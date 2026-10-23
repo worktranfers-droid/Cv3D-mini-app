@@ -352,6 +352,7 @@
 
   <!-- ==================== JAVASCRIPT ==================== -->
   <script>
+    // URL Web App API
     var API_URL = "https://script.google.com/macros/s/AKfycbxdsFeRnhFqZDwoPovJLhpJQxprKcoix3kU5WGp9aTtvfmnoreawVHrZsQh7NzrC1k6cA/exec"; 
 
     var i18n = {
@@ -425,12 +426,16 @@
       updateCartBadge();
     };
 
+    // Helper POST ប្រើ text/plain ដើម្បីបញ្ចៀស CORS Preflight Block និង Redirect issues
     function callBackendPost(payload) {
       return fetch(API_URL, {
         method: "POST",
         headers: { "Content-Type": "text/plain;charset=utf-8" },
         body: JSON.stringify(payload)
-      }).then(function(res) { return res.json(); });
+      }).then(function(res) { 
+        if (!res.ok) throw new Error("HTTP " + res.status);
+        return res.json(); 
+      });
     }
 
     function toggleLanguage() {
@@ -479,20 +484,15 @@
       }
     }
 
-    // --- CUSTOMER CATALOG ---
+    // --- CUSTOMER CATALOG (ប្រើ POST ជៀសវាង CORS Redirect) ---
     function loadCustomerData() {
       var loader = document.getElementById('custLoader');
-      if (loader) loader.className = "text-center py-16 text-slate-400 text-xs";
+      if (loader) {
+        loader.className = "text-center py-16 text-slate-400 text-xs";
+        loader.innerHTML = '<div class="w-6 h-6 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-2"></div><span id="custLoaderText">កំពុងទាញទិន្នន័យពីហាង...</span>';
+      }
 
-      fetch(API_URL + "?action=getCatalog", {
-        method: "GET",
-        mode: "cors",
-        redirect: "follow"
-      })
-        .then(function(res) { 
-          if (!res.ok) throw new Error("HTTP error " + res.status);
-          return res.json(); 
-        })
+      callBackendPost({ action: "getCatalog" })
         .then(function(data) {
           customerProducts = data || [];
           if (loader) loader.className = "hidden";
@@ -503,7 +503,7 @@
           if (loader) {
             loader.innerHTML = '<div class="py-10 text-center">' +
               '<p class="text-rose-500 font-bold mb-2">កំហុសទាញទិន្នន័យ៖ ' + err.message + '</p>' +
-              '<button type="button" onclick="loadCustomerData()" class="px-4 py-2 bg-blue-600 text-white rounded-xl text-xs font-semibold shadow-sm">ព្យាយាមម្តងទៀត 🔄</button>' +
+              '<button type="button" onclick="loadCustomerData()" class="px-3 py-1.5 bg-blue-600 text-white rounded-xl text-xs font-semibold shadow-sm">ព្យាយាមម្តងទៀត 🔄</button>' +
             '</div>';
           }
         });
@@ -1213,8 +1213,7 @@
       container.innerHTML = '';
       emptyState.className = "hidden";
 
-      fetch(API_URL + "?action=getMyOrders&queryValue=" + encodeURIComponent(queryValue) + "&type=" + encodeURIComponent(type))
-        .then(function(res) { return res.json(); })
+      callBackendPost({ action: "getMyOrders", queryValue: queryValue, type: type })
         .then(function(res) {
           loader.className = "hidden";
           if (res && res.success && res.orders && res.orders.length > 0) {
@@ -1382,4 +1381,172 @@
           item.className = "bg-white p-3 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between gap-3";
 
           var leftDiv = document.createElement('div');
-          leftDiv.
+          leftDiv.className = "flex items-center gap-3";
+
+          var imgDiv = document.createElement('div');
+          imgDiv.className = "w-12 h-12 rounded-xl bg-slate-100 overflow-hidden flex-shrink-0 relative";
+          var img = document.createElement('img');
+          img.src = p.image;
+          img.className = "w-full h-full object-cover";
+          img.onerror = function() { this.src = "https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&w=600&q=80"; };
+          imgDiv.appendChild(img);
+
+          var infoDiv = document.createElement('div');
+          var titleWrap = document.createElement('div');
+          titleWrap.className = "flex items-center gap-1.5";
+          var title = document.createElement('h4');
+          title.className = "text-xs font-bold text-slate-800 line-clamp-1";
+          title.innerText = p.title;
+          titleWrap.appendChild(title);
+
+          if (p.badge) {
+            var bSpan = document.createElement('span');
+            bSpan.className = "text-[9px] bg-slate-100 px-1.5 py-0.5 rounded font-bold";
+            bSpan.innerText = p.badge;
+            titleWrap.appendChild(bSpan);
+          }
+
+          var price = document.createElement('p');
+          price.className = "text-[11px] text-blue-600 font-bold";
+          price.innerText = "$" + p.price.toFixed(2);
+
+          infoDiv.appendChild(titleWrap);
+          infoDiv.appendChild(price);
+          leftDiv.appendChild(imgDiv);
+          leftDiv.appendChild(infoDiv);
+
+          var rightDiv = document.createElement('div');
+          rightDiv.className = "flex items-center gap-1.5";
+
+          var stockBtn = document.createElement('button');
+          stockBtn.type = "button";
+          stockBtn.className = "text-[11px] px-2.5 py-1 rounded-xl font-bold " + (p.inStock ? "bg-emerald-50 text-emerald-600 border border-emerald-200" : "bg-red-50 text-red-500 border border-red-200");
+          stockBtn.innerText = p.inStock ? "មានស្តុក" : "ដាច់ស្តុក";
+          stockBtn.onclick = function() { toggleStock(p.id, !p.inStock); };
+
+          var editBtn = document.createElement('button');
+          editBtn.type = "button";
+          editBtn.className = "text-slate-500 hover:text-blue-600 p-1.5 rounded-lg bg-slate-50 border border-slate-200";
+          editBtn.innerText = "✏️";
+          editBtn.onclick = function() { openEditModalById(p.id); };
+
+          var delBtn = document.createElement('button');
+          delBtn.type = "button";
+          delBtn.className = "text-slate-400 hover:text-red-500 p-1.5 rounded-lg bg-slate-50 border border-slate-200";
+          delBtn.innerText = "🗑️";
+          delBtn.onclick = function() { deleteProd(p.id); };
+
+          rightDiv.appendChild(stockBtn);
+          rightDiv.appendChild(editBtn);
+          rightDiv.appendChild(delBtn);
+
+          item.appendChild(leftDiv);
+          item.appendChild(rightDiv);
+          container.appendChild(item);
+        })(items[i]);
+      }
+    }
+
+    function toggleStock(id, newStatus) {
+      callBackendPost({ action: "toggleStock", pin: adminPin, productId: id, newStatus: newStatus })
+        .then(function() { loadAdminData(); });
+    }
+
+    function deleteProd(id) {
+      if (confirm("តើអ្នកចង់លុបទំនិញនេះចេញពី Google Sheet មែនទេ?")) {
+        callBackendPost({ action: "deleteProduct", pin: adminPin, productId: id })
+          .then(function() { loadAdminData(); });
+      }
+    }
+
+    function openAddModal() {
+      var el;
+      if (el = document.getElementById('editProductId')) el.value = '';
+      if (el = document.getElementById('addTitle')) el.value = '';
+      if (el = document.getElementById('addCategory')) el.value = '';
+      if (el = document.getElementById('addPrice')) el.value = '';
+      if (el = document.getElementById('addDesc')) el.value = '';
+      if (el = document.getElementById('addImage')) el.value = '';
+      if (el = document.getElementById('addColors')) el.value = '';
+      if (el = document.getElementById('addSizes')) el.value = '';
+      if (el = document.getElementById('addBadge')) el.value = '';
+
+      if (el = document.getElementById('modalFormTitle')) el.innerText = "➕ បន្ថែមផលិតផលថ្មី";
+      if (el = document.getElementById('saveProdBtn')) el.innerText = "💾 រក្សាទុកចូល Google Sheet";
+      var modal = document.getElementById('addModal');
+      if (modal) modal.className = "fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4";
+    }
+
+    function openEditModalById(id) {
+      var p = null;
+      for (var i = 0; i < adminProducts.length; i++) {
+        if (String(adminProducts[i].id) === String(id)) {
+          p = adminProducts[i];
+          break;
+        }
+      }
+      if (!p) return;
+
+      var el;
+      if (el = document.getElementById('editProductId')) el.value = p.id;
+      if (el = document.getElementById('addTitle')) el.value = p.title || '';
+      if (el = document.getElementById('addCategory')) el.value = p.category || '';
+      if (el = document.getElementById('addPrice')) el.value = p.price || '';
+      if (el = document.getElementById('addDesc')) el.value = p.desc || '';
+      if (el = document.getElementById('addImage')) el.value = p.image || '';
+      if (el = document.getElementById('addColors')) el.value = p.colors || '';
+      if (el = document.getElementById('addSizes')) el.value = p.sizes || '';
+      if (el = document.getElementById('addBadge')) el.value = p.badge || '';
+
+      if (el = document.getElementById('modalFormTitle')) el.innerText = "✏️ កែប្រែព័ត៌មានផលិតផល";
+      if (el = document.getElementById('saveProdBtn')) el.innerText = "💾 រក្សាទុកការកែប្រែ (Update)";
+      var modal = document.getElementById('addModal');
+      if (modal) modal.className = "fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4";
+    }
+
+    function closeAddModal() {
+      var modal = document.getElementById('addModal');
+      if (modal) modal.className = "fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden flex items-center justify-center p-4";
+    }
+
+    function saveProductData() {
+      var editId = document.getElementById('editProductId').value;
+      var p = {
+        id: editId,
+        title: document.getElementById('addTitle').value.trim(),
+        category: (document.getElementById('addCategory').value || 'other').trim(),
+        price: parseFloat(document.getElementById('addPrice').value) || 0,
+        desc: document.getElementById('addDesc').value.trim(),
+        image: document.getElementById('addImage').value.trim(),
+        colors: document.getElementById('addColors').value.trim(),
+        sizes: document.getElementById('addSizes').value.trim() || "Standard",
+        badge: document.getElementById('addBadge').value
+      };
+
+      if (!p.title || p.price <= 0) {
+        alert("សូមបំពេញឈ្មោះ និងតម្លៃឱ្យបានត្រឹមត្រូវ!");
+        return;
+      }
+
+      var btn = document.getElementById('saveProdBtn');
+      btn.disabled = true;
+      btn.innerText = "⏳ កំពុងដំណើរការ...";
+
+      var action = editId ? "updateProduct" : "addProduct";
+      callBackendPost({ action: action, pin: adminPin, product: p })
+        .then(function() {
+          btn.disabled = false;
+          btn.innerText = "💾 រក្សាទុកចូល Google Sheet";
+          closeAddModal();
+          loadAdminData();
+          loadCustomerData();
+        })
+        .catch(function(err) {
+          btn.disabled = false;
+          btn.innerText = "💾 រក្សាទុកចូល Google Sheet";
+          alert("Error: " + err.message);
+        });
+    }
+  </script>
+</body>
+</html>
