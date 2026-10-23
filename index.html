@@ -1,0 +1,1559 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title></title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="2685.7">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+  </style>
+</head>
+<body>
+<p class="p1">&lt;!DOCTYPE html&gt;</p>
+<p class="p1">&lt;html lang="km"&gt;</p>
+<p class="p1">&lt;head&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;meta charset="UTF-8"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;title&gt;3D Print Studio&lt;/title&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;script src="https://cdn.tailwindcss.com"&gt;&lt;/script&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;script src="https://telegram.org/js/telegram-web-app.js"&gt;&lt;/script&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;link href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@300;400;600;700&amp;family=Inter:wght@400;600;700&amp;display=swap" rel="stylesheet"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;style&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>body { font-family: 'Kantumruy Pro', 'Inter', sans-serif; }</p>
+<p class="p1"><span class="Apple-converted-space">    </span>::-webkit-scrollbar { display: none; }</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/style&gt;</p>
+<p class="p1">&lt;/head&gt;</p>
+<p class="p1">&lt;body class="bg-slate-50 text-slate-800 font-sans pb-24 select-none"&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;!-- ==================== CLEAN &amp; MODERN HEADER ==================== --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;header class="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-slate-100 px-4 py-2.5 shadow-sm flex items-center justify-between"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="flex items-center gap-2.5"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="w-9 h-9 bg-slate-100 rounded-xl flex items-center justify-center text-xl shadow-xs"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>🐉</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;h1 class="text-sm font-bold text-slate-900 leading-none"&gt;3D Print Studio&lt;/h1&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;p id="subHeader" class="text-[10px] text-emerald-600 font-semibold mt-1 flex items-center gap-1"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"&gt;&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;span id="subHeaderText"&gt;កំពុងទទួលការកុម្ម៉ង់&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
+<p class="p2"><span class="Apple-converted-space">    </span></p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="flex items-center gap-1.5"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;button type="button" onclick="openMyOrdersModal()" class="text-xs bg-amber-50 hover:bg-amber-100 text-amber-700 font-bold px-3 py-1.5 rounded-xl border border-amber-200/80 transition-all flex items-center gap-1 active:scale-95 shadow-xs"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;span&gt;📦&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;span class="text-[11px]"&gt;ការកុម្ម៉ង់&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;/button&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;button type="button" onclick="openSellerChat()" title="ឆាតសួរនាំ" class="w-8 h-8 bg-blue-50 hover:bg-blue-100 text-blue-600 rounded-xl border border-blue-200/80 flex items-center justify-center text-sm transition-all active:scale-95 shadow-xs"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>💬</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;/button&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;button id="langToggleBtn" type="button" onclick="toggleLanguage()" class="h-8 px-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl border border-slate-200 flex items-center gap-1 text-[11px] transition-all active:scale-95 shadow-xs"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;span id="langFlag"&gt;🇬🇧&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;span id="langText"&gt;EN&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/header&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;!-- ==================== CUSTOMER VIEW ==================== --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;section id="customerSection"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="px-4 pt-3"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="relative"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-slate-400 text-xs"&gt;🔍&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;input<span class="Apple-converted-space"> </span></p>
+<p class="p1"><span class="Apple-converted-space">          </span>id="custSearchInput"<span class="Apple-converted-space"> </span></p>
+<p class="p1"><span class="Apple-converted-space">          </span>type="text"<span class="Apple-converted-space"> </span></p>
+<p class="p1"><span class="Apple-converted-space">          </span>oninput="applyCustomerFilter()"<span class="Apple-converted-space"> </span></p>
+<p class="p1"><span class="Apple-converted-space">          </span>placeholder="ស្វែងរកប្រដាប់ក្មេងលេង ជើងទម្រ Fidget..."<span class="Apple-converted-space"> </span></p>
+<p class="p1"><span class="Apple-converted-space">          </span>class="w-full pl-9 pr-8 py-2.5 bg-white border border-slate-200 rounded-2xl text-xs outline-none focus:ring-2 focus:ring-blue-500 transition-all shadow-sm"</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;button id="clearCustSearchBtn" type="button" onclick="clearCustSearch()" class="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400 hidden text-xs font-bold"&gt;✕&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div id="categoryContainer" class="flex gap-2 px-4 py-3 overflow-x-auto no-scrollbar"&gt;&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;main class="px-4"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div id="customerGrid" class="grid grid-cols-2 gap-3"&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div id="custLoader" class="text-center py-16 text-slate-400 text-xs"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="w-6 h-6 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-2"&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;span id="custLoaderText"&gt;កំពុងទាញទិន្នន័យពីហាង...&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/main&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="text-center py-10 text-slate-400"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;button type="button" onclick="handleRoleClick()" class="text-xs text-slate-400 hover:text-slate-600 transition-colors py-1 px-3 rounded-lg hover:bg-slate-100"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>🔒 Admin Portal</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;p class="text-[10px] text-slate-300 mt-1"&gt;© 2026 3D Print Studio. All rights reserved.&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/section&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;!-- ==================== ADMIN VIEW ==================== --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;section id="adminSection" class="hidden px-4 pt-3 space-y-3"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="flex justify-between items-center bg-white p-3 rounded-2xl border border-slate-200 shadow-sm"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;h2 class="text-xs font-bold text-slate-800"&gt;🛠️ Admin Dashboard&lt;/h2&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;p class="text-[10px] text-slate-500"&gt;គ្រប់គ្រងផលិតផល &amp; ស្តុក&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="flex items-center gap-2"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;button type="button" onclick="switchToCustomer()" class="text-xs bg-slate-100 text-slate-700 font-semibold px-3 py-1.5 rounded-xl border border-slate-200"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>🛒 ទៅហាងវិញ</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;button type="button" onclick="openAddModal()" class="text-xs bg-blue-600 text-white font-semibold px-3 py-1.5 rounded-xl shadow-sm hover:bg-blue-700"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>➕ បន្ថែមទំនិញ</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="relative"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-slate-400 text-xs"&gt;🔍&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;input<span class="Apple-converted-space"> </span></p>
+<p class="p1"><span class="Apple-converted-space">        </span>id="adminSearchInput"<span class="Apple-converted-space"> </span></p>
+<p class="p1"><span class="Apple-converted-space">        </span>type="text"<span class="Apple-converted-space"> </span></p>
+<p class="p1"><span class="Apple-converted-space">        </span>oninput="filterAdminProducts()"<span class="Apple-converted-space"> </span></p>
+<p class="p1"><span class="Apple-converted-space">        </span>placeholder="ស្វែងរកតាមឈ្មោះ ឬប្រភេទ..."<span class="Apple-converted-space"> </span></p>
+<p class="p1"><span class="Apple-converted-space">        </span>class="w-full pl-8 pr-8 py-2 bg-white border border-slate-200 rounded-xl text-xs outline-none focus:ring-2 focus:ring-blue-500 shadow-sm"</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;button id="clearAdminBtn" type="button" onclick="clearAdminSearch()" class="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400 hidden text-xs font-bold"&gt;✕&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div id="adminLoader" class="text-center py-10 text-slate-400 text-xs hidden"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="w-6 h-6 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-2"&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>កំពុងធ្វើបច្ចុប្បន្នភាព...</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div id="adminList" class="space-y-2.5"&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/section&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;!-- ==================== FLOATING CART BUTTON ==================== --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;div id="floatingCartContainer" class="fixed bottom-6 right-5 z-40"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;button onclick="openCartModal()" class="bg-blue-600 hover:bg-blue-700 text-white p-3.5 rounded-full shadow-2xl flex items-center justify-center active:scale-95 transition-all relative"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;span class="text-2xl"&gt;🛒&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;span id="floatingCartBadge" class="hidden absolute -top-1 -right-1 bg-rose-500 text-white text-[10px] font-extrabold w-5 h-5 rounded-full flex items-center justify-center border-2 border-white shadow-sm"&gt;0&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;!-- ==================== MODAL: PRODUCT DETAIL (CAROUSEL) ==================== --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;div id="productModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden flex items-end sm:items-center justify-center p-0 sm:p-4"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="bg-white w-full max-w-md rounded-t-3xl sm:rounded-3xl max-h-[90vh] overflow-y-auto p-5 shadow-2xl relative"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;button type="button" onclick="closeModal()" class="absolute top-4 right-4 bg-slate-100 hover:bg-slate-200 w-8 h-8 rounded-full flex items-center justify-center text-slate-500 font-bold z-20"&gt;✕&lt;/button&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="w-full h-56 rounded-2xl overflow-hidden bg-slate-100 mb-4 relative select-none"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div id="modalSliderContainer" class="w-full h-full flex overflow-x-auto snap-x snap-mandatory scroll-smooth no-scrollbar" onscroll="handleSliderScroll()"&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div id="sliderDots" class="absolute bottom-2.5 left-1/2 -translate-x-1/2 flex items-center gap-1.5 bg-black/40 backdrop-blur-md px-2.5 py-1 rounded-full z-10"&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;span class="absolute top-2.5 left-2.5 bg-black/60 backdrop-blur-md text-white text-[10px] font-bold px-2 py-0.5 rounded-full pointer-events-none z-10"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>🔍 ចុចលើរូបដើម្បី Zoom</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="flex justify-between items-start mb-2"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;h2 id="modalTitle" class="text-base font-bold text-slate-900 leading-snug"&gt;&lt;/h2&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;p id="modalCategory" class="text-xs text-slate-400 font-medium uppercase"&gt;&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;span id="modalPrice" class="text-xl font-extrabold text-blue-600"&gt;&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;p id="modalDesc" class="text-xs text-slate-500 mb-4 leading-relaxed"&gt;&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;hr class="border-slate-100 my-3"&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="mb-4"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;label id="lblSelectColor" class="block text-xs font-bold text-slate-700 mb-2"&gt;ជ្រើសរើសពណ៌ (Color):&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div id="colorContainer" class="flex flex-wrap gap-2"&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="mb-4"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;label id="lblSelectSize" class="block text-xs font-bold text-slate-700 mb-2"&gt;ជ្រើសរើសទំហំ (Size):&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div id="sizeContainer" class="flex gap-2"&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="flex justify-between items-center mb-6"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;label id="lblSelectQty" class="text-xs font-bold text-slate-700"&gt;ចំនួន (Quantity):&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="flex items-center gap-3 bg-slate-100 rounded-xl p-1"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;button type="button" onclick="changeQty(-1)" class="w-7 h-7 bg-white rounded-lg shadow-sm font-bold text-slate-700"&gt;-&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;span id="qtyVal" class="text-sm font-bold text-slate-800 w-6 text-center"&gt;1&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;button type="button" onclick="changeQty(1)" class="w-7 h-7 bg-white rounded-lg shadow-sm font-bold text-slate-700"&gt;+&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="grid grid-cols-2 gap-2.5"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;button type="button" onclick="addToCart()" class="w-full bg-blue-50 hover:bg-blue-100 text-blue-600 font-bold py-3.5 rounded-2xl border border-blue-200 flex items-center justify-center gap-1.5 active:scale-95 transition-all text-xs"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;span&gt;🛒&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;span id="btnAddToCartText"&gt;ដាក់ចូលកន្រ្តក&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;button type="button" onclick="buyNowDirectly()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 rounded-2xl shadow-lg shadow-blue-500/25 flex items-center justify-center gap-1.5 active:scale-95 transition-all text-xs"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;span&gt;⚡&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;span id="btnBuyNowText"&gt;ទិញឥឡូវនេះ&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;!-- ==================== MODAL: PINCH-TO-ZOOM ==================== --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;div id="imageZoomModal" class="fixed inset-0 z-[60] bg-black/95 backdrop-blur-md hidden flex flex-col justify-between items-center p-3 select-none touch-none"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="w-full flex justify-between items-center z-20 px-2 pt-2"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;span class="text-[11px] text-white/70 bg-white/10 px-3 py-1 rounded-full backdrop-blur-sm"&gt;🖐️ ប្រើម្រាមដៃពីរពង្រីក ឬចុច ២ ដង&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;button type="button" onclick="closeZoomModal()" class="bg-white/20 hover:bg-white/30 text-white w-9 h-9 rounded-full flex items-center justify-center font-bold text-sm transition-all active:scale-95"&gt;✕&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
+<p class="p2"><span class="Apple-converted-space">    </span></p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div id="zoomViewport" class="w-full h-full flex items-center justify-center overflow-hidden relative"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;img id="zoomedImg" src="" alt="Zoomed Product" class="max-w-full max-h-[85vh] object-contain rounded-2xl will-change-transform origin-center transition-transform duration-75"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="flex items-center gap-3 z-20 pb-4"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;button type="button" onclick="adjustZoom(-0.5)" class="w-10 h-10 bg-white/15 hover:bg-white/25 text-white font-bold rounded-full text-base flex items-center justify-center backdrop-blur-sm active:scale-95"&gt;-&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;button type="button" onclick="resetZoomState()" class="px-3.5 py-1.5 bg-white/15 hover:bg-white/25 text-white text-xs font-semibold rounded-full backdrop-blur-sm active:scale-95"&gt;Reset&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;button type="button" onclick="adjustZoom(0.5)" class="w-10 h-10 bg-white/15 hover:bg-white/25 text-white font-bold rounded-full text-base flex items-center justify-center backdrop-blur-sm active:scale-95"&gt;+&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;!-- ==================== MODAL: SHOPPING CART ==================== --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;div id="cartModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden flex items-end sm:items-center justify-center p-0 sm:p-4"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="bg-white w-full max-w-md rounded-t-3xl sm:rounded-3xl max-h-[92vh] overflow-y-auto p-5 shadow-2xl relative flex flex-col justify-between"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="flex justify-between items-center mb-3"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;div class="flex items-center gap-2"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;span class="text-xl"&gt;🛒&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;h3 id="cartModalTitle" class="text-base font-bold text-slate-800"&gt;កន្រ្តកទំនិញរបស់អ្នក&lt;/h3&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;button type="button" onclick="closeCartModal()" class="bg-slate-100 hover:bg-slate-200 w-8 h-8 rounded-full flex items-center justify-center text-slate-500 font-bold"&gt;✕&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div id="cartItemList" class="space-y-2.5 my-3 max-h-56 overflow-y-auto pr-1"&gt;&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div id="cartEmptyState" class="text-center py-10 text-slate-400 text-xs hidden"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;span class="text-3xl block mb-2"&gt;🛍️&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;p id="cartEmptyText"&gt;កន្រ្តករបស់អ្នកនៅទទេស្អាត&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div id="cartOrderForm" class="space-y-2.5 bg-slate-50 p-3.5 rounded-2xl border border-slate-200 my-3"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;label id="lblCartPhone" class="block text-xs font-bold text-slate-700 mb-1"&gt;លេខទូរសព្ទ (Phone Number): *&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;input id="cartPhoneInput" type="tel" placeholder="ឧ. 012 345 678" class="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs outline-none focus:ring-2 focus:ring-blue-500 shadow-sm"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;label id="lblCartLoc" class="block text-xs font-bold text-slate-700 mb-1"&gt;ទីតាំងដឹកជញ្ជូន (Delivery Address): *&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;textarea id="cartLocInput" rows="2" placeholder="ផ្ទះលេខ, ផ្លូវ, សង្កាត់, ខណ្ឌ ឬខេត្ត..." class="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs outline-none focus:ring-2 focus:ring-blue-500 shadow-sm"&gt;&lt;/textarea&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div id="cartBottomBar" class="pt-2 border-t border-slate-100"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="flex justify-between items-center mb-3"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;span id="lblCartTotal" class="text-xs text-slate-500 font-bold"&gt;តម្លៃសរុបទាំងអស់៖&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;span id="cartTotalPrice" class="text-lg font-black text-blue-600"&gt;$0.00&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;button type="button" onclick="submitCartOrder()" class="w-full bg-blue-600 hover:bg-blue-700 active:scale-95 text-white font-bold py-3.5 rounded-2xl shadow-lg shadow-blue-500/25 flex items-center justify-center gap-2 text-xs"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;span id="btnCartCheckout"&gt;🚀 ផ្ញើការកុម្ម៉ង់ទិញឥឡូវនេះ&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;!-- ==================== MODAL: SUCCESS POPUP ==================== --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;div id="orderSuccessModal" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden flex items-center justify-center p-4"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="bg-white w-full max-w-sm rounded-3xl p-6 shadow-2xl text-center space-y-4"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center text-3xl mx-auto shadow-inner animate-bounce"&gt;✓&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;h3 class="text-base font-bold text-slate-800"&gt;ការកុម្ម៉ង់ទទួលបានជោគជ័យ!&lt;/h3&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;p class="text-xs text-slate-500 mt-1 leading-relaxed"&gt;យើងខ្ញុំបានទទួលព័ត៌មានរួចរាល់ហើយ និងកំពុងរៀបចំជូនលោកអ្នក។&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="bg-slate-50 border border-slate-200 rounded-2xl p-3 text-left space-y-1.5"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="flex justify-between items-center text-xs"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;span class="text-slate-400"&gt;លេខកូដកុម្ម៉ង់៖&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;span id="succOrderId" class="font-bold text-slate-800 font-mono select-all"&gt;&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="flex justify-between items-center text-xs"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;span class="text-slate-400"&gt;ស្ថានភាព៖&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;span class="font-bold text-amber-600 bg-amber-50 px-2 py-0.5 rounded-lg border border-amber-200"&gt;🟡 រង់ចាំពិនិត្យ&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="space-y-2 pt-1"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;button type="button" onclick="finishAndCloseApp()" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-3 rounded-2xl text-xs shadow-md active:scale-95 transition-all flex items-center justify-center gap-1.5"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;span&gt;🚪&lt;/span&gt;&lt;span&gt;រួចរាល់ (បិទ App)&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;button type="button" onclick="continueShopping()" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-3 rounded-2xl text-xs border border-slate-200 active:scale-95 transition-all flex items-center justify-center gap-1.5"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;span&gt;🛍️&lt;/span&gt;&lt;span&gt;ទិញទំនិញបន្ត&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;!-- ==================== MODAL: MY ORDERS LIST ==================== --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;div id="myOrdersModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden flex items-end sm:items-center justify-center p-0 sm:p-4"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="bg-white w-full max-w-md rounded-t-3xl sm:rounded-3xl max-h-[85vh] overflow-y-auto p-5 shadow-2xl relative"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;button type="button" onclick="closeMyOrdersModal()" class="absolute top-4 right-4 bg-slate-100 hover:bg-slate-200 w-8 h-8 rounded-full flex items-center justify-center text-slate-500 font-bold text-xs"&gt;✕&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="flex items-center gap-2 mb-4"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;span class="text-2xl"&gt;📦&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;h3 class="text-sm font-bold text-slate-800"&gt;ការកុម្ម៉ង់របស់ខ្ញុំ (My Orders)&lt;/h3&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;p class="text-[10px] text-slate-400"&gt;តាមដានស្ថានភាពផលិត និងការដឹកជញ្ជូន&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div id="myOrdersLoader" class="text-center py-10 text-slate-400 text-xs"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="w-6 h-6 border-2 border-amber-500 border-t-transparent rounded-full animate-spin mx-auto mb-2"&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>កំពុងពិនិត្យមើលប្រវត្តិការកុម្ម៉ង់...</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div id="myOrdersContainer" class="space-y-3"&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div id="myOrdersEmpty" class="hidden text-center py-10 text-slate-400 text-xs"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;span class="text-3xl block mb-2"&gt;🛍️&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;p&gt;អ្នកមិនទាន់មានការកុម្ម៉ង់ទិញនៅឡើយទេ!&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;!-- ==================== MODAL: ADD / EDIT PRODUCT ==================== --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;div id="addModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden flex items-center justify-center p-4"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="bg-white w-full max-w-md rounded-3xl p-5 shadow-2xl relative max-h-[92vh] overflow-y-auto"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;button type="button" onclick="closeAddModal()" class="absolute top-4 right-4 bg-slate-100 w-8 h-8 rounded-full font-bold text-slate-500"&gt;✕&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;h3 id="modalFormTitle" class="text-base font-bold text-slate-800 mb-4"&gt;➕ បន្ថែមផលិតផលថ្មី&lt;/h3&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;input id="editProductId" type="hidden" value=""&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="space-y-3"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;label class="block text-xs font-semibold text-slate-600 mb-1"&gt;ឈ្មោះផលិតផល&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;input id="addTitle" type="text" placeholder="ឧ. Articulated Dragon" class="w-full border border-slate-300 p-2 rounded-xl text-xs outline-none focus:ring-2 focus:ring-blue-500"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="grid grid-cols-3 gap-2"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;label class="block text-xs font-semibold text-slate-600 mb-1"&gt;ប្រភេទ&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;input id="addCategory" list="categoryDataList" placeholder="រើស ឬវាយថ្មី..." class="w-full border border-slate-300 p-2 rounded-xl text-xs outline-none bg-white focus:ring-2 focus:ring-blue-500"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;datalist id="categoryDataList"&gt;&lt;/datalist&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;label class="block text-xs font-semibold text-slate-600 mb-1"&gt;តម្លៃ ($)&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;input id="addPrice" type="number" step="0.5" placeholder="12.00" class="w-full border border-slate-300 p-2 rounded-xl text-xs outline-none"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;label class="block text-xs font-semibold text-slate-600 mb-1"&gt;Badge&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;select id="addBadge" class="w-full border border-slate-300 p-2 rounded-xl text-xs outline-none bg-white"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">              </span>&lt;option value=""&gt;គ្មាន&lt;/option&gt;</p>
+<p class="p1"><span class="Apple-converted-space">              </span>&lt;option value="Best Seller"&gt;🔥 Best Seller&lt;/option&gt;</p>
+<p class="p1"><span class="Apple-converted-space">              </span>&lt;option value="Hot"&gt;⚡ Hot&lt;/option&gt;</p>
+<p class="p1"><span class="Apple-converted-space">              </span>&lt;option value="New"&gt;✨ New&lt;/option&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/select&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;label class="block text-xs font-semibold text-slate-600 mb-1"&gt;ការពិពណ៌នា&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;textarea id="addDesc" rows="2" placeholder="ព័ត៌មានលម្អិត..." class="w-full border border-slate-300 p-2 rounded-xl text-xs outline-none"&gt;&lt;/textarea&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;label class="block text-xs font-semibold text-slate-600 mb-1"&gt;Link រូបភាព Drive (បំបែកដោយក្បៀស , បើមានច្រើន)&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;input id="addImage" type="text" placeholder="https://drive.google.com/file/d/..., https://..." class="w-full border border-slate-300 p-2 rounded-xl text-xs outline-none"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;label class="block text-xs font-semibold text-slate-600 mb-1"&gt;ជម្រើសពណ៌ (បំបែកដោយក្បៀស ,)&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;input id="addColors" type="text" placeholder="Silk Gold, Rainbow, Black" class="w-full border border-slate-300 p-2 rounded-xl text-xs outline-none"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;label class="block text-xs font-semibold text-slate-600 mb-1"&gt;ជម្រើសទំហំ (បំបែកដោយក្បៀស ,)&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;input id="addSizes" type="text" placeholder="Standard, Giant" class="w-full border border-slate-300 p-2 rounded-xl text-xs outline-none"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p2"><span class="Apple-converted-space">        </span></p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;button id="saveProdBtn" type="button" onclick="saveProductData()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-2xl text-xs mt-2 shadow-md"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>💾 រក្សាទុកចូល Google Sheet</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;!-- ==================== JAVASCRIPT (FETCH API FOR GITHUB PAGES) ==================== --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;script&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>// ⚠️ បញ្ចូល Web App Deployment URL របស់អ្នកនៅត្រង់នេះ</p>
+<p class="p1"><span class="Apple-converted-space">    </span>var API_URL = "https://script.google.com/macros/s/AKfycbxdsFeRnhFqZDwoPovJLhpJQxprKcoix3kU5WGp9aTtvfmnoreawVHrZsQh7NzrC1k6cA/exec";<span class="Apple-converted-space"> </span></p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>var i18n = {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>km: {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>flag: "🇬🇧", langText: "EN", chatSeller: "ឆាត", statusOpen: "កំពុងទទួលការកុម្ម៉ង់",</p>
+<p class="p1"><span class="Apple-converted-space">        </span>searchPlaceholder: "ស្វែងរកប្រដាប់ក្មេងលេង ជើងទម្រ Fidget...", catAll: "ទាំងអស់",</p>
+<p class="p1"><span class="Apple-converted-space">        </span>loaderText: "កំពុងទាញទិន្នន័យពីហាង...", emptyShop: "មិនទាន់មានទំនិញដាក់លក់ទេ ឬកំពុងផ្ទុកទិន្នន័យ...",</p>
+<p class="p1"><span class="Apple-converted-space">        </span>btnView: "មើល", lblColor: "ជ្រើសរើសពណ៌ (Color):", lblSize: "ជ្រើសរើសទំហំ (Size):",</p>
+<p class="p1"><span class="Apple-converted-space">        </span>lblQty: "ចំនួន (Quantity):", btnAddToCart: "ដាក់ចូលកន្រ្តក", btnBuyNow: "ទិញឥឡូវនេះ",</p>
+<p class="p1"><span class="Apple-converted-space">        </span>cartTitle: "កន្រ្តកទំនិញរបស់អ្នក", cartEmpty: "កន្រ្តករបស់អ្នកនៅទទេស្អាត",</p>
+<p class="p1"><span class="Apple-converted-space">        </span>lblPhone: "លេខទូរសព្ទ (Phone Number): *", lblLoc: "ទីតាំងដឹកជញ្ជូន (Delivery Address): *",</p>
+<p class="p1"><span class="Apple-converted-space">        </span>phonePlaceholder: "ឧ. 012 345 678", locPlaceholder: "ផ្ទះលេខ, ផ្លូវ, សង្កាត់, ខណ្ឌ ឬខេត្ត...",</p>
+<p class="p1"><span class="Apple-converted-space">        </span>cartTotal: "តម្លៃសរុបទាំងអស់៖", btnCheckout: "🚀 ផ្ញើការកុម្ម៉ង់ទិញឥឡូវនេះ",</p>
+<p class="p1"><span class="Apple-converted-space">        </span>alertFillInfo: "សូមបញ្ចូលលេខទូរសព្ទ និងទីតាំងដឹកជញ្ជូនរបស់អ្នក!"</p>
+<p class="p1"><span class="Apple-converted-space">      </span>},</p>
+<p class="p1"><span class="Apple-converted-space">      </span>en: {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>flag: "🇰🇭", langText: "ខ្មែរ", chatSeller: "Chat", statusOpen: "Accepting Orders",</p>
+<p class="p1"><span class="Apple-converted-space">        </span>searchPlaceholder: "Search fidget toys, desk stands...", catAll: "All",</p>
+<p class="p1"><span class="Apple-converted-space">        </span>loaderText: "Loading shop catalog...", emptyShop: "No products available or loading...",</p>
+<p class="p1"><span class="Apple-converted-space">        </span>btnView: "View", lblColor: "Select Color:", lblSize: "Select Size:",</p>
+<p class="p1"><span class="Apple-converted-space">        </span>lblQty: "Quantity:", btnAddToCart: "Add to Cart", btnBuyNow: "Buy Now",</p>
+<p class="p1"><span class="Apple-converted-space">        </span>cartTitle: "Your Shopping Cart", cartEmpty: "Your cart is empty",</p>
+<p class="p1"><span class="Apple-converted-space">        </span>lblPhone: "Phone Number: *", lblLoc: "Delivery Address: *",</p>
+<p class="p1"><span class="Apple-converted-space">        </span>phonePlaceholder: "e.g., 012 345 678", locPlaceholder: "House No, Street, Sangkat, Khan or City...",</p>
+<p class="p1"><span class="Apple-converted-space">        </span>cartTotal: "Total Amount:", btnCheckout: "🚀 Send Order Now",</p>
+<p class="p1"><span class="Apple-converted-space">        </span>alertFillInfo: "Please enter your phone number and delivery location!"</p>
+<p class="p1"><span class="Apple-converted-space">      </span>}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>};</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>var currentLang = localStorage.getItem('app_user_lang') || 'km';</p>
+<p class="p1"><span class="Apple-converted-space">    </span>var currentRole = 'customer';</p>
+<p class="p1"><span class="Apple-converted-space">    </span>var adminPin = localStorage.getItem('saved_admin_pin') || '';</p>
+<p class="p1"><span class="Apple-converted-space">    </span>var customerProducts = [];</p>
+<p class="p1"><span class="Apple-converted-space">    </span>var adminProducts = [];</p>
+<p class="p1"><span class="Apple-converted-space">    </span>var currentCustomerCategory = 'all';</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>var selectedProduct = null;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>var selectedColor = "";</p>
+<p class="p1"><span class="Apple-converted-space">    </span>var selectedSize = "";</p>
+<p class="p1"><span class="Apple-converted-space">    </span>var quantity = 1;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>var cart = [];</p>
+<p class="p1"><span class="Apple-converted-space">    </span>var MY_TELEGRAM_USERNAME = "Vireak699";</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>var currentSliderImages = [];</p>
+<p class="p1"><span class="Apple-converted-space">    </span>var activeImageIndex = 0;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>var currentScale = 1;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>var minScale = 1;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>var maxScale = 4;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>var posX = 0;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>var posY = 0;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>var startDist = 0;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>var initialScale = 1;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>var startX = 0;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>var startY = 0;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>var isDragging = false;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>var lastTapTime = 0;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>window.onload = function() {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>try {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>if (window.Telegram &amp;&amp; window.Telegram.WebApp) {</p>
+<p class="p1"><span class="Apple-converted-space">          </span>window.Telegram.WebApp.ready();</p>
+<p class="p1"><span class="Apple-converted-space">          </span>window.Telegram.WebApp.expand();</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">      </span>} catch (e) {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>console.warn("Telegram WebApp SDK not detected");</p>
+<p class="p1"><span class="Apple-converted-space">      </span>}</p>
+<p class="p1"><span class="Apple-converted-space">      </span>applyLanguageUI();</p>
+<p class="p1"><span class="Apple-converted-space">      </span>loadCustomerData();</p>
+<p class="p1"><span class="Apple-converted-space">      </span>updateCartBadge();</p>
+<p class="p1"><span class="Apple-converted-space">    </span>};</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>// Helper POST method ប្រើ text/plain ដើម្បីបញ្ចៀស CORS Preflight Block</p>
+<p class="p1"><span class="Apple-converted-space">    </span>function callBackendPost(payload) {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>return fetch(API_URL, {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>method: "POST",</p>
+<p class="p1"><span class="Apple-converted-space">        </span>headers: { "Content-Type": "text/plain;charset=utf-8" },</p>
+<p class="p1"><span class="Apple-converted-space">        </span>body: JSON.stringify(payload)</p>
+<p class="p1"><span class="Apple-converted-space">      </span>}).then(function(res) { return res.json(); });</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>function toggleLanguage() {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>currentLang = (currentLang === 'km') ? 'en' : 'km';</p>
+<p class="p1"><span class="Apple-converted-space">      </span>localStorage.setItem('app_user_lang', currentLang);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>applyLanguageUI();</p>
+<p class="p1"><span class="Apple-converted-space">      </span>renderDynamicCategories();</p>
+<p class="p1"><span class="Apple-converted-space">      </span>applyCustomerFilter();</p>
+<p class="p1"><span class="Apple-converted-space">      </span>renderCartItems();</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>function applyLanguageUI() {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>var t = i18n[currentLang];</p>
+<p class="p1"><span class="Apple-converted-space">      </span>var el;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (el = document.getElementById('langFlag')) el.innerText = t.flag;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (el = document.getElementById('langText')) el.innerText = t.langText;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (el = document.getElementById('subHeaderText')) {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>if (currentRole === 'customer') el.innerText = t.statusOpen;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>}</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (el = document.getElementById('custSearchInput')) el.placeholder = t.searchPlaceholder;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (el = document.getElementById('custLoaderText')) el.innerText = t.loaderText;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (el = document.getElementById('lblSelectColor')) el.innerText = t.lblColor;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (el = document.getElementById('lblSelectSize')) el.innerText = t.lblSize;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (el = document.getElementById('lblSelectQty')) el.innerText = t.lblQty;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (el = document.getElementById('btnAddToCartText')) el.innerText = t.btnAddToCart;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (el = document.getElementById('btnBuyNowText')) el.innerText = t.btnBuyNow;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (el = document.getElementById('cartModalTitle')) el.innerText = t.cartTitle;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (el = document.getElementById('cartEmptyText')) el.innerText = t.cartEmpty;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (el = document.getElementById('lblCartPhone')) el.innerText = t.lblPhone;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (el = document.getElementById('lblCartLoc')) el.innerText = t.lblLoc;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (el = document.getElementById('cartPhoneInput')) el.placeholder = t.phonePlaceholder;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (el = document.getElementById('cartLocInput')) el.placeholder = t.locPlaceholder;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (el = document.getElementById('lblCartTotal')) el.innerText = t.cartTotal;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (el = document.getElementById('btnCartCheckout')) el.innerText = t.btnCheckout;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>function openSellerChat() {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>var username = "Vireak699";</p>
+<p class="p1"><span class="Apple-converted-space">      </span>var tgUrl = "https://t.me/" + username;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (window.Telegram &amp;&amp; window.Telegram.WebApp &amp;&amp; typeof window.Telegram.WebApp.openLink === "function") {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>window.Telegram.WebApp.openLink(tgUrl);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>return;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>}</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (confirm("💬 តើអ្នកចង់ឆាតទៅកាន់អ្នកលក់ (@" + username + ") ផ្ទាល់មែនទេ?")) {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>window.location.href = tgUrl;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>// --- CUSTOMER CATALOG ---</p>
+<p class="p1"><span class="Apple-converted-space">    </span>function loadCustomerData() {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>var loader = document.getElementById('custLoader');</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (loader) loader.className = "text-center py-16 text-slate-400 text-xs";</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>fetch(API_URL + "?action=getCatalog")</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.then(function(res) { return res.json(); })</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.then(function(data) {</p>
+<p class="p1"><span class="Apple-converted-space">          </span>customerProducts = data || [];</p>
+<p class="p1"><span class="Apple-converted-space">          </span>if (loader) loader.className = "hidden";</p>
+<p class="p1"><span class="Apple-converted-space">          </span>renderDynamicCategories();</p>
+<p class="p1"><span class="Apple-converted-space">          </span>applyCustomerFilter();</p>
+<p class="p1"><span class="Apple-converted-space">        </span>})</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.catch(function(err) {</p>
+<p class="p1"><span class="Apple-converted-space">          </span>if (loader) loader.innerHTML = '&lt;p class="text-rose-500 py-10"&gt;កំហុសទាញទិន្នន័យ៖ ' + err.message + '&lt;/p&gt;';</p>
+<p class="p1"><span class="Apple-converted-space">        </span>});</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>function renderDynamicCategories() {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>var container = document.getElementById('categoryContainer');</p>
+<p class="p1"><span class="Apple-converted-space">      </span>var dataList = document.getElementById('categoryDataList');</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (!container) return;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>var categories = ['all'];</p>
+<p class="p1"><span class="Apple-converted-space">      </span>for (var i = 0; i &lt; customerProducts.length; i++) {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>var cat = (customerProducts[i].category || '').trim();</p>
+<p class="p1"><span class="Apple-converted-space">        </span>if (cat &amp;&amp; categories.indexOf(cat) === -1) categories.push(cat);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>container.innerHTML = '';</p>
+<p class="p1"><span class="Apple-converted-space">      </span>for (var j = 0; j &lt; categories.length; j++) {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>(function(cat) {</p>
+<p class="p1"><span class="Apple-converted-space">          </span>var btn = document.createElement('button');</p>
+<p class="p1"><span class="Apple-converted-space">          </span>btn.type = "button";</p>
+<p class="p1"><span class="Apple-converted-space">          </span>var isActive = (currentCustomerCategory === cat);</p>
+<p class="p1"><span class="Apple-converted-space">          </span>var label = (cat === 'all') ? ((currentLang === 'km') ? 'ទាំងអស់' : 'All') : cat;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">          </span>btn.className = isActive<span class="Apple-converted-space"> </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>? "cat-pill active bg-slate-900 text-white text-xs px-3.5 py-1.5 rounded-full font-medium whitespace-nowrap shadow-sm capitalize"</p>
+<p class="p1"><span class="Apple-converted-space">            </span>: "cat-pill bg-white border border-slate-200 text-slate-600 text-xs px-3.5 py-1.5 rounded-full font-medium whitespace-nowrap capitalize";</p>
+<p class="p1"><span class="Apple-converted-space">          </span>btn.innerText = label;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">          </span>btn.onclick = function() {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>currentCustomerCategory = cat;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>var pills = document.querySelectorAll('.cat-pill');</p>
+<p class="p1"><span class="Apple-converted-space">            </span>for (var k = 0; k &lt; pills.length; k++) {</p>
+<p class="p1"><span class="Apple-converted-space">              </span>pills[k].className = "cat-pill bg-white border border-slate-200 text-slate-600 text-xs px-3.5 py-1.5 rounded-full font-medium whitespace-nowrap capitalize";</p>
+<p class="p1"><span class="Apple-converted-space">            </span>}</p>
+<p class="p1"><span class="Apple-converted-space">            </span>btn.className = "cat-pill active bg-slate-900 text-white text-xs px-3.5 py-1.5 rounded-full font-medium whitespace-nowrap shadow-sm capitalize";</p>
+<p class="p1"><span class="Apple-converted-space">            </span>applyCustomerFilter();</p>
+<p class="p1"><span class="Apple-converted-space">          </span>};</p>
+<p class="p1"><span class="Apple-converted-space">          </span>container.appendChild(btn);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>})(categories[j]);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (dataList) {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>dataList.innerHTML = '';</p>
+<p class="p1"><span class="Apple-converted-space">        </span>for (var c = 0; c &lt; categories.length; c++) {</p>
+<p class="p1"><span class="Apple-converted-space">          </span>if (categories[c] !== 'all') {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>var opt = document.createElement('option');</p>
+<p class="p1"><span class="Apple-converted-space">            </span>opt.value = categories[c];</p>
+<p class="p1"><span class="Apple-converted-space">            </span>dataList.appendChild(opt);</p>
+<p class="p1"><span class="Apple-converted-space">          </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">      </span>}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>function applyCustomerFilter() {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>var input = document.getElementById('custSearchInput');</p>
+<p class="p1"><span class="Apple-converted-space">      </span>var query = (input ? input.value : '').toLowerCase().trim();</p>
+<p class="p1"><span class="Apple-converted-space">      </span>var clearBtn = document.getElementById('clearCustSearchBtn');</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (clearBtn) clearBtn.className = query.length === 0 ? "absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400 hidden text-xs font-bold" : "absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400 text-xs font-bold";</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>var filtered = [];</p>
+<p class="p1"><span class="Apple-converted-space">      </span>for (var i = 0; i &lt; customerProducts.length; i++) {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>var p = customerProducts[i];</p>
+<p class="p1"><span class="Apple-converted-space">        </span>var matchCat = (currentCustomerCategory === 'all') || (p.category === currentCustomerCategory);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>var matchText = (p.title || '').toLowerCase().indexOf(query) !== -1 || (p.desc || '').toLowerCase().indexOf(query) !== -1;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>if (matchCat &amp;&amp; matchText) filtered.push(p);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>}</p>
+<p class="p1"><span class="Apple-converted-space">      </span>renderCustomerGrid(filtered);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>function clearCustSearch() {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>var input = document.getElementById('custSearchInput');</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (input) input.value = '';</p>
+<p class="p1"><span class="Apple-converted-space">      </span>var clearBtn = document.getElementById('clearCustSearchBtn');</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (clearBtn) clearBtn.className = "absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400 hidden text-xs font-bold";</p>
+<p class="p1"><span class="Apple-converted-space">      </span>applyCustomerFilter();</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>function renderCustomerGrid(items) {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>var grid = document.getElementById('customerGrid');</p>
+<p class="p1"><span class="Apple-converted-space">      </span>var t = i18n[currentLang];</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (!grid) return;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>grid.innerHTML = '';</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (!items || items.length === 0) {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>grid.innerHTML = '&lt;p class="col-span-2 text-center text-xs text-slate-400 py-12"&gt;' + t.emptyShop + '&lt;/p&gt;';</p>
+<p class="p1"><span class="Apple-converted-space">        </span>return;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>for (var i = 0; i &lt; items.length; i++) {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>(function(p) {</p>
+<p class="p1"><span class="Apple-converted-space">          </span>var card = document.createElement('div');</p>
+<p class="p1"><span class="Apple-converted-space">          </span>card.className = "bg-white rounded-2xl p-2.5 shadow-sm border border-slate-100 flex flex-col justify-between cursor-pointer hover:shadow-md transition-all active:scale-98 relative";</p>
+<p class="p1"><span class="Apple-converted-space">          </span>card.onclick = function() { openModal(p); };</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">          </span>var topDiv = document.createElement('div');</p>
+<p class="p1"><span class="Apple-converted-space">          </span>var imgContainer = document.createElement('div');</p>
+<p class="p1"><span class="Apple-converted-space">          </span>imgContainer.className = "w-full h-36 rounded-xl overflow-hidden bg-slate-100 mb-2 relative";</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">          </span>var img = document.createElement('img');</p>
+<p class="p1"><span class="Apple-converted-space">          </span>img.src = p.image;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>img.alt = p.title;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>img.className = "w-full h-full object-cover";</p>
+<p class="p1"><span class="Apple-converted-space">          </span>img.onerror = function() { this.src = "https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&amp;fit=crop&amp;w=600&amp;q=80"; };</p>
+<p class="p1"><span class="Apple-converted-space">          </span>imgContainer.appendChild(img);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">          </span>if (p.badge) {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>var badgeSpan = document.createElement('span');</p>
+<p class="p1"><span class="Apple-converted-space">            </span>var b = p.badge.toLowerCase();</p>
+<p class="p1"><span class="Apple-converted-space">            </span>if (b.indexOf('best') !== -1 || b.indexOf('seller') !== -1) {</p>
+<p class="p1"><span class="Apple-converted-space">              </span>badgeSpan.className = "absolute top-2 left-2 bg-amber-500/90 text-white text-[9px] font-extrabold px-2 py-0.5 rounded-md shadow-sm";</p>
+<p class="p1"><span class="Apple-converted-space">              </span>badgeSpan.innerText = "🔥 BEST SELLER";</p>
+<p class="p1"><span class="Apple-converted-space">            </span>} else if (b.indexOf('new') !== -1) {</p>
+<p class="p1"><span class="Apple-converted-space">              </span>badgeSpan.className = "absolute top-2 left-2 bg-emerald-500/90 text-white text-[9px] font-extrabold px-2 py-0.5 rounded-md shadow-sm";</p>
+<p class="p1"><span class="Apple-converted-space">              </span>badgeSpan.innerText = "✨ NEW";</p>
+<p class="p1"><span class="Apple-converted-space">            </span>} else {</p>
+<p class="p1"><span class="Apple-converted-space">              </span>badgeSpan.className = "absolute top-2 left-2 bg-rose-500/90 text-white text-[9px] font-extrabold px-2 py-0.5 rounded-md shadow-sm";</p>
+<p class="p1"><span class="Apple-converted-space">              </span>badgeSpan.innerText = "⚡ HOT";</p>
+<p class="p1"><span class="Apple-converted-space">            </span>}</p>
+<p class="p1"><span class="Apple-converted-space">            </span>imgContainer.appendChild(badgeSpan);</p>
+<p class="p1"><span class="Apple-converted-space">          </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">          </span>var title = document.createElement('h3');</p>
+<p class="p1"><span class="Apple-converted-space">          </span>title.className = "text-xs font-bold text-slate-800 line-clamp-2";</p>
+<p class="p1"><span class="Apple-converted-space">          </span>title.innerText = p.title;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">          </span>topDiv.appendChild(imgContainer);</p>
+<p class="p1"><span class="Apple-converted-space">          </span>topDiv.appendChild(title);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">          </span>var bottomDiv = document.createElement('div');</p>
+<p class="p1"><span class="Apple-converted-space">          </span>bottomDiv.className = "flex items-center justify-between mt-2 pt-2 border-t border-slate-50";</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">          </span>var priceSpan = document.createElement('span');</p>
+<p class="p1"><span class="Apple-converted-space">          </span>priceSpan.className = "text-sm font-extrabold text-blue-600";</p>
+<p class="p1"><span class="Apple-converted-space">          </span>priceSpan.innerText = "$" + p.price.toFixed(2);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">          </span>var btnView = document.createElement('span');</p>
+<p class="p1"><span class="Apple-converted-space">          </span>btnView.className = "bg-blue-50 text-blue-600 text-[10px] font-bold px-2 py-0.5 rounded-lg";</p>
+<p class="p1"><span class="Apple-converted-space">          </span>btnView.innerText = t.btnView;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">          </span>bottomDiv.appendChild(priceSpan);</p>
+<p class="p1"><span class="Apple-converted-space">          </span>bottomDiv.appendChild(btnView);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">          </span>card.appendChild(topDiv);</p>
+<p class="p1"><span class="Apple-converted-space">          </span>card.appendChild(bottomDiv);</p>
+<p class="p1"><span class="Apple-converted-space">          </span>grid.appendChild(card);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>})(items[i]);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>// --- MODAL CONTROLLER ---</p>
+<p class="p1"><span class="Apple-converted-space">    </span>function openModal(p) {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>selectedProduct = p;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>selectedColor = (p.colors &amp;&amp; p.colors.length &gt; 0) ? p.colors[0] : "Standard";</p>
+<p class="p1"><span class="Apple-converted-space">      </span>selectedSize = (p.sizes &amp;&amp; p.sizes.length &gt; 0) ? p.sizes[0] : "Standard";</p>
+<p class="p1"><span class="Apple-converted-space">      </span>quantity = 1;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>activeImageIndex = 0;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>currentSliderImages = (p.images &amp;&amp; p.images.length &gt; 0) ? p.images : [p.image];</p>
+<p class="p1"><span class="Apple-converted-space">      </span>renderProductSlider(currentSliderImages);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>var el;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (el = document.getElementById('modalTitle')) el.innerText = p.title;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (el = document.getElementById('modalPrice')) el.innerText = '$' + p.price.toFixed(2);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (el = document.getElementById('modalCategory')) el.innerText = p.category.toUpperCase();</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (el = document.getElementById('modalDesc')) el.innerText = p.desc;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (el = document.getElementById('qtyVal')) el.innerText = quantity;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>var colorBox = document.getElementById('colorContainer');</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (colorBox) {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>colorBox.innerHTML = '';</p>
+<p class="p1"><span class="Apple-converted-space">        </span>for (var i = 0; i &lt; p.colors.length; i++) {</p>
+<p class="p1"><span class="Apple-converted-space">          </span>(function(col, idx) {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>var btn = document.createElement('button');</p>
+<p class="p1"><span class="Apple-converted-space">            </span>btn.type = "button";</p>
+<p class="p1"><span class="Apple-converted-space">            </span>btn.innerText = col;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>btn.className = "text-xs px-3 py-1.5 rounded-xl border font-medium " + (idx === 0 ? "border-blue-600 bg-blue-50 text-blue-600 font-bold" : "border-slate-200 text-slate-600");</p>
+<p class="p1"><span class="Apple-converted-space">            </span>btn.onclick = function() {</p>
+<p class="p1"><span class="Apple-converted-space">              </span>selectedColor = col;</p>
+<p class="p1"><span class="Apple-converted-space">              </span>var cChildren = colorBox.children;</p>
+<p class="p1"><span class="Apple-converted-space">              </span>for (var j = 0; j &lt; cChildren.length; j++) {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>cChildren[j].className = "text-xs px-3 py-1.5 rounded-xl border border-slate-200 text-slate-600 font-medium";</p>
+<p class="p1"><span class="Apple-converted-space">              </span>}</p>
+<p class="p1"><span class="Apple-converted-space">              </span>btn.className = "text-xs px-3 py-1.5 rounded-xl border border-blue-600 bg-blue-50 text-blue-600 font-bold";</p>
+<p class="p1"><span class="Apple-converted-space">            </span>};</p>
+<p class="p1"><span class="Apple-converted-space">            </span>colorBox.appendChild(btn);</p>
+<p class="p1"><span class="Apple-converted-space">          </span>})(p.colors[i], i);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">      </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>var sizeBox = document.getElementById('sizeContainer');</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (sizeBox) {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>sizeBox.innerHTML = '';</p>
+<p class="p1"><span class="Apple-converted-space">        </span>for (var s = 0; s &lt; p.sizes.length; s++) {</p>
+<p class="p1"><span class="Apple-converted-space">          </span>(function(sz, idx) {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>var btn = document.createElement('button');</p>
+<p class="p1"><span class="Apple-converted-space">            </span>btn.type = "button";</p>
+<p class="p1"><span class="Apple-converted-space">            </span>btn.innerText = sz;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>btn.className = "text-xs px-3 py-1.5 rounded-xl border font-medium " + (idx === 0 ? "border-blue-600 bg-blue-50 text-blue-600 font-bold" : "border-slate-200 text-slate-600");</p>
+<p class="p1"><span class="Apple-converted-space">            </span>btn.onclick = function() {</p>
+<p class="p1"><span class="Apple-converted-space">              </span>selectedSize = sz;</p>
+<p class="p1"><span class="Apple-converted-space">              </span>var sChildren = sizeBox.children;</p>
+<p class="p1"><span class="Apple-converted-space">              </span>for (var k = 0; k &lt; sChildren.length; k++) {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>sChildren[k].className = "text-xs px-3 py-1.5 rounded-xl border border-slate-200 text-slate-600 font-medium";</p>
+<p class="p1"><span class="Apple-converted-space">              </span>}</p>
+<p class="p1"><span class="Apple-converted-space">              </span>btn.className = "text-xs px-3 py-1.5 rounded-xl border border-blue-600 bg-blue-50 text-blue-600 font-bold";</p>
+<p class="p1"><span class="Apple-converted-space">            </span>};</p>
+<p class="p1"><span class="Apple-converted-space">            </span>sizeBox.appendChild(btn);</p>
+<p class="p1"><span class="Apple-converted-space">          </span>})(p.sizes[s], s);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">      </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>var modal = document.getElementById('productModal');</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (modal) modal.className = "fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4";</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>function renderProductSlider(images) {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>var container = document.getElementById('modalSliderContainer');</p>
+<p class="p1"><span class="Apple-converted-space">      </span>var dotsContainer = document.getElementById('sliderDots');</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (!container || !dotsContainer) return;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>container.innerHTML = '';</p>
+<p class="p1"><span class="Apple-converted-space">      </span>dotsContainer.innerHTML = '';</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>for (var i = 0; i &lt; images.length; i++) {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>(function(imgUrl, idx) {</p>
+<p class="p1"><span class="Apple-converted-space">          </span>var slide = document.createElement('div');</p>
+<p class="p1"><span class="Apple-converted-space">          </span>slide.className = "w-full h-full flex-shrink-0 snap-center flex items-center justify-center cursor-pointer";</p>
+<p class="p1"><span class="Apple-converted-space">          </span>slide.onclick = function() { openZoomForImage(imgUrl); };</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">          </span>var img = document.createElement('img');</p>
+<p class="p1"><span class="Apple-converted-space">          </span>img.src = imgUrl;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>img.className = "w-full h-full object-cover";</p>
+<p class="p1"><span class="Apple-converted-space">          </span>img.onerror = function() { this.src = "https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&amp;fit=crop&amp;w=600&amp;q=80"; };</p>
+<p class="p1"><span class="Apple-converted-space">          </span>slide.appendChild(img);</p>
+<p class="p1"><span class="Apple-converted-space">          </span>container.appendChild(slide);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">          </span>var dot = document.createElement('span');</p>
+<p class="p1"><span class="Apple-converted-space">          </span>dot.className = "h-1.5 rounded-full transition-all " + (idx === 0 ? "bg-white w-3" : "bg-white/40 w-1.5");</p>
+<p class="p1"><span class="Apple-converted-space">          </span>dotsContainer.appendChild(dot);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>})(images[i], i);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>dotsContainer.className = images.length &gt; 1<span class="Apple-converted-space"> </span></p>
+<p class="p1"><span class="Apple-converted-space">        </span>? "absolute bottom-2.5 left-1/2 -translate-x-1/2 flex items-center gap-1.5 bg-black/40 backdrop-blur-md px-2.5 py-1 rounded-full z-10"</p>
+<p class="p1"><span class="Apple-converted-space">        </span>: "hidden";</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>function handleSliderScroll() {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>var container = document.getElementById('modalSliderContainer');</p>
+<p class="p1"><span class="Apple-converted-space">      </span>var dotsContainer = document.getElementById('sliderDots');</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (!container || !dotsContainer) return;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>var scrollLeft = container.scrollLeft;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>var width = container.offsetWidth;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>var newIndex = Math.round(scrollLeft / width);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (newIndex !== activeImageIndex &amp;&amp; newIndex &lt; currentSliderImages.length) {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>activeImageIndex = newIndex;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>var dots = dotsContainer.children;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>for (var i = 0; i &lt; dots.length; i++) {</p>
+<p class="p1"><span class="Apple-converted-space">          </span>dots[i].className = (i === activeImageIndex) ? "w-3 h-1.5 rounded-full bg-white transition-all" : "w-1.5 h-1.5 rounded-full bg-white/40 transition-all";</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">      </span>}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>function closeModal() {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>var modal = document.getElementById('productModal');</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (modal) modal.className = "fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden flex items-end sm:items-center justify-center p-0 sm:p-4";</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>function changeQty(delta) {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (quantity + delta &gt;= 1) {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>quantity += delta;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>var qEl = document.getElementById('qtyVal');</p>
+<p class="p1"><span class="Apple-converted-space">        </span>if (qEl) qEl.innerText = quantity;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>// --- PINCH TO ZOOM ---</p>
+<p class="p1"><span class="Apple-converted-space">    </span>function openZoomForImage(imgUrl) {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>var zoomedImg = document.getElementById('zoomedImg');</p>
+<p class="p1"><span class="Apple-converted-space">      </span>var zoomModal = document.getElementById('imageZoomModal');</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (zoomedImg &amp;&amp; zoomModal) {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>zoomedImg.src = imgUrl;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>resetZoomState();</p>
+<p class="p1"><span class="Apple-converted-space">        </span>zoomModal.className = "fixed inset-0 z-[60] bg-black/95 backdrop-blur-md flex flex-col justify-between items-center p-3 select-none touch-none";</p>
+<p class="p1"><span class="Apple-converted-space">        </span>initZoomEvents();</p>
+<p class="p1"><span class="Apple-converted-space">      </span>}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>function closeZoomModal() {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>var zoomModal = document.getElementById('imageZoomModal');</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (zoomModal) {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>zoomModal.className = "fixed inset-0 z-[60] bg-black/95 backdrop-blur-md hidden flex flex-col justify-between items-center p-3 select-none touch-none";</p>
+<p class="p1"><span class="Apple-converted-space">      </span>}</p>
+<p class="p1"><span class="Apple-converted-space">      </span>resetZoomState();</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>function resetZoomState() {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>currentScale = 1;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>posX = 0;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>posY = 0;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>applyImageTransform();</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>function adjustZoom(delta) {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>var nextScale = currentScale + delta;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (nextScale &lt; minScale) nextScale = minScale;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (nextScale &gt; maxScale) nextScale = maxScale;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>currentScale = nextScale;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (currentScale === 1) { posX = 0; posY = 0; }</p>
+<p class="p1"><span class="Apple-converted-space">      </span>applyImageTransform();</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>function applyImageTransform() {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>var img = document.getElementById('zoomedImg');</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (!img) return;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>img.style.transform = 'translate(' + posX + 'px, ' + posY + 'px) scale(' + currentScale + ')';</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>function initZoomEvents() {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>var viewport = document.getElementById('zoomViewport');</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (!viewport || viewport.dataset.eventsBound === "true") return;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>viewport.dataset.eventsBound = "true";</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>viewport.addEventListener('touchstart', function(e) {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>if (e.touches.length === 2) {</p>
+<p class="p1"><span class="Apple-converted-space">          </span>isDragging = false;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>startDist = Math.hypot(</p>
+<p class="p1"><span class="Apple-converted-space">            </span>e.touches[0].clientX - e.touches[1].clientX,</p>
+<p class="p1"><span class="Apple-converted-space">            </span>e.touches[0].clientY - e.touches[1].clientY</p>
+<p class="p1"><span class="Apple-converted-space">          </span>);</p>
+<p class="p1"><span class="Apple-converted-space">          </span>initialScale = currentScale;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>} else if (e.touches.length === 1) {</p>
+<p class="p1"><span class="Apple-converted-space">          </span>var currentTime = new Date().getTime();</p>
+<p class="p1"><span class="Apple-converted-space">          </span>var tapGap = currentTime - lastTapTime;</p>
+<p class="p2"><span class="Apple-converted-space">          </span></p>
+<p class="p1"><span class="Apple-converted-space">          </span>if (tapGap &lt; 300 &amp;&amp; tapGap &gt; 0) {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>if (currentScale &gt; 1) {</p>
+<p class="p1"><span class="Apple-converted-space">              </span>resetZoomState();</p>
+<p class="p1"><span class="Apple-converted-space">            </span>} else {</p>
+<p class="p1"><span class="Apple-converted-space">              </span>currentScale = 2.5;</p>
+<p class="p1"><span class="Apple-converted-space">              </span>applyImageTransform();</p>
+<p class="p1"><span class="Apple-converted-space">            </span>}</p>
+<p class="p1"><span class="Apple-converted-space">            </span>lastTapTime = 0;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>return;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>}</p>
+<p class="p1"><span class="Apple-converted-space">          </span>lastTapTime = currentTime;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">          </span>if (currentScale &gt; 1) {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>isDragging = true;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>startX = e.touches[0].clientX - posX;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>startY = e.touches[0].clientY - posY;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">      </span>}, { passive: false });</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>viewport.addEventListener('touchmove', function(e) {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>e.preventDefault();</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>if (e.touches.length === 2) {</p>
+<p class="p1"><span class="Apple-converted-space">          </span>var dist = Math.hypot(</p>
+<p class="p1"><span class="Apple-converted-space">            </span>e.touches[0].clientX - e.touches[1].clientX,</p>
+<p class="p1"><span class="Apple-converted-space">            </span>e.touches[0].clientY - e.touches[1].clientY</p>
+<p class="p1"><span class="Apple-converted-space">          </span>);</p>
+<p class="p1"><span class="Apple-converted-space">          </span>if (startDist &gt; 0) {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>var newScale = initialScale * (dist / startDist);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>if (newScale &lt; minScale) newScale = minScale;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>if (newScale &gt; maxScale) newScale = maxScale;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>currentScale = newScale;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>applyImageTransform();</p>
+<p class="p1"><span class="Apple-converted-space">          </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>} else if (e.touches.length === 1 &amp;&amp; isDragging &amp;&amp; currentScale &gt; 1) {</p>
+<p class="p1"><span class="Apple-converted-space">          </span>posX = e.touches[0].clientX - startX;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>posY = e.touches[0].clientY - startY;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>applyImageTransform();</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">      </span>}, { passive: false });</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>viewport.addEventListener('touchend', function(e) {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>if (e.touches.length &lt; 2) startDist = 0;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>if (e.touches.length === 0) isDragging = false;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>if (currentScale &lt;= 1) {</p>
+<p class="p1"><span class="Apple-converted-space">          </span>currentScale = 1;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>posX = 0;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>posY = 0;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>applyImageTransform();</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">      </span>});</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>// --- CART ---</p>
+<p class="p1"><span class="Apple-converted-space">    </span>function addToCart() {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (!selectedProduct) return;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>var existingIndex = -1;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>for (var i = 0; i &lt; cart.length; i++) {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>if (cart[i].id === selectedProduct.id &amp;&amp; cart[i].color === selectedColor &amp;&amp; cart[i].size === selectedSize) {</p>
+<p class="p1"><span class="Apple-converted-space">          </span>existingIndex = i;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>break;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">      </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (existingIndex &gt; -1) {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>cart[existingIndex].qty += quantity;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>} else {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>cart.push({</p>
+<p class="p1"><span class="Apple-converted-space">          </span>id: selectedProduct.id,</p>
+<p class="p1"><span class="Apple-converted-space">          </span>title: selectedProduct.title,</p>
+<p class="p1"><span class="Apple-converted-space">          </span>price: selectedProduct.price,</p>
+<p class="p1"><span class="Apple-converted-space">          </span>image: selectedProduct.image,</p>
+<p class="p1"><span class="Apple-converted-space">          </span>color: selectedColor,</p>
+<p class="p1"><span class="Apple-converted-space">          </span>size: selectedSize,</p>
+<p class="p1"><span class="Apple-converted-space">          </span>qty: quantity</p>
+<p class="p1"><span class="Apple-converted-space">        </span>});</p>
+<p class="p1"><span class="Apple-converted-space">      </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>updateCartBadge();</p>
+<p class="p1"><span class="Apple-converted-space">      </span>closeModal();</p>
+<p class="p1"><span class="Apple-converted-space">      </span>openCartModal();</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>function buyNowDirectly() {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>addToCart();</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>function updateCartBadge() {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>var totalCount = 0;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>for (var i = 0; i &lt; cart.length; i++) {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>totalCount += cart[i].qty;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>}</p>
+<p class="p1"><span class="Apple-converted-space">      </span>var badge = document.getElementById('floatingCartBadge');</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (badge) {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>badge.innerText = totalCount;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>badge.className = totalCount &gt; 0<span class="Apple-converted-space"> </span></p>
+<p class="p1"><span class="Apple-converted-space">          </span>? "absolute -top-1 -right-1 bg-rose-500 text-white text-[10px] font-extrabold w-5 h-5 rounded-full flex items-center justify-center border-2 border-white shadow-sm animate-pulse"<span class="Apple-converted-space"> </span></p>
+<p class="p1"><span class="Apple-converted-space">          </span>: "hidden";</p>
+<p class="p1"><span class="Apple-converted-space">      </span>}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>function openCartModal() {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>renderCartItems();</p>
+<p class="p1"><span class="Apple-converted-space">      </span>var modal = document.getElementById('cartModal');</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (modal) modal.className = "fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4";</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>function closeCartModal() {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>var modal = document.getElementById('cartModal');</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (modal) modal.className = "fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden flex items-end sm:items-center justify-center p-0 sm:p-4";</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>function renderCartItems() {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>var list = document.getElementById('cartItemList');</p>
+<p class="p1"><span class="Apple-converted-space">      </span>var emptyState = document.getElementById('cartEmptyState');</p>
+<p class="p1"><span class="Apple-converted-space">      </span>var form = document.getElementById('cartOrderForm');</p>
+<p class="p1"><span class="Apple-converted-space">      </span>var bottomBar = document.getElementById('cartBottomBar');</p>
+<p class="p1"><span class="Apple-converted-space">      </span>var totalEl = document.getElementById('cartTotalPrice');</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (!list) return;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>list.innerHTML = '';</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (cart.length === 0) {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>emptyState.className = "text-center py-10 text-slate-400 text-xs";</p>
+<p class="p1"><span class="Apple-converted-space">        </span>form.className = "hidden";</p>
+<p class="p1"><span class="Apple-converted-space">        </span>bottomBar.className = "hidden";</p>
+<p class="p1"><span class="Apple-converted-space">        </span>if (totalEl) totalEl.innerText = "$0.00";</p>
+<p class="p1"><span class="Apple-converted-space">        </span>return;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>emptyState.className = "hidden";</p>
+<p class="p1"><span class="Apple-converted-space">      </span>form.className = "space-y-2.5 bg-slate-50 p-3.5 rounded-2xl border border-slate-200 my-3";</p>
+<p class="p1"><span class="Apple-converted-space">      </span>bottomBar.className = "pt-2 border-t border-slate-100";</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>var grandTotal = 0;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>for (var i = 0; i &lt; cart.length; i++) {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>(function(idx) {</p>
+<p class="p1"><span class="Apple-converted-space">          </span>var item = cart[idx];</p>
+<p class="p1"><span class="Apple-converted-space">          </span>var itemTotal = item.price * item.qty;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>grandTotal += itemTotal;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">          </span>var itemDiv = document.createElement('div');</p>
+<p class="p1"><span class="Apple-converted-space">          </span>itemDiv.className = "bg-white p-2.5 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between gap-3";</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">          </span>var leftDiv = document.createElement('div');</p>
+<p class="p1"><span class="Apple-converted-space">          </span>leftDiv.className = "flex items-center gap-2.5";</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">          </span>var img = document.createElement('img');</p>
+<p class="p1"><span class="Apple-converted-space">          </span>img.src = item.image;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>img.className = "w-11 h-11 rounded-xl object-cover bg-slate-100 flex-shrink-0";</p>
+<p class="p1"><span class="Apple-converted-space">          </span>img.onerror = function() { this.src = "https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&amp;fit=crop&amp;w=600&amp;q=80"; };</p>
+<p class="p1"><span class="Apple-converted-space">          </span>leftDiv.appendChild(img);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">          </span>var details = document.createElement('div');</p>
+<p class="p1"><span class="Apple-converted-space">          </span>var title = document.createElement('h4');</p>
+<p class="p1"><span class="Apple-converted-space">          </span>title.className = "text-xs font-bold text-slate-800 line-clamp-1";</p>
+<p class="p1"><span class="Apple-converted-space">          </span>title.innerText = item.title;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">          </span>var meta = document.createElement('p');</p>
+<p class="p1"><span class="Apple-converted-space">          </span>meta.className = "text-[10px] text-slate-500";</p>
+<p class="p1"><span class="Apple-converted-space">          </span>meta.innerText = item.color + " | " + item.size;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">          </span>var price = document.createElement('p');</p>
+<p class="p1"><span class="Apple-converted-space">          </span>price.className = "text-[11px] font-bold text-blue-600";</p>
+<p class="p1"><span class="Apple-converted-space">          </span>price.innerText = "$" + item.price.toFixed(2);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">          </span>details.appendChild(title);</p>
+<p class="p1"><span class="Apple-converted-space">          </span>details.appendChild(meta);</p>
+<p class="p1"><span class="Apple-converted-space">          </span>details.appendChild(price);</p>
+<p class="p1"><span class="Apple-converted-space">          </span>leftDiv.appendChild(details);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">          </span>var rightDiv = document.createElement('div');</p>
+<p class="p1"><span class="Apple-converted-space">          </span>rightDiv.className = "flex items-center gap-2";</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">          </span>var qtyBox = document.createElement('div');</p>
+<p class="p1"><span class="Apple-converted-space">          </span>qtyBox.className = "flex items-center gap-1.5 bg-slate-100 rounded-lg p-0.5";</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">          </span>var minusBtn = document.createElement('button');</p>
+<p class="p1"><span class="Apple-converted-space">          </span>minusBtn.type = "button";</p>
+<p class="p1"><span class="Apple-converted-space">          </span>minusBtn.className = "w-5 h-5 bg-white rounded font-bold text-xs text-slate-700 shadow-sm flex items-center justify-center";</p>
+<p class="p1"><span class="Apple-converted-space">          </span>minusBtn.innerText = "-";</p>
+<p class="p1"><span class="Apple-converted-space">          </span>minusBtn.onclick = function() { changeCartItemQty(idx, -1); };</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">          </span>var qtyVal = document.createElement('span');</p>
+<p class="p1"><span class="Apple-converted-space">          </span>qtyVal.className = "text-xs font-bold text-slate-800 w-4 text-center";</p>
+<p class="p1"><span class="Apple-converted-space">          </span>qtyVal.innerText = item.qty;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">          </span>var plusBtn = document.createElement('button');</p>
+<p class="p1"><span class="Apple-converted-space">          </span>plusBtn.type = "button";</p>
+<p class="p1"><span class="Apple-converted-space">          </span>plusBtn.className = "w-5 h-5 bg-white rounded font-bold text-xs text-slate-700 shadow-sm flex items-center justify-center";</p>
+<p class="p1"><span class="Apple-converted-space">          </span>plusBtn.innerText = "+";</p>
+<p class="p1"><span class="Apple-converted-space">          </span>plusBtn.onclick = function() { changeCartItemQty(idx, 1); };</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">          </span>qtyBox.appendChild(minusBtn);</p>
+<p class="p1"><span class="Apple-converted-space">          </span>qtyBox.appendChild(qtyVal);</p>
+<p class="p1"><span class="Apple-converted-space">          </span>qtyBox.appendChild(plusBtn);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">          </span>var delBtn = document.createElement('button');</p>
+<p class="p1"><span class="Apple-converted-space">          </span>delBtn.type = "button";</p>
+<p class="p1"><span class="Apple-converted-space">          </span>delBtn.className = "text-slate-400 hover:text-rose-500 text-xs px-1 font-bold";</p>
+<p class="p1"><span class="Apple-converted-space">          </span>delBtn.innerText = "✕";</p>
+<p class="p1"><span class="Apple-converted-space">          </span>delBtn.onclick = function() { removeCartItem(idx); };</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">          </span>rightDiv.appendChild(qtyBox);</p>
+<p class="p1"><span class="Apple-converted-space">          </span>rightDiv.appendChild(delBtn);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">          </span>itemDiv.appendChild(leftDiv);</p>
+<p class="p1"><span class="Apple-converted-space">          </span>itemDiv.appendChild(rightDiv);</p>
+<p class="p1"><span class="Apple-converted-space">          </span>list.appendChild(itemDiv);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>})(i);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (totalEl) totalEl.innerText = "$" + grandTotal.toFixed(2);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>function changeCartItemQty(index, delta) {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (!cart[index]) return;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>cart[index].qty += delta;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (cart[index].qty &lt;= 0) {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>cart.splice(index, 1);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>}</p>
+<p class="p1"><span class="Apple-converted-space">      </span>updateCartBadge();</p>
+<p class="p1"><span class="Apple-converted-space">      </span>renderCartItems();</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>function removeCartItem(index) {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>cart.splice(index, 1);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>updateCartBadge();</p>
+<p class="p1"><span class="Apple-converted-space">      </span>renderCartItems();</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>// --- CHECKOUT VIA FETCH API ---</p>
+<p class="p1"><span class="Apple-converted-space">    </span>function submitCartOrder() {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (cart.length === 0) return;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>var phoneEl = document.getElementById('cartPhoneInput');</p>
+<p class="p1"><span class="Apple-converted-space">      </span>var locEl = document.getElementById('cartLocInput');</p>
+<p class="p1"><span class="Apple-converted-space">      </span>var phone = phoneEl ? phoneEl.value.trim() : '';</p>
+<p class="p1"><span class="Apple-converted-space">      </span>var location = locEl ? locEl.value.trim() : '';</p>
+<p class="p1"><span class="Apple-converted-space">      </span>var t = i18n[currentLang];</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (!phone || !location) {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>alert(t.alertFillInfo);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>return;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>var submitBtn = document.getElementById('btnCartCheckout');</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (submitBtn) {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>submitBtn.innerText = "⏳ កំពុងបញ្ជូន...";</p>
+<p class="p1"><span class="Apple-converted-space">        </span>submitBtn.disabled = true;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>var grandTotal = 0;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>for (var i = 0; i &lt; cart.length; i++) {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>grandTotal += (cart[i].price * cart[i].qty);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>var custName = "អតិថិជន";</p>
+<p class="p1"><span class="Apple-converted-space">      </span>var tgUsername = "";</p>
+<p class="p1"><span class="Apple-converted-space">      </span>var tgUserId = "";</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (window.Telegram &amp;&amp; window.Telegram.WebApp &amp;&amp; window.Telegram.WebApp.initDataUnsafe &amp;&amp; window.Telegram.WebApp.initDataUnsafe.user) {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>var u = window.Telegram.WebApp.initDataUnsafe.user;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>custName = (u.first_name || "") + " " + (u.last_name || "");</p>
+<p class="p1"><span class="Apple-converted-space">        </span>custName = custName.trim() || "អតិថិជន";</p>
+<p class="p1"><span class="Apple-converted-space">        </span>tgUsername = u.username || "";</p>
+<p class="p1"><span class="Apple-converted-space">        </span>tgUserId = u.id || "";</p>
+<p class="p1"><span class="Apple-converted-space">      </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>callBackendPost({</p>
+<p class="p1"><span class="Apple-converted-space">        </span>action: "recordOrder",</p>
+<p class="p1"><span class="Apple-converted-space">        </span>orderData: {</p>
+<p class="p1"><span class="Apple-converted-space">          </span>items: cart,</p>
+<p class="p1"><span class="Apple-converted-space">          </span>total: grandTotal.toFixed(2),</p>
+<p class="p1"><span class="Apple-converted-space">          </span>customerName: custName,</p>
+<p class="p1"><span class="Apple-converted-space">          </span>tgUsername: tgUsername,</p>
+<p class="p1"><span class="Apple-converted-space">          </span>tgUserId: tgUserId,</p>
+<p class="p1"><span class="Apple-converted-space">          </span>phone: phone,</p>
+<p class="p1"><span class="Apple-converted-space">          </span>location: location</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">      </span>})</p>
+<p class="p1"><span class="Apple-converted-space">      </span>.then(function(res) {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>if (submitBtn) {</p>
+<p class="p1"><span class="Apple-converted-space">          </span>submitBtn.innerText = t.btnCheckout;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>submitBtn.disabled = false;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>var orderId = (res &amp;&amp; res.orderId) ? res.orderId : ("ORD-" + Math.floor(Date.now() / 1000));</p>
+<p class="p1"><span class="Apple-converted-space">        </span>cart = [];</p>
+<p class="p1"><span class="Apple-converted-space">        </span>updateCartBadge();</p>
+<p class="p1"><span class="Apple-converted-space">        </span>closeCartModal();</p>
+<p class="p1"><span class="Apple-converted-space">        </span>showSuccessPopup(orderId);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>})</p>
+<p class="p1"><span class="Apple-converted-space">      </span>.catch(function(err) {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>if (submitBtn) {</p>
+<p class="p1"><span class="Apple-converted-space">          </span>submitBtn.innerText = t.btnCheckout;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>submitBtn.disabled = false;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>alert("មានបញ្ហាក្នុងការបញ្ជូនការកុម្ម៉ង់៖ " + err.message);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>});</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>function showSuccessPopup(orderId) {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>var idEl = document.getElementById('succOrderId');</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (idEl) idEl.innerText = orderId;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>var modal = document.getElementById('orderSuccessModal');</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (modal) modal.className = "fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4";</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>function finishAndCloseApp() {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>var modal = document.getElementById('orderSuccessModal');</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (modal) modal.className = "fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden flex items-center justify-center p-4";</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (window.Telegram &amp;&amp; window.Telegram.WebApp &amp;&amp; typeof window.Telegram.WebApp.close === "function") {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>window.Telegram.WebApp.close();</p>
+<p class="p1"><span class="Apple-converted-space">      </span>}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>function continueShopping() {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>var modal = document.getElementById('orderSuccessModal');</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (modal) modal.className = "fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden flex items-center justify-center p-4";</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>// --- MY ORDERS ---</p>
+<p class="p1"><span class="Apple-converted-space">    </span>function openMyOrdersModal() {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>var modal = document.getElementById('myOrdersModal');</p>
+<p class="p1"><span class="Apple-converted-space">      </span>var loader = document.getElementById('myOrdersLoader');</p>
+<p class="p1"><span class="Apple-converted-space">      </span>var container = document.getElementById('myOrdersContainer');</p>
+<p class="p1"><span class="Apple-converted-space">      </span>var emptyState = document.getElementById('myOrdersEmpty');</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>container.innerHTML = '';</p>
+<p class="p1"><span class="Apple-converted-space">      </span>loader.className = "text-center py-10 text-slate-400 text-xs";</p>
+<p class="p1"><span class="Apple-converted-space">      </span>emptyState.className = "hidden";</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (modal) modal.className = "fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4";</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>var currentUserId = "";</p>
+<p class="p1"><span class="Apple-converted-space">      </span>try {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>if (window.Telegram &amp;&amp; window.Telegram.WebApp &amp;&amp; window.Telegram.WebApp.initDataUnsafe &amp;&amp; window.Telegram.WebApp.initDataUnsafe.user) {</p>
+<p class="p1"><span class="Apple-converted-space">          </span>currentUserId = String(window.Telegram.WebApp.initDataUnsafe.user.id || "").trim();</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">      </span>} catch (e) {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>console.warn("Cannot read Telegram user data", e);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (!currentUserId) {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>loader.className = "hidden";</p>
+<p class="p1"><span class="Apple-converted-space">        </span>container.innerHTML =<span class="Apple-converted-space"> </span></p>
+<p class="p1"><span class="Apple-converted-space">          </span>'&lt;div class="bg-amber-50 border border-amber-200 rounded-2xl p-4 text-center space-y-3"&gt;' +</p>
+<p class="p1"><span class="Apple-converted-space">            </span>'&lt;p class="text-xs text-amber-800 font-medium"&gt;⚠️ មិនអាចចាប់យកគណនី Telegram ដោយស្វ័យប្រវត្តិបានទេ។&lt;/p&gt;' +</p>
+<p class="p1"><span class="Apple-converted-space">            </span>'&lt;p class="text-[11px] text-slate-500"&gt;សូមបញ្ចូលលេខទូរសព្ទដែលអ្នកធ្លាប់កុម្ម៉ង់ទិញដើម្បីពិនិត្យ៖&lt;/p&gt;' +</p>
+<p class="p1"><span class="Apple-converted-space">            </span>'&lt;div class="flex gap-2"&gt;' +</p>
+<p class="p1"><span class="Apple-converted-space">              </span>'&lt;input id="manualPhoneInput" type="tel" placeholder="ឧ. 012345678" class="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs outline-none focus:ring-2 focus:ring-blue-500"&gt;' +</p>
+<p class="p1"><span class="Apple-converted-space">              </span>'&lt;button type="button" onclick="searchOrderByPhone()" class="bg-blue-600 text-white text-xs px-3 py-2 rounded-xl font-bold whitespace-nowrap shadow-sm"&gt;ស្វែងរក&lt;/button&gt;' +</p>
+<p class="p1"><span class="Apple-converted-space">            </span>'&lt;/div&gt;' +</p>
+<p class="p1"><span class="Apple-converted-space">          </span>'&lt;/div&gt;';</p>
+<p class="p1"><span class="Apple-converted-space">        </span>return;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>fetchOrdersFromServer(currentUserId, 'id');</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>function fetchOrdersFromServer(queryValue, type) {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>var loader = document.getElementById('myOrdersLoader');</p>
+<p class="p1"><span class="Apple-converted-space">      </span>var container = document.getElementById('myOrdersContainer');</p>
+<p class="p1"><span class="Apple-converted-space">      </span>var emptyState = document.getElementById('myOrdersEmpty');</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>loader.className = "text-center py-10 text-slate-400 text-xs";</p>
+<p class="p1"><span class="Apple-converted-space">      </span>container.innerHTML = '';</p>
+<p class="p1"><span class="Apple-converted-space">      </span>emptyState.className = "hidden";</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>fetch(API_URL + "?action=getMyOrders&amp;queryValue=" + encodeURIComponent(queryValue) + "&amp;type=" + encodeURIComponent(type))</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.then(function(res) { return res.json(); })</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.then(function(res) {</p>
+<p class="p1"><span class="Apple-converted-space">          </span>loader.className = "hidden";</p>
+<p class="p1"><span class="Apple-converted-space">          </span>if (res &amp;&amp; res.success &amp;&amp; res.orders &amp;&amp; res.orders.length &gt; 0) {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>renderMyOrdersList(res.orders);</p>
+<p class="p1"><span class="Apple-converted-space">          </span>} else {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>emptyState.className = "text-center py-10 text-slate-400 text-xs";</p>
+<p class="p1"><span class="Apple-converted-space">            </span>emptyState.innerHTML = '&lt;span class="text-3xl block mb-2"&gt;🛍️&lt;/span&gt;&lt;p class="text-xs text-slate-400"&gt;មិនទាន់មានប្រវត្តិការកុម្ម៉ង់ទិញនៅឡើយទេ!&lt;/p&gt;';</p>
+<p class="p1"><span class="Apple-converted-space">          </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>})</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.catch(function(err) {</p>
+<p class="p1"><span class="Apple-converted-space">          </span>loader.className = "hidden";</p>
+<p class="p1"><span class="Apple-converted-space">          </span>container.innerHTML = '&lt;p class="text-center text-xs text-rose-500 py-6"&gt;កំហុសទាញទិន្នន័យ៖ ' + err.message + '&lt;/p&gt;';</p>
+<p class="p1"><span class="Apple-converted-space">        </span>});</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>function searchOrderByPhone() {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>var phone = document.getElementById('manualPhoneInput') ? document.getElementById('manualPhoneInput').value.trim() : '';</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (!phone) {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>alert("សូមបញ្ចូលលេខទូរសព្ទរបស់អ្នក!");</p>
+<p class="p1"><span class="Apple-converted-space">        </span>return;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>}</p>
+<p class="p1"><span class="Apple-converted-space">      </span>fetchOrdersFromServer(phone, 'phone');</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>function closeMyOrdersModal() {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>var modal = document.getElementById('myOrdersModal');</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (modal) modal.className = "fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden flex items-end sm:items-center justify-center p-0 sm:p-4";</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>function renderMyOrdersList(orders) {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>var container = document.getElementById('myOrdersContainer');</p>
+<p class="p1"><span class="Apple-converted-space">      </span>container.innerHTML = '';</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>for (var i = 0; i &lt; orders.length; i++) {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>var ord = orders[i];</p>
+<p class="p1"><span class="Apple-converted-space">        </span>var card = document.createElement('div');</p>
+<p class="p1"><span class="Apple-converted-space">        </span>card.className = "bg-slate-50 border border-slate-200 rounded-2xl p-3.5 space-y-2 text-xs shadow-sm";</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>var topRow = document.createElement('div');</p>
+<p class="p1"><span class="Apple-converted-space">        </span>topRow.className = "flex justify-between items-center border-b border-slate-200/60 pb-1.5";</p>
+<p class="p1"><span class="Apple-converted-space">        </span>topRow.innerHTML = '&lt;span class="font-bold font-mono text-slate-700"&gt;' + ord.orderId + '&lt;/span&gt;' +</p>
+<p class="p1"><span class="Apple-converted-space">                           </span>'&lt;span class="text-[10px] text-slate-400"&gt;' + (ord.date || '') + '&lt;/span&gt;';</p>
+<p class="p1"><span class="Apple-converted-space">        </span>card.appendChild(topRow);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>var badgeRow = document.createElement('div');</p>
+<p class="p1"><span class="Apple-converted-space">        </span>var badgeClass = "p-1.5 rounded-xl text-center font-bold text-xs shadow-sm ";</p>
+<p class="p1"><span class="Apple-converted-space">        </span>if (ord.status.indexOf("Pending") !== -1) {</p>
+<p class="p1"><span class="Apple-converted-space">          </span>badgeClass += "bg-amber-100 text-amber-800 border border-amber-200";</p>
+<p class="p1"><span class="Apple-converted-space">        </span>} else if (ord.status.indexOf("Printing") !== -1) {</p>
+<p class="p1"><span class="Apple-converted-space">          </span>badgeClass += "bg-blue-100 text-blue-800 border border-blue-200 animate-pulse";</p>
+<p class="p1"><span class="Apple-converted-space">        </span>} else if (ord.status.indexOf("Shipping") !== -1 || ord.status.indexOf("Ready") !== -1) {</p>
+<p class="p1"><span class="Apple-converted-space">          </span>badgeClass += "bg-purple-100 text-purple-800 border border-purple-200";</p>
+<p class="p1"><span class="Apple-converted-space">        </span>} else if (ord.status.indexOf("Completed") !== -1) {</p>
+<p class="p1"><span class="Apple-converted-space">          </span>badgeClass += "bg-emerald-100 text-emerald-800 border border-emerald-200";</p>
+<p class="p1"><span class="Apple-converted-space">        </span>} else {</p>
+<p class="p1"><span class="Apple-converted-space">          </span>badgeClass += "bg-rose-100 text-rose-800 border border-rose-200";</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>badgeRow.innerHTML = '&lt;div class="' + badgeClass + '"&gt;' + ord.status + '&lt;/div&gt;';</p>
+<p class="p1"><span class="Apple-converted-space">        </span>card.appendChild(badgeRow);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>var itemRow = document.createElement('div');</p>
+<p class="p1"><span class="Apple-converted-space">        </span>itemRow.className = "text-slate-600 whitespace-pre-line text-[11px] bg-white p-2 rounded-xl border border-slate-100";</p>
+<p class="p1"><span class="Apple-converted-space">        </span>itemRow.innerText = ord.items;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>card.appendChild(itemRow);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>var bottomRow = document.createElement('div');</p>
+<p class="p1"><span class="Apple-converted-space">        </span>bottomRow.className = "flex justify-between items-center pt-1 font-bold";</p>
+<p class="p1"><span class="Apple-converted-space">        </span>bottomRow.innerHTML = '&lt;span class="text-slate-500 text-[11px]"&gt;តម្លៃសរុប៖&lt;/span&gt;' +</p>
+<p class="p1"><span class="Apple-converted-space">                              </span>'&lt;span class="text-blue-600 font-extrabold text-xs"&gt;$' + ord.totalPrice.toFixed(2) + '&lt;/span&gt;';</p>
+<p class="p1"><span class="Apple-converted-space">        </span>card.appendChild(bottomRow);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>container.appendChild(card);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>// --- ADMIN ACTIONS VIA FETCH API ---</p>
+<p class="p1"><span class="Apple-converted-space">    </span>function handleRoleClick() {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (currentRole === 'customer') {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>var pin = prompt("សូមបញ្ចូលលេខកូដសម្ងាត់ Admin PIN (Default: 9999):");</p>
+<p class="p1"><span class="Apple-converted-space">        </span>if (!pin) return;</p>
+<p class="p2"><span class="Apple-converted-space">        </span></p>
+<p class="p1"><span class="Apple-converted-space">        </span>callBackendPost({ action: "verifyPin", pin: pin })</p>
+<p class="p1"><span class="Apple-converted-space">          </span>.then(function(res) {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>if (res &amp;&amp; res.valid) {</p>
+<p class="p1"><span class="Apple-converted-space">              </span>adminPin = pin;</p>
+<p class="p1"><span class="Apple-converted-space">              </span>localStorage.setItem('saved_admin_pin', pin);</p>
+<p class="p1"><span class="Apple-converted-space">              </span>switchToAdmin();</p>
+<p class="p1"><span class="Apple-converted-space">            </span>} else {</p>
+<p class="p1"><span class="Apple-converted-space">              </span>alert("❌ លេខកូដ PIN មិនត្រឹមត្រូវ!");</p>
+<p class="p1"><span class="Apple-converted-space">            </span>}</p>
+<p class="p1"><span class="Apple-converted-space">          </span>})</p>
+<p class="p1"><span class="Apple-converted-space">          </span>.catch(function(err) { alert("Error: " + err.message); });</p>
+<p class="p1"><span class="Apple-converted-space">      </span>} else {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>switchToCustomer();</p>
+<p class="p1"><span class="Apple-converted-space">      </span>}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>function switchToAdmin() {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>currentRole = 'admin';</p>
+<p class="p1"><span class="Apple-converted-space">      </span>var el;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (el = document.getElementById('customerSection')) el.className = "hidden";</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (el = document.getElementById('floatingCartContainer')) el.className = "hidden";</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (el = document.getElementById('adminSection')) el.className = "px-4 pt-3 space-y-3";</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (el = document.getElementById('subHeaderText')) el.innerText = 'Admin Control';</p>
+<p class="p1"><span class="Apple-converted-space">      </span>loadAdminData();</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>function switchToCustomer() {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>currentRole = 'customer';</p>
+<p class="p1"><span class="Apple-converted-space">      </span>var el;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (el = document.getElementById('adminSection')) el.className = "hidden";</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (el = document.getElementById('customerSection')) el.className = "";</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (el = document.getElementById('floatingCartContainer')) el.className = "fixed bottom-6 right-5 z-40";</p>
+<p class="p1"><span class="Apple-converted-space">      </span>applyLanguageUI();</p>
+<p class="p1"><span class="Apple-converted-space">      </span>loadCustomerData();</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>function loadAdminData() {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>var loader = document.getElementById('adminLoader');</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (loader) loader.className = "text-center py-10 text-slate-400 text-xs";</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>callBackendPost({ action: "getAdminCatalog", pin: adminPin })</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.then(function(data) {</p>
+<p class="p1"><span class="Apple-converted-space">          </span>adminProducts = data || [];</p>
+<p class="p1"><span class="Apple-converted-space">          </span>if (loader) loader.className = "hidden";</p>
+<p class="p1"><span class="Apple-converted-space">          </span>filterAdminProducts();</p>
+<p class="p1"><span class="Apple-converted-space">        </span>})</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.catch(function(err) { alert("Error: " + err.message); });</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>function filterAdminProducts() {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>var input = document.getElementById('adminSearchInput');</p>
+<p class="p1"><span class="Apple-converted-space">      </span>var q = (input ? input.value : '').toLowerCase().trim();</p>
+<p class="p1"><span class="Apple-converted-space">      </span>var clearBtn = document.getElementById('clearAdminBtn');</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (clearBtn) clearBtn.className = q.length === 0 ? "absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400 hidden text-xs font-bold" : "absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400 text-xs font-bold";</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>var filtered = [];</p>
+<p class="p1"><span class="Apple-converted-space">      </span>for (var i = 0; i &lt; adminProducts.length; i++) {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>var p = adminProducts[i];</p>
+<p class="p1"><span class="Apple-converted-space">        </span>if (p.title.toLowerCase().indexOf(q) !== -1 || p.category.toLowerCase().indexOf(q) !== -1 || p.id.toLowerCase().indexOf(q) !== -1) {</p>
+<p class="p1"><span class="Apple-converted-space">          </span>filtered.push(p);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">      </span>}</p>
+<p class="p1"><span class="Apple-converted-space">      </span>renderAdminList(filtered);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>function clearAdminSearch() {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>var input = document.getElementById('adminSearchInput');</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (input) input.value = '';</p>
+<p class="p1"><span class="Apple-converted-space">      </span>filterAdminProducts();</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>function renderAdminList(items) {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>var container = document.getElementById('adminList');</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (!container) return;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>container.innerHTML = '';</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (!items || items.length === 0) {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>container.innerHTML = '&lt;p class="text-center text-xs text-slate-400 py-10"&gt;រកមិនឃើញទំនិញទេ&lt;/p&gt;';</p>
+<p class="p1"><span class="Apple-converted-space">        </span>return;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>for (var i = 0; i &lt; items.length; i++) {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>(function(p) {</p>
+<p class="p1"><span class="Apple-converted-space">          </span>var item = document.createElement('div');</p>
+<p class="p1"><span class="Apple-converted-space">          </span>item.className = "bg-white p-3 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between gap-3";</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">          </span>var leftDiv = document.createElement('div');</p>
+<p class="p1"><span class="Apple-converted-space">          </span>leftDiv.className = "flex items-center gap-3";</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">          </span>var imgDiv = document.createElement('div');</p>
+<p class="p1"><span class="Apple-converted-space">          </span>imgDiv.className = "w-12 h-12 rounded-xl bg-slate-100 overflow-hidden flex-shrink-0 relative";</p>
+<p class="p1"><span class="Apple-converted-space">          </span>var img = document.createElement('img');</p>
+<p class="p1"><span class="Apple-converted-space">          </span>img.src = p.image;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>img.className = "w-full h-full object-cover";</p>
+<p class="p1"><span class="Apple-converted-space">          </span>img.onerror = function() { this.src = "https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&amp;fit=crop&amp;w=600&amp;q=80"; };</p>
+<p class="p1"><span class="Apple-converted-space">          </span>imgDiv.appendChild(img);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">          </span>var infoDiv = document.createElement('div');</p>
+<p class="p1"><span class="Apple-converted-space">          </span>var titleWrap = document.createElement('div');</p>
+<p class="p1"><span class="Apple-converted-space">          </span>titleWrap.className = "flex items-center gap-1.5";</p>
+<p class="p1"><span class="Apple-converted-space">          </span>var title = document.createElement('h4');</p>
+<p class="p1"><span class="Apple-converted-space">          </span>title.className = "text-xs font-bold text-slate-800 line-clamp-1";</p>
+<p class="p1"><span class="Apple-converted-space">          </span>title.innerText = p.title;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>titleWrap.appendChild(title);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">          </span>if (p.badge) {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>var bSpan = document.createElement('span');</p>
+<p class="p1"><span class="Apple-converted-space">            </span>bSpan.className = "text-[9px] bg-slate-100 px-1.5 py-0.5 rounded font-bold";</p>
+<p class="p1"><span class="Apple-converted-space">            </span>bSpan.innerText = p.badge;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>titleWrap.appendChild(bSpan);</p>
+<p class="p1"><span class="Apple-converted-space">          </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">          </span>var price = document.createElement('p');</p>
+<p class="p1"><span class="Apple-converted-space">          </span>price.className = "text-[11px] text-blue-600 font-bold";</p>
+<p class="p1"><span class="Apple-converted-space">          </span>price.innerText = "$" + p.price.toFixed(2);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">          </span>infoDiv.appendChild(titleWrap);</p>
+<p class="p1"><span class="Apple-converted-space">          </span>infoDiv.appendChild(price);</p>
+<p class="p1"><span class="Apple-converted-space">          </span>leftDiv.appendChild(imgDiv);</p>
+<p class="p1"><span class="Apple-converted-space">          </span>leftDiv.appendChild(infoDiv);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">          </span>var rightDiv = document.createElement('div');</p>
+<p class="p1"><span class="Apple-converted-space">          </span>rightDiv.className = "flex items-center gap-1.5";</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">          </span>var stockBtn = document.createElement('button');</p>
+<p class="p1"><span class="Apple-converted-space">          </span>stockBtn.type = "button";</p>
+<p class="p1"><span class="Apple-converted-space">          </span>stockBtn.className = "text-[11px] px-2.5 py-1 rounded-xl font-bold " + (p.inStock ? "bg-emerald-50 text-emerald-600 border border-emerald-200" : "bg-red-50 text-red-500 border border-red-200");</p>
+<p class="p1"><span class="Apple-converted-space">          </span>stockBtn.innerText = p.inStock ? "មានស្តុក" : "ដាច់ស្តុក";</p>
+<p class="p1"><span class="Apple-converted-space">          </span>stockBtn.onclick = function() { toggleStock(p.id, !p.inStock); };</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">          </span>var editBtn = document.createElement('button');</p>
+<p class="p1"><span class="Apple-converted-space">          </span>editBtn.type = "button";</p>
+<p class="p1"><span class="Apple-converted-space">          </span>editBtn.className = "text-slate-500 hover:text-blue-600 p-1.5 rounded-lg bg-slate-50 border border-slate-200";</p>
+<p class="p1"><span class="Apple-converted-space">          </span>editBtn.innerText = "✏️";</p>
+<p class="p1"><span class="Apple-converted-space">          </span>editBtn.onclick = function() { openEditModalById(p.id); };</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">          </span>var delBtn = document.createElement('button');</p>
+<p class="p1"><span class="Apple-converted-space">          </span>delBtn.type = "button";</p>
+<p class="p1"><span class="Apple-converted-space">          </span>delBtn.className = "text-slate-400 hover:text-red-500 p-1.5 rounded-lg bg-slate-50 border border-slate-200";</p>
+<p class="p1"><span class="Apple-converted-space">          </span>delBtn.innerText = "🗑️";</p>
+<p class="p1"><span class="Apple-converted-space">          </span>delBtn.onclick = function() { deleteProd(p.id); };</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">          </span>rightDiv.appendChild(stockBtn);</p>
+<p class="p1"><span class="Apple-converted-space">          </span>rightDiv.appendChild(editBtn);</p>
+<p class="p1"><span class="Apple-converted-space">          </span>rightDiv.appendChild(delBtn);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">          </span>item.appendChild(leftDiv);</p>
+<p class="p1"><span class="Apple-converted-space">          </span>item.appendChild(rightDiv);</p>
+<p class="p1"><span class="Apple-converted-space">          </span>container.appendChild(item);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>})(items[i]);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>function toggleStock(id, newStatus) {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>callBackendPost({ action: "toggleStock", pin: adminPin, productId: id, newStatus: newStatus })</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.then(function() { loadAdminData(); });</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>function deleteProd(id) {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (confirm("តើអ្នកចង់លុបទំនិញនេះចេញពី Google Sheet មែនទេ?")) {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>callBackendPost({ action: "deleteProduct", pin: adminPin, productId: id })</p>
+<p class="p1"><span class="Apple-converted-space">          </span>.then(function() { loadAdminData(); });</p>
+<p class="p1"><span class="Apple-converted-space">      </span>}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>function openAddModal() {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>var el;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (el = document.getElementById('editProductId')) el.value = '';</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (el = document.getElementById('addTitle')) el.value = '';</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (el = document.getElementById('addCategory')) el.value = '';</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (el = document.getElementById('addPrice')) el.value = '';</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (el = document.getElementById('addDesc')) el.value = '';</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (el = document.getElementById('addImage')) el.value = '';</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (el = document.getElementById('addColors')) el.value = '';</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (el = document.getElementById('addSizes')) el.value = '';</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (el = document.getElementById('addBadge')) el.value = '';</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (el = document.getElementById('modalFormTitle')) el.innerText = "➕ បន្ថែមផលិតផលថ្មី";</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (el = document.getElementById('saveProdBtn')) el.innerText = "💾 រក្សាទុកចូល Google Sheet";</p>
+<p class="p1"><span class="Apple-converted-space">      </span>var modal = document.getElementById('addModal');</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (modal) modal.className = "fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4";</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>function openEditModalById(id) {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>var p = null;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>for (var i = 0; i &lt; adminProducts.length; i++) {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>if (String(adminProducts[i].id) === String(id)) {</p>
+<p class="p1"><span class="Apple-converted-space">          </span>p = adminProducts[i];</p>
+<p class="p1"><span class="Apple-converted-space">          </span>break;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">      </span>}</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (!p) return;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>var el;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (el = document.getElementById('editProductId')) el.value = p.id;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (el = document.getElementById('addTitle')) el.value = p.title || '';</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (el = document.getElementById('addCategory')) el.value = p.category || '';</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (el = document.getElementById('addPrice')) el.value = p.price || '';</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (el = document.getElementById('addDesc')) el.value = p.desc || '';</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (el = document.getElementById('addImage')) el.value = p.image || '';</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (el = document.getElementById('addColors')) el.value = p.colors || '';</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (el = document.getElementById('addSizes')) el.value = p.sizes || '';</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (el = document.getElementById('addBadge')) el.value = p.badge || '';</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (el = document.getElementById('modalFormTitle')) el.innerText = "✏️ កែប្រែព័ត៌មានផលិតផល";</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (el = document.getElementById('saveProdBtn')) el.innerText = "💾 រក្សាទុកការកែប្រែ (Update)";</p>
+<p class="p1"><span class="Apple-converted-space">      </span>var modal = document.getElementById('addModal');</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (modal) modal.className = "fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4";</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>function closeAddModal() {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>var modal = document.getElementById('addModal');</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (modal) modal.className = "fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden flex items-center justify-center p-4";</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>function saveProductData() {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>var editId = document.getElementById('editProductId').value;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>var p = {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>id: editId,</p>
+<p class="p1"><span class="Apple-converted-space">        </span>title: document.getElementById('addTitle').value.trim(),</p>
+<p class="p1"><span class="Apple-converted-space">        </span>category: (document.getElementById('addCategory').value || 'other').trim(),</p>
+<p class="p1"><span class="Apple-converted-space">        </span>price: parseFloat(document.getElementById('addPrice').value) || 0,</p>
+<p class="p1"><span class="Apple-converted-space">        </span>desc: document.getElementById('addDesc').value.trim(),</p>
+<p class="p1"><span class="Apple-converted-space">        </span>image: document.getElementById('addImage').value.trim(),</p>
+<p class="p1"><span class="Apple-converted-space">        </span>colors: document.getElementById('addColors').value.trim(),</p>
+<p class="p1"><span class="Apple-converted-space">        </span>sizes: document.getElementById('addSizes').value.trim() || "Standard",</p>
+<p class="p1"><span class="Apple-converted-space">        </span>badge: document.getElementById('addBadge').value</p>
+<p class="p1"><span class="Apple-converted-space">      </span>};</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (!p.title || p.price &lt;= 0) {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>alert("សូមបំពេញឈ្មោះ និងតម្លៃឱ្យបានត្រឹមត្រូវ!");</p>
+<p class="p1"><span class="Apple-converted-space">        </span>return;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>var btn = document.getElementById('saveProdBtn');</p>
+<p class="p1"><span class="Apple-converted-space">      </span>btn.disabled = true;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>btn.innerText = "⏳ កំពុងដំណើរការ...";</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>var action = editId ? "updateProduct" : "addProduct";</p>
+<p class="p1"><span class="Apple-converted-space">      </span>callBackendPost({ action: action, pin: adminPin, product: p })</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.then(function() {</p>
+<p class="p1"><span class="Apple-converted-space">          </span>btn.disabled = false;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>btn.innerText = "💾 រក្សាទុកចូល Google Sheet";</p>
+<p class="p1"><span class="Apple-converted-space">          </span>closeAddModal();</p>
+<p class="p1"><span class="Apple-converted-space">          </span>loadAdminData();</p>
+<p class="p1"><span class="Apple-converted-space">          </span>loadCustomerData();</p>
+<p class="p1"><span class="Apple-converted-space">        </span>})</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.catch(function(err) {</p>
+<p class="p1"><span class="Apple-converted-space">          </span>btn.disabled = false;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>btn.innerText = "💾 រក្សាទុកចូល Google Sheet";</p>
+<p class="p1"><span class="Apple-converted-space">          </span>alert("Error: " + err.message);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>});</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/script&gt;</p>
+<p class="p1">&lt;/body&gt;</p>
+<p class="p1">&lt;/html&gt;</p>
+</body>
+</html>
