@@ -1386,13 +1386,25 @@
           var imgDiv = document.createElement('div');
           imgDiv.className = "w-12 h-12 rounded-xl bg-slate-100 overflow-hidden flex-shrink-0 relative";
           var img = document.createElement('img');
-          var img = document.createElement('img');
-          // ប្រើ displayImage បើគ្មានទេ ពិនិត្យមើលថាតើ image មានផ្ទុក lh3 ឬអត់
+
+          // ១. យក displayImage (ដែលជា lh3 Link ពី Column F)
           var finalThumb = p.displayImage || "";
+
+          // ២. បើគ្មានទេ ពិនិត្យមើលក្រែងលោក្នុង image មានផ្ទុក link lh3 រួចហើយ
           if (!finalThumb && p.image && p.image.indexOf("googleusercontent.com") !== -1) {
             finalThumb = p.image.split(",")[0].trim();
           }
-          
+
+          // ៣. បើនៅតែគ្មាន ហើយ p.image ជា Link Google Drive ធម្មតា -> បំប្លែងយក ID មកធ្វើជា lh3 ភ្លាមៗ
+          if (!finalThumb && p.image && p.image.indexOf("drive.google.com") !== -1) {
+            var rawFirst = p.image.split(",")[0].trim();
+            var idMatch = rawFirst.match(/[-\w]{25,}/);
+            if (idMatch && idMatch[0]) {
+              finalThumb = "https://lh3.googleusercontent.com/d/" + idMatch[0] + "=s800";
+            }
+          }
+
+          // ៤. ដាក់ Link រូបភាពចូល ឬប្រើរូបបម្រុងបើគ្មានទាល់តែសោះ
           img.src = finalThumb || "https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&w=600&q=80";
           img.className = "w-full h-full object-cover";
           img.onerror = function() { 
