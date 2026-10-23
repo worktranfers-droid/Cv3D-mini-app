@@ -1292,7 +1292,7 @@
     // --- ADMIN ACTIONS VIA FETCH API ---
     function handleRoleClick() {
       if (currentRole === 'customer') {
-        var pin = prompt("សូមបញ្ចូលលេខកូដសម្ងាត់ Admin PIN (Default: 9999):");
+        var pin = prompt("សូមបញ្ចូលលេខកូដសម្ងាត់ Admin PIN:");
         if (!pin) return;
         
         callBackendPost({ action: "verifyPin", pin: pin })
