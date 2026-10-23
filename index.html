@@ -1386,7 +1386,7 @@
           var imgDiv = document.createElement('div');
           imgDiv.className = "w-12 h-12 rounded-xl bg-slate-100 overflow-hidden flex-shrink-0 relative";
           var img = document.createElement('img');
-          img.src = p.image;
+          img.src = p.displayImage || p.image;
           img.className = "w-full h-full object-cover";
           img.onerror = function() { this.src = "https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&w=600&q=80"; };
           imgDiv.appendChild(img);
