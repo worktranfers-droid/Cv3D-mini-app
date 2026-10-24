@@ -935,15 +935,14 @@
       } else {
         cart.push({
           id: selectedProduct.id,
-          title: selectedProduct.title,
+          title: "[" + selectedProduct.id + "] " + selectedProduct.title,
           price: selectedProduct.price,
           image: selectedProduct.image,
           color: selectedColor,
           size: selectedSize,
           qty: quantity
         });
-      }
-
+        
       updateCartBadge();
       closeModal();
       openCartModal();
