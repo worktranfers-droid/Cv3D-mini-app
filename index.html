@@ -388,6 +388,7 @@
     var customerProducts = [];
     var adminProducts = [];
     var currentCustomerCategory = 'all';
+    var adminCostData = {}; // អថេរសម្រាប់ផ្ទុកទិន្នន័យថ្លៃដើមពី Sheet1
 
     var selectedProduct = null;
     var selectedColor = "";
@@ -1331,19 +1332,28 @@
       loadCustomerData();
     }
 
-    function loadAdminData() {
+    ffunction loadAdminData() {
       var loader = document.getElementById('adminLoader');
       if (loader) loader.className = "text-center py-10 text-slate-400 text-xs";
 
-      callBackendPost({ action: "getAdminCatalog", pin: adminPin })
-        .then(function(data) {
-          adminProducts = data || [];
-          if (loader) loader.className = "hidden";
-          filterAdminProducts();
-        })
-        .catch(function(err) { alert("Error: " + err.message); });
+      Promise.all([
+        callBackendPost({ action: "getAdminCatalog", pin: adminPin }),
+        callBackendPost({ action: "getCostCalculations", pin: adminPin })
+      ])
+      .then(function(results) {
+        adminProducts = results[0] || [];
+        // ចាប់យក costMap ពី Sheet1
+        adminCostData = (results[1] && results[1].costMap) ? results[1].costMap : {};
+        
+        if (loader) loader.className = "hidden";
+        filterAdminProducts();
+      })
+      .catch(function(err) { 
+        if (loader) loader.className = "hidden";
+        alert("Error: " + err.message); 
+      });
     }
-
+    
     function filterAdminProducts() {
       var input = document.getElementById('adminSearchInput');
       var q = (input ? input.value : '').toLowerCase().trim();
@@ -1429,10 +1439,28 @@
 
           var price = document.createElement('p');
           price.className = "text-[11px] text-blue-600 font-bold";
-          price.innerText = "$" + p.price.toFixed(2);
+          price.innerText = "តម្លៃលក់៖ $" + p.price.toFixed(2);
+
+          // ស្វែងរកទិន្នន័យគណនាពី Sheet1 ដោយផ្គូផ្គងឈ្មោះផលិតផល
+          var lookupKey = (p.title || "").trim().toLowerCase();
+          var calc = adminCostData[lookupKey];
+
+          var costInfo = document.createElement('div');
+          costInfo.className = "flex flex-wrap items-center gap-1.5 mt-1 text-[10px]";
+
+          if (calc && calc.totalCost > 0) {
+            costInfo.innerHTML = 
+              '<span class="text-slate-600 bg-slate-100 border border-slate-200 px-1.5 py-0.5 rounded-md font-medium">ថ្លៃដើម៖ $' + calc.totalCost.toFixed(2) + '</span>' +
+              '<span class="text-emerald-700 bg-emerald-50 border border-emerald-200 px-1.5 py-0.5 rounded-md font-bold">ចំណេញ៖ $' + calc.estimatedProfit.toFixed(2) + '</span>' +
+              '<span class="text-slate-400 text-[9px]">(' + calc.printTime + 'h | ' + calc.weight + 'g)</span>';
+          } else {
+            costInfo.innerHTML = '<span class="text-slate-300 text-[9px] italic">មិនទាន់មានទិន្នន័យក្នុង Sheet1</span>';
+          }
 
           infoDiv.appendChild(titleWrap);
           infoDiv.appendChild(price);
+          infoDiv.appendChild(costInfo); // បន្ថែមព័ត៌មានថ្លៃដើមចូលក្នុង infoDiv
+
           leftDiv.appendChild(imgDiv);
           leftDiv.appendChild(infoDiv);
 
