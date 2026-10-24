@@ -129,8 +129,25 @@
       <div id="adminList" class="space-y-2.5"></div>
     </div>
 
-    <!-- កុងតឺន័រទី ២៖ គ្រប់គ្រងការកុម្ម៉ង់ទិញ -->
+   <!-- កុងតឺន័រទី ២៖ គ្រប់គ្រងការកុម្ម៉ង់ទិញ -->
     <div id="adminOrdersContainer" class="hidden space-y-3">
+      
+      <!-- ប៊ូតុង Filter ស្ថានភាពការកុម្ម៉ង់ -->
+      <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-1">
+        <button type="button" onclick="setOrderFilter('active')" id="filterBtnActive" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-900 text-white shadow-xs whitespace-nowrap">
+          ⚡ កំពុងដំណើរការ
+        </button>
+        <button type="button" onclick="setOrderFilter('all')" id="filterBtnAll" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-white text-slate-600 border border-slate-200 whitespace-nowrap">
+          ទាំងអស់
+        </button>
+        <button type="button" onclick="setOrderFilter('completed')" id="filterBtnCompleted" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-white text-slate-600 border border-slate-200 whitespace-nowrap">
+          🟢 បានបញ្ចប់
+        </button>
+        <button type="button" onclick="setOrderFilter('canceled')" id="filterBtnCanceled" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-white text-slate-600 border border-slate-200 whitespace-nowrap">
+          🔴 បានបោះបង់
+        </button>
+      </div>
+
       <div id="adminOrdersLoader" class="text-center py-10 text-slate-400 text-xs hidden">
         <div class="w-6 h-6 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-2"></div>
         កំពុងទាញបញ្ជីការកុម្ម៉ង់...
@@ -1533,11 +1550,57 @@
           .then(function() { loadAdminData(); });
       }
     }
-    // ==================== ADMIN ORDERS CONTROLLER ====================
+// ==================== ADMIN ORDERS CONTROLLER ====================
     var currentAdminTab = 'products';
     var allAdminOrders = [];
+    var currentOrderFilter = 'active'; // លំនាំដើម៖ បង្ហាញតែការកុម្ម៉ង់ដែលកំពុងដំណើរការ (លាក់ Completed & Canceled)
 
-    // ប្តូរការមើលរវាង Tab ផលិតផល និង Tab ការកុម្ម៉ង់
+    // ១. អនុគមន៍ប្តូរពណ៌ប៊ូតុង Filter និងកំណត់ប្រភេទ Filter
+    function setOrderFilter(filterType) {
+      currentOrderFilter = filterType;
+
+      var filterKeys = ['active', 'all', 'completed', 'canceled'];
+      for (var b = 0; b < filterKeys.length; b++) {
+        var key = filterKeys[b];
+        // ផ្គូផ្គង ID ប៊ូតុង: filterBtnActive, filterBtnAll, filterBtnCompleted, filterBtnCanceled
+        var btnId = 'filterBtn' + key.charAt(0).toUpperCase() + key.slice(1);
+        var btn = document.getElementById(btnId);
+        if (btn) {
+          if (key === filterType) {
+            btn.className = "px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-900 text-white shadow-xs whitespace-nowrap transition-all";
+          } else {
+            btn.className = "px-3 py-1.5 rounded-xl text-xs font-bold bg-white text-slate-600 border border-slate-200 whitespace-nowrap transition-all";
+          }
+        }
+      }
+
+      applyOrderFilter();
+    }
+
+    // ២. អនុគមន៍ចម្រាញ់ទិន្នន័យ (Filter) មុនពេលបញ្ជូនទៅបង្ហាញលើអេក្រង់
+    function applyOrderFilter() {
+      if (!allAdminOrders) return;
+
+      var filtered = allAdminOrders.filter(function(ord) {
+        var st = ord.status || "";
+        var isCompleted = st.indexOf("Completed") !== -1 || st.indexOf("បានបញ្ចប់") !== -1;
+        var isCanceled = st.indexOf("Canceled") !== -1 || st.indexOf("បានបោះបង់") !== -1;
+
+        if (currentOrderFilter === 'active') {
+          // បង្ហាញតែ Pending, Printing, Shipping (លាក់ Completed & Canceled)
+          return !isCompleted && !isCanceled;
+        } else if (currentOrderFilter === 'completed') {
+          return isCompleted;
+        } else if (currentOrderFilter === 'canceled') {
+          return isCanceled;
+        }
+        return true; // 'all': បង្ហាញទាំងអស់មិនលាក់ឡើយ
+      });
+
+      renderAdminOrdersList(filtered);
+    }
+
+    // ៣. ប្តូរ Tab រវាង ផលិតផល និង ការកុម្ម៉ង់
     function switchAdminTab(tab) {
       currentAdminTab = tab;
       var tabP = document.getElementById('adminTabProds');
@@ -1547,22 +1610,22 @@
       var addBtn = document.getElementById('adminAddProdBtn');
 
       if (tab === 'products') {
-        tabP.className = "flex-1 py-2 rounded-xl text-xs font-bold bg-white text-slate-800 shadow-xs transition-all";
-        tabO.className = "flex-1 py-2 rounded-xl text-xs font-bold text-slate-500 transition-all";
+        if (tabP) tabP.className = "flex-1 py-2 rounded-xl text-xs font-bold bg-white text-slate-800 shadow-xs transition-all";
+        if (tabO) tabO.className = "flex-1 py-2 rounded-xl text-xs font-bold text-slate-500 transition-all";
         if (conP) conP.className = "space-y-3";
         if (conO) conO.className = "hidden space-y-3";
         if (addBtn) addBtn.className = "text-xs bg-blue-600 text-white font-semibold px-3 py-1.5 rounded-xl shadow-sm hover:bg-blue-700";
       } else {
-        tabO.className = "flex-1 py-2 rounded-xl text-xs font-bold bg-white text-slate-800 shadow-xs transition-all";
-        tabP.className = "flex-1 py-2 rounded-xl text-xs font-bold text-slate-500 transition-all";
+        if (tabO) tabO.className = "flex-1 py-2 rounded-xl text-xs font-bold bg-white text-slate-800 shadow-xs transition-all";
+        if (tabP) tabP.className = "flex-1 py-2 rounded-xl text-xs font-bold text-slate-500 transition-all";
         if (conP) conP.className = "hidden space-y-3";
         if (conO) conO.className = "space-y-3";
-        if (addBtn) addBtn.className = "hidden"; // លាក់ប៊ូតុងបន្ថែមទំនិញពេលនៅផ្ទាំងកុម្ម៉ង់
+        if (addBtn) addBtn.className = "hidden";
         loadAdminOrders();
       }
     }
 
-    // ទាញយកបញ្ជីកុម្ម៉ង់ទាំងអស់ពី Server
+    // ៤. ទាញយកបញ្ជីកុម្ម៉ង់ទាំងអស់ពី Server រួចហៅ applyOrderFilter()
     function loadAdminOrders() {
       var loader = document.getElementById('adminOrdersLoader');
       if (loader) loader.className = "text-center py-10 text-slate-400 text-xs";
@@ -1571,7 +1634,7 @@
         .then(function(res) {
           if (loader) loader.className = "hidden";
           allAdminOrders = (res && res.orders) ? res.orders : [];
-          renderAdminOrdersList(allAdminOrders);
+          applyOrderFilter(); // ហៅ Filter មកដំណើរការជាស្វ័យប្រវត្តិ
         })
         .catch(function(err) {
           if (loader) {
@@ -1704,10 +1767,15 @@
           select.onchange = function() {
             var chosen = this.value;
             select.disabled = true;
+
             callBackendPost({ action: "updateOrderStatus", pin: adminPin, orderId: ord.orderId, newStatus: chosen })
               .then(function() {
                 select.disabled = false;
-                ord.status = chosen;
+                ord.status = chosen; // កែប្រែស្ថានភាពក្នុងទិន្នន័យជាក់ស្តែង
+
+                // បញ្ជាឱ្យដំណើរការ Filter ឡើងវិញភ្លាមៗ
+                // ប្រសិនបើកំពុងនៅផ្ទាំង "⚡ កំពុងដំណើរការ" ហើយប្តូរទៅ Completed ឬ Canceled កាតនេះនឹងរលត់បាត់ភ្លាម
+                applyOrderFilter();
               })
               .catch(function(err) {
                 select.disabled = false;
