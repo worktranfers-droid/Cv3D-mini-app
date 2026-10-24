@@ -1446,10 +1446,8 @@
           price.className = "text-[11px] text-blue-600 font-bold";
           price.innerText = "តម្លៃលក់៖ $" + p.price.toFixed(2);
 
-          // ២. ស្វែងរកទិន្នន័យពី Sheet1 តាម ID មុន បើគ្មានទើបតាម Title
-          var idKey = (p.id || "").trim();
-          var titleKey = (p.title || "").trim().toLowerCase();
-          var calc = adminCostData[idKey] || adminCostData[titleKey];
+          // យកទិន្នន័យដែលបានភ្ជាប់ស្រាប់ពី Backend
+          var calc = p.costAnalysis || (adminCostData ? (adminCostData[(p.id || "").trim()] || adminCostData[(p.title || "").trim().toLowerCase()]) : null);
 
           var costInfo = document.createElement('div');
           costInfo.className = "flex flex-wrap items-center gap-1.5 mt-1 text-[10px]";
