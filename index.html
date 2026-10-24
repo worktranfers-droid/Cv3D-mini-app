@@ -1451,9 +1451,10 @@
           price.className = "text-[11px] text-blue-600 font-bold";
           price.innerText = "តម្លៃលក់៖ $" + p.price.toFixed(2);
 
-          // ស្វែងរកទិន្នន័យពី Sheet1 តាមរយៈ Product ID (P-001, P-002...)
-          var lookupKey = (p.id || "").trim();
-          var calc = adminCostData[lookupKey];
+          // ស្វែងរកទិន្នន័យពី Sheet1 តាម ID មុន បើគ្មានទើបតាមឈ្មោះ
+          var idKey = (p.id || "").trim();
+          var titleKey = (p.title || "").trim().toLowerCase();
+          var calc = adminCostData[idKey] || adminCostData[titleKey];
 
           var costInfo = document.createElement('div');
           costInfo.className = "flex flex-wrap items-center gap-1.5 mt-1 text-[10px]";
