@@ -1580,7 +1580,33 @@
         });
     }
 
-    // បង្ហាញកាតកុម្ម៉ង់នីមួយៗ និង Dropdown ប្តូរស្ថានភាព (Status)
+// ជំនួយការស្វែងរករូបភាពតូច (Thumbnail) របស់ទំនិញតាម ID ឬ តាមឈ្មោះ
+    function findProductThumb(textLine) {
+      if (!adminProducts || adminProducts.length === 0) return "";
+      
+      // ១. ស្វែងរកតាម [Product ID] ដូចជា [P-001], [P-002]
+      var idMatch = textLine.match(/\[(P-\d+|P\d+)\]/i);
+      if (idMatch && idMatch[1]) {
+        var searchId = idMatch[1].trim().toLowerCase();
+        for (var i = 0; i < adminProducts.length; i++) {
+          if (String(adminProducts[i].id).trim().toLowerCase() === searchId) {
+            return adminProducts[i].displayImage || adminProducts[i].image || "";
+          }
+        }
+      }
+
+      // ២. ស្វែងរកតាមឈ្មោះទំនិញបម្រុងទុក (សម្រាប់ Order ចាស់ៗដែលគ្មានកូដ ID)
+      for (var j = 0; j < adminProducts.length; j++) {
+        var pTitle = String(adminProducts[j].title || "").trim().toLowerCase();
+        if (pTitle && textLine.toLowerCase().indexOf(pTitle) !== -1) {
+          return adminProducts[j].displayImage || adminProducts[j].image || "";
+        }
+      }
+
+      return "";
+    }
+
+    // បង្ហាញកាតកុម្ម៉ង់នីមួយៗ ព្រមទាំងរូបភាព Thumbnail របស់មុខទំនិញ
     function renderAdminOrdersList(orders) {
       var container = document.getElementById('adminOrdersList');
       if (!container) return;
@@ -1605,8 +1631,8 @@
 
           // ២. ព័ត៌មានអតិថិជន (ឈ្មោះ, Telegram, ទូរសព្ទ, ទីតាំង)
           var custInfo = document.createElement('div');
-          custInfo.className = "text-[11px] space-y-1 text-slate-600 bg-slate-50/60 p-2 rounded-xl border border-slate-100";
-          var tgDisplay = ord.tgUsername ? ('<a href="https://t.me/' + ord.tgUsername + '" target="_blank" class="text-blue-500 font-semibold underline">@' + ord.tgUsername + '</a>') : '<span class="text-slate-400">គ្មាន</span>';
+          custInfo.className = "text-[11px] space-y-1 text-slate-600 bg-slate-50/70 p-2.5 rounded-xl border border-slate-100";
+          var tgDisplay = ord.tgUsername ? ('<a href="https://t.me/' + ord.tgUsername.replace('@','') + '" target="_blank" class="text-blue-500 font-semibold underline">' + ord.tgUsername + '</a>') : '<span class="text-slate-400">គ្មាន</span>';
           var phoneCall = ord.phone ? ('<a href="tel:' + ord.phone + '" class="text-blue-600 font-bold underline">' + ord.phone + ' 📞</a>') : 'N/A';
 
           custInfo.innerHTML = '<div>👤 <b>ភ្ញៀវ៖</b> ' + ord.customerName + ' | TG: ' + tgDisplay + '</div>' +
@@ -1614,10 +1640,36 @@
                                '<div>📍 <b>ទីតាំង៖</b> ' + ord.location + '</div>';
           card.appendChild(custInfo);
 
-          // ៣. បញ្ជីទំនិញដែលបានកុម្ម៉ង់
+          // ៣. បញ្ជីទំនិញដែលបានកុម្ម៉ង់ (បង្ហាញរូបភាព Thumbnail ភ្ជាប់ជាមួយមុខទំនិញនីមួយៗ)
           var itemsBox = document.createElement('div');
-          itemsBox.className = "bg-white p-2.5 rounded-xl text-[11px] text-slate-700 whitespace-pre-line border border-slate-200/80 leading-relaxed font-sans";
-          itemsBox.innerText = ord.items;
+          itemsBox.className = "space-y-1.5 bg-slate-50/40 p-2 rounded-xl border border-slate-100";
+
+          var lines = (ord.items || "").split("\n");
+          for (var l = 0; l < lines.length; l++) {
+            var lineText = lines[l].trim();
+            if (!lineText) continue;
+
+            var itemRow = document.createElement('div');
+            itemRow.className = "flex items-center gap-2.5 bg-white p-2 rounded-lg border border-slate-200/70 shadow-2xs";
+
+            // រកមើលរូបភាពរបស់ទំនិញនោះ
+            var thumbUrl = findProductThumb(lineText) || "https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&w=600&q=80";
+
+            var itemImg = document.createElement('img');
+            itemImg.src = thumbUrl;
+            itemImg.className = "w-10 h-10 rounded-lg object-cover bg-slate-100 border border-slate-200 flex-shrink-0";
+            itemImg.onerror = function() {
+              this.src = "https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&w=600&q=80";
+            };
+
+            var itemDetails = document.createElement('div');
+            itemDetails.className = "text-[11px] text-slate-700 leading-tight font-sans";
+            itemDetails.innerText = lineText;
+
+            itemRow.appendChild(itemImg);
+            itemRow.appendChild(itemDetails);
+            itemsBox.appendChild(itemRow);
+          }
           card.appendChild(itemsBox);
 
           // ៤. តម្លៃសរុប និង Dropdown ប្តូរស្ថានភាពការងារ
