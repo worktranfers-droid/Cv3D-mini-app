@@ -1332,26 +1332,37 @@
       loadCustomerData();
     }
 
-    ffunction loadAdminData() {
+    function loadAdminData() {
       var loader = document.getElementById('adminLoader');
       if (loader) loader.className = "text-center py-10 text-slate-400 text-xs";
 
-      Promise.all([
-        callBackendPost({ action: "getAdminCatalog", pin: adminPin }),
-        callBackendPost({ action: "getCostCalculations", pin: adminPin })
-      ])
-      .then(function(results) {
-        adminProducts = results[0] || [];
-        // ចាប់យក costMap ពី Sheet1
-        adminCostData = (results[1] && results[1].costMap) ? results[1].costMap : {};
-        
-        if (loader) loader.className = "hidden";
-        filterAdminProducts();
-      })
-      .catch(function(err) { 
-        if (loader) loader.className = "hidden";
-        alert("Error: " + err.message); 
-      });
+      // ១. ទាញយកបញ្ជីទំនិញ Admin ជាចម្បង
+      callBackendPost({ action: "getAdminCatalog", pin: adminPin })
+        .then(function(data) {
+          adminProducts = data || [];
+          if (loader) loader.className = "hidden";
+          filterAdminProducts();
+
+          // ២. ទាញយកទិន្នន័យថ្លៃដើមពី Sheet1 ដាច់ដោយឡែក (មិនឱ្យគាំងទំព័រឡើយបើមានកំហុស)
+          callBackendPost({ action: "getCostCalculations", pin: adminPin })
+            .then(function(res) {
+              if (res && res.costMap) {
+                adminCostData = res.costMap;
+                filterAdminProducts(); // ធ្វើបច្ចុប្បន្នភាពកាតដើម្បីបង្ហាញថ្លៃដើម
+              }
+            })
+            .catch(function(err) {
+              console.warn("មិនអាចទាញទិន្នន័យថ្លៃដើមបាន:", err);
+            });
+        })
+        .catch(function(err) {
+          if (loader) {
+            loader.innerHTML = '<div class="text-center py-6 text-rose-500 text-xs">' +
+              'កំហុសទាញទិន្នន័យ៖ ' + err.message + 
+              '<br><button type="button" onclick="loadAdminData()" class="mt-2 px-3 py-1 bg-blue-600 text-white rounded-lg">សាកល្បងម្តងទៀត 🔄</button>' +
+              '</div>';
+          }
+        });
     }
     
     function filterAdminProducts() {
