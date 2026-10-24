@@ -1336,19 +1336,18 @@
       var loader = document.getElementById('adminLoader');
       if (loader) loader.className = "text-center py-10 text-slate-400 text-xs";
 
-      // ១. ទាញយកបញ្ជីទំនិញ Admin ជាចម្បង
       callBackendPost({ action: "getAdminCatalog", pin: adminPin })
         .then(function(data) {
           adminProducts = data || [];
           if (loader) loader.className = "hidden";
           filterAdminProducts();
 
-          // ២. ទាញយកទិន្នន័យថ្លៃដើមពី Sheet1 ដាច់ដោយឡែក (មិនឱ្យគាំងទំព័រឡើយបើមានកំហុស)
+          // ទាញយកទិន្នន័យថ្លៃដើមពី Sheet1
           callBackendPost({ action: "getCostCalculations", pin: adminPin })
             .then(function(res) {
               if (res && res.costMap) {
                 adminCostData = res.costMap;
-                filterAdminProducts(); // ធ្វើបច្ចុប្បន្នភាពកាតដើម្បីបង្ហាញថ្លៃដើម
+                filterAdminProducts();
               }
             })
             .catch(function(err) {
