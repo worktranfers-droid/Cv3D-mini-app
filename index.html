@@ -91,30 +91,52 @@
         <button type="button" onclick="switchToCustomer()" class="text-xs bg-slate-100 text-slate-700 font-semibold px-3 py-1.5 rounded-xl border border-slate-200">
           🛒 ទៅហាងវិញ
         </button>
-        <button type="button" onclick="openAddModal()" class="text-xs bg-blue-600 text-white font-semibold px-3 py-1.5 rounded-xl shadow-sm hover:bg-blue-700">
+        <button id="adminAddProdBtn" type="button" onclick="openAddModal()" class="text-xs bg-blue-600 text-white font-semibold px-3 py-1.5 rounded-xl shadow-sm hover:bg-blue-700">
           ➕ បន្ថែមទំនិញ
         </button>
       </div>
     </div>
 
-    <div class="relative">
-      <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-slate-400 text-xs">🔍</span>
-      <input 
-        id="adminSearchInput" 
-        type="text" 
-        oninput="filterAdminProducts()" 
-        placeholder="ស្វែងរកតាមឈ្មោះ ឬប្រភេទ..." 
-        class="w-full pl-8 pr-8 py-2 bg-white border border-slate-200 rounded-xl text-xs outline-none focus:ring-2 focus:ring-blue-500 shadow-sm"
-      >
-      <button id="clearAdminBtn" type="button" onclick="clearAdminSearch()" class="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400 hidden text-xs font-bold">✕</button>
+    <!-- ប៊ូតុងរើសផ្ទាំង Tab: ផលិតផល ឬ ការកុម្ម៉ង់ -->
+    <div class="flex gap-2 bg-slate-200/70 p-1 rounded-2xl">
+      <button id="adminTabProds" type="button" onclick="switchAdminTab('products')" class="flex-1 py-2 rounded-xl text-xs font-bold bg-white text-slate-800 shadow-xs transition-all">
+        📦 ផលិតផល & ស្តុក
+      </button>
+      <button id="adminTabOrders" type="button" onclick="switchAdminTab('orders')" class="flex-1 py-2 rounded-xl text-xs font-bold text-slate-500 transition-all">
+        📋 បញ្ជីកុម្ម៉ង់ទិញ
+      </button>
     </div>
 
-    <div id="adminLoader" class="text-center py-10 text-slate-400 text-xs hidden">
-      <div class="w-6 h-6 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-2"></div>
-      កំពុងធ្វើបច្ចុប្បន្នភាព...
+    <!-- កុងតឺន័រទី ១៖ គ្រប់គ្រងផលិតផល -->
+    <div id="adminProductsContainer" class="space-y-3">
+      <div class="relative">
+        <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-slate-400 text-xs">🔍</span>
+        <input 
+          id="adminSearchInput" 
+          type="text" 
+          oninput="filterAdminProducts()" 
+          placeholder="ស្វែងរកតាមឈ្មោះ ឬប្រភេទ..." 
+          class="w-full pl-8 pr-8 py-2 bg-white border border-slate-200 rounded-xl text-xs outline-none focus:ring-2 focus:ring-blue-500 shadow-sm"
+        >
+        <button id="clearAdminBtn" type="button" onclick="clearAdminSearch()" class="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400 hidden text-xs font-bold">✕</button>
+      </div>
+
+      <div id="adminLoader" class="text-center py-10 text-slate-400 text-xs hidden">
+        <div class="w-6 h-6 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-2"></div>
+        កំពុងធ្វើបច្ចុប្បន្នភាព...
+      </div>
+
+      <div id="adminList" class="space-y-2.5"></div>
     </div>
 
-    <div id="adminList" class="space-y-2.5"></div>
+    <!-- កុងតឺន័រទី ២៖ គ្រប់គ្រងការកុម្ម៉ង់ទិញ -->
+    <div id="adminOrdersContainer" class="hidden space-y-3">
+      <div id="adminOrdersLoader" class="text-center py-10 text-slate-400 text-xs hidden">
+        <div class="w-6 h-6 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-2"></div>
+        កំពុងទាញបញ្ជីការកុម្ម៉ង់...
+      </div>
+      <div id="adminOrdersList" class="space-y-3"></div>
+    </div>
   </section>
 
   <!-- ==================== FLOATING CART BUTTON ==================== -->
@@ -1509,6 +1531,142 @@
       if (confirm("តើអ្នកចង់លុបទំនិញនេះចេញពី Google Sheet មែនទេ?")) {
         callBackendPost({ action: "deleteProduct", pin: adminPin, productId: id })
           .then(function() { loadAdminData(); });
+      }
+    }
+    // ==================== ADMIN ORDERS CONTROLLER ====================
+    var currentAdminTab = 'products';
+    var allAdminOrders = [];
+
+    // ប្តូរការមើលរវាង Tab ផលិតផល និង Tab ការកុម្ម៉ង់
+    function switchAdminTab(tab) {
+      currentAdminTab = tab;
+      var tabP = document.getElementById('adminTabProds');
+      var tabO = document.getElementById('adminTabOrders');
+      var conP = document.getElementById('adminProductsContainer');
+      var conO = document.getElementById('adminOrdersContainer');
+      var addBtn = document.getElementById('adminAddProdBtn');
+
+      if (tab === 'products') {
+        tabP.className = "flex-1 py-2 rounded-xl text-xs font-bold bg-white text-slate-800 shadow-xs transition-all";
+        tabO.className = "flex-1 py-2 rounded-xl text-xs font-bold text-slate-500 transition-all";
+        if (conP) conP.className = "space-y-3";
+        if (conO) conO.className = "hidden space-y-3";
+        if (addBtn) addBtn.className = "text-xs bg-blue-600 text-white font-semibold px-3 py-1.5 rounded-xl shadow-sm hover:bg-blue-700";
+      } else {
+        tabO.className = "flex-1 py-2 rounded-xl text-xs font-bold bg-white text-slate-800 shadow-xs transition-all";
+        tabP.className = "flex-1 py-2 rounded-xl text-xs font-bold text-slate-500 transition-all";
+        if (conP) conP.className = "hidden space-y-3";
+        if (conO) conO.className = "space-y-3";
+        if (addBtn) addBtn.className = "hidden"; // លាក់ប៊ូតុងបន្ថែមទំនិញពេលនៅផ្ទាំងកុម្ម៉ង់
+        loadAdminOrders();
+      }
+    }
+
+    // ទាញយកបញ្ជីកុម្ម៉ង់ទាំងអស់ពី Server
+    function loadAdminOrders() {
+      var loader = document.getElementById('adminOrdersLoader');
+      if (loader) loader.className = "text-center py-10 text-slate-400 text-xs";
+
+      callBackendPost({ action: "getAllOrdersAdmin", pin: adminPin })
+        .then(function(res) {
+          if (loader) loader.className = "hidden";
+          allAdminOrders = (res && res.orders) ? res.orders : [];
+          renderAdminOrdersList(allAdminOrders);
+        })
+        .catch(function(err) {
+          if (loader) {
+            loader.innerHTML = '<p class="text-rose-500 text-xs py-4">កំហុសទាញទិន្នន័យ៖ ' + err.message + '</p>';
+          }
+        });
+    }
+
+    // បង្ហាញកាតកុម្ម៉ង់នីមួយៗ និង Dropdown ប្តូរស្ថានភាព (Status)
+    function renderAdminOrdersList(orders) {
+      var container = document.getElementById('adminOrdersList');
+      if (!container) return;
+      container.innerHTML = '';
+
+      if (!orders || orders.length === 0) {
+        container.innerHTML = '<p class="text-center text-xs text-slate-400 py-10">មិនទាន់មានការកុម្ម៉ង់ទិញនៅឡើយទេ</p>';
+        return;
+      }
+
+      for (var i = 0; i < orders.length; i++) {
+        (function(ord) {
+          var card = document.createElement('div');
+          card.className = "bg-white p-3.5 rounded-2xl border border-slate-200 shadow-sm space-y-2.5 text-xs";
+
+          // ១. បន្ទាត់លើ៖ លេខកូដកុម្ម៉ង់ និង កាលបរិច្ឆេទ
+          var top = document.createElement('div');
+          top.className = "flex justify-between items-center border-b border-slate-100 pb-2";
+          top.innerHTML = '<span class="font-bold font-mono text-blue-600 text-xs select-all">' + ord.orderId + '</span>' +
+                          '<span class="text-[10px] text-slate-400">' + ord.date + '</span>';
+          card.appendChild(top);
+
+          // ២. ព័ត៌មានអតិថិជន (ឈ្មោះ, Telegram, ទូរសព្ទ, ទីតាំង)
+          var custInfo = document.createElement('div');
+          custInfo.className = "text-[11px] space-y-1 text-slate-600 bg-slate-50/60 p-2 rounded-xl border border-slate-100";
+          var tgDisplay = ord.tgUsername ? ('<a href="https://t.me/' + ord.tgUsername + '" target="_blank" class="text-blue-500 font-semibold underline">@' + ord.tgUsername + '</a>') : '<span class="text-slate-400">គ្មាន</span>';
+          var phoneCall = ord.phone ? ('<a href="tel:' + ord.phone + '" class="text-blue-600 font-bold underline">' + ord.phone + ' 📞</a>') : 'N/A';
+
+          custInfo.innerHTML = '<div>👤 <b>ភ្ញៀវ៖</b> ' + ord.customerName + ' | TG: ' + tgDisplay + '</div>' +
+                               '<div>📞 <b>ទូរសព្ទ៖</b> ' + phoneCall + '</div>' +
+                               '<div>📍 <b>ទីតាំង៖</b> ' + ord.location + '</div>';
+          card.appendChild(custInfo);
+
+          // ៣. បញ្ជីទំនិញដែលបានកុម្ម៉ង់
+          var itemsBox = document.createElement('div');
+          itemsBox.className = "bg-white p-2.5 rounded-xl text-[11px] text-slate-700 whitespace-pre-line border border-slate-200/80 leading-relaxed font-sans";
+          itemsBox.innerText = ord.items;
+          card.appendChild(itemsBox);
+
+          // ៤. តម្លៃសរុប និង Dropdown ប្តូរស្ថានភាពការងារ
+          var bottom = document.createElement('div');
+          bottom.className = "flex justify-between items-center pt-1";
+          bottom.innerHTML = '<div class="leading-none">' +
+                               '<span class="text-[10px] text-slate-400 block">តម្លៃសរុប</span>' +
+                               '<span class="font-black text-sm text-blue-600">$' + ord.totalPrice.toFixed(2) + '</span>' +
+                             '</div>';
+
+          var select = document.createElement('select');
+          select.className = "text-xs border border-slate-300 rounded-xl px-2.5 py-1.5 bg-white font-bold outline-none shadow-xs text-slate-700 cursor-pointer focus:ring-2 focus:ring-blue-500";
+          
+          var statuses = [
+            "🟡 រង់ចាំពិនិត្យ (Pending)",
+            "🔵 កំពុងព្រីន (Printing)",
+            "🟣 កំពុងដឹកជញ្ជូន (Shipping)",
+            "🟢 បានបញ្ចប់ (Completed)",
+            "🔴 បានបោះបង់ (Canceled)"
+          ];
+
+          for (var s = 0; s < statuses.length; s++) {
+            var opt = document.createElement('option');
+            opt.value = statuses[s];
+            opt.innerText = statuses[s];
+            if (ord.status && (ord.status.indexOf(statuses[s].split(" ")[1]) !== -1 || ord.status === statuses[s])) {
+              opt.selected = true;
+            }
+            select.appendChild(opt);
+          }
+
+          select.onchange = function() {
+            var chosen = this.value;
+            select.disabled = true;
+            callBackendPost({ action: "updateOrderStatus", pin: adminPin, orderId: ord.orderId, newStatus: chosen })
+              .then(function() {
+                select.disabled = false;
+                ord.status = chosen;
+              })
+              .catch(function(err) {
+                select.disabled = false;
+                alert("កំហុសកែប្រែស្ថានភាព៖ " + err.message);
+              });
+          };
+
+          bottom.appendChild(select);
+          card.appendChild(bottom);
+          container.appendChild(card);
+        })(orders[i]);
       }
     }
 
