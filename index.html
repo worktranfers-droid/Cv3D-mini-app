@@ -1451,13 +1451,30 @@
           price.className = "text-[11px] text-blue-600 font-bold";
           price.innerText = "តម្លៃលក់៖ $" + p.price.toFixed(2);
 
-          // ស្វែងរកទិន្នន័យពី Sheet1 តាម ID មុន បើគ្មានទើបតាមឈ្មោះ
+          // ១. ស្វែងរកទិន្នន័យពី Sheet1 តាម Product ID មុន បើគ្មានទើបតាម Title
           var idKey = (p.id || "").trim();
           var titleKey = (p.title || "").trim().toLowerCase();
           var calc = adminCostData[idKey] || adminCostData[titleKey];
 
+          // ២. បង្កើតស្លាកបង្ហាញព័ត៌មានថ្លៃដើម និងប្រាក់ចំណេញ
           var costInfo = document.createElement('div');
           costInfo.className = "flex flex-wrap items-center gap-1.5 mt-1 text-[10px]";
+
+          if (calc && calc.totalCost > 0) {
+            costInfo.innerHTML = 
+              '<span class="text-slate-600 bg-slate-100 border border-slate-200 px-1.5 py-0.5 rounded-md font-medium">ថ្លៃដើម៖ $' + calc.totalCost.toFixed(2) + '</span>' +
+              '<span class="text-emerald-700 bg-emerald-50 border border-emerald-200 px-1.5 py-0.5 rounded-md font-bold">ចំណេញ៖ $' + calc.estimatedProfit.toFixed(2) + '</span>' +
+              '<span class="text-slate-400 text-[9px]">(' + calc.printTime + 'h | ' + calc.weight + 'g)</span>';
+          } else {
+            costInfo.innerHTML = '<span class="text-slate-300 text-[9px] italic">មិនទាន់មានទិន្នន័យក្នុង Sheet1</span>';
+          }
+
+          infoDiv.appendChild(titleWrap);
+          infoDiv.appendChild(price);
+          infoDiv.appendChild(costInfo); // បន្ថែមស្លាកថ្លៃដើមចូលក្នុងកាតទំនិញ
+
+          leftDiv.appendChild(imgDiv);
+          leftDiv.appendChild(infoDiv);
 
           if (calc && calc.totalCost > 0) {
             costInfo.innerHTML = 
