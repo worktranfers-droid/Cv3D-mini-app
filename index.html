@@ -1451,8 +1451,8 @@
           price.className = "text-[11px] text-blue-600 font-bold";
           price.innerText = "តម្លៃលក់៖ $" + p.price.toFixed(2);
 
-          // ស្វែងរកទិន្នន័យគណនាពី Sheet1 ដោយផ្គូផ្គងឈ្មោះផលិតផល
-          var lookupKey = (p.title || "").trim().toLowerCase();
+          // ស្វែងរកទិន្នន័យពី Sheet1 តាមរយៈ Product ID (P-001, P-002...)
+          var lookupKey = (p.id || "").trim();
           var calc = adminCostData[lookupKey];
 
           var costInfo = document.createElement('div');
