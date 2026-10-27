@@ -204,6 +204,16 @@
         <div id="sizeContainer" class="flex gap-2"></div>
       </div>
 
+      <!-- ផ្នែកសម្រាប់ទំនិញ Custom (បង្ហាញតែពេលទំនិញជា Custom) -->
+      <div id="custCustomSection" class="hidden mb-4 bg-blue-50/70 p-3 rounded-2xl border border-blue-200 space-y-2">
+        <div class="flex justify-between items-center">
+          <label class="text-xs font-bold text-blue-900">✍️ បញ្ចូលឈ្មោះ/អក្សរដែលចង់ឆ្លាក់៖ *</label>
+          <span id="custCustomFeeBadge" class="text-[10px] font-bold bg-blue-200 text-blue-800 px-2 py-0.5 rounded-full hidden"></span>
+        </div>
+        <input id="custCustomNameInput" type="text" placeholder="ឧ. Milo, Lucky, ឬឈ្មោះរបស់អ្នក..." class="w-full px-3 py-2 bg-white border border-blue-300 rounded-xl text-xs outline-none focus:ring-2 focus:ring-blue-500 shadow-xs">
+        <p class="text-[10px] text-slate-400 italic">* សូមពិនិត្យអក្ខរាវិរុទ្ធឈ្មោះឱ្យបានត្រឹមត្រូវមុនពេលកុម្ម៉ង់</p>
+      </div>
+
       <div class="flex justify-between items-center mb-6">
         <label id="lblSelectQty" class="text-xs font-bold text-slate-700">ចំនួន (Quantity):</label>
         <div class="flex items-center gap-3 bg-slate-100 rounded-xl p-1">
@@ -386,6 +396,17 @@
         <div>
           <label class="block text-xs font-semibold text-slate-600 mb-1">ជម្រើសទំហំ (បំបែកដោយក្បៀស ,)</label>
           <input id="addSizes" type="text" placeholder="Standard, Giant" class="w-full border border-slate-300 p-2 rounded-xl text-xs outline-none">
+        </div>
+        <!-- កំណត់ថាជាទំនិញ Custom ឬអត់ -->
+        <div class="bg-amber-50 p-3 rounded-2xl border border-amber-200 space-y-2">
+          <label class="flex items-center gap-2 cursor-pointer">
+            <input id="addIsCustom" type="checkbox" onchange="toggleCustomFeeInput()" class="w-4 h-4 text-blue-600 rounded">
+            <span class="text-xs font-bold text-amber-900">🛠️ ទំនិញ Custom (ឆ្លាក់ឈ្មោះ/រៀបចំពិសេស)</span>
+          </label>
+          <div id="customFeeContainer" class="hidden pt-1">
+            <label class="block text-[11px] font-semibold text-amber-800 mb-1">ថ្លៃសេវាឆ្លាក់/បន្ថែម ($)</label>
+            <input id="addCustomFee" type="number" step="0.5" placeholder="ឧ. 1.00 (ដាក់ 0 បើមិនគិតថ្លៃបន្ថែម)" class="w-full border border-amber-300 p-2 rounded-xl text-xs bg-white outline-none">
+          </div>
         </div>
         
         <button id="saveProdBtn" type="button" onclick="saveProductData()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-2xl text-xs mt-2 shadow-md">
@@ -759,6 +780,24 @@
             sizeBox.appendChild(btn);
           })(p.sizes[s], s);
         }
+      // ត្រួតពិនិត្យទំនិញ Custom
+      var customSection = document.getElementById('custCustomSection');
+      var nameInput = document.getElementById('custCustomNameInput');
+      var feeBadge = document.getElementById('custCustomFeeBadge');
+      if (nameInput) nameInput.value = '';
+
+      if (p.isCustom) {
+        if (customSection) customSection.className = "mb-4 bg-blue-50/70 p-3 rounded-2xl border border-blue-200 space-y-2 block";
+        if (feeBadge) {
+          if (p.customFee > 0) {
+            feeBadge.innerText = "+$" + Number(p.customFee).toFixed(2) + " សេវាឆ្លាក់";
+            feeBadge.className = "text-[10px] font-bold bg-blue-200 text-blue-800 px-2 py-0.5 rounded-full inline-block";
+          } else {
+            feeBadge.className = "hidden";
+          }
+        }
+      } else {
+        if (customSection) customSection.className = "hidden";
       }
 
       var modal = document.getElementById('productModal');
@@ -945,9 +984,31 @@
     function addToCart() {
       if (!selectedProduct) return;
 
+      var customText = "";
+      var finalUnitPrice = selectedProduct.price;
+
+      // បើសិនជាទំនិញប្រភេទ Custom តម្រូវឱ្យវាយឈ្មោះជាមុន
+      if (selectedProduct.isCustom) {
+        var nameInput = document.getElementById('custCustomNameInput');
+        customText = nameInput ? nameInput.value.trim() : "";
+        if (!customText) {
+          alert("សូមបញ្ចូលឈ្មោះ ឬអក្សរដែលអ្នកចង់ឆ្លាក់ជាមុនសិន!");
+          if (nameInput) nameInput.focus();
+          return;
+        }
+        if (selectedProduct.customFee > 0) {
+          finalUnitPrice += parseFloat(selectedProduct.customFee);
+        }
+      }
+
+      var itemTitleDisplay = selectedProduct.title;
+      if (customText) {
+        itemTitleDisplay += " (ឆ្លាក់ឈ្មោះ: " + customText + ")";
+      }
+
       var existingIndex = -1;
       for (var i = 0; i < cart.length; i++) {
-        if (cart[i].id === selectedProduct.id && cart[i].color === selectedColor && cart[i].size === selectedSize) {
+        if (cart[i].id === selectedProduct.id && cart[i].color === selectedColor && cart[i].size === selectedSize && cart[i].customText === customText) {
           existingIndex = i;
           break;
         }
@@ -958,20 +1019,21 @@
       } else {
         cart.push({
           id: selectedProduct.id,
-          title: "[" + selectedProduct.id + "] " + selectedProduct.title,
-          price: selectedProduct.price,
+          title: "[" + selectedProduct.id + "] " + itemTitleDisplay,
+          price: finalUnitPrice,
           image: selectedProduct.image,
           color: selectedColor,
           size: selectedSize,
+          customText: customText,
           qty: quantity
         });
-      } // <--- ត្រូវមានសញ្ញា } នេះដើម្បីបិទ else
+      }
 
       updateCartBadge();
       closeModal();
       openCartModal();
     }
-
+      
     function buyNowDirectly() {
       addToCart();
     }
@@ -1846,6 +1908,12 @@
       if (modal) modal.className = "fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden flex items-center justify-center p-4";
     }
 
+    function toggleCustomFeeInput() {
+      var isCheck = document.getElementById('addIsCustom') ? document.getElementById('addIsCustom').checked : false;
+      var feeBox = document.getElementById('customFeeContainer');
+      if (feeBox) feeBox.className = isCheck ? "pt-1 block" : "hidden";
+    }  
+
     function saveProductData() {
       var editId = document.getElementById('editProductId').value;
       var p = {
@@ -1857,7 +1925,9 @@
         image: document.getElementById('addImage').value.trim(),
         colors: document.getElementById('addColors').value.trim(),
         sizes: document.getElementById('addSizes').value.trim() || "Standard",
-        badge: document.getElementById('addBadge').value
+        badge: document.getElementById('addBadge').value,
+        isCustom: document.getElementById('addIsCustom').checked,
+        customFee: parseFloat(document.getElementById('addCustomFee').value) || 0
       };
 
       if (!p.title || p.price <= 0) {
