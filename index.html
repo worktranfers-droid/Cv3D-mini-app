@@ -219,6 +219,7 @@
           class="w-full px-3 py-2 bg-white border border-blue-300 rounded-xl text-xs outline-none focus:ring-2 focus:ring-blue-500 shadow-xs"
         >
         
+        <!-- បន្ទាត់ពន្យល់ និងរាប់ចំនួនតួអក្សរជាក់ស្តែង -->
         <div class="flex justify-between items-center text-[11px] pt-0.5">
           <span id="charCountNotice" class="text-slate-500 font-medium"></span>
           <span id="charCountDisplay" class="font-mono font-bold text-blue-600 bg-white px-2 py-0.5 rounded-md border border-blue-100">0 តួអក្សរ</span>
@@ -798,22 +799,13 @@
       // ត្រួតពិនិត្យទំនិញ Custom
       var customSection = document.getElementById('custCustomSection');
       var nameInput = document.getElementById('custCustomNameInput');
-      var feeBadge = document.getElementById('custCustomFeeBadge');
       if (nameInput) nameInput.value = '';
 
       if (p.isCustom) {
         if (customSection) customSection.className = "mb-4 bg-blue-50/70 p-3 rounded-2xl border border-blue-200 space-y-2 block";
-        if (feeBadge) {
-          if (p.customFee > 0) {
-            feeBadge.innerText = "+$" + Number(p.customFee).toFixed(2) + " សេវាឆ្លាក់";
-            feeBadge.className = "text-[10px] font-bold bg-blue-200 text-blue-800 px-2 py-0.5 rounded-full inline-block";
-          } else {
-            feeBadge.className = "hidden";
-          }
-        }
+        updateModalLivePrice(); // ហៅឱ្យ Refresh ទិន្នន័យតម្លៃ និងទម្រង់ភ្លាមៗ
       } else {
         if (customSection) customSection.className = "hidden";
-        updateModalLivePrice();
       }
 
       var modal = document.getElementById('productModal');
@@ -896,7 +888,7 @@
       }
     }
     
-    // អនុគមន៍គណនាតម្លៃបង្ហាញភ្លាមៗពេលភ្ញៀវវាយបញ្ចូលឈ្មោះ
+    /// អនុគមន៍គណនាតម្លៃ និង Refresh បង្ហាញលើអេក្រង់ភ្លាមៗ
     function updateModalLivePrice() {
       if (!selectedProduct) return;
 
@@ -913,29 +905,30 @@
       var totalFee = 0;
 
       if (selectedProduct.isCustom) {
-        var mode = selectedProduct.customMode || "flat";
+        // ឆែកមើលរបៀបគិតថ្លៃ (បើ per_char ឬឈ្មោះមានពាក្យ Keychain គឺគិតតាមតួអក្សរ)
+        var isPerChar = (selectedProduct.customMode === 'per_char') || 
+                        ((selectedProduct.title || '').toLowerCase().indexOf('keychain') !== -1);
 
-        // ១. គិតតាមចំនួនតួអក្សរ (Per Character ដូចជា Keychain)
-        if (mode === 'per_char') {
+        if (isPerChar) {
+          // ១. ករណី Keychain (Per Character)
           var baseLimit = 5;
           var rate = Number(selectedProduct.customFee) || 0.50;
 
           if (feeBadge) {
-            feeBadge.innerText = "+$" + rate.toFixed(2) + "/អក្សរ (លើស ៥)";
+            feeBadge.innerText = "+$" + rate.toFixed(2) + "/អក្សរ (លើស " + baseLimit + ")";
             feeBadge.className = "text-[10px] font-bold bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full inline-block";
           }
 
           if (charLength <= baseLimit) {
             totalFee = 0;
-            if (noticeEl) noticeEl.innerHTML = '<span class="text-emerald-600">✓ ឥតគិតថ្លៃ (ក្នុងកម្រិត ' + baseLimit + ' អក្សរ)</span>';
+            if (noticeEl) noticeEl.innerHTML = '<span class="text-emerald-600 font-medium">✓ ឥតគិតថ្លៃ (ក្នុងកម្រិត ' + baseLimit + ' អក្សរ)</span>';
           } else {
             var extraChars = charLength - baseLimit;
             totalFee = extraChars * rate;
             if (noticeEl) noticeEl.innerHTML = '<span class="text-amber-600 font-bold">លើស ' + extraChars + ' អក្សរ (+ $' + totalFee.toFixed(2) + ')</span>';
           }
-        } 
-        // ២. គិតថ្លៃសេវាថេរ (Flat Fee ដូចជា ចានឆ្កែ)
-        else {
+        } else {
+          // ២. ករណីចានឆ្កែ ឬទំនិញទូទៅ (Flat Fee - ថ្លៃសេវាថេរ)
           var flatRate = Number(selectedProduct.customFee) || 0;
           totalFee = (charLength > 0) ? flatRate : 0;
 
@@ -943,12 +936,17 @@
             feeBadge.innerText = flatRate > 0 ? "+$" + flatRate.toFixed(2) + " សេវាឆ្លាក់" : "ឥតគិតថ្លៃ";
             feeBadge.className = "text-[10px] font-bold bg-blue-200 text-blue-800 px-2 py-0.5 rounded-full inline-block";
           }
-          if (noticeEl) noticeEl.innerHTML = '<span class="text-slate-500">* ថ្លៃសេវាឆ្លាក់ស្លាកឈ្មោះ (ថេរ)</span>';
+          if (noticeEl) {
+            noticeEl.innerHTML = (charLength > 0) 
+              ? '<span class="text-blue-600 font-semibold">✓ បានបូកថ្លៃសេវាឆ្លាក់ថេរ</span>' 
+              : '<span class="text-slate-500">* ថ្លៃសេវាឆ្លាក់ស្លាកឈ្មោះ (ថេរ)</span>';
+          }
         }
       }
 
       if (countEl) countEl.innerText = charLength + " តួអក្សរ";
 
+      // កែប្រែតម្លៃលោតភ្លាមៗលើអេក្រង់
       var currentUnitPrice = basePrice + totalFee;
       if (priceEl) priceEl.innerText = '$' + currentUnitPrice.toFixed(2);
     }
