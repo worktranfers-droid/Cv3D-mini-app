@@ -780,6 +780,8 @@
             sizeBox.appendChild(btn);
           })(p.sizes[s], s);
         }
+      } // <--- សញ្ញា } នេះគឺបិទ if (sizeBox) ដែលពីមុនបានភ្លេចដាក់
+
       // ត្រួតពិនិត្យទំនិញ Custom
       var customSection = document.getElementById('custCustomSection');
       var nameInput = document.getElementById('custCustomNameInput');
@@ -1869,6 +1871,11 @@
       if (el = document.getElementById('addColors')) el.value = '';
       if (el = document.getElementById('addSizes')) el.value = '';
       if (el = document.getElementById('addBadge')) el.value = '';
+      
+      // Reset Custom Checkbox & Fee
+      if (document.getElementById('addIsCustom')) document.getElementById('addIsCustom').checked = false;
+      if (document.getElementById('addCustomFee')) document.getElementById('addCustomFee').value = '';
+      toggleCustomFeeInput();
 
       if (el = document.getElementById('modalFormTitle')) el.innerText = "➕ បន្ថែមផលិតផលថ្មី";
       if (el = document.getElementById('saveProdBtn')) el.innerText = "💾 រក្សាទុកចូល Google Sheet";
@@ -1897,12 +1904,17 @@
       if (el = document.getElementById('addSizes')) el.value = p.sizes || '';
       if (el = document.getElementById('addBadge')) el.value = p.badge || '';
 
+      // បង្ហាញស្ថានភាព Custom ចាស់ពេល Edit
+      if (document.getElementById('addIsCustom')) document.getElementById('addIsCustom').checked = !!p.isCustom;
+      if (document.getElementById('addCustomFee')) document.getElementById('addCustomFee').value = p.customFee || '';
+      toggleCustomFeeInput();
+
       if (el = document.getElementById('modalFormTitle')) el.innerText = "✏️ កែប្រែព័ត៌មានផលិតផល";
       if (el = document.getElementById('saveProdBtn')) el.innerText = "💾 រក្សាទុកការកែប្រែ (Update)";
       var modal = document.getElementById('addModal');
       if (modal) modal.className = "fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4";
     }
-
+    
     function closeAddModal() {
       var modal = document.getElementById('addModal');
       if (modal) modal.className = "fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden flex items-center justify-center p-4";
