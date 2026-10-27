@@ -204,21 +204,24 @@
         <div id="sizeContainer" class="flex gap-2"></div>
       </div>
 
-      <!-- ផ្នែកសម្រាប់ទំនិញ Custom (បង្ហាញតែពេលទំនិញជា Custom) -->
+      <!-- ផ្នែកសម្រាប់ទំនិញ Custom -->
       <div id="custCustomSection" class="hidden mb-4 bg-blue-50/70 p-3 rounded-2xl border border-blue-200 space-y-2">
         <div class="flex justify-between items-center">
           <label class="text-xs font-bold text-blue-900">✍️ បញ្ចូលឈ្មោះ/អក្សរដែលចង់ឆ្លាក់៖ *</label>
-          <span id="custCustomFeeBadge" class="text-[10px] font-bold bg-blue-200 text-blue-800 px-2 py-0.5 rounded-full hidden"></span>
+          <span id="custCustomFeeBadge" class="text-[10px] font-bold bg-blue-200 text-blue-800 px-2 py-0.5 rounded-full"></span>
         </div>
-        <input id="custCustomNameInput" type="text" oninput="updateModalLivePrice()" placeholder="ឧ. Milo, Lucky, ឬឈ្មោះរបស់អ្នក..." class="w-full px-3 py-2 bg-white border border-blue-300 rounded-xl text-xs outline-none focus:ring-2 focus:ring-blue-500 shadow-xs">        <p class="text-[10px] text-slate-400 italic">* សូមពិនិត្យអក្ខរាវិរុទ្ធឈ្មោះឱ្យបានត្រឹមត្រូវមុនពេលកុម្ម៉ង់</p>
-      </div>
-
-      <div class="flex justify-between items-center mb-6">
-        <label id="lblSelectQty" class="text-xs font-bold text-slate-700">ចំនួន (Quantity):</label>
-        <div class="flex items-center gap-3 bg-slate-100 rounded-xl p-1">
-          <button type="button" onclick="changeQty(-1)" class="w-7 h-7 bg-white rounded-lg shadow-sm font-bold text-slate-700">-</button>
-          <span id="qtyVal" class="text-sm font-bold text-slate-800 w-6 text-center">1</span>
-          <button type="button" onclick="changeQty(1)" class="w-7 h-7 bg-white rounded-lg shadow-sm font-bold text-slate-700">+</button>
+        
+        <input 
+          id="custCustomNameInput" 
+          type="text" 
+          oninput="updateModalLivePrice()" 
+          placeholder="ឧ. Milo, Lucky, ឬឈ្មោះរបស់អ្នក..." 
+          class="w-full px-3 py-2 bg-white border border-blue-300 rounded-xl text-xs outline-none focus:ring-2 focus:ring-blue-500 shadow-xs"
+        >
+        
+        <div class="flex justify-between items-center text-[11px] pt-0.5">
+          <span id="charCountNotice" class="text-slate-500 font-medium"></span>
+          <span id="charCountDisplay" class="font-mono font-bold text-blue-600 bg-white px-2 py-0.5 rounded-md border border-blue-100">0 តួអក្សរ</span>
         </div>
       </div>
 
@@ -396,15 +399,26 @@
           <label class="block text-xs font-semibold text-slate-600 mb-1">ជម្រើសទំហំ (បំបែកដោយក្បៀស ,)</label>
           <input id="addSizes" type="text" placeholder="Standard, Giant" class="w-full border border-slate-300 p-2 rounded-xl text-xs outline-none">
         </div>
-        <!-- កំណត់ថាជាទំនិញ Custom ឬអត់ -->
+        <!-- កំណត់ថាជាទំនិញ Custom -->
         <div class="bg-amber-50 p-3 rounded-2xl border border-amber-200 space-y-2">
           <label class="flex items-center gap-2 cursor-pointer">
             <input id="addIsCustom" type="checkbox" onchange="toggleCustomFeeInput()" class="w-4 h-4 text-blue-600 rounded">
             <span class="text-xs font-bold text-amber-900">🛠️ ទំនិញ Custom (ឆ្លាក់ឈ្មោះ/រៀបចំពិសេស)</span>
           </label>
-          <div id="customFeeContainer" class="hidden pt-1">
-            <label class="block text-[11px] font-semibold text-amber-800 mb-1">ថ្លៃសេវាឆ្លាក់/បន្ថែម ($)</label>
-            <input id="addCustomFee" type="number" step="0.5" placeholder="ឧ. 1.00 (ដាក់ 0 បើមិនគិតថ្លៃបន្ថែម)" class="w-full border border-amber-300 p-2 rounded-xl text-xs bg-white outline-none">
+          
+          <div id="customFeeContainer" class="hidden pt-1 space-y-2">
+            <div>
+              <label class="block text-[11px] font-semibold text-amber-800 mb-1">របៀបគិតថ្លៃសេវា Custom៖</label>
+              <select id="addCustomMode" onchange="updateCustomModeUI()" class="w-full border border-amber-300 p-2 rounded-xl text-xs bg-white outline-none">
+                <option value="flat">ថ្លៃសេវាថេរ (Flat Fee - សម្រាប់ចានឆ្កែ/ទំនិញទូទៅ)</option>
+                <option value="per_char">គិតតាមចំនួនអក្សរ (Per Char - សម្រាប់ Keychain)</option>
+              </select>
+            </div>
+
+            <div>
+              <label id="lblCustomFeeVal" class="block text-[11px] font-semibold text-amber-800 mb-1">ថ្លៃសេវាថេរ ($)</label>
+              <input id="addCustomFee" type="number" step="0.1" placeholder="ឧ. 1.50 (ដាក់ 0 បើមិនគិតថ្លៃបន្ថែម)" class="w-full border border-amber-300 p-2 rounded-xl text-xs bg-white outline-none">
+            </div>
           </div>
         </div>
         
@@ -869,6 +883,19 @@
       }
     }
 
+    function updateCustomModeUI() {
+      var mode = document.getElementById('addCustomMode').value;
+      var lbl = document.getElementById('lblCustomFeeVal');
+      var input = document.getElementById('addCustomFee');
+      if (mode === 'per_char') {
+        if (lbl) lbl.innerText = "ថ្លៃបន្ថែមក្នុង ១ អក្សរ ($) (គិតចាប់ពីអក្សរទី ៦ ឡើងទៅ)";
+        if (input) input.placeholder = "ឧ. 0.50";
+      } else {
+        if (lbl) lbl.innerText = "ថ្លៃសេវាថេរ ($)";
+        if (input) input.placeholder = "ឧ. 1.50 ឬ 2.00";
+      }
+    }
+    
     // អនុគមន៍គណនាតម្លៃបង្ហាញភ្លាមៗពេលភ្ញៀវវាយបញ្ចូលឈ្មោះ
     function updateModalLivePrice() {
       if (!selectedProduct) return;
@@ -876,15 +903,54 @@
       var basePrice = Number(selectedProduct.price) || 0;
       var nameInput = document.getElementById('custCustomNameInput');
       var customText = nameInput ? nameInput.value.trim() : "";
-      
-      // ប្រសិនបើជាទំនិញ Custom ហើយភ្ញៀវបានវាយអក្សរ នោះនឹងបូកថ្លៃសេវាបន្ថែម
-      var fee = (selectedProduct.isCustom && customText.length > 0) ? (Number(selectedProduct.customFee) || 0) : 0;
-      var currentUnitPrice = basePrice + fee;
+      var charLength = customText.length;
 
+      var noticeEl = document.getElementById('charCountNotice');
+      var countEl = document.getElementById('charCountDisplay');
       var priceEl = document.getElementById('modalPrice');
-      if (priceEl) {
-        priceEl.innerText = '$' + currentUnitPrice.toFixed(2);
+      var feeBadge = document.getElementById('custCustomFeeBadge');
+
+      var totalFee = 0;
+
+      if (selectedProduct.isCustom) {
+        var mode = selectedProduct.customMode || "flat";
+
+        // ១. គិតតាមចំនួនតួអក្សរ (Per Character ដូចជា Keychain)
+        if (mode === 'per_char') {
+          var baseLimit = 5;
+          var rate = Number(selectedProduct.customFee) || 0.50;
+
+          if (feeBadge) {
+            feeBadge.innerText = "+$" + rate.toFixed(2) + "/អក្សរ (លើស ៥)";
+            feeBadge.className = "text-[10px] font-bold bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full inline-block";
+          }
+
+          if (charLength <= baseLimit) {
+            totalFee = 0;
+            if (noticeEl) noticeEl.innerHTML = '<span class="text-emerald-600">✓ ឥតគិតថ្លៃ (ក្នុងកម្រិត ' + baseLimit + ' អក្សរ)</span>';
+          } else {
+            var extraChars = charLength - baseLimit;
+            totalFee = extraChars * rate;
+            if (noticeEl) noticeEl.innerHTML = '<span class="text-amber-600 font-bold">លើស ' + extraChars + ' អក្សរ (+ $' + totalFee.toFixed(2) + ')</span>';
+          }
+        } 
+        // ២. គិតថ្លៃសេវាថេរ (Flat Fee ដូចជា ចានឆ្កែ)
+        else {
+          var flatRate = Number(selectedProduct.customFee) || 0;
+          totalFee = (charLength > 0) ? flatRate : 0;
+
+          if (feeBadge) {
+            feeBadge.innerText = flatRate > 0 ? "+$" + flatRate.toFixed(2) + " សេវាឆ្លាក់" : "ឥតគិតថ្លៃ";
+            feeBadge.className = "text-[10px] font-bold bg-blue-200 text-blue-800 px-2 py-0.5 rounded-full inline-block";
+          }
+          if (noticeEl) noticeEl.innerHTML = '<span class="text-slate-500">* ថ្លៃសេវាឆ្លាក់ស្លាកឈ្មោះ (ថេរ)</span>';
+        }
       }
+
+      if (countEl) countEl.innerText = charLength + " តួអក្សរ";
+
+      var currentUnitPrice = basePrice + totalFee;
+      if (priceEl) priceEl.innerText = '$' + currentUnitPrice.toFixed(2);
     }
 
     // --- PINCH TO ZOOM ---
@@ -1007,7 +1073,7 @@
       var customText = "";
       var finalUnitPrice = selectedProduct.price;
 
-      // បើសិនជាទំនិញប្រភេទ Custom តម្រូវឱ្យវាយឈ្មោះជាមុន
+      // ពិនិត្យមើលទំនិញប្រភេទ Custom ពេលចុចដាក់ចូលកន្ត្រក
       if (selectedProduct.isCustom) {
         var nameInput = document.getElementById('custCustomNameInput');
         customText = nameInput ? nameInput.value.trim() : "";
@@ -1016,11 +1082,17 @@
           if (nameInput) nameInput.focus();
           return;
         }
-        if (selectedProduct.customFee > 0) {
-          finalUnitPrice += parseFloat(selectedProduct.customFee);
+
+        var mode = selectedProduct.customMode || "flat";
+        if (mode === 'per_char') {
+          if (customText.length > 5) {
+            var rate = Number(selectedProduct.customFee) || 0.50;
+            finalUnitPrice += (customText.length - 5) * rate;
+          }
+        } else {
+          finalUnitPrice += (Number(selectedProduct.customFee) || 0);
         }
       }
-
       var itemTitleDisplay = selectedProduct.title;
       if (customText) {
         itemTitleDisplay += " (ឆ្លាក់ឈ្មោះ: " + customText + ")";
@@ -1892,8 +1964,10 @@
       
       // Reset Custom Checkbox & Fee
       if (document.getElementById('addIsCustom')) document.getElementById('addIsCustom').checked = false;
+      if (document.getElementById('addCustomMode')) document.getElementById('addCustomMode').value = 'flat';
       if (document.getElementById('addCustomFee')) document.getElementById('addCustomFee').value = '';
       toggleCustomFeeInput();
+      updateCustomModeUI();
 
       if (el = document.getElementById('modalFormTitle')) el.innerText = "➕ បន្ថែមផលិតផលថ្មី";
       if (el = document.getElementById('saveProdBtn')) el.innerText = "💾 រក្សាទុកចូល Google Sheet";
@@ -1924,8 +1998,10 @@
 
       // បង្ហាញស្ថានភាព Custom ចាស់ពេល Edit
       if (document.getElementById('addIsCustom')) document.getElementById('addIsCustom').checked = !!p.isCustom;
+      if (document.getElementById('addCustomMode')) document.getElementById('addCustomMode').value = p.customMode || 'flat';
       if (document.getElementById('addCustomFee')) document.getElementById('addCustomFee').value = p.customFee || '';
       toggleCustomFeeInput();
+      updateCustomModeUI();
 
       if (el = document.getElementById('modalFormTitle')) el.innerText = "✏️ កែប្រែព័ត៌មានផលិតផល";
       if (el = document.getElementById('saveProdBtn')) el.innerText = "💾 រក្សាទុកការកែប្រែ (Update)";
@@ -1957,6 +2033,7 @@
         sizes: document.getElementById('addSizes').value.trim() || "Standard",
         badge: document.getElementById('addBadge').value,
         isCustom: document.getElementById('addIsCustom').checked,
+        customMode: document.getElementById('addCustomMode').value,
         customFee: parseFloat(document.getElementById('addCustomFee').value) || 0
       };
 
