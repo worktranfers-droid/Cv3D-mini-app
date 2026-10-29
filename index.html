@@ -265,6 +265,16 @@
         </div>
       </div>
 
+      <!-- ប្រអប់ជ្រើសរើសចំនួន (Quantity Selector) -->
+      <div class="flex items-center justify-between mb-4 bg-slate-50 p-2.5 rounded-2xl border border-slate-100">
+        <label id="lblSelectQty" class="text-xs font-bold text-slate-700">ចំនួន (Quantity):</label>
+        <div class="flex items-center gap-2 bg-white px-2 py-1 rounded-xl border border-slate-200 shadow-xs">
+          <button type="button" onclick="changeQty(-1)" class="w-6 h-6 bg-slate-100 hover:bg-slate-200 rounded-lg font-black text-slate-600 flex items-center justify-center text-xs active:scale-90 transition-all">-</button>
+          <span id="qtyVal" class="text-xs font-black text-slate-800 w-6 text-center">1</span>
+          <button type="button" onclick="changeQty(1)" class="w-6 h-6 bg-slate-100 hover:bg-slate-200 rounded-lg font-black text-slate-600 flex items-center justify-center text-xs active:scale-90 transition-all">+</button>
+        </div>
+      </div>
+      
       <!-- ប៊ូតុងដាក់ចូលកន្ត្រក និងទិញឥឡូវនេះ -->
       <div class="grid grid-cols-2 gap-2.5">
         <button type="button" onclick="addToCart()" class="w-full bg-blue-50 hover:bg-blue-100 text-blue-600 font-bold py-3.5 rounded-2xl border border-blue-200 flex items-center justify-center gap-1.5 active:scale-95 transition-all text-xs">
@@ -929,7 +939,7 @@
         quantity += delta;
         var qEl = document.getElementById('qtyVal');
         if (qEl) qEl.innerText = quantity;
-        updateModalLivePrice(); // ហៅឱ្យគណនា និងប្តូរតម្លៃសរុបតាមចំនួនភ្លាមៗ
+        updateModalLivePrice(); // ហៅឱ្យគណនាតម្លៃសរុបឡើងវិញភ្លាមៗពេលចុច + ឬ -
       }
     }
 
