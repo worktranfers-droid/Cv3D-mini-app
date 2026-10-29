@@ -929,6 +929,7 @@
         quantity += delta;
         var qEl = document.getElementById('qtyVal');
         if (qEl) qEl.innerText = quantity;
+        updateModalLivePrice(); // ហៅឱ្យគណនា និងប្តូរតម្លៃសរុបតាមចំនួនភ្លាមៗ
       }
     }
 
@@ -945,7 +946,7 @@
       }
     }
     
-    /// អនុគមន៍គណនាតម្លៃ និង Refresh បង្ហាញលើអេក្រង់ភ្លាមៗ
+    // អនុគមន៍គណនាតម្លៃ និង Refresh បង្ហាញលើអេក្រង់ភ្លាមៗ (គុណនឹងចំនួន Quantity)
     function updateModalLivePrice() {
       if (!selectedProduct) return;
 
@@ -1000,6 +1001,22 @@
           }
         }
       }
+
+      if (countEl) countEl.innerText = charLength + " តួអក្សរ";
+
+      // គណនាតម្លៃក្នុង ១ ឯកតា រួចគុណនឹងចំនួន Quantity
+      var unitPrice = basePrice + totalFee;
+      var totalProductPrice = unitPrice * (quantity || 1);
+
+      if (priceEl) {
+        if (quantity > 1) {
+          // បង្ហាញតម្លៃសរុប និងមានបញ្ជាក់តម្លៃក្នុង ១ មុខតូចនៅពីមុខ
+          priceEl.innerHTML = '<span class="text-[11px] text-slate-400 font-normal mr-1">($' + unitPrice.toFixed(2) + ' x ' + quantity + ')</span> $' + totalProductPrice.toFixed(2);
+        } else {
+          priceEl.innerText = '$' + totalProductPrice.toFixed(2);
+        }
+      }
+    }
 
       if (countEl) countEl.innerText = charLength + " តួអក្សរ";
 
