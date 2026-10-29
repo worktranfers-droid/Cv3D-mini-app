@@ -199,12 +199,26 @@
             <span class="text-xs font-bold text-indigo-900">🖼️ បង្ហាញ Slide Banner ផ្សព្វផ្សាយ (Promotional Banner)</span>
           </label>
 
-          <div id="bannerInputsBox" class="hidden space-y-1.5 pt-1">
-            <label class="block text-[11px] font-semibold text-indigo-800">Link រូបភាព Banner (បំបែកដោយក្បៀស , បើមានច្រើន)</label>
-            <textarea id="setBannerImages" rows="2" placeholder="https://lh3.googleusercontent.com/..., https://..." class="w-full border border-indigo-300 p-2 rounded-xl text-xs outline-none bg-white font-mono"></textarea>
-            <p class="text-[10px] text-indigo-600">* ទំហំរូបដែលស្អាតបំផុតគឺសមាមាត្រ 16:7 ឬ 2:1 (ឧ. 800x350px)</p>
+          <div id="bannerInputsBox" class="hidden space-y-2 pt-1">
+            <!-- ជម្រើសទី ១៖ រើសរូបភាពផ្ទាល់ពីម៉ាស៊ីន -->
+            <div>
+              <label class="block text-[11px] font-semibold text-indigo-900 mb-1">📁 រើសរូបភាពផ្ទាល់ (Upload ពីម៉ាស៊ីន)៖</label>
+              <input 
+                type="file" 
+                accept="image/*" 
+                onchange="handleDirectImageUpload(event, 'setBannerImages', 'bannerUploadStatus')"
+                class="w-full text-xs text-slate-500 file:mr-2 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-indigo-600 file:text-white hover:file:bg-indigo-700 cursor-pointer bg-white p-1 rounded-xl border border-indigo-200"
+              >
+              <span id="bannerUploadStatus" class="text-[10px] text-blue-600 font-bold hidden mt-1"></span>
+            </div>
+
+            <!-- ជម្រើសទី ២៖ វាយ Link ឬទុកសម្រាប់ទទួល Link ស្វ័យប្រវត្តិ -->
+            <div>
+              <label class="block text-[11px] font-semibold text-indigo-900 mb-1">🔗 ឬ Link រូបភាព Banner (បំបែកដោយក្បៀស , បើមានច្រើន)៖</label>
+              <textarea id="setBannerImages" rows="2" placeholder="https://lh3.googleusercontent.com/..., https://..." class="w-full border border-indigo-300 p-2 rounded-xl text-xs outline-none bg-white font-mono"></textarea>
+              <p class="text-[10px] text-indigo-600">* ទំហំរូបដែលស្អាតបំផុតគឺសមាមាត្រ 16:7 ឬ 2:1 (ឧ. 800x350px)</p>
+            </div>
           </div>
-        </div>
         
         <button type="button" onclick="saveDeliverySettings()" id="btnSaveSettings" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl text-xs shadow-md active:scale-95 transition-all">
           💾 រក្សាទុកការកំណត់
@@ -274,16 +288,6 @@
         <div class="flex justify-between items-center text-[11px] pt-0.5">
           <span id="charCountNotice" class="text-slate-500 font-medium"></span>
           <span id="charCountDisplay" class="font-mono font-bold text-blue-600 bg-white px-2 py-0.5 rounded-md border border-blue-100">0 តួអក្សរ</span>
-        </div>
-      </div>
-
-      <!-- ⬇️ ដាក់បន្ថែមប្លុកនេះនៅត្រង់នេះ ⬇️ -->
-      <div class="flex items-center justify-between mb-4 bg-slate-50 p-2.5 rounded-2xl border border-slate-100">
-        <label id="lblSelectQty" class="text-xs font-bold text-slate-700">ចំនួន (Quantity):</label>
-        <div class="flex items-center gap-2 bg-white px-2 py-1 rounded-xl border border-slate-200 shadow-xs">
-          <button type="button" onclick="changeQty(-1)" class="w-6 h-6 bg-slate-100 hover:bg-slate-200 rounded-lg font-black text-slate-600 flex items-center justify-center text-xs active:scale-90 transition-all">-</button>
-          <span id="qtyVal" class="text-xs font-black text-slate-800 w-6 text-center">1</span>
-          <button type="button" onclick="changeQty(1)" class="w-6 h-6 bg-slate-100 hover:bg-slate-200 rounded-lg font-black text-slate-600 flex items-center justify-center text-xs active:scale-90 transition-all">+</button>
         </div>
       </div>
 
@@ -478,7 +482,17 @@
         </div>
         <div>
           <label class="block text-xs font-semibold text-slate-600 mb-1">Link រូបភាព Drive (បំបែកដោយក្បៀស , បើមានច្រើន)</label>
-          <input id="addImage" type="text" placeholder="https://drive.google.com/file/d/..., https://..." class="w-full border border-slate-300 p-2 rounded-xl text-xs outline-none">
+          <!-- អាចវាយ Link ក៏បាន ឬ Upload រូបភាពផលិតផលផ្ទាល់ក៏បាន -->
+        <div class="space-y-1.5">
+          <label class="block text-xs font-semibold text-slate-600">រូបភាពផលិតផល (Link Drive ឬ Upload ផ្ទាល់)</label>
+          <input 
+            type="file" 
+            accept="image/*" 
+            onchange="handleDirectImageUpload(event, 'addImage', 'prodUploadStatus')"
+            class="w-full text-xs text-slate-500 file:mr-2 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700 cursor-pointer bg-slate-50 p-1 rounded-xl border border-slate-200"
+          >
+          <span id="prodUploadStatus" class="text-[10px] text-blue-600 font-bold hidden"></span>
+          <input id="addImage" type="text" placeholder="https://drive.google.com/file/d/..., https://..." class="w-full border border-slate-300 p-2 rounded-xl text-xs outline-none mt-1">
         </div>
         <div>
           <label class="block text-xs font-semibold text-slate-600 mb-1">ជម្រើសពណ៌ (បំបែកដោយក្បៀស ,)</label>
@@ -2116,6 +2130,54 @@
         if (typeof toggleBannerInputUI === "function") toggleBannerInputUI();
       }
     } 
+
+    // អនុគមន៍បម្លែងរូបភាព និង Upload ចូល Google Drive ស្វ័យប្រវត្តិ
+    function handleDirectImageUpload(event, targetInputId, statusSpanId) {
+      var file = event.target.files[0];
+      if (!file) return;
+
+      var statusSpan = document.getElementById(statusSpanId);
+      if (statusSpan) {
+        statusSpan.className = "text-[10px] text-blue-600 font-bold block mt-1";
+        statusSpan.innerText = "⏳ កំពុង Upload ចូល Google Drive សូមរង់ចាំបន្តិច...";
+      }
+
+      var reader = new FileReader();
+      reader.onload = function(e) {
+        var base64Data = e.target.result;
+
+        callBackendPost({
+          action: "uploadImage",
+          pin: adminPin,
+          base64Data: base64Data,
+          fileName: file.name
+        })
+        .then(function(res) {
+          if (res && res.success) {
+            if (statusSpan) {
+              statusSpan.className = "text-[10px] text-emerald-600 font-bold block mt-1";
+              statusSpan.innerText = "✓ Upload ជោគជ័យ និងបានបំពេញ Link រួចរាល់!";
+            }
+            var targetInput = document.getElementById(targetInputId);
+            if (targetInput) {
+              if (targetInput.value.trim() === "") {
+                targetInput.value = res.imageUrl;
+              } else {
+                targetInput.value += ", " + res.imageUrl;
+              }
+            }
+          } else {
+            alert("❌ មិនអាច Upload រូបភាពបាន៖ " + (res.message || ""));
+            if (statusSpan) statusSpan.className = "hidden";
+          }
+        })
+        .catch(function(err) {
+          alert("Error: " + err.message);
+          if (statusSpan) statusSpan.className = "hidden";
+        });
+      };
+      reader.readAsDataURL(file);
+    }
     
     // អនុគមន៍រក្សាទុក Settings ពី Page Admin ចូល Google Sheet
     function saveDeliverySettings() {
