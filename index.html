@@ -2110,12 +2110,13 @@
         if (document.getElementById('setShipProv')) document.getElementById('setShipProv').value = appSettings.ship_province;
         if (document.getElementById('setFreeShipMin')) document.getElementById('setFreeShipMin').value = appSettings.free_shipping_min;
 
-        // បំពេញទិន្នន័យ Banner ចាស់ចូល Form កែប្រែ
+        // បំពេញទិន្នន័យ Banner ចាស់ចូល Form
         if (document.getElementById('setBannerEnabled')) document.getElementById('setBannerEnabled').checked = appSettings.banner_enabled;
         if (document.getElementById('setBannerImages')) document.getElementById('setBannerImages').value = appSettings.banner_images || '';
-        toggleBannerInputUI();
+        if (typeof toggleBannerInputUI === "function") toggleBannerInputUI();
       }
-
+    } 
+    
     // អនុគមន៍រក្សាទុក Settings ពី Page Admin ចូល Google Sheet
     function saveDeliverySettings() {
       var btn = document.getElementById('btnSaveSettings');
