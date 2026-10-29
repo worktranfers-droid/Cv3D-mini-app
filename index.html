@@ -138,10 +138,32 @@
       <div id="adminList" class="space-y-2.5"></div>
     </div>
 
-   <!-- កុងតឺន័រទី ២៖ គ្រប់គ្រងការកុម្ម៉ង់ទិញ -->
+<!-- កុងតឺន័រទី ២៖ គ្រប់គ្រងការកុម្ម៉ង់ទិញ -->
     <div id="adminOrdersContainer" class="hidden space-y-3">
+      <!-- ប៊ូតុង Filter ស្ថានភាពការកុម្ម៉ង់ -->
+      <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-1">
+        <button type="button" onclick="setOrderFilter('active')" id="filterBtnActive" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-900 text-white shadow-xs whitespace-nowrap">
+          ⚡ កំពុងដំណើរការ
+        </button>
+        <button type="button" onclick="setOrderFilter('all')" id="filterBtnAll" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-white text-slate-600 border border-slate-200 whitespace-nowrap">
+          ទាំងអស់
+        </button>
+        <button type="button" onclick="setOrderFilter('completed')" id="filterBtnCompleted" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-white text-slate-600 border border-slate-200 whitespace-nowrap">
+          🟢 បានបញ្ចប់
+        </button>
+        <button type="button" onclick="setOrderFilter('canceled')" id="filterBtnCanceled" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-white text-slate-600 border border-slate-200 whitespace-nowrap">
+          🔴 បានបោះបង់
+        </button>
+      </div>
 
-   <!-- កុងតឺន័រទី ៣៖ ការកំណត់ថ្លៃដឹកជញ្ជូន & Free Shipping -->
+      <div id="adminOrdersLoader" class="text-center py-10 text-slate-400 text-xs hidden">
+        <div class="w-6 h-6 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-2"></div>
+        កំពុងទាញបញ្ជីការកុម្ម៉ង់...
+      </div>
+      <div id="adminOrdersList" class="space-y-3"></div>
+    </div>
+
+    <!-- កុងតឺន័រទី ៣៖ ការកំណត់ថ្លៃដឹកជញ្ជូន & Free Shipping (នៅក្រៅ Orders) -->
     <div id="adminSettingsContainer" class="hidden space-y-3">
       <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-3">
         <h3 class="text-xs font-bold text-slate-800 border-b border-slate-100 pb-2">🚚 កំណត់តម្លៃសេវាដឹកជញ្ជូន</h3>
@@ -1295,7 +1317,6 @@
       var noticeBox = document.getElementById('paymentPolicyNotice');
       if (noticeBox) {
         if (hasCustomItem) {
-          // សារសម្រាប់ទំនិញ Custom (តម្រូវឱ្យកក់ប្រាក់មុន ៥០%)
           noticeBox.className = "p-2.5 rounded-xl text-xs space-y-1 bg-amber-50 border border-amber-200 text-amber-900";
           noticeBox.innerHTML = 
             '<div class="font-bold flex items-center gap-1 text-amber-800">' +
@@ -1305,7 +1326,6 @@
               'ដោយសារទំនិញនេះឆ្លាក់ឈ្មោះផ្ទាល់ខ្លួន ខាងហាងនឹងទាក់ទងទៅលោកអ្នកដើម្បី <b>សុំកក់ប្រាក់ ៥០%</b> មុនពេលចាប់ផ្ដើមព្រីន។' +
             '</p>';
         } else {
-          // សារសម្រាប់ទំនិញធម្មតា (COD - មិនបាច់បង់មុនទេ)
           noticeBox.className = "p-2.5 rounded-xl text-xs space-y-1 bg-emerald-50 border border-emerald-200 text-emerald-900";
           noticeBox.innerHTML = 
             '<div class="font-bold flex items-center gap-1 text-emerald-800">' +
@@ -1397,7 +1417,7 @@
         })(i);
       }
 
-      // ៣. // គណនាថ្លៃដឹក និង Free Delivery
+      // ៣. គណនាថ្លៃដឹក និង Free Delivery
       var zoneSelect = document.getElementById('cartDeliveryZone');
       var baseShipFee = 1.50;
       if (zoneSelect) {
@@ -1427,6 +1447,7 @@
             '</div>';
         }
       }
+    } // <--- សញ្ញា } បិទ renderCartItems() ត្រឹមត្រូវនៅត្រង់នេះ
     
     function changeCartItemQty(index, delta) {
       if (!cart[index]) return;
