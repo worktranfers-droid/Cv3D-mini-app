@@ -946,7 +946,7 @@
       }
     }
     
-    // អនុគមន៍គណនាតម្លៃ និង Refresh បង្ហាញលើអេក្រង់ភ្លាមៗ (គុណនឹងចំនួន Quantity)
+    /// អនុគមន៍គណនាតម្លៃ និង Refresh បង្ហាញលើអេក្រង់ភ្លាមៗ (គុណនឹងចំនួន Quantity)
     function updateModalLivePrice() {
       if (!selectedProduct) return;
 
@@ -963,12 +963,10 @@
       var totalFee = 0;
 
       if (selectedProduct.isCustom) {
-        // ឆែកមើលរបៀបគិតថ្លៃ (បើ per_char ឬឈ្មោះមានពាក្យ Keychain គឺគិតតាមតួអក្សរ)
         var isPerChar = (selectedProduct.customMode === 'per_char') || 
                         ((selectedProduct.title || '').toLowerCase().indexOf('keychain') !== -1);
 
         if (isPerChar) {
-          // ១. ករណី Keychain (Per Character)
           var baseLimit = 5;
           var rate = Number(selectedProduct.customFee) || 0.50;
 
@@ -986,7 +984,6 @@
             if (noticeEl) noticeEl.innerHTML = '<span class="text-amber-600 font-bold">លើស ' + extraChars + ' អក្សរ (+ $' + totalFee.toFixed(2) + ')</span>';
           }
         } else {
-          // ២. ករណីចានឆ្កែ ឬទំនិញទូទៅ (Flat Fee - ថ្លៃសេវាថេរ)
           var flatRate = Number(selectedProduct.customFee) || 0;
           totalFee = (charLength > 0) ? flatRate : 0;
 
@@ -1010,19 +1007,11 @@
 
       if (priceEl) {
         if (quantity > 1) {
-          // បង្ហាញតម្លៃសរុប និងមានបញ្ជាក់តម្លៃក្នុង ១ មុខតូចនៅពីមុខ
           priceEl.innerHTML = '<span class="text-[11px] text-slate-400 font-normal mr-1">($' + unitPrice.toFixed(2) + ' x ' + quantity + ')</span> $' + totalProductPrice.toFixed(2);
         } else {
           priceEl.innerText = '$' + totalProductPrice.toFixed(2);
         }
       }
-    }
-
-      if (countEl) countEl.innerText = charLength + " តួអក្សរ";
-
-      // កែប្រែតម្លៃលោតភ្លាមៗលើអេក្រង់
-      var currentUnitPrice = basePrice + totalFee;
-      if (priceEl) priceEl.innerText = '$' + currentUnitPrice.toFixed(2);
     }
 
     // --- PINCH TO ZOOM ---
