@@ -490,19 +490,28 @@
           <label class="block text-xs font-semibold text-slate-600 mb-1">ការពិពណ៌នា</label>
           <textarea id="addDesc" rows="2" placeholder="ព័ត៌មានលម្អិត..." class="w-full border border-slate-300 p-2 rounded-xl text-xs outline-none"></textarea>
         </div>
-        <div>
-          <label class="block text-xs font-semibold text-slate-600 mb-1">Link រូបភាព Drive (បំបែកដោយក្បៀស , បើមានច្រើន)</label>
-          <!-- អាចវាយ Link ក៏បាន ឬ Upload រូបភាពផលិតផលផ្ទាល់ក៏បាន -->
-        <div class="space-y-1.5">
-          <label class="block text-xs font-semibold text-slate-600">រូបភាពផលិតផល (Link Drive ឬ Upload ផ្ទាល់)</label>
+        <!-- កន្លែង Upload រូបភាពផលិតផល & Preview តូចៗ (ស្អាត គ្មានអក្សរវែងៗ) -->
+        <div class="space-y-2">
           <input 
             type="file" 
+            id="prodFileInput"
             accept="image/*" 
             onchange="handleDirectImageUpload(event, 'addImage', 'prodUploadStatus')"
             class="w-full text-xs text-slate-500 file:mr-2 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700 cursor-pointer bg-slate-50 p-1 rounded-xl border border-slate-200"
           >
           <span id="prodUploadStatus" class="text-[10px] text-blue-600 font-bold hidden"></span>
-          <input id="addImage" type="text" placeholder="https://drive.google.com/file/d/..., https://..." class="w-full border border-slate-300 p-2 rounded-xl text-xs outline-none mt-1">
+
+          <!-- 🖼️ បង្ហាញរូបភាពតូចៗ និងសញ្ញាខ្វែង ✕ (ដូច Banner) -->
+          <div id="prodThumbnailsContainer" class="flex flex-wrap gap-2.5 py-1 items-center"></div>
+
+          <!-- ប្រអប់ Link សម្រាប់រក្សាទុក ឬវាយ Link បន្ថែម -->
+          <input 
+            id="addImage" 
+            type="text" 
+            oninput="renderProductThumbnailsUI()" 
+            placeholder="https://drive.google.com/file/d/..., https://..." 
+            class="w-full border border-slate-300 p-2 rounded-xl text-xs outline-none"
+          >
         </div>
         <div>
           <label class="block text-xs font-semibold text-slate-600 mb-1">ជម្រើសពណ៌ (បំបែកដោយក្បៀស ,)</label>
@@ -1430,6 +1439,71 @@
         renderBannerThumbnailsUI(); // Refresh Preview ភ្លាមៗ
       }
     }
+
+    // បង្ហាញរូបភាព Thumbnail របស់ផលិតផលជាមួយប៊ូតុង ✕
+    function renderProductThumbnailsUI() {
+      var container = document.getElementById('prodThumbnailsContainer');
+      var input = document.getElementById('addImage');
+      if (!container || !input) return;
+
+      var urls = input.value.split(',')
+        .map(function(u) { return u.trim(); })
+        .filter(function(u) { return u.length > 0; });
+
+      container.innerHTML = '';
+      if (urls.length === 0) return;
+
+      for (var i = 0; i < urls.length; i++) {
+        (function(imgUrl, idx) {
+          var displaySrc = imgUrl;
+          if (imgUrl.indexOf('drive.google.com') !== -1) {
+            var match = imgUrl.match(/[-\w]{25,}/);
+            if (match && match[0]) displaySrc = "https://lh3.googleusercontent.com/d/" + match[0] + "=s800";
+          }
+
+          var wrapper = document.createElement('div');
+          wrapper.className = "relative w-16 h-12 rounded-xl overflow-visible shadow-xs flex-shrink-0";
+
+          var img = document.createElement('img');
+          img.src = displaySrc;
+          img.className = "w-full h-full object-cover rounded-xl border border-slate-200 bg-slate-100";
+          img.onerror = function() { 
+            this.src = "https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&w=200&q=80"; 
+          };
+
+          // ប៊ូតុង ✕ សម្រាប់លុបរូប
+          var delBtn = document.createElement('button');
+          delBtn.type = "button";
+          delBtn.className = "absolute -top-1.5 -right-1.5 w-5 h-5 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-full text-[10px] flex items-center justify-center shadow-md active:scale-90 transition-all z-10";
+          delBtn.innerText = "✕";
+          delBtn.onclick = function() {
+            removeProductImageByIndex(idx);
+          };
+
+          wrapper.appendChild(img);
+          wrapper.appendChild(delBtn);
+          container.appendChild(wrapper);
+        })(urls[i], i);
+      }
+    }
+
+    // អនុគមន៍លុបរូបភាពផលិតផល ដោយមាន Popup សួរបញ្ជាក់ជាមុន
+    function removeProductImageByIndex(targetIndex) {
+      var input = document.getElementById('addImage');
+      if (!input) return;
+
+      var urls = input.value.split(',')
+        .map(function(u) { return u.trim(); })
+        .filter(function(u) { return u.length > 0; });
+
+      if (targetIndex < 0 || targetIndex >= urls.length) return;
+
+      if (confirm("⚠️ តើអ្នកពិតជាចង់លុបរូបភាពមួយនេះចេញពីផលិតផលមែនទេ?")) {
+        urls.splice(targetIndex, 1);
+        input.value = urls.join(', ');
+        renderProductThumbnailsUI(); // ធ្វើបច្ចុប្បន្នភាពរូបភាពឡើងវិញភ្លាមៗ
+      }
+    }
     
     function loadAppSettings() {
       callBackendPost({ action: "getSettings" })
@@ -2241,8 +2315,11 @@
               }
               // បង្ហាញរូបភាពតូចៗភ្លាមៗបន្ទាប់ពី Upload រួច
               if (targetInputId === 'setBannerImages' && typeof renderBannerThumbnailsUI === "function") {
-                renderBannerThumbnailsUI();
-              }
+             renderBannerThumbnailsUI();
+           }
+              if (targetInputId === 'addImage' && typeof renderProductThumbnailsUI === "function") {
+             renderProductThumbnailsUI();
+           }
             }
           } else {
             alert("❌ មិនអាច Upload រូបភាពបាន៖ " + (res.message || ""));
@@ -2481,6 +2558,7 @@
       if (el = document.getElementById('addPrice')) el.value = '';
       if (el = document.getElementById('addDesc')) el.value = '';
       if (el = document.getElementById('addImage')) el.value = '';
+      renderProductThumbnailsUI();
       if (el = document.getElementById('addColors')) el.value = '';
       if (el = document.getElementById('addSizes')) el.value = '';
       if (el = document.getElementById('addBadge')) el.value = '';
@@ -2515,6 +2593,7 @@
       if (el = document.getElementById('addPrice')) el.value = p.price || '';
       if (el = document.getElementById('addDesc')) el.value = p.desc || '';
       if (el = document.getElementById('addImage')) el.value = p.image || '';
+      renderProductThumbnailsUI();
       if (el = document.getElementById('addColors')) el.value = Array.isArray(p.colors) ? p.colors.join(', ') : (p.colors || '');
       if (el = document.getElementById('addSizes')) el.value = Array.isArray(p.sizes) ? p.sizes.join(', ') : (p.sizes || '');
       if (el = document.getElementById('addBadge')) el.value = p.badge || '';
