@@ -1471,12 +1471,15 @@
         subTotal += (cart[i].price * cart[i].qty);
       }
 
-      // ២. បូកថ្លៃដឹកជញ្ជូនតាមតំបន់
-      var shippingFee = typeof getDeliveryFee === "function" ? getDeliveryFee() : 1.50;
+      // ២. ពិនិត្យលក្ខខណ្ឌដឹកឥតគិតថ្លៃ (Free Shipping)
+      var baseShipFee = typeof getDeliveryFee === "function" ? getDeliveryFee() : 1.50;
+      var isFreeShipping = (subTotal >= appSettings.free_shipping_min);
+      var shippingFee = isFreeShipping ? 0 : baseShipFee;
       var grandTotal = subTotal + shippingFee;
 
-      // ឈ្មោះតំបន់ដឹកជញ្ជូន (ឧ. ភ្នំពេញ ឬ បណ្តាខេត្ត)
-      var zoneLabel = zoneSelect ? zoneSelect.options[zoneSelect.selectedIndex].text : "ភ្នំពេញ";
+      // ឈ្មោះតំបន់ដឹកជញ្ជូន និងសម្គាល់ការដឹកឥតគិតថ្លៃ
+      var zoneText = zoneSelect ? zoneSelect.options[zoneSelect.selectedIndex].text : "ភ្នំពេញ";
+      var zoneLabel = isFreeShipping ? (zoneText.split('(')[0].trim() + " (🎉 ដឹកឥតគិតថ្លៃ)") : zoneText;
 
       var custName = "អតិថិជន";
       var tgUsername = "";
@@ -1495,12 +1498,12 @@
         action: "recordOrder",
         orderData: {
           items: cart,
-          total: grandTotal.toFixed(2), // តម្លៃសរុបដែលបានបូកបញ្ចូលថ្លៃដឹក
+          total: grandTotal.toFixed(2), // តម្លៃសរុបដែលបានកាត់ថ្លៃដឹកជញ្ជូនត្រឹមត្រូវ
           customerName: custName,
           tgUsername: tgUsername,
           tgUserId: tgUserId,
           phone: phone,
-          location: "[" + zoneLabel + "] " + location // កត់ត្រាទាំងតំបន់ និងអាសយដ្ឋាន
+          location: "[" + zoneLabel + "] " + location
         }
       })
       .then(function(res) {
