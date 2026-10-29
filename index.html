@@ -213,13 +213,8 @@
               <span id="bannerUploadStatus" class="text-[10px] text-blue-600 font-bold hidden mt-1"></span>
             </div>
 
-            <!-- 🖼️ កន្លែងបង្ហាញរូបភាពតូចៗ (Thumbnails Preview) ជាមួយប៊ូតុងលុប -->
-            <div>
-              <label class="block text-[11px] font-semibold text-indigo-900 mb-1">🖼️ រូបភាព Banner បច្ចុប្បន្ន (ចុច ✕ ដើម្បីលុប)៖</label>
-              <div id="bannerThumbnailsContainer" class="flex flex-wrap gap-2 p-2 bg-white rounded-xl border border-indigo-100 min-h-[50px] items-center">
-                <span class="text-[10px] text-slate-400 italic">មិនទាន់មានរូបភាពនៅឡើយទេ</span>
-              </div>
-            </div>
+            <!-- 🖼️ បង្ហាញតែរូបភាព និងសញ្ញាខ្វែងប៉ុណ្ណោះ -->
+            <div id="bannerThumbnailsContainer" class="flex flex-wrap gap-2.5 py-1 items-center"></div>
 
             <!-- ជម្រើសទី ២៖ Link រូបភាព Banner (ទុកឱ្យប្រព័ន្ធបំពេញ ឬវាយដោយដៃ) -->
             <div>
@@ -1373,7 +1368,7 @@
       if (box) box.className = isCheck ? "space-y-1.5 pt-1 block" : "hidden";
     }
 
-    // ១. អនុគមន៍បង្ហាញរូបភាពតូចៗ (Thumbnails) លើផ្ទាំង Admin Banner
+    // បង្ហាញតែរូបភាព និងសញ្ញាខ្វែង (គ្មានអក្សរ គ្មានប្រអប់ធំ)
     function renderBannerThumbnailsUI() {
       var container = document.getElementById('bannerThumbnailsContainer');
       var textarea = document.getElementById('setBannerImages');
@@ -1385,29 +1380,26 @@
 
       container.innerHTML = '';
 
-      if (urls.length === 0) {
-        container.innerHTML = '<span class="text-[10px] text-slate-400 italic">មិនទាន់មានរូបភាពនៅឡើយទេ</span>';
-        return;
-      }
+      // បើគ្មានរូបភាព គឺមិនបាច់បង្ហាញអ្វីឡើយ
+      if (urls.length === 0) return;
 
       for (var i = 0; i < urls.length; i++) {
         (function(imgUrl, idx) {
           var wrapper = document.createElement('div');
-          wrapper.className = "relative w-20 h-12 rounded-xl overflow-hidden border border-slate-200 shadow-2xs group bg-slate-50 flex-shrink-0";
+          wrapper.className = "relative w-20 h-12 rounded-xl overflow-visible shadow-xs flex-shrink-0";
 
           var img = document.createElement('img');
           img.src = imgUrl;
-          img.className = "w-full h-full object-cover";
+          img.className = "w-full h-full object-cover rounded-xl border border-slate-200";
           img.onerror = function() { 
             this.src = "https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&w=200&q=80"; 
           };
 
-          // ប៊ូតុង ✕ សម្រាប់លុប (ពណ៌ក្រហម)
+          // ប៊ូតុង ✕ សម្រាប់លុប (នៅជ្រុងលើខាងស្តាំ)
           var delBtn = document.createElement('button');
           delBtn.type = "button";
-          delBtn.className = "absolute top-1 right-1 w-5 h-5 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-full text-[10px] flex items-center justify-center shadow-md active:scale-90 transition-all";
+          delBtn.className = "absolute -top-1.5 -right-1.5 w-5 h-5 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-full text-[10px] flex items-center justify-center shadow-md active:scale-90 transition-all z-10";
           delBtn.innerText = "✕";
-          delBtn.title = "លុបរូបភាពនេះ";
           delBtn.onclick = function() {
             removeBannerImageByIndex(idx);
           };
