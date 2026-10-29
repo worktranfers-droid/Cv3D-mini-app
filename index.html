@@ -276,15 +276,31 @@
           <p id="cartEmptyText">កន្រ្តករបស់អ្នកនៅទទេស្អាត</p>
         </div>
 
-        <div id="cartOrderForm" class="space-y-2.5 bg-slate-50 p-3.5 rounded-2xl border border-slate-200 my-3">
+       <div id="cartOrderForm" class="space-y-2.5 bg-slate-50 p-3.5 rounded-2xl border border-slate-200 my-3">
+          <!-- ១. ជ្រើសរើសតំបន់ដឹកជញ្ជូន -->
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">🚚 តំបន់ដឹកជញ្ជូន (Delivery Zone): *</label>
+            <select id="cartDeliveryZone" onchange="updateCartDeliveryCost()" class="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs outline-none focus:ring-2 focus:ring-blue-500 shadow-sm font-medium">
+              <option value="phnom_penh" data-cost="1.50">📍 ភ្នំពេញ (+$1.50)</option>
+              <option value="province" data-cost="2.00">🚐 បណ្តាខេត្ត (+$2.00)</option>
+            </select>
+          </div>
+
+          <!-- ២. លេខទូរសព្ទ -->
           <div>
             <label id="lblCartPhone" class="block text-xs font-bold text-slate-700 mb-1">លេខទូរសព្ទ (Phone Number): *</label>
             <input id="cartPhoneInput" type="tel" placeholder="ឧ. 012 345 678" class="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs outline-none focus:ring-2 focus:ring-blue-500 shadow-sm">
           </div>
+
+          <!-- ៣. ទីតាំងដឹកជញ្ជូន -->
           <div>
             <label id="lblCartLoc" class="block text-xs font-bold text-slate-700 mb-1">ទីតាំងដឹកជញ្ជូន (Delivery Address): *</label>
-            <textarea id="cartLocInput" rows="2" placeholder="ផ្ទះលេខ, ផ្លូវ, សង្កាត់, ខណ្ឌ ឬខេត្ត..." class="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs outline-none focus:ring-2 focus:ring-blue-500 shadow-sm"></textarea>
+            <textarea id="cartLocInput" rows="2" placeholder="ភ្នំពេញ៖ លេខផ្ទះ ផ្លូវ សង្កាត់ | តាមខេត្ត៖ ឈ្មោះខេត្ត និងសាខាឡាន..." class="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs outline-none focus:ring-2 focus:ring-blue-500 shadow-sm"></textarea>
           </div>
+
+          <!-- ប្រអប់ជូនដំណឹងអំពីលក្ខខណ្ឌទូទាត់ប្រាក់ (ស្វ័យប្រវត្តិតាមទំនិញក្នុងកន្ត្រក) -->
+          <div id="paymentPolicyNotice" class="p-2.5 rounded-xl text-xs space-y-1 border"></div>
+        </div>
 
           <!-- ប្រអប់ជូនដំណឹងអំពីលក្ខខណ្ឌទូទាត់ប្រាក់ (ស្វ័យប្រវត្តិតាមទំនិញក្នុងកន្ត្រក) -->
           <div id="paymentPolicyNotice" class="p-2.5 rounded-xl text-xs space-y-1 border"></div>
@@ -1156,6 +1172,19 @@
       if (modal) modal.className = "fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden flex items-end sm:items-center justify-center p-0 sm:p-4";
     }
 
+    // អនុគមន៍ទាញយកថ្លៃដឹកជញ្ជូនតាមតំបន់ដែលភ្ញៀវរើស
+    function getDeliveryFee() {
+      var zoneSelect = document.getElementById('cartDeliveryZone');
+      if (!zoneSelect) return 1.50;
+      var selectedOpt = zoneSelect.options[zoneSelect.selectedIndex];
+      return parseFloat(selectedOpt.getAttribute('data-cost')) || 1.50;
+    }
+
+    function updateCartDeliveryCost() {
+      renderCartItems(); // ហៅឱ្យគណនាតម្លៃសរុបឡើងវិញភ្លាមៗ
+    }
+
+    // អនុគមន៍ Render បញ្ជីទំនិញក្នុងកន្ត្រក និងគណនាតម្លៃសរុប
     function renderCartItems() {
       var list = document.getElementById('cartItemList');
       var emptyState = document.getElementById('cartEmptyState');
@@ -1178,7 +1207,7 @@
       form.className = "space-y-2.5 bg-slate-50 p-3.5 rounded-2xl border border-slate-200 my-3";
       bottomBar.className = "pt-2 border-t border-slate-100";
 
-      // ពិនិត្យមើលថាតើក្នុងកន្ត្រកមានទំនិញ Custom (ឆ្លាក់ឈ្មោះ) ដែរឬទេ
+      // ១. ពិនិត្យមើលថាតើក្នុងកន្ត្រកមានទំនិញ Custom (ឆ្លាក់ឈ្មោះ) ដែរឬទេ
       var hasCustomItem = false;
       for (var c = 0; c < cart.length; c++) {
         if (cart[c].customText && cart[c].customText.trim().length > 0) {
@@ -1212,13 +1241,14 @@
         }
       }
 
-      var grandTotal = 0;
+      // ២. បូកសរុបតម្លៃទំនិញទាំងអស់ក្នុងកន្ត្រក (Subtotal)
+      var subTotal = 0;
 
       for (var i = 0; i < cart.length; i++) {
         (function(idx) {
           var item = cart[idx];
           var itemTotal = item.price * item.qty;
-          grandTotal += itemTotal;
+          subTotal += itemTotal;
 
           var itemDiv = document.createElement('div');
           itemDiv.className = "bg-white p-2.5 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between gap-3";
@@ -1291,9 +1321,15 @@
         })(i);
       }
 
-      if (totalEl) totalEl.innerText = "$" + grandTotal.toFixed(2);
-    }
+      // ៣. បូកថ្លៃទំនិញ + ថ្លៃដឹកជញ្ជូនចូលគ្នា
+      var shippingFee = getDeliveryFee();
+      var grandTotal = subTotal + shippingFee;
 
+      if (totalEl) {
+        totalEl.innerHTML = '<span class="text-[11px] text-slate-400 font-normal mr-1">(ទំនិញ: $' + subTotal.toFixed(2) + ' + ដឹក: $' + shippingFee.toFixed(2) + ')</span> $' + grandTotal.toFixed(2);
+      }
+    }
+    
     function changeCartItemQty(index, delta) {
       if (!cart[index]) return;
       cart[index].qty += delta;
@@ -1316,6 +1352,8 @@
 
       var phoneEl = document.getElementById('cartPhoneInput');
       var locEl = document.getElementById('cartLocInput');
+      var zoneSelect = document.getElementById('cartDeliveryZone'); // ចាប់យក Dropdown តំបន់ដឹក
+
       var phone = phoneEl ? phoneEl.value.trim() : '';
       var location = locEl ? locEl.value.trim() : '';
       var t = i18n[currentLang];
@@ -1331,10 +1369,18 @@
         submitBtn.disabled = true;
       }
 
-      var grandTotal = 0;
+      // ១. គណនាតម្លៃទំនិញសរុប (Subtotal)
+      var subTotal = 0;
       for (var i = 0; i < cart.length; i++) {
-        grandTotal += (cart[i].price * cart[i].qty);
+        subTotal += (cart[i].price * cart[i].qty);
       }
+
+      // ២. បូកថ្លៃដឹកជញ្ជូនតាមតំបន់
+      var shippingFee = typeof getDeliveryFee === "function" ? getDeliveryFee() : 1.50;
+      var grandTotal = subTotal + shippingFee;
+
+      // ឈ្មោះតំបន់ដឹកជញ្ជូន (ឧ. ភ្នំពេញ ឬ បណ្តាខេត្ត)
+      var zoneLabel = zoneSelect ? zoneSelect.options[zoneSelect.selectedIndex].text : "ភ្នំពេញ";
 
       var custName = "អតិថិជន";
       var tgUsername = "";
@@ -1348,16 +1394,17 @@
         tgUserId = u.id || "";
       }
 
+      // បញ្ជូនទិន្នន័យទៅកាន់ Google Apps Script
       callBackendPost({
         action: "recordOrder",
         orderData: {
           items: cart,
-          total: grandTotal.toFixed(2),
+          total: grandTotal.toFixed(2), // តម្លៃសរុបដែលបានបូកបញ្ចូលថ្លៃដឹក
           customerName: custName,
           tgUsername: tgUsername,
           tgUserId: tgUserId,
           phone: phone,
-          location: location
+          location: "[" + zoneLabel + "] " + location // កត់ត្រាទាំងតំបន់ និងអាសយដ្ឋាន
         }
       })
       .then(function(res) {
