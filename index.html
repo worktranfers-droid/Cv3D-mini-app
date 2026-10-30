@@ -357,15 +357,32 @@
     </div>
   </div>
 
-  <!-- Modal 2: Pinch to Zoom -->
+  <!-- ==================== MODAL: PINCH-TO-ZOOM (SWIPABLE GALLERY) ==================== -->
   <div id="imageZoomModal" class="fixed inset-0 z-[60] bg-black/95 backdrop-blur-md hidden flex flex-col justify-between items-center p-3 select-none touch-none">
+    <!-- ផ្នែកខាងលើ៖ បង្ហាញការណែនាំ និងប៊ូតុងបិទ ✕ -->
     <div class="w-full flex justify-between items-center z-20 px-2 pt-2">
-      <span class="text-[11px] text-white/70 bg-white/10 px-3 py-1 rounded-full backdrop-blur-sm">🖐️ ប្រើម្រាមដៃពីរពង្រីក ឬចុច ២ ដង</span>
+      <div class="flex items-center gap-2">
+        <span class="text-[11px] text-white/70 bg-white/10 px-3 py-1 rounded-full backdrop-blur-sm">🖐️ ពង្រីក ឬអូសឆ្វេងស្តាំ</span>
+        <span id="zoomCounter" class="text-[11px] font-bold text-white bg-blue-600/80 px-2.5 py-0.5 rounded-full">1/1</span>
+      </div>
       <button type="button" onclick="closeZoomModal()" class="bg-white/20 hover:bg-white/30 text-white w-9 h-9 rounded-full flex items-center justify-center font-bold text-sm transition-all active:scale-95">✕</button>
     </div>
-    <div id="zoomViewport" class="w-full h-full flex items-center justify-center overflow-hidden relative">
-      <img id="zoomedImg" src="" alt="Zoomed Product" class="max-w-full max-h-[85vh] object-contain rounded-2xl will-change-transform origin-center transition-transform duration-75">
+    
+    <!-- ផ្នែកកណ្ដាល៖ កន្លែងបង្ហាញរូបភាព និងប៊ូតុងព្រួញ ‹ › -->
+    <div class="w-full h-full flex items-center justify-center relative overflow-hidden">
+      <!-- ប៊ូតុងត្រឡប់ក្រោយ ‹ -->
+      <button id="zoomPrevBtn" type="button" onclick="navigateZoomImage(-1)" class="absolute left-2 z-30 w-10 h-10 bg-black/50 hover:bg-black/75 text-white text-lg font-bold rounded-full flex items-center justify-center backdrop-blur-sm transition-all active:scale-90 shadow-md">‹</button>
+
+      <!-- Viewport រូបភាព Zoom -->
+      <div id="zoomViewport" class="w-full h-full flex items-center justify-center overflow-hidden relative">
+        <img id="zoomedImg" src="" alt="Zoomed Product" class="max-w-full max-h-[80vh] object-contain rounded-2xl will-change-transform origin-center transition-transform duration-75">
+      </div>
+
+      <!-- ប៊ូតុងទៅមុខ › -->
+      <button id="zoomNextBtn" type="button" onclick="navigateZoomImage(1)" class="absolute right-2 z-30 w-10 h-10 bg-black/50 hover:bg-black/75 text-white text-lg font-bold rounded-full flex items-center justify-center backdrop-blur-sm transition-all active:scale-90 shadow-md">›</button>
     </div>
+
+    <!-- ផ្នែកខាងក្រោម៖ ប៊ូតុងពង្រីក/បង្រួម (-) Reset (+) -->
     <div class="flex items-center gap-3 z-20 pb-4">
       <button type="button" onclick="adjustZoom(-0.5)" class="w-10 h-10 bg-white/15 hover:bg-white/25 text-white font-bold rounded-full text-base flex items-center justify-center backdrop-blur-sm active:scale-95">-</button>
       <button type="button" onclick="resetZoomState()" class="px-3.5 py-1.5 bg-white/15 hover:bg-white/25 text-white text-xs font-semibold rounded-full backdrop-blur-sm active:scale-95">Reset</button>
@@ -1411,15 +1428,49 @@
       }
     }
 
+    // ==================== ENHANCED ZOOM & SWIPE CONTROLLER ====================
+    var zoomIndex = 0;
+    var swipeStartX = 0;
+    var swipeStartY = 0;
+
     function openZoomForImage(imgUrl) {
-      var zoomedImg = document.getElementById('zoomedImg');
+      // ស្វែងរក Index នៃរូបភាពដែលកំពុងចុច
+      zoomIndex = currentSliderImages.indexOf(imgUrl);
+      if (zoomIndex === -1) zoomIndex = 0;
+
+      updateZoomView();
       var zoomModal = document.getElementById('imageZoomModal');
-      if (zoomedImg && zoomModal) {
-        zoomedImg.src = imgUrl;
-        resetZoomState();
+      if (zoomModal) {
         zoomModal.className = "fixed inset-0 z-[60] bg-black/95 backdrop-blur-md flex flex-col justify-between items-center p-3 select-none touch-none";
         initZoomEvents();
       }
+    }
+
+    function updateZoomView() {
+      if (!currentSliderImages || currentSliderImages.length === 0) return;
+      var zoomedImg = document.getElementById('zoomedImg');
+      var counter = document.getElementById('zoomCounter');
+      var prevBtn = document.getElementById('zoomPrevBtn');
+      var nextBtn = document.getElementById('zoomNextBtn');
+
+      if (zoomedImg) zoomedImg.src = currentSliderImages[zoomIndex];
+      if (counter) counter.innerText = (zoomIndex + 1) + " / " + currentSliderImages.length;
+
+      // បង្ហាញ ឬលាក់ប៊ូតុងព្រួញ ‹ › អាស្រ័យលើចំនួនរូបភាព
+      var hasMultiple = currentSliderImages.length > 1;
+      if (prevBtn) prevBtn.style.display = hasMultiple ? "flex" : "none";
+      if (nextBtn) nextBtn.style.display = hasMultiple ? "flex" : "none";
+
+      resetZoomState();
+    }
+
+    // អនុគមន៍ប្តូរទៅរូបមុន ឬរូបបន្ទាប់
+    function navigateZoomImage(direction) {
+      if (!currentSliderImages || currentSliderImages.length <= 1) return;
+      zoomIndex += direction;
+      if (zoomIndex < 0) zoomIndex = currentSliderImages.length - 1;
+      if (zoomIndex >= currentSliderImages.length) zoomIndex = 0;
+      updateZoomView();
     }
 
     function closeZoomModal() {
@@ -1461,6 +1512,10 @@
           startDist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
           initialScale = currentScale;
         } else if (e.touches.length === 1) {
+          var touch = e.touches[0];
+          swipeStartX = touch.clientX;
+          swipeStartY = touch.clientY;
+
           var currentTime = new Date().getTime();
           var tapGap = currentTime - lastTapTime;
           if (tapGap < 300 && tapGap > 0) {
@@ -1469,10 +1524,11 @@
             return;
           }
           lastTapTime = currentTime;
+
           if (currentScale > 1) {
             isDragging = true;
-            startX = e.touches[0].clientX - posX;
-            startY = e.touches[0].clientY - posY;
+            startX = touch.clientX - posX;
+            startY = touch.clientY - posY;
           }
         }
       }, { passive: false });
@@ -1498,7 +1554,23 @@
       viewport.addEventListener('touchend', function(e) {
         if (e.touches.length < 2) startDist = 0;
         if (e.touches.length === 0) isDragging = false;
-        if (currentScale <= 1) { resetZoomState(); }
+
+        // ដំណើរការ Swipe អូសឆ្វេង-ស្ដាំ នៅពេលដែលរូបភាពមិនត្រូវបាន Zoom ពង្រីកធំ (Scale = 1)
+        if (currentScale <= 1 && e.changedTouches && e.changedTouches.length === 1) {
+          var touch = e.changedTouches[0];
+          var diffX = touch.clientX - swipeStartX;
+          var diffY = touch.clientY - swipeStartY;
+
+          // ប្រសិនបើអូសផ្ដេកលើសពី 45px
+          if (Math.abs(diffX) > 45 && Math.abs(diffX) > Math.abs(diffY)) {
+            if (diffX < 0) {
+              navigateZoomImage(1);  // អូសទៅឆ្វេង -> បង្ហាញរូបបន្ទាប់
+            } else {
+              navigateZoomImage(-1); // អូសទៅស្ដាំ -> បង្ហាញរូបមុន
+            }
+          }
+          resetZoomState();
+        }
       });
     }
 
