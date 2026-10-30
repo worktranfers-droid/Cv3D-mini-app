@@ -833,10 +833,19 @@
       var dataList = document.getElementById('categoryDataList');
       if (!container) return;
 
+      // ១. រាប់ចំនួនទំនិញតាមប្រភេទនីមួយៗ (Category Count)
       var categories = ['all'];
+      var categoryCounts = { 'all': customerProducts.length };
+
       for (var i = 0; i < customerProducts.length; i++) {
         var cat = (customerProducts[i].category || '').trim();
-        if (cat && categories.indexOf(cat) === -1) categories.push(cat);
+        if (cat) {
+          if (categories.indexOf(cat) === -1) {
+            categories.push(cat);
+            categoryCounts[cat] = 0;
+          }
+          categoryCounts[cat]++;
+        }
       }
 
       container.innerHTML = '';
@@ -846,19 +855,21 @@
           btn.type = "button";
           var isActive = (currentCustomerCategory === cat);
           var label = (cat === 'all') ? ((currentLang === 'km') ? 'ទាំងអស់' : 'All') : cat;
+          var count = categoryCounts[cat] || 0;
 
+          // ប៊ូតុងរចនាបែប Pill ដែលមាន Badge បង្ហាញចំនួនទំនិញ
           btn.className = isActive 
-            ? "cat-pill active bg-slate-900 text-white text-xs px-3.5 py-1.5 rounded-full font-medium whitespace-nowrap shadow-sm capitalize"
-            : "cat-pill bg-white border border-slate-200 text-slate-600 text-xs px-3.5 py-1.5 rounded-full font-medium whitespace-nowrap capitalize";
-          btn.innerText = label;
+            ? "cat-pill active bg-slate-900 text-white text-xs px-3 py-1.5 rounded-full font-medium whitespace-nowrap shadow-sm capitalize flex items-center gap-1.5 transition-all"
+            : "cat-pill bg-white border border-slate-200 text-slate-600 text-xs px-3 py-1.5 rounded-full font-medium whitespace-nowrap capitalize flex items-center gap-1.5 hover:bg-slate-50 transition-all";
+          
+          // បង្ហាញឈ្មោះប្រភេទ អមដោយចំនួនទំនិញ
+          btn.innerHTML = '<span>' + label + '</span>' +
+                          '<span class="' + (isActive ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-500') + ' text-[10px] font-bold px-1.5 py-0.2 rounded-full">' + count + '</span>';
 
           btn.onclick = function() {
             currentCustomerCategory = cat;
-            var pills = document.querySelectorAll('.cat-pill');
-            for (var k = 0; k < pills.length; k++) {
-              pills[k].className = "cat-pill bg-white border border-slate-200 text-slate-600 text-xs px-3.5 py-1.5 rounded-full font-medium whitespace-nowrap capitalize";
-            }
-            btn.className = "cat-pill active bg-slate-900 text-white text-xs px-3.5 py-1.5 rounded-full font-medium whitespace-nowrap shadow-sm capitalize";
+            // ហៅ render ឡើងវិញដើម្បីឱ្យ Badge ប្តូរពណ៌ទៅតាមប៊ូតុងដែលកំពុង Active
+            renderDynamicCategories();
             applyCustomerFilter();
           };
           container.appendChild(btn);
