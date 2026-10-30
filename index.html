@@ -675,7 +675,14 @@
         customNoticeChars: " អក្សរ (+ $",
         customNoticeFixedAdded: "✓ បានបូកថ្លៃសេវាឆ្លាក់ថេរ",
         customNoticeFixedNote: "* ថ្លៃសេវាឆ្លាក់ស្លាកឈ្មោះ (ថេរ)",
-        customCharUnit: " តួអក្សរ"
+        customCharUnit: " តួអក្សរ",
+        adminSalePrice: "តម្លៃលក់៖ $",
+        adminCostPrice: "ថ្លៃដើម៖ $",
+        adminProfit: "ចំណេញ៖ $",
+        adminInStock: "មានស្តុក",
+        adminOutOfStock: "ដាច់ស្តុក",
+        adminNoSheetData: "មិនទាន់មានទិន្នន័យក្នុង Sheet1",
+        adminNoProdFound: "រកមិនឃើញទំនិញទេ"
       },
       en: {
         flag: "🇬🇧",
@@ -749,7 +756,14 @@
         customNoticeChars: " chars (+ $",
         customNoticeFixedAdded: "✓ Fixed engraving fee added",
         customNoticeFixedNote: "* Fixed nameplate engraving fee",
-        customCharUnit: " chars"
+        customCharUnit: " chars",
+        adminSalePrice: "Price: $",
+        adminCostPrice: "Cost: $",
+        adminProfit: "Profit: $",
+        adminInStock: "In Stock",
+        adminOutOfStock: "Out of Stock",
+        adminNoSheetData: "No data in Sheet1 yet",
+        adminNoProdFound: "No products found"
       },
       zh: {
         flag: "🇨🇳",
@@ -823,7 +837,14 @@
         customNoticeChars: " 个字 (+ $",
         customNoticeFixedAdded: "✓ 已计入固定刻字费",
         customNoticeFixedNote: "* 固定名牌刻字服务费",
-        customCharUnit: " 个字符"
+        customCharUnit: " 个字符",
+        adminSalePrice: "售价: $",
+        adminCostPrice: "成本: $",
+        adminProfit: "利润: $",
+        adminInStock: "有现货",
+        adminOutOfStock: "缺货中",
+        adminNoSheetData: "Sheet1 暂无数据",
+        adminNoProdFound: "未找到相关商品"
       }
     };
 
@@ -2244,10 +2265,12 @@
 
     function renderAdminList(items) {
       var container = document.getElementById('adminList');
+      var t = i18n[currentLang] || i18n['km']; // ចាប់យកភាសាដែលកំពុងជ្រើសរើស
       if (!container) return;
       container.innerHTML = '';
+
       if (!items || items.length === 0) {
-        container.innerHTML = '<p class="text-center text-xs text-slate-400 py-10">រកមិនឃើញទំនិញទេ</p>';
+        container.innerHTML = '<p class="text-center text-xs text-slate-400 py-10">' + t.adminNoProdFound + '</p>';
         return;
       }
 
@@ -2297,21 +2320,23 @@
             titleWrap.appendChild(bSpan);
           }
 
+          // ប្តូរភាសា "តម្លៃលក់"
           var price = document.createElement('p');
           price.className = "text-[11px] text-blue-600 font-bold";
-          price.innerText = "តម្លៃលក់៖ $" + p.price.toFixed(2);
+          price.innerText = t.adminSalePrice + p.price.toFixed(2);
 
           var calc = p.costAnalysis || (adminCostData ? (adminCostData[(p.id || "").trim()] || adminCostData[(p.title || "").trim().toLowerCase()]) : null);
           var costInfo = document.createElement('div');
           costInfo.className = "flex flex-wrap items-center gap-1.5 mt-1 text-[10px]";
 
+          // ប្តូរភាសា "ថ្លៃដើម" និង "ចំណេញ"
           if (calc && calc.totalCost > 0) {
             costInfo.innerHTML = 
-              '<span class="text-slate-600 bg-slate-100 border border-slate-200 px-1.5 py-0.5 rounded-md font-medium">ថ្លៃដើម៖ $' + calc.totalCost.toFixed(2) + '</span>' +
-              '<span class="text-emerald-700 bg-emerald-50 border border-emerald-200 px-1.5 py-0.5 rounded-md font-bold">ចំណេញ៖ $' + calc.estimatedProfit.toFixed(2) + '</span>' +
+              '<span class="text-slate-600 bg-slate-100 border border-slate-200 px-1.5 py-0.5 rounded-md font-medium">' + t.adminCostPrice + calc.totalCost.toFixed(2) + '</span>' +
+              '<span class="text-emerald-700 bg-emerald-50 border border-emerald-200 px-1.5 py-0.5 rounded-md font-bold">' + t.adminProfit + calc.estimatedProfit.toFixed(2) + '</span>' +
               '<span class="text-slate-400 text-[9px]">(' + calc.printTime + 'h | ' + calc.weight + 'g)</span>';
           } else {
-            costInfo.innerHTML = '<span class="text-slate-300 text-[9px] italic">មិនទាន់មានទិន្នន័យក្នុង Sheet1</span>';
+            costInfo.innerHTML = '<span class="text-slate-300 text-[9px] italic">' + t.adminNoSheetData + '</span>';
           }
 
           infoDiv.appendChild(titleWrap);
@@ -2324,10 +2349,11 @@
           var rightDiv = document.createElement('div');
           rightDiv.className = "flex items-center gap-1.5";
 
+          // ប្តូរភាសាប៊ូតុង "មានស្តុក / ដាច់ស្តុក"
           var stockBtn = document.createElement('button');
           stockBtn.type = "button";
           stockBtn.className = "text-[11px] px-2.5 py-1 rounded-xl font-bold " + (p.inStock ? "bg-emerald-50 text-emerald-600 border border-emerald-200" : "bg-red-50 text-red-500 border border-red-200");
-          stockBtn.innerText = p.inStock ? "មានស្តុក" : "ដាច់ស្តុក";
+          stockBtn.innerText = p.inStock ? t.adminInStock : t.adminOutOfStock;
           stockBtn.onclick = function() { toggleStock(p.id, !p.inStock); };
 
           var editBtn = document.createElement('button');
@@ -2352,7 +2378,7 @@
         })(items[i]);
       }
     }
-
+    
     function toggleStock(id, newStatus) {
       callBackendPost({ action: "toggleStock", pin: adminPin, productId: id, newStatus: newStatus })
         .then(function() { loadAdminData(); });
