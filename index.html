@@ -161,17 +161,24 @@
     <!-- កុងតឺន័រទី ២៖ គ្រប់គ្រងការកុម្ម៉ង់ទិញ -->
     <div id="adminOrdersContainer" class="hidden space-y-3">
       <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-1">
-        <button type="button" onclick="setOrderFilter('active')" id="filterBtnActive" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-900 text-white shadow-xs whitespace-nowrap">
-          ⚡ កំពុងដំណើរការ
+        <button type="button" onclick="setOrderFilter('active')" id="filterBtnActive" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-900 text-white shadow-xs whitespace-nowrap flex items-center gap-1.5 transition-all">
+          <span id="txtFilterActive">⚡ កំពុងដំណើរការ</span>
+          <span id="badgeFilterActive" class="bg-white/20 text-white text-[10px] font-bold px-1.5 py-0.2 rounded-full">0</span>
         </button>
-        <button type="button" onclick="setOrderFilter('all')" id="filterBtnAll" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-white text-slate-600 border border-slate-200 whitespace-nowrap">
-          ទាំងអស់
+
+        <button type="button" onclick="setOrderFilter('all')" id="filterBtnAll" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-white text-slate-600 border border-slate-200 whitespace-nowrap flex items-center gap-1.5 transition-all">
+          <span id="txtFilterAll">ទាំងអស់</span>
+          <span id="badgeFilterAll" class="bg-slate-100 text-slate-500 text-[10px] font-bold px-1.5 py-0.2 rounded-full">0</span>
         </button>
-        <button type="button" onclick="setOrderFilter('completed')" id="filterBtnCompleted" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-white text-slate-600 border border-slate-200 whitespace-nowrap">
-          🟢 បានបញ្ចប់
+
+        <button type="button" onclick="setOrderFilter('completed')" id="filterBtnCompleted" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-white text-slate-600 border border-slate-200 whitespace-nowrap flex items-center gap-1.5 transition-all">
+          <span id="txtFilterCompleted">🟢 បានបញ្ចប់</span>
+          <span id="badgeFilterCompleted" class="bg-slate-100 text-slate-500 text-[10px] font-bold px-1.5 py-0.2 rounded-full">0</span>
         </button>
-        <button type="button" onclick="setOrderFilter('canceled')" id="filterBtnCanceled" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-white text-slate-600 border border-slate-200 whitespace-nowrap">
-          🔴 បានបោះបង់
+
+        <button type="button" onclick="setOrderFilter('canceled')" id="filterBtnCanceled" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-white text-slate-600 border border-slate-200 whitespace-nowrap flex items-center gap-1.5 transition-all">
+          <span id="txtFilterCanceled">🔴 បានបោះបង់</span>
+          <span id="badgeFilterCanceled" class="bg-slate-100 text-slate-500 text-[10px] font-bold px-1.5 py-0.2 rounded-full">0</span>
         </button>
       </div>
 
@@ -901,10 +908,10 @@
       if (el = document.getElementById('adminTabOrders')) el.innerText = t.adminTabOrders;
       if (el = document.getElementById('adminTabSettings')) el.innerText = t.adminTabSettings;
       if (el = document.getElementById('adminSearchInput')) el.placeholder = t.adminSearchPlaceholder;
-      if (el = document.getElementById('filterBtnActive')) el.innerText = t.adminFilterActive;
-      if (el = document.getElementById('filterBtnAll')) el.innerText = t.adminFilterAll;
-      if (el = document.getElementById('filterBtnCompleted')) el.innerText = t.adminFilterCompleted;
-      if (el = document.getElementById('filterBtnCanceled')) el.innerText = t.adminFilterCanceled;
+      if (el = document.getElementById('txtFilterActive')) el.innerText = t.adminFilterActive;
+      if (el = document.getElementById('txtFilterAll')) el.innerText = t.adminFilterAll;
+      if (el = document.getElementById('txtFilterCompleted')) el.innerText = t.adminFilterCompleted;
+      if (el = document.getElementById('txtFilterCanceled')) el.innerText = t.adminFilterCanceled;
       if (el = document.getElementById('adminSetShippingTitle')) el.innerText = t.adminSettingsShipping;
       if (el = document.getElementById('lblSetShipPP')) el.innerText = t.adminSettingsPP;
       if (el = document.getElementById('lblSetShipProv')) el.innerText = t.adminSettingsProv;
@@ -2238,34 +2245,83 @@
     }
 
     // --- 6.11 ADMIN ORDERS MANAGEMENT ---
+    // ១. អនុគមន៍រាប់ចំនួនការកុម្ម៉ង់ និង Update លើប៊ូតុង Filter
+    function updateAdminOrderBadges() {
+      if (!allAdminOrders) return;
+
+      var counts = { active: 0, all: allAdminOrders.length, completed: 0, canceled: 0 };
+
+      for (var i = 0; i < allAdminOrders.length; i++) {
+        var st = allAdminOrders[i].status || "";
+        var isCompleted = st.indexOf("Completed") !== -1 || st.indexOf("បានបញ្ចប់") !== -1 || st.indexOf("已完成") !== -1;
+        var isCanceled = st.indexOf("Canceled") !== -1 || st.indexOf("បានបោះបង់") !== -1 || st.indexOf("已取消") !== -1;
+
+        if (isCompleted) {
+          counts.completed++;
+        } else if (isCanceled) {
+          counts.canceled++;
+        } else {
+          counts.active++; // Pending, Printing, Shipping
+        }
+      }
+
+      var bActive = document.getElementById('badgeFilterActive');
+      var bAll = document.getElementById('badgeFilterAll');
+      var bComp = document.getElementById('badgeFilterCompleted');
+      var bCanc = document.getElementById('badgeFilterCanceled');
+
+      if (bActive) bActive.innerText = counts.active;
+      if (bAll) bAll.innerText = counts.all;
+      if (bComp) bComp.innerText = counts.completed;
+      if (bCanc) bCanc.innerText = counts.canceled;
+    }
+
+    // ២. អនុគមន៍ជ្រើសរើស Filter (ប្តូរពណ៌ប៊ូតុង & ពណ៌ Badge)
     function setOrderFilter(filterType) {
       currentOrderFilter = filterType;
       var filterKeys = ['active', 'all', 'completed', 'canceled'];
+
       for (var b = 0; b < filterKeys.length; b++) {
         var key = filterKeys[b];
         var btnId = 'filterBtn' + key.charAt(0).toUpperCase() + key.slice(1);
+        var badgeId = 'badgeFilter' + key.charAt(0).toUpperCase() + key.slice(1);
+
         var btn = document.getElementById(btnId);
+        var badge = document.getElementById(badgeId);
+
+        var isActive = (key === filterType);
         if (btn) {
-          btn.className = (key === filterType) 
-            ? "px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-900 text-white shadow-xs whitespace-nowrap transition-all"
-            : "px-3 py-1.5 rounded-xl text-xs font-bold bg-white text-slate-600 border border-slate-200 whitespace-nowrap transition-all";
+          btn.className = isActive 
+            ? "px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-900 text-white shadow-xs whitespace-nowrap flex items-center gap-1.5 transition-all"
+            : "px-3 py-1.5 rounded-xl text-xs font-bold bg-white text-slate-600 border border-slate-200 whitespace-nowrap flex items-center gap-1.5 transition-all";
+        }
+        if (badge) {
+          badge.className = isActive
+            ? "bg-white/20 text-white text-[10px] font-bold px-1.5 py-0.2 rounded-full"
+            : "bg-slate-100 text-slate-500 text-[10px] font-bold px-1.5 py-0.2 rounded-full";
         }
       }
+
       applyOrderFilter();
     }
 
+    // ៣. ចម្រាញ់ការកុម្ម៉ង់ និងហៅ updateAdminOrderBadges
     function applyOrderFilter() {
       if (!allAdminOrders) return;
+
+      updateAdminOrderBadges(); // ធ្វើបច្ចុប្បន្នភាពលេខរាប់ Badge
+
       var filtered = allAdminOrders.filter(function(ord) {
         var st = ord.status || "";
-        var isCompleted = st.indexOf("Completed") !== -1 || st.indexOf("បានបញ្ចប់") !== -1;
-        var isCanceled = st.indexOf("Canceled") !== -1 || st.indexOf("បានបោះបង់") !== -1;
+        var isCompleted = st.indexOf("Completed") !== -1 || st.indexOf("បានបញ្ចប់") !== -1 || st.indexOf("已完成") !== -1;
+        var isCanceled = st.indexOf("Canceled") !== -1 || st.indexOf("បានបោះបង់") !== -1 || st.indexOf("已取消") !== -1;
 
         if (currentOrderFilter === 'active') { return !isCompleted && !isCanceled; }
         else if (currentOrderFilter === 'completed') { return isCompleted; }
         else if (currentOrderFilter === 'canceled') { return isCanceled; }
         return true;
       });
+
       renderAdminOrdersList(filtered);
     }
 
