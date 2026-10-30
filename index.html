@@ -314,12 +314,13 @@
         <div id="sizeContainer" class="flex gap-2"></div>
       </div>
 
-      <!-- Custom Info -->
+      <!-- ផ្នែកសម្រាប់ទំនិញ Custom -->
       <div id="custCustomSection" class="hidden mb-4 bg-blue-50/70 p-3 rounded-2xl border border-blue-200 space-y-2">
         <div class="flex justify-between items-center">
-          <label class="text-xs font-bold text-blue-900">✍️ បញ្ចូលឈ្មោះ/អក្សរដែលចង់ឆ្លាក់៖ *</label>
+          <label id="lblCustCustomTitle" class="text-xs font-bold text-blue-900">✍️ បញ្ចូលឈ្មោះ/អក្សរដែលចង់ឆ្លាក់៖ *</label>
           <span id="custCustomFeeBadge" class="text-[10px] font-bold bg-blue-200 text-blue-800 px-2 py-0.5 rounded-full"></span>
         </div>
+        
         <input 
           id="custCustomNameInput" 
           type="text" 
@@ -327,6 +328,7 @@
           placeholder="ឧ. Milo, Lucky, ឬឈ្មោះរបស់អ្នក..." 
           class="w-full px-3 py-2 bg-white border border-blue-300 rounded-xl text-xs outline-none focus:ring-2 focus:ring-blue-500 shadow-xs"
         >
+        
         <div class="flex justify-between items-center text-[11px] pt-0.5">
           <span id="charCountNotice" class="text-slate-500 font-medium"></span>
           <span id="charCountDisplay" class="font-mono font-bold text-blue-600 bg-white px-2 py-0.5 rounded-md border border-blue-100">0 តួអក្សរ</span>
@@ -662,7 +664,18 @@
         adminSettingsProv: "ថ្លៃដឹកជញ្ជូន បណ្តាខេត្ត ($)",
         adminSettingsFreeShip: "🎉 ចំណាយចាប់ពីប៉ុន្មានឡើងទៅ ដឹកឥតគិតថ្លៃ ($)",
         adminSettingsBanner: "🖼️ បង្ហាញ Slide Banner ផ្សព្វផ្សាយ (Promotional Banner)",
-        adminSaveSettingsBtn: "💾 រក្សាទុកការកំណត់"
+        adminSaveSettingsBtn: "💾 រក្សាទុកការកំណត់",
+        lblCustomTitle: "✍️ បញ្ចូលឈ្មោះ/អក្សរដែលចង់ឆ្លាក់៖ *",
+        customPlaceholder: "ឧ. Milo, Lucky, ឬឈ្មោះរបស់អ្នក...",
+        customFeeEngraving: "សេវាឆ្លាក់",
+        customFree: "ឥតគិតថ្លៃ",
+        customPerCharOver: "/អក្សរ (លើស ",
+        customNoticeFreeLimit: "✓ ឥតគិតថ្លៃ (ក្នុងកម្រិត ",
+        customNoticeExtraChars: "លើស ",
+        customNoticeChars: " អក្សរ (+ $",
+        customNoticeFixedAdded: "✓ បានបូកថ្លៃសេវាឆ្លាក់ថេរ",
+        customNoticeFixedNote: "* ថ្លៃសេវាឆ្លាក់ស្លាកឈ្មោះ (ថេរ)",
+        customCharUnit: " តួអក្សរ"
       },
       en: {
         flag: "🇬🇧",
@@ -725,7 +738,18 @@
         adminSettingsProv: "Provinces Delivery ($)",
         adminSettingsFreeShip: "🎉 Free Shipping Threshold ($)",
         adminSettingsBanner: "🖼️ Enable Promotional Slide Banner",
-        adminSaveSettingsBtn: "💾 Save Settings"
+        adminSaveSettingsBtn: "💾 Save Settings",
+        lblCustomTitle: "✍️ Enter Name/Text to Engrave: *",
+        customPlaceholder: "e.g., Milo, Lucky, or your name...",
+        customFeeEngraving: "Engraving fee",
+        customFree: "Free",
+        customPerCharOver: "/char (over ",
+        customNoticeFreeLimit: "✓ Free (up to ",
+        customNoticeExtraChars: "Extra ",
+        customNoticeChars: " chars (+ $",
+        customNoticeFixedAdded: "✓ Fixed engraving fee added",
+        customNoticeFixedNote: "* Fixed nameplate engraving fee",
+        customCharUnit: " chars"
       },
       zh: {
         flag: "🇨🇳",
@@ -788,7 +812,18 @@
         adminSettingsProv: "外省运费 ($)",
         adminSettingsFreeShip: "🎉 免运费消费门槛 ($)",
         adminSettingsBanner: "🖼️ 启用促销幻灯片横幅 (Banner)",
-        adminSaveSettingsBtn: "💾 保存设置"
+        adminSaveSettingsBtn: "💾 保存设置",
+        lblCustomTitle: "✍️ 输入定制刻字内容: *",
+        customPlaceholder: "例如：Milo、Lucky 或您的名字...",
+        customFeeEngraving: "刻字服务费",
+        customFree: "免费",
+        customPerCharOver: "/字 (超过 ",
+        customNoticeFreeLimit: "✓ 免费 (限 ",
+        customNoticeExtraChars: "超出 ",
+        customNoticeChars: " 个字 (+ $",
+        customNoticeFixedAdded: "✓ 已计入固定刻字费",
+        customNoticeFixedNote: "* 固定名牌刻字服务费",
+        customCharUnit: " 个字符"
       }
     };
 
@@ -936,6 +971,11 @@
       if (el = document.getElementById('lblSetFreeShipMin')) el.innerText = t.adminSettingsFreeShip;
       if (el = document.getElementById('lblSetBannerText')) el.innerText = t.adminSettingsBanner;
       if (el = document.getElementById('btnSaveSettings')) el.innerText = t.adminSaveSettingsBtn;
+
+      // ធ្វើបច្ចុប្បន្នភាពផ្នែក Custom ភ្លាមៗប្រសិនបើ Modal កំពុងបើក
+      if (typeof updateModalLivePrice === "function") {
+        updateModalLivePrice();
+      }
     }
 
     function openSellerChat() {
@@ -1366,15 +1406,19 @@
     function updateModalLivePrice() {
       if (!selectedProduct) return;
 
+      var t = i18n[currentLang] || i18n['km'];
       var basePrice = Number(selectedProduct.price) || 0;
       var nameInput = document.getElementById('custCustomNameInput');
       var customText = nameInput ? nameInput.value.trim() : "";
       var charLength = customText.length;
 
+      var titleEl = document.getElementById('lblCustCustomTitle');
       var noticeEl = document.getElementById('charCountNotice');
       var countEl = document.getElementById('charCountDisplay');
       var priceEl = document.getElementById('modalPrice');
       var feeBadge = document.getElementById('custCustomFeeBadge');
+
+      if (titleEl) titleEl.innerText = t.lblCustomTitle;
 
       var totalFee = 0;
 
@@ -1387,35 +1431,35 @@
           var rate = Number(selectedProduct.customFee) || 0.50;
 
           if (feeBadge) {
-            feeBadge.innerText = "+$" + rate.toFixed(2) + "/អក្សរ (លើស " + baseLimit + ")";
+            feeBadge.innerText = "+$" + rate.toFixed(2) + t.customPerCharOver + baseLimit + ")";
             feeBadge.className = "text-[10px] font-bold bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full inline-block";
           }
 
           if (charLength <= baseLimit) {
             totalFee = 0;
-            if (noticeEl) noticeEl.innerHTML = '<span class="text-emerald-600 font-medium">✓ ឥតគិតថ្លៃ (ក្នុងកម្រិត ' + baseLimit + ' អក្សរ)</span>';
+            if (noticeEl) noticeEl.innerHTML = '<span class="text-emerald-600 font-medium">' + t.customNoticeFreeLimit + baseLimit + (currentLang === 'zh' ? ' 个字)' : ' chars)') + '</span>';
           } else {
             var extraChars = charLength - baseLimit;
             totalFee = extraChars * rate;
-            if (noticeEl) noticeEl.innerHTML = '<span class="text-amber-600 font-bold">លើស ' + extraChars + ' អក្សរ (+ $' + totalFee.toFixed(2) + ')</span>';
+            if (noticeEl) noticeEl.innerHTML = '<span class="text-amber-600 font-bold">' + t.customNoticeExtraChars + extraChars + t.customNoticeChars + totalFee.toFixed(2) + ')</span>';
           }
         } else {
           var flatRate = Number(selectedProduct.customFee) || 0;
           totalFee = (charLength > 0) ? flatRate : 0;
 
           if (feeBadge) {
-            feeBadge.innerText = flatRate > 0 ? "+$" + flatRate.toFixed(2) + " សេវាឆ្លាក់" : "ឥតគិតថ្លៃ";
+            feeBadge.innerText = flatRate > 0 ? "+$" + flatRate.toFixed(2) + " " + t.customFeeEngraving : t.customFree;
             feeBadge.className = "text-[10px] font-bold bg-blue-200 text-blue-800 px-2 py-0.5 rounded-full inline-block";
           }
           if (noticeEl) {
             noticeEl.innerHTML = (charLength > 0) 
-              ? '<span class="text-blue-600 font-semibold">✓ បានបូកថ្លៃសេវាឆ្លាក់ថេរ</span>' 
-              : '<span class="text-slate-500">* ថ្លៃសេវាឆ្លាក់ស្លាកឈ្មោះ (ថេរ)</span>';
+              ? '<span class="text-blue-600 font-semibold">' + t.customNoticeFixedAdded + '</span>' 
+              : '<span class="text-slate-500">' + t.customNoticeFixedNote + '</span>';
           }
         }
       }
 
-      if (countEl) countEl.innerText = charLength + " តួអក្សរ";
+      if (countEl) countEl.innerText = charLength + t.customCharUnit;
 
       var unitPrice = basePrice + totalFee;
       var totalProductPrice = unitPrice * (quantity || 1);
