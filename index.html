@@ -453,7 +453,7 @@
   </div>
 
   <!-- Modal 5: My Orders History -->
-  <div id="myOrdersModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
+  <div id="myOrdersModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden items-end sm:items-center justify-center p-0 sm:p-4">
     <div class="bg-white w-full max-w-md rounded-t-3xl sm:rounded-3xl max-h-[85vh] overflow-y-auto p-5 shadow-2xl relative">
       <button type="button" onclick="closeMyOrdersModal()" class="absolute top-4 right-4 bg-slate-100 hover:bg-slate-200 w-8 h-8 rounded-full flex items-center justify-center text-slate-500 font-bold text-xs">✕</button>
       <div class="flex items-center gap-2 mb-4">
@@ -463,14 +463,13 @@
           <p id="myOrdersModalSub" class="text-[10px] text-slate-400">តាមដានស្ថានភាពផលិត និងការដឹកជញ្ជូន</p>
         </div>
       </div>
-          <h3 class="text-sm font-bold text-slate-800">ការកុម្ម៉ង់របស់ខ្ញុំ (My Orders)</h3>
-          <p class="text-[10px] text-slate-400">តាមដានស្ថានភាពផលិត និងការដឹកជញ្ជូន</p>
-        </div>
-      </div>
-      <div id="myOrdersLoader" class="text-center py-10 text-slate-400 text-xs">
+
+      <!-- បន្ថែម hidden នៅត្រង់នេះ ដើម្បីកុំឱ្យវិលនៅខាងក្រៅ -->
+      <div id="myOrdersLoader" class="text-center py-10 text-slate-400 text-xs hidden">
         <div class="w-6 h-6 border-2 border-amber-500 border-t-transparent rounded-full animate-spin mx-auto mb-2"></div>
-        កំពុងពិនិត្យមើលប្រវត្តិការកុម្ម៉ង់...
+        <span>កំពុងពិនិត្យមើលប្រវត្តិការកុម្ម៉ង់...</span>
       </div>
+
       <div id="myOrdersContainer" class="space-y-3"></div>
       <div id="myOrdersEmpty" class="hidden text-center py-10 text-slate-400 text-xs">
         <span class="text-3xl block mb-2">🛍️</span>
@@ -1819,10 +1818,13 @@
       var container = document.getElementById('myOrdersContainer');
       var emptyState = document.getElementById('myOrdersEmpty');
 
-      container.innerHTML = '';
-      loader.className = "text-center py-10 text-slate-400 text-xs";
-      emptyState.className = "hidden";
+      if (container) container.innerHTML = '';
+      if (emptyState) emptyState.className = "hidden";
+      
+      // បង្ហាញ Modal ជាផ្ទាំង Pop-up ពេញអេក្រង់
       if (modal) modal.className = "fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4";
+      // បង្ហាញ Loader វិលតែពេលកំពុងទាញទិន្នន័យ
+      if (loader) loader.className = "text-center py-10 text-slate-400 text-xs block";
 
       var currentUserId = "";
       try {
@@ -1834,16 +1836,18 @@
       }
 
       if (!currentUserId) {
-        loader.className = "hidden";
-        container.innerHTML = 
-          '<div class="bg-amber-50 border border-amber-200 rounded-2xl p-4 text-center space-y-3">' +
-            '<p class="text-xs text-amber-800 font-medium">⚠️ មិនអាចចាប់យកគណនី Telegram ដោយស្វ័យប្រវត្តិបានទេ។</p>' +
-            '<p class="text-[11px] text-slate-500">សូមបញ្ចូលលេខទូរសព្ទដែលអ្នកធ្លាប់កុម្ម៉ង់ទិញដើម្បីពិនិត្យ៖</p>' +
-            '<div class="flex gap-2">' +
-              '<input id="manualPhoneInput" type="tel" placeholder="ឧ. 012345678" class="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs outline-none focus:ring-2 focus:ring-blue-500">' +
-              '<button type="button" onclick="searchOrderByPhone()" class="bg-blue-600 text-white text-xs px-3 py-2 rounded-xl font-bold whitespace-nowrap shadow-sm">ស្វែងរក</button>' +
-            '</div>' +
-          '</div>';
+        if (loader) loader.className = "hidden";
+        if (container) {
+          container.innerHTML = 
+            '<div class="bg-amber-50 border border-amber-200 rounded-2xl p-4 text-center space-y-3">' +
+              '<p class="text-xs text-amber-800 font-medium">⚠️ មិនអាចចាប់យកគណនី Telegram ដោយស្វ័យប្រវត្តិបានទេ។</p>' +
+              '<p class="text-[11px] text-slate-500">សូមបញ្ចូលលេខទូរសព្ទដែលអ្នកធ្លាប់កុម្ម៉ង់ទិញដើម្បីពិនិត្យ៖</p>' +
+              '<div class="flex gap-2">' +
+                '<input id="manualPhoneInput" type="tel" placeholder="ឧ. 012345678" class="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs outline-none focus:ring-2 focus:ring-blue-500">' +
+                '<button type="button" onclick="searchOrderByPhone()" class="bg-blue-600 text-white text-xs px-3 py-2 rounded-xl font-bold whitespace-nowrap shadow-sm">ស្វែងរក</button>' +
+              '</div>' +
+            '</div>';
+        }
         return;
       }
 
@@ -1886,7 +1890,10 @@
 
     function closeMyOrdersModal() {
       var modal = document.getElementById('myOrdersModal');
-      if (modal) modal.className = "fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden flex items-end sm:items-center justify-center p-0 sm:p-4";
+      var loader = document.getElementById('myOrdersLoader');
+      // បិទ Modal វិញដោយដាក់ class hidden (និងដក flex ចេញ)
+      if (modal) modal.className = "fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden items-end sm:items-center justify-center p-0 sm:p-4";
+      if (loader) loader.className = "hidden";
     }
 
     function renderMyOrdersList(orders) {
