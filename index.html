@@ -35,23 +35,29 @@
       </div>
     </div>
     
+    <!-- ប៊ូតុង Icon ទាំង ៣៖ ស្វែងរក, ឆាត, និង ភាសា -->
     <div class="flex items-center gap-1.5">
-      <!-- ប៊ូតុងឆាតសួរនាំ -->
-      <button type="button" onclick="openSellerChat()" title="ឆាតសួរនាំ" class="w-8 h-8 bg-blue-50 hover:bg-blue-100 text-blue-600 rounded-xl border border-blue-200/80 flex items-center justify-center text-sm transition-all active:scale-95 shadow-xs">
+      <!-- ១. ប៊ូតុង Icon ស្វែងរក -->
+      <button type="button" onclick="toggleSearchBox()" title="ស្វែងរកទំនិញ" class="w-9 h-9 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl border border-slate-200/80 flex items-center justify-center text-sm transition-all active:scale-90 shadow-2xs">
+        🔍
+      </button>
+
+      <!-- ២. ប៊ូតុង Icon ឆាត -->
+      <button type="button" onclick="openSellerChat()" title="ឆាតសួរនាំ" class="w-9 h-9 bg-blue-50 hover:bg-blue-100 text-blue-600 rounded-xl border border-blue-200/80 flex items-center justify-center text-sm transition-all active:scale-90 shadow-2xs">
         💬
       </button>
 
-      <!-- ប៊ូតុងប្តូរភាសា -->
-      <button id="langToggleBtn" type="button" onclick="toggleLanguage()" class="h-8 px-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl border border-slate-200 flex items-center gap-1 text-[11px] transition-all active:scale-95 shadow-xs">
+      <!-- ៣. ប៊ូតុង Icon ភាសា (ដាក់តែរូប Icon ទង់ជាតិ) -->
+      <button id="langToggleBtn" type="button" onclick="toggleLanguage()" title="ប្តូរភាសា" class="w-9 h-9 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl border border-slate-200 flex items-center justify-center text-base transition-all active:scale-90 shadow-2xs">
         <span id="langFlag">🇬🇧</span>
-        <span id="langText">EN</span>
       </button>
     </div>
   </header>
 
   <!-- ==================== CUSTOMER VIEW ==================== -->
   <section id="customerSection">
-    <div class="px-4 pt-3">
+    <!-- ប្រអប់ Search (លាក់ទុកជាមុន hidden - ពេលចុច Icon 🔍 ទើបបង្ហាញចុះមក) -->
+    <div id="custSearchWrapper" class="hidden px-4 pt-3 transition-all duration-300">
       <div class="relative">
         <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-slate-400 text-xs">🔍</span>
         <input 
@@ -59,7 +65,7 @@
           type="text" 
           oninput="applyCustomerFilter()" 
           placeholder="ស្វែងរកប្រដាប់ក្មេងលេង ជើងទម្រ Fidget..." 
-          class="w-full pl-9 pr-8 py-2.5 bg-white border border-slate-200 rounded-2xl text-xs outline-none focus:ring-2 focus:ring-blue-500 transition-all shadow-sm"
+          class="w-full pl-9 pr-8 py-2.5 bg-white border border-blue-200 rounded-2xl text-xs outline-none focus:ring-2 focus:ring-blue-500 transition-all shadow-sm"
         >
         <button id="clearCustSearchBtn" type="button" onclick="clearCustSearch()" class="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400 hidden text-xs font-bold">✕</button>
       </div>
@@ -666,7 +672,6 @@
       var t = i18n[currentLang];
       var el;
       if (el = document.getElementById('langFlag')) el.innerText = t.flag;
-      if (el = document.getElementById('langText')) el.innerText = t.langText;
       if (el = document.getElementById('subHeaderText')) {
         if (currentRole === 'customer') el.innerText = t.statusOpen;
       }
@@ -795,6 +800,23 @@
       var clearBtn = document.getElementById('clearCustSearchBtn');
       if (clearBtn) clearBtn.className = "absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400 hidden text-xs font-bold";
       applyCustomerFilter();
+    }
+
+    // អនុគមន៍ បើក/បិទ ប្រអប់ Search ពេលចុចលើ Icon 🔍
+    function toggleSearchBox() {
+      var box = document.getElementById('custSearchWrapper');
+      var input = document.getElementById('custSearchInput');
+      if (!box) return;
+
+      if (box.classList.contains('hidden')) {
+        box.classList.remove('hidden');
+        if (input) input.focus(); // ឱ្យ cursor លោតចូលប្រអប់វាយភ្លាមៗ
+      } else {
+        box.classList.add('hidden');
+        if (input && input.value.trim() !== '') {
+          clearCustSearch(); // សម្អាតអក្សរស្វែងរកវិញពេលបិទ
+        }
+      }
     }
 
     function renderCustomerGrid(items) {
