@@ -2857,7 +2857,9 @@
           btn.innerText = "💾 រក្សាទុកការកែប្រែ (Update)";
           alert("Error: " + err.message);
         });
-      // បង្ហាញបញ្ជី Category ក្នុង Admin Settings ដើម្បីរុញលំដាប់
+      }
+    
+      // ១. បង្ហាញបញ្ជី Category ក្នុង Admin Settings
     function renderAdminCategoryOrderManager() {
       var container = document.getElementById('adminCategoryOrderList');
       if (!container) return;
@@ -2899,7 +2901,6 @@
           var btnGroup = document.createElement('div');
           btnGroup.className = "flex items-center gap-1";
 
-          // ប៊ូតុងរុញឡើងលើ / ទៅមុខ (▲)
           var upBtn = document.createElement('button');
           upBtn.type = "button";
           upBtn.className = "w-6 h-6 rounded-lg bg-slate-100 hover:bg-slate-200 font-bold text-xs flex items-center justify-center " + (index === 0 ? "opacity-30 cursor-not-allowed" : "active:scale-90");
@@ -2907,7 +2908,6 @@
           upBtn.disabled = (index === 0);
           upBtn.onclick = function() { moveCategoryPosition(index, -1); };
 
-          // ប៊ូតុងរុញចុះក្រោម / ទៅក្រោយ (▼)
           var downBtn = document.createElement('button');
           downBtn.type = "button";
           downBtn.className = "w-6 h-6 rounded-lg bg-slate-100 hover:bg-slate-200 font-bold text-xs flex items-center justify-center " + (index === categories.length - 1 ? "opacity-30 cursor-not-allowed" : "active:scale-90");
@@ -2924,7 +2924,7 @@
       }
     }
 
-    // អនុគមន៍ប្តូរទីតាំង Category (រុញទៅមុខ / ទៅក្រោយ)
+    // ២. អនុគមន៍រុញប្តូរទីតាំង Category
     function moveCategoryPosition(currentIndex, delta) {
       var categories = [];
       for (var i = 0; i < adminProducts.length; i++) {
