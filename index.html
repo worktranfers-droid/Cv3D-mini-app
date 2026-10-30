@@ -258,19 +258,19 @@
     <!-- 🏠 Home -->
     <button type="button" onclick="scrollToTop()" class="flex flex-col items-center gap-0.5 text-blue-600 active:scale-90 transition-all">
       <span class="text-xl">🏠</span>
-      <span class="text-[11px] font-bold">ទំព័រដើម</span>
+      <span id="navHomeText" class="text-[11px] font-bold">ទំព័រដើម</span>
     </button>
 
     <!-- 📦 Orders -->
     <button type="button" onclick="openMyOrdersModal()" class="flex flex-col items-center gap-0.5 text-slate-500 hover:text-slate-800 active:scale-90 transition-all">
       <span class="text-xl">📦</span>
-      <span class="text-[11px] font-semibold">ការកុម្ម៉ង់</span>
+      <span id="navOrdersText" class="text-[11px] font-semibold">ការកុម្ម៉ង់</span>
     </button>
 
     <!-- 🛒 Cart -->
     <button type="button" onclick="openCartModal()" class="flex flex-col items-center gap-0.5 text-slate-500 hover:text-slate-800 active:scale-90 transition-all relative">
       <span class="text-xl">🛒</span>
-      <span class="text-[11px] font-semibold">កន្រ្តក</span>
+      <span id="navCartText" class="text-[11px] font-semibold">កន្រ្តក</span>
       <span id="floatingCartBadge" class="hidden absolute -top-1 -right-2 bg-rose-500 text-white text-[9px] font-extrabold w-4 h-4 rounded-full flex items-center justify-center border border-white shadow-xs">0</span>
     </button>
   </nav>
@@ -287,7 +287,7 @@
       <div class="w-full h-56 rounded-2xl overflow-hidden bg-slate-100 mb-4 relative select-none">
         <div id="modalSliderContainer" class="w-full h-full flex overflow-x-auto snap-x snap-mandatory scroll-smooth no-scrollbar" onscroll="handleSliderScroll()"></div>
         <div id="sliderDots" class="absolute bottom-2.5 left-1/2 -translate-x-1/2 flex items-center gap-1.5 bg-black/40 backdrop-blur-md px-2.5 py-1 rounded-full z-10"></div>
-        <span class="absolute top-2.5 left-2.5 bg-black/60 backdrop-blur-md text-white text-[10px] font-bold px-2 py-0.5 rounded-full pointer-events-none z-10">
+        <span id="modalZoomNotice" class="absolute top-2.5 left-2.5 bg-black/60 backdrop-blur-md text-white text-[10px] font-bold px-2 py-0.5 rounded-full pointer-events-none z-10">
           🔍 ចុចលើរូបដើម្បី Zoom
         </span>
       </div>
@@ -392,11 +392,11 @@
         </div>
 
         <div id="cartOrderForm" class="space-y-2.5 bg-slate-50 p-3.5 rounded-2xl border border-slate-200 my-3">
-          <div>
-            <label class="block text-xs font-bold text-slate-700 mb-1">🚚 តំបន់ដឹកជញ្ជូន (Delivery Zone): *</label>
+         <div>
+            <label id="lblCartZone" class="block text-xs font-bold text-slate-700 mb-1">🚚 តំបន់ដឹកជញ្ជូន (Delivery Zone): *</label>
             <select id="cartDeliveryZone" onchange="updateCartDeliveryCost()" class="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs outline-none focus:ring-2 focus:ring-blue-500 shadow-sm font-medium">
-              <option value="phnom_penh" data-cost="1.50">📍 ភ្នំពេញ (+$1.50)</option>
-              <option value="province" data-cost="2.00">🚐 បណ្តាខេត្ត (+$2.00)</option>
+              <option value="phnom_penh" data-cost="1.50"> ភ្នំពេញ (+$1.50)</option>
+              <option value="province" data-cost="2.00"> បណ្តាខេត្ត (+$2.00)</option>
             </select>
           </div>
           <div>
@@ -459,6 +459,10 @@
       <div class="flex items-center gap-2 mb-4">
         <span class="text-2xl">📦</span>
         <div>
+          <h3 id="myOrdersModalTitle" class="text-sm font-bold text-slate-800">ការកុម្ម៉ង់របស់ខ្ញុំ (My Orders)</h3>
+          <p id="myOrdersModalSub" class="text-[10px] text-slate-400">តាមដានស្ថានភាពផលិត និងការដឹកជញ្ជូន</p>
+        </div>
+      </div>
           <h3 class="text-sm font-bold text-slate-800">ការកុម្ម៉ង់របស់ខ្ញុំ (My Orders)</h3>
           <p class="text-[10px] text-slate-400">តាមដានស្ថានភាពផលិត និងការដឹកជញ្ជូន</p>
         </div>
@@ -580,40 +584,139 @@
     // ១. កាតាឡុកពាក្យ ៣ ភាសា (ខ្មែរ, English, 中文)
     var i18n = {
       km: {
-        flag: "🇰🇭", langName: "ខ្មែរ", chatSeller: "ឆាត", statusOpen: "កំពុងទទួលការកុម្ម៉ង់",
-        searchPlaceholder: "ស្វែងរកប្រដាប់ក្មេងលេង ជើងទម្រ Fidget...", catAll: "ទាំងអស់",
-        loaderText: "កំពុងទាញទិន្នន័យពីហាង...", emptyShop: "មិនទាន់មានទំនិញដាក់លក់ទេ ឬកំពុងផ្ទុកទិន្នន័យ...",
-        btnView: "មើល", lblColor: "ជ្រើសរើសពណ៌ (Color):", lblSize: "ជ្រើសរើសទំហំ (Size):",
-        lblQty: "ចំនួន (Quantity):", btnAddToCart: "ដាក់ចូលកន្រ្តក", btnBuyNow: "ទិញឥឡូវនេះ",
-        cartTitle: "កន្រ្តកទំនិញរបស់អ្នក", cartEmpty: "កន្រ្តករបស់អ្នកនៅទទេស្អាត",
-        lblPhone: "លេខទូរសព្ទ (Phone Number): *", lblLoc: "ទីតាំងដឹកជញ្ជូន (Delivery Address): *",
-        phonePlaceholder: "ឧ. 012 345 678", locPlaceholder: "ផ្ទះលេខ, ផ្លូវ, សង្កាត់, ខណ្ឌ ឬខេត្ត...",
-        cartTotal: "តម្លៃសរុបទាំងអស់៖", btnCheckout: "🚀 ផ្ញើការកុម្ម៉ង់ទិញឥឡូវនេះ",
-        alertFillInfo: "សូមបញ្ចូលលេខទូរសព្ទ និងទីតាំងដឹកជញ្ជូនរបស់អ្នក!"
+        flag: "🇰🇭",
+        statusOpen: "កំពុងទទួលការកុម្ម៉ង់",
+        searchPlaceholder: "ស្វែងរកប្រដាប់ក្មេងលេង ជើងទម្រ Fidget...",
+        catAll: "ទាំងអស់",
+        loaderText: "កំពុងទាញទិន្នន័យពីហាង...",
+        emptyShop: "មិនទាន់មានទំនិញដាក់លក់ទេ ឬកំពុងផ្ទុកទិន្នន័យ...",
+        btnView: "មើល",
+        zoomNotice: "🔍 ចុចលើរូបដើម្បី Zoom",
+        lblColor: "ជ្រើសរើសពណ៌ (Color):",
+        lblSize: "ជ្រើសរើសទំហំ (Size):",
+        lblCustomTitle: "✍️ បញ្ចូលឈ្មោះ/អក្សរដែលចង់ឆ្លាក់៖ *",
+        customPlaceholder: "ឧ. Milo, Lucky, ឬឈ្មោះរបស់អ្នក...",
+        lblQty: "ចំនួន (Quantity):",
+        btnAddToCart: "ដាក់ចូលកន្រ្តក",
+        btnBuyNow: "ទិញឥឡូវនេះ",
+        cartTitle: "កន្រ្តកទំនិញរបស់អ្នក",
+        cartEmpty: "កន្រ្តករបស់អ្នកនៅទទេស្អាត",
+        lblZone: "🚚 តំបន់ដឹកជញ្ជូន (Delivery Zone): *",
+        optPhnomPenh: "📍 ភ្នំពេញ",
+        optProvince: "🚐 បណ្តាខេត្ត",
+        lblPhone: "លេខទូរសព្ទ (Phone Number): *",
+        lblLoc: "ទីតាំងដឹកជញ្ជូន (Delivery Address): *",
+        phonePlaceholder: "ឧ. 012 345 678",
+        locPlaceholder: "ភ្នំពេញ៖ លេខផ្ទះ ផ្លូវ សង្កាត់ | តាមខេត្ត៖ ឈ្មោះខេត្ត និងសាខាឡាន...",
+        cartTotal: "តម្លៃសរុបទាំងអស់៖",
+        btnCheckout: "🚀 ផ្ញើការកុម្ម៉ង់ទិញឥឡូវនេះ",
+        alertFillInfo: "សូមបញ្ចូលលេខទូរសព្ទ និងទីតាំងដឹកជញ្ជូនរបស់អ្នក!",
+        alertCustomEmpty: "សូមបញ្ចូលឈ្មោះ ឬអក្សរដែលអ្នកចង់ឆ្លាក់ជាមុនសិន!",
+        freeShippingBadge: "🎉 ដឹកឥតគិតថ្លៃ (ទិញលើស $",
+        needMoreShip: "ទិញថែម $",
+        needMoreShipEnd: " ទៀត ដើម្បីដឹកឥតគិតថ្លៃ!",
+        itemCostPrefix: "ទំនិញ: $",
+        shipCostPrefix: " + ដឹក: $",
+        navHome: "ទំព័រដើម",
+        navOrders: "ការកុម្ម៉ង់",
+        navCart: "កន្រ្តក",
+        myOrdersTitle: "ការកុម្ម៉ង់របស់ខ្ញុំ (My Orders)",
+        myOrdersSub: "តាមដានស្ថានភាពផលិត និងការដឹកជញ្ជូន",
+        myOrdersEmpty: "អ្នកមិនទាន់មានការកុម្ម៉ង់ទិញនៅឡើយទេ!",
+        policyCustomTitle: "⚠️ លក្ខខណ្ឌទំនិញ Custom (ឆ្លាក់ឈ្មោះ)៖",
+        policyCustomDesc: "ដោយសារទំនិញនេះឆ្លាក់ឈ្មោះផ្ទាល់ខ្លួន ខាងហាងនឹងទាក់ទងទៅលោកអ្នកដើម្បី <b>សុំកក់ប្រាក់ ៥០%</b> មុនពេលចាប់ផ្ដើមព្រីន។",
+        policyNormalTitle: "✓ មិនត្រូវការបង់ប្រាក់មុនឡើយ!",
+        policyNormalDesc: "លោកអ្នកអាចទូទាត់ប្រាក់នៅពេលអ្នកដឹកជញ្ជូនយកទំនិញទៅដល់ផ្ទាល់ (Cash on Delivery)។"
       },
       en: {
-        flag: "🇬🇧", langName: "EN", chatSeller: "Chat", statusOpen: "Accepting Orders",
-        searchPlaceholder: "Search fidget toys, desk stands...", catAll: "All",
-        loaderText: "Loading shop catalog...", emptyShop: "No products available or loading...",
-        btnView: "View", lblColor: "Select Color:", lblSize: "Select Size:",
-        lblQty: "Quantity:", btnAddToCart: "Add to Cart", btnBuyNow: "Buy Now",
-        cartTitle: "Your Shopping Cart", cartEmpty: "Your cart is empty",
-        lblPhone: "Phone Number: *", lblLoc: "Delivery Address: *",
-        phonePlaceholder: "e.g., 012 345 678", locPlaceholder: "House No, Street, Sangkat, Khan or City...",
-        cartTotal: "Total Amount:", btnCheckout: "🚀 Send Order Now",
-        alertFillInfo: "Please enter your phone number and delivery location!"
+        flag: "🇬🇧",
+        statusOpen: "Accepting Orders",
+        searchPlaceholder: "Search fidget toys, desk stands...",
+        catAll: "All",
+        loaderText: "Loading shop catalog...",
+        emptyShop: "No products available or loading...",
+        btnView: "View",
+        zoomNotice: "🔍 Click image to Zoom",
+        lblColor: "Select Color:",
+        lblSize: "Select Size:",
+        lblCustomTitle: "✍️ Enter Name/Text to Engrave: *",
+        customPlaceholder: "e.g., Milo, Lucky, or your name...",
+        lblQty: "Quantity:",
+        btnAddToCart: "Add to Cart",
+        btnBuyNow: "Buy Now",
+        cartTitle: "Your Shopping Cart",
+        cartEmpty: "Your cart is empty",
+        lblZone: "🚚 Delivery Zone: *",
+        optPhnomPenh: "📍 Phnom Penh",
+        optProvince: "🚐 Provinces",
+        lblPhone: "Phone Number: *",
+        lblLoc: "Delivery Address: *",
+        phonePlaceholder: "e.g., 012 345 678",
+        locPlaceholder: "House No, Street, Sangkat, or Province & Bus branch...",
+        cartTotal: "Total Amount:",
+        btnCheckout: "🚀 Send Order Now",
+        alertFillInfo: "Please enter your phone number and delivery location!",
+        alertCustomEmpty: "Please enter the custom name or text first!",
+        freeShippingBadge: "🎉 Free Shipping (Orders over $",
+        needMoreShip: "Add $",
+        needMoreShipEnd: " more for free shipping!",
+        itemCostPrefix: "Items: $",
+        shipCostPrefix: " + Shipping: $",
+        navHome: "Home",
+        navOrders: "Orders",
+        navCart: "Cart",
+        myOrdersTitle: "My Orders",
+        myOrdersSub: "Track print and delivery status",
+        myOrdersEmpty: "You don't have any orders yet!",
+        policyCustomTitle: "⚠️ Custom Item Policy (Engraving):",
+        policyCustomDesc: "Since this item is customized, we will contact you for a <b>50% deposit</b> before printing.",
+        policyNormalTitle: "✓ No Prepayment Required!",
+        policyNormalDesc: "You can pay when the courier delivers the package to you (Cash on Delivery)."
       },
       zh: {
-        flag: "🇨🇳", langName: "中文", chatSeller: "客服", statusOpen: "营业中 (接受预订)",
-        searchPlaceholder: "搜索减压玩具、桌面支架...", catAll: "全部",
-        loaderText: "正在加载商品列表...", emptyShop: "暂无在售商品或正在加载...",
-        btnView: "查看", lblColor: "选择颜色:", lblSize: "选择尺寸:",
-        lblQty: "数量:", btnAddToCart: "加入购物车", btnBuyNow: "立即购买",
-        cartTitle: "您的购物车", cartEmpty: "购物车空空如也",
-        lblPhone: "电话号码: *", lblLoc: "配送地址: *",
-        phonePlaceholder: "例如: 012 345 678", locPlaceholder: "门牌号、街道、区域、省市...",
-        cartTotal: "总计金额:", btnCheckout: "🚀 立即提交订单",
-        alertFillInfo: "请输入您的电话号码和配送地址！"
+        flag: "🇨🇳",
+        statusOpen: "营业中 (接受预订)",
+        searchPlaceholder: "搜索减压玩具、桌面支架...",
+        catAll: "全部",
+        loaderText: "正在加载商品列表...",
+        emptyShop: "暂无在售商品或正在加载...",
+        btnView: "查看",
+        zoomNotice: "🔍 点击图片放大",
+        lblColor: "选择颜色:",
+        lblSize: "选择尺寸:",
+        lblCustomTitle: "✍️ 输入定制刻字内容: *",
+        customPlaceholder: "例如：Milo、Lucky 或您的名字...",
+        lblQty: "数量:",
+        btnAddToCart: "加入购物车",
+        btnBuyNow: "立即购买",
+        cartTitle: "您的购物车",
+        cartEmpty: "购物车空空如也",
+        lblZone: "🚚 配送区域: *",
+        optPhnomPenh: "📍 金边市",
+        optProvince: "🚐 外省区域",
+        lblPhone: "电话号码: *",
+        lblLoc: "配送地址: *",
+        phonePlaceholder: "例如: 012 345 678",
+        locPlaceholder: "门牌号、街道、区域、省市及车站...",
+        cartTotal: "总计金额:",
+        btnCheckout: "🚀 立即提交订单",
+        alertFillInfo: "请输入您的电话号码和配送地址！",
+        alertCustomEmpty: "请先输入定制刻字的名字或文字！",
+        freeShippingBadge: "🎉 免运费 (订单满 $",
+        needMoreShip: "再买 $",
+        needMoreShipEnd: " 即可享受免运费！",
+        itemCostPrefix: "商品: $",
+        shipCostPrefix: " + 运费: $",
+        navHome: "首页",
+        navOrders: "我的订单",
+        navCart: "购物车",
+        myOrdersTitle: "我的订单",
+        myOrdersSub: "追踪制作与配送状态",
+        myOrdersEmpty: "您目前暂无任何订单！",
+        policyCustomTitle: "⚠️ 定制商品条款 (刻字)：",
+        policyCustomDesc: "由于该商品为专属定制，我们将在开始打印前联系您收取 <b>50% 定金</b>。",
+        policyNormalTitle: "✓ 无需提前付款！",
+        policyNormalDesc: "您可以在快递送达时直接付款给派送员 (货到付款 COD)。"
       }
     };
 
@@ -694,7 +797,6 @@
       } else {
         currentLang = 'km';
       }
-      
       localStorage.setItem('app_user_lang', currentLang);
       applyLanguageUI();
       renderDynamicCategories();
@@ -703,7 +805,7 @@
     }
 
     function applyLanguageUI() {
-      var t = i18n[currentLang];
+      var t = i18n[currentLang] || i18n['km'];
       var el;
       if (el = document.getElementById('langFlag')) el.innerText = t.flag;
       if (el = document.getElementById('subHeaderText')) {
@@ -711,19 +813,37 @@
       }
       if (el = document.getElementById('custSearchInput')) el.placeholder = t.searchPlaceholder;
       if (el = document.getElementById('custLoaderText')) el.innerText = t.loaderText;
+
+      // Product Modal
+      if (el = document.getElementById('modalZoomNotice')) el.innerText = t.zoomNotice;
       if (el = document.getElementById('lblSelectColor')) el.innerText = t.lblColor;
       if (el = document.getElementById('lblSelectSize')) el.innerText = t.lblSize;
       if (el = document.getElementById('lblSelectQty')) el.innerText = t.lblQty;
       if (el = document.getElementById('btnAddToCartText')) el.innerText = t.btnAddToCart;
       if (el = document.getElementById('btnBuyNowText')) el.innerText = t.btnBuyNow;
+      if (el = document.getElementById('custCustomNameInput')) el.placeholder = t.customPlaceholder;
+
+      // Cart Modal
       if (el = document.getElementById('cartModalTitle')) el.innerText = t.cartTitle;
       if (el = document.getElementById('cartEmptyText')) el.innerText = t.cartEmpty;
+      if (el = document.getElementById('lblCartZone')) el.innerText = t.lblZone;
       if (el = document.getElementById('lblCartPhone')) el.innerText = t.lblPhone;
       if (el = document.getElementById('lblCartLoc')) el.innerText = t.lblLoc;
       if (el = document.getElementById('cartPhoneInput')) el.placeholder = t.phonePlaceholder;
       if (el = document.getElementById('cartLocInput')) el.placeholder = t.locPlaceholder;
       if (el = document.getElementById('lblCartTotal')) el.innerText = t.cartTotal;
       if (el = document.getElementById('btnCartCheckout')) el.innerText = t.btnCheckout;
+
+      // Bottom Nav
+      if (el = document.getElementById('navHomeText')) el.innerText = t.navHome;
+      if (el = document.getElementById('navOrdersText')) el.innerText = t.navOrders;
+      if (el = document.getElementById('navCartText')) el.innerText = t.navCart;
+
+      // My Orders Modal
+      if (el = document.getElementById('myOrdersModalTitle')) el.innerText = t.myOrdersTitle;
+      if (el = document.getElementById('myOrdersModalSub')) el.innerText = t.myOrdersSub;
+
+      updateDeliveryDropdownUI();
     }
 
     function openSellerChat() {
@@ -876,7 +996,7 @@
           var btn = document.createElement('button');
           btn.type = "button";
           var isActive = (currentCustomerCategory === cat);
-          var label = (cat === 'all') ? ((currentLang === 'km') ? 'ទាំងអស់' : 'All') : cat;
+          var label = (cat === 'all') ? (i18n[currentLang] ? i18n[currentLang].catAll : 'All') : cat;
           var count = categoryCounts[cat] || 0;
 
           // ប៊ូតុងរចនាបែប Pill ដែលមាន Badge បង្ហាញចំនួនទំនិញ
@@ -1398,11 +1518,12 @@
 
     function updateDeliveryDropdownUI() {
       var zone = document.getElementById('cartDeliveryZone');
+      var t = i18n[currentLang] || i18n['km'];
       if (zone) {
         var currentSelected = zone.value || "phnom_penh";
         zone.innerHTML = 
-          '<option value="phnom_penh" data-cost="' + appSettings.ship_phnom_penh + '">📍 ភ្នំពេញ (+$' + appSettings.ship_phnom_penh.toFixed(2) + ')</option>' +
-          '<option value="province" data-cost="' + appSettings.ship_province + '">🚐 បណ្តាខេត្ត (+$' + appSettings.ship_province.toFixed(2) + ')</option>';
+          '<option value="phnom_penh" data-cost="' + appSettings.ship_phnom_penh + '">' + t.optPhnomPenh + ' (+$' + appSettings.ship_phnom_penh.toFixed(2) + ')</option>' +
+          '<option value="province" data-cost="' + appSettings.ship_province + '">' + t.optProvince + ' (+$' + appSettings.ship_province.toFixed(2) + ')</option>';
         zone.value = currentSelected;
       }
     }
@@ -1448,25 +1569,26 @@
         }
       }
 
+      var t = i18n[currentLang] || i18n['km'];
       var noticeBox = document.getElementById('paymentPolicyNotice');
       if (noticeBox) {
         if (hasCustomItem) {
           noticeBox.className = "p-2.5 rounded-xl text-xs space-y-1 bg-amber-50 border border-amber-200 text-amber-900";
           noticeBox.innerHTML = 
             '<div class="font-bold flex items-center gap-1 text-amber-800">' +
-              '<span>⚠️</span> <span>លក្ខខណ្ឌទំនិញ Custom (ឆ្លាក់ឈ្មោះ)៖</span>' +
+              '<span>⚠️</span> <span>' + t.policyCustomTitle + '</span>' +
             '</div>' +
             '<p class="text-[11px] leading-relaxed text-amber-700">' +
-              'ដោយសារទំនិញនេះឆ្លាក់ឈ្មោះផ្ទាល់ខ្លួន ខាងហាងនឹងទាក់ទងទៅលោកអ្នកដើម្បី <b>សុំកក់ប្រាក់ ៥០%</b> មុនពេលចាប់ផ្ដើមព្រីន។' +
+              t.policyCustomDesc +
             '</p>';
         } else {
           noticeBox.className = "p-2.5 rounded-xl text-xs space-y-1 bg-emerald-50 border border-emerald-200 text-emerald-900";
           noticeBox.innerHTML = 
             '<div class="font-bold flex items-center gap-1 text-emerald-800">' +
-              '<span>✓</span> <span>មិនត្រូវការបង់ប្រាក់មុនឡើយ!</span>' +
+              '<span>✓</span> <span>' + t.policyNormalTitle + '</span>' +
             '</div>' +
             '<p class="text-[11px] leading-relaxed text-emerald-700">' +
-              'លោកអ្នកអាចទូទាត់ប្រាក់នៅពេលអ្នកដឹកជញ្ជូនយកទំនិញទៅដល់ផ្ទាល់ (Cash on Delivery)។' +
+              t.policyNormalDesc +
             '</p>';
         }
       }
@@ -1558,16 +1680,16 @@
         if (isFreeShipping) {
           totalEl.innerHTML = 
             '<div class="text-right">' +
-              '<span class="text-[10px] bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-md font-bold block mb-0.5">🎉 ដឹកឥតគិតថ្លៃ (ទិញលើស $' + appSettings.free_shipping_min + ')</span>' +
-              '<span class="text-xs text-slate-400 font-normal mr-1">(ទំនិញ: $' + subTotal.toFixed(2) + ' + ដឹក: $0.00)</span>' +
+              '<span class="text-[10px] bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-md font-bold block mb-0.5">' + t.freeShippingBadge + appSettings.free_shipping_min + ')</span>' +
+              '<span class="text-xs text-slate-400 font-normal mr-1">(' + t.itemCostPrefix + subTotal.toFixed(2) + t.shipCostPrefix + '0.00)</span>' +
               '<span class="text-lg font-black text-blue-600">$' + grandTotal.toFixed(2) + '</span>' +
             '</div>';
         } else {
           var needMore = (appSettings.free_shipping_min - subTotal).toFixed(2);
           totalEl.innerHTML = 
             '<div class="text-right">' +
-              '<span class="text-[10px] text-slate-400 block mb-0.5">ទិញថែម $' + needMore + ' ទៀត ដើម្បីដឹកឥតគិតថ្លៃ!</span>' +
-              '<span class="text-xs text-slate-400 font-normal mr-1">(ទំនិញ: $' + subTotal.toFixed(2) + ' + ដឹក: $' + shippingFee.toFixed(2) + ')</span>' +
+              '<span class="text-[10px] text-slate-400 block mb-0.5">' + t.needMoreShip + needMore + t.needMoreShipEnd + '</span>' +
+              '<span class="text-xs text-slate-400 font-normal mr-1">(' + t.itemCostPrefix + subTotal.toFixed(2) + t.shipCostPrefix + shippingFee.toFixed(2) + ')</span>' +
               '<span class="text-lg font-black text-blue-600">$' + grandTotal.toFixed(2) + '</span>' +
             '</div>';
         }
