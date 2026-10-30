@@ -102,17 +102,37 @@
     <div class="flex justify-between items-center bg-white p-3 rounded-2xl border border-slate-200 shadow-sm">
       <div>
         <h2 class="text-xs font-bold text-slate-800">🛠️ Admin Dashboard</h2>
-        <p class="text-[10px] text-slate-500">គ្រប់គ្រងផលិតផល & ស្តុក</p>
+        <p class="text-[10px] text-slate-500">គ្រប់គ្រងផលិតផល ស្តុក & ការកំណត់</p>
       </div>
-      <div class="flex items-center gap-2">
-        <button type="button" onclick="switchToCustomer()" class="text-xs bg-slate-100 text-slate-700 font-semibold px-3 py-1.5 rounded-xl border border-slate-200">
-          🛒 ទៅហាងវិញ
-        </button>
-        <button id="adminAddProdBtn" type="button" onclick="openAddModal()" class="text-xs bg-blue-600 text-white font-semibold px-3 py-1.5 rounded-xl shadow-sm hover:bg-blue-700">
-          ➕ បន្ថែមទំនិញ
+      <div>
+        <button id="adminAddProdBtn" type="button" onclick="openAddModal()" class="text-xs bg-blue-600 text-white font-bold px-3.5 py-2 rounded-xl shadow-sm hover:bg-blue-700 active:scale-95 transition-all flex items-center gap-1.5">
+          <span>➕</span>
+          <span>បន្ថែមទំនិញ</span>
         </button>
       </div>
     </div>
+      <div class="flex items-center gap-1.5">
+      <!-- ប៊ូតុង Customer (លាក់ពេលចូល Admin) -->
+      <div id="custHeaderBtns" class="flex items-center gap-1.5">
+        <button type="button" onclick="toggleSearchBox()" title="ស្វែងរក" class="w-9 h-9 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl border border-slate-200/80 flex items-center justify-center text-sm transition-all active:scale-90 shadow-2xs">
+          🔍
+        </button>
+        <button type="button" onclick="openSellerChat()" title="ឆាតសួរនាំ" class="w-9 h-9 bg-blue-50 hover:bg-blue-100 text-blue-600 rounded-xl border border-blue-200/80 flex items-center justify-center text-sm transition-all active:scale-90 shadow-2xs">
+          💬
+        </button>
+      </div>
+
+      <!-- ប៊ូតុងសម្រាប់ Admin តែប៉ុណ្ណោះ (បង្ហាញតែពេលចូល Admin Dashboard) -->
+      <button id="adminBackBtn" type="button" onclick="switchToCustomer()" class="hidden text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-3 py-1.5 rounded-xl border border-slate-200 transition-all active:scale-95 shadow-2xs">
+        🛒 ទៅហាងវិញ
+      </button>
+
+      <!-- ប៊ូតុង Icon ភាសា -->
+      <button id="langToggleBtn" type="button" onclick="toggleLanguage()" title="ប្តូរភាសា" class="w-9 h-9 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl border border-slate-200 flex items-center justify-center text-base transition-all active:scale-90 shadow-2xs">
+        <span id="langFlag">🇬🇧</span>
+      </button>
+    </div>
+  </header>
 
     <!-- ប៊ូតុងរើសផ្ទាំង Tab: ផលិតផល, ការកុម្ម៉ង់, ឬ ការកំណត់ -->
     <div class="flex gap-2 bg-slate-200/70 p-1 rounded-2xl">
@@ -2006,7 +2026,7 @@
             if (res && res.valid) {
               adminPin = pin;
               localStorage.setItem('saved_admin_pin', pin);
-              switchToAdmin();
+              ;
             } else {
               alert("❌ លេខកូដ PIN មិនត្រឹមត្រូវ!");
             }
@@ -2021,11 +2041,12 @@
       currentRole = 'admin';
       var el;
       if (el = document.getElementById('customerSection')) el.className = "hidden";
-      if (el = document.getElementById('bottomNavContainer')) el.className = "hidden";
-      if (el = document.getElementById('adminSection')) el.className = "px-4 pt-3 space-y-3";
+      if (el = document.getElementById('bottomNavContainer')) el.className = "hidden"; // លាក់ Bottom Nav
+      if (el = document.getElementById('custHeaderBtns')) el.className = "hidden"; // លាក់ប៊ូតុង Search & Chat
+      if (el = document.getElementById('adminBackBtn')) el.className = "text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-3 py-1.5 rounded-xl border border-slate-200 transition-all active:scale-95 shadow-2xs block"; // បង្ហាញប៊ូតុងទៅហាងវិញ
+      if (el = document.getElementById('adminSection')) el.className = "px-4 pt-3 space-y-3 max-w-4xl mx-auto";
       if (el = document.getElementById('subHeaderText')) el.innerText = 'Admin Control';
       
-      // បញ្ជាឱ្យ Reset មកផ្ទាំងផលិតផលជាមុនជានិច្ច មិនឱ្យជាប់នៅ Settings ទៀតឡើយ
       switchAdminTab('products');
       loadAdminData();
     }
@@ -2034,7 +2055,9 @@
       currentRole = 'customer';
       var el;
       if (el = document.getElementById('adminSection')) el.className = "hidden";
-      if (el = document.getElementById('customerSection')) el.className = "";
+      if (el = document.getElementById('adminBackBtn')) el.className = "hidden";
+      if (el = document.getElementById('custHeaderBtns')) el.className = "flex items-center gap-1.5"; // បង្ហាញប៊ូតុង Search & Chat វិញ
+      if (el = document.getElementById('customerSection')) el.className = "max-w-4xl mx-auto";
       if (el = document.getElementById('bottomNavContainer')) el.className = "fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-slate-200/80 px-8 py-2 shadow-lg flex justify-around items-center select-none";
       applyLanguageUI();
       loadCustomerData();
