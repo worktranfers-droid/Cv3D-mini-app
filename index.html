@@ -109,25 +109,22 @@
     </div>
   </section>
 
-  <!-- ========================================================= -->
-  <!-- 3. ADMIN VIEW                                             -->
-  <!-- ========================================================= -->
+  <!-- ==================== ADMIN VIEW ==================== -->
   <section id="adminSection" class="hidden px-4 pt-3 space-y-3 max-w-4xl mx-auto">
-    <!-- Admin Dashboard Title & Add Button -->
     <div class="flex justify-between items-center bg-white p-3 rounded-2xl border border-slate-200 shadow-sm">
       <div>
-        <h2 class="text-xs font-bold text-slate-800">🛠️ Admin Dashboard</h2>
-        <p class="text-[10px] text-slate-500">គ្រប់គ្រងផលិតផល ស្តុក & ការកំណត់</p>
+        <h2 id="adminTitleText" class="text-xs font-bold text-slate-800">🛠️ Admin Dashboard</h2>
+        <p id="adminSubText" class="text-[10px] text-slate-500">គ្រប់គ្រងផលិតផល ស្តុក & ការកំណត់</p>
       </div>
       <div>
         <button id="adminAddProdBtn" type="button" onclick="openAddModal()" class="text-xs bg-blue-600 text-white font-bold px-3.5 py-2 rounded-xl shadow-sm hover:bg-blue-700 active:scale-95 transition-all flex items-center gap-1.5">
           <span>➕</span>
-          <span>បន្ថែមទំនិញ</span>
+          <span id="adminAddBtnText">បន្ថែមទំនិញ</span>
         </button>
       </div>
     </div>
 
-    <!-- Admin Tabs: ផលិតផល, ការកុម្ម៉ង់, ការកំណត់ -->
+    <!-- ប៊ូតុងរើសផ្ទាំង Tab: ផលិតផល, ការកុម្ម៉ង់, ការកំណត់ -->
     <div class="flex gap-2 bg-slate-200/70 p-1 rounded-2xl">
       <button id="adminTabProds" type="button" onclick="switchAdminTab('products')" class="flex-1 py-2 rounded-xl text-xs font-bold bg-white text-slate-800 shadow-xs transition-all">
         📦 ផលិតផល
@@ -140,7 +137,7 @@
       </button>
     </div>
 
-    <!-- Admin Tab 1: គ្រប់គ្រងផលិតផល -->
+    <!-- កុងតឺន័រទី ១៖ គ្រប់គ្រងផលិតផល -->
     <div id="adminProductsContainer" class="space-y-3">
       <div class="relative">
         <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-slate-400 text-xs">🔍</span>
@@ -154,16 +151,15 @@
         <button id="clearAdminBtn" type="button" onclick="clearAdminSearch()" class="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400 hidden text-xs font-bold">✕</button>
       </div>
 
-      <!-- ដាក់ class="hidden ..." ដើម្បីកុំឱ្យវិលចោលមុនពេលទាញទិន្នន័យ -->
       <div id="adminLoader" class="text-center py-10 text-slate-400 text-xs hidden">
         <div class="w-6 h-6 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-2"></div>
         <span>កំពុងធ្វើបច្ចុប្បន្នភាព...</span>
       </div>
-      
+
       <div id="adminList" class="space-y-2.5"></div>
     </div>
 
-    <!-- Admin Tab 2: គ្រប់គ្រងការកុម្ម៉ង់ទិញ -->
+    <!-- កុងតឺន័រទី ២៖ គ្រប់គ្រងការកុម្ម៉ង់ទិញ -->
     <div id="adminOrdersContainer" class="hidden space-y-3">
       <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-1">
         <button type="button" onclick="setOrderFilter('active')" id="filterBtnActive" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-900 text-white shadow-xs whitespace-nowrap">
@@ -180,41 +176,37 @@
         </button>
       </div>
 
-      <!-- ដាក់ class="hidden ..." ដូចគ្នា -->
       <div id="adminOrdersLoader" class="text-center py-10 text-slate-400 text-xs hidden">
         <div class="w-6 h-6 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-2"></div>
         <span>កំពុងទាញបញ្ជីការកុម្ម៉ង់...</span>
       </div>
-      
       <div id="adminOrdersList" class="space-y-3"></div>
     </div>
 
-    <!-- Admin Tab 3: ការកំណត់ថ្លៃដឹក & Banner -->
+    <!-- កុងតឺន័រទី ៣៖ ការកំណត់ថ្លៃដឹក & Banner -->
     <div id="adminSettingsContainer" class="hidden space-y-3">
       <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-3">
-        <h3 class="text-xs font-bold text-slate-800 border-b border-slate-100 pb-2">🚚 កំណត់តម្លៃសេវាដឹកជញ្ជូន</h3>
+        <h3 id="adminSetShippingTitle" class="text-xs font-bold text-slate-800 border-b border-slate-100 pb-2">🚚 កំណត់តម្លៃសេវាដឹកជញ្ជូន</h3>
         
         <div>
-          <label class="block text-[11px] font-semibold text-slate-600 mb-1">ថ្លៃដឹកជញ្ជូន ភ្នំពេញ ($)</label>
+          <label id="lblSetShipPP" class="block text-[11px] font-semibold text-slate-600 mb-1">ថ្លៃដឹកជញ្ជូន ភ្នំពេញ ($)</label>
           <input id="setShipPP" type="number" step="0.1" class="w-full border border-slate-300 p-2.5 rounded-xl text-xs outline-none focus:ring-2 focus:ring-blue-500 font-bold text-slate-800">
         </div>
 
         <div>
-          <label class="block text-[11px] font-semibold text-slate-600 mb-1">ថ្លៃដឹកជញ្ជូន បណ្តាខេត្ត ($)</label>
+          <label id="lblSetShipProv" class="block text-[11px] font-semibold text-slate-600 mb-1">ថ្លៃដឹកជញ្ជូន បណ្តាខេត្ត ($)</label>
           <input id="setShipProv" type="number" step="0.1" class="w-full border border-slate-300 p-2.5 rounded-xl text-xs outline-none focus:ring-2 focus:ring-blue-500 font-bold text-slate-800">
         </div>
 
         <div class="bg-emerald-50 p-3 rounded-xl border border-emerald-200">
-          <label class="block text-[11px] font-bold text-emerald-800 mb-1">🎉 ចំណាយចាប់ពីប៉ុន្មានឡើងទៅ ដឹកឥតគិតថ្លៃ ($)</label>
+          <label id="lblSetFreeShipMin" class="block text-[11px] font-bold text-emerald-800 mb-1">🎉 ចំណាយចាប់ពីប៉ុន្មានឡើងទៅ ដឹកឥតគិតថ្លៃ ($)</label>
           <input id="setFreeShipMin" type="number" step="1" class="w-full border border-emerald-300 p-2.5 rounded-xl text-xs outline-none bg-white font-bold text-emerald-700">
-          <p class="text-[10px] text-emerald-600 mt-1">* ឧ. ដាក់ 20 នោះភ្ញៀវដែលទិញចាប់ពី $20 ឡើង នឹងមិនគិតថ្លៃដឹកឡើយ។</p>
         </div>
 
-        <!-- កំណត់ Promo Banner -->
         <div class="bg-indigo-50/70 p-3 rounded-xl border border-indigo-200 space-y-2.5">
           <label class="flex items-center gap-2 cursor-pointer">
             <input id="setBannerEnabled" type="checkbox" onchange="toggleBannerInputUI()" class="w-4 h-4 text-blue-600 rounded">
-            <span class="text-xs font-bold text-indigo-900">🖼️ បង្ហាញ Slide Banner ផ្សព្វផ្សាយ (Promotional Banner)</span>
+            <span id="lblSetBannerText" class="text-xs font-bold text-indigo-900">🖼️ បង្ហាញ Slide Banner ផ្សព្វផ្សាយ (Promotional Banner)</span>
           </label>
 
           <div id="bannerInputsBox" class="hidden space-y-2.5 pt-1">
@@ -628,7 +620,25 @@
         policyCustomTitle: "⚠️ លក្ខខណ្ឌទំនិញ Custom (ឆ្លាក់ឈ្មោះ)៖",
         policyCustomDesc: "ដោយសារទំនិញនេះឆ្លាក់ឈ្មោះផ្ទាល់ខ្លួន ខាងហាងនឹងទាក់ទងទៅលោកអ្នកដើម្បី <b>សុំកក់ប្រាក់ ៥០%</b> មុនពេលចាប់ផ្ដើមព្រីន។",
         policyNormalTitle: "✓ មិនត្រូវការបង់ប្រាក់មុនឡើយ!",
-        policyNormalDesc: "លោកអ្នកអាចទូទាត់ប្រាក់នៅពេលអ្នកដឹកជញ្ជូនយកទំនិញទៅដល់ផ្ទាល់ (Cash on Delivery)។"
+        policyNormalDesc: "លោកអ្នកអាចទូទាត់ប្រាក់នៅពេលអ្នកដឹកជញ្ជូនយកទំនិញទៅដល់ផ្ទាល់ (Cash on Delivery)។",
+        adminBackToShop: "🛒 ទៅហាងវិញ",
+        adminTitle: "🛠️ Admin Dashboard",
+        adminSub: "គ្រប់គ្រងផលិតផល ស្តុក & ការកំណត់",
+        adminAddBtn: "➕ បន្ថែមទំនិញ",
+        adminTabProds: "📦 ផលិតផល",
+        adminTabOrders: "📋 ការកុម្ម៉ង់",
+        adminTabSettings: "⚙️ ការកំណត់",
+        adminSearchPlaceholder: "ស្វែងរកតាមឈ្មោះ ឬប្រភេទ...",
+        adminFilterActive: "⚡ កំពុងដំណើរការ",
+        adminFilterAll: "ទាំងអស់",
+        adminFilterCompleted: "🟢 បានបញ្ចប់",
+        adminFilterCanceled: "🔴 បានបោះបង់",
+        adminSettingsShipping: "🚚 កំណត់តម្លៃសេវាដឹកជញ្ជូន",
+        adminSettingsPP: "ថ្លៃដឹកជញ្ជូន ភ្នំពេញ ($)",
+        adminSettingsProv: "ថ្លៃដឹកជញ្ជូន បណ្តាខេត្ត ($)",
+        adminSettingsFreeShip: "🎉 ចំណាយចាប់ពីប៉ុន្មានឡើងទៅ ដឹកឥតគិតថ្លៃ ($)",
+        adminSettingsBanner: "🖼️ បង្ហាញ Slide Banner ផ្សព្វផ្សាយ (Promotional Banner)",
+        adminSaveSettingsBtn: "💾 រក្សាទុកការកំណត់"
       },
       en: {
         flag: "🇬🇧",
@@ -673,7 +683,25 @@
         policyCustomTitle: "⚠️ Custom Item Policy (Engraving):",
         policyCustomDesc: "Since this item is customized, we will contact you for a <b>50% deposit</b> before printing.",
         policyNormalTitle: "✓ No Prepayment Required!",
-        policyNormalDesc: "You can pay when the courier delivers the package to you (Cash on Delivery)."
+        policyNormalDesc: "You can pay when the courier delivers the package to you (Cash on Delivery).",
+        adminBackToShop: "🛒 Back to Shop",
+        adminTitle: "🛠️ Admin Dashboard",
+        adminSub: "Manage products, stock & settings",
+        adminAddBtn: "➕ Add Product",
+        adminTabProds: "📦 Products",
+        adminTabOrders: "📋 Orders",
+        adminTabSettings: "⚙️ Settings",
+        adminSearchPlaceholder: "Search by title or category...",
+        adminFilterActive: "⚡ Active",
+        adminFilterAll: "All",
+        adminFilterCompleted: "🟢 Completed",
+        adminFilterCanceled: "🔴 Canceled",
+        adminSettingsShipping: "🚚 Delivery Fees Setting",
+        adminSettingsPP: "Phnom Penh Delivery ($)",
+        adminSettingsProv: "Provinces Delivery ($)",
+        adminSettingsFreeShip: "🎉 Free Shipping Threshold ($)",
+        adminSettingsBanner: "🖼️ Enable Promotional Slide Banner",
+        adminSaveSettingsBtn: "💾 Save Settings"
       },
       zh: {
         flag: "🇨🇳",
@@ -718,7 +746,25 @@
         policyCustomTitle: "⚠️ 定制商品条款 (刻字)：",
         policyCustomDesc: "由于该商品为专属定制，我们将在开始打印前联系您收取 <b>50% 定金</b>。",
         policyNormalTitle: "✓ 无需提前付款！",
-        policyNormalDesc: "您可以在快递送达时直接付款给派送员 (货到付款 COD)。"
+        policyNormalDesc: "您可以在快递送达时直接付款给派送员 (货到付款 COD)。",
+        adminBackToShop: "🛒 返回商城",
+        adminTitle: "🛠️ 管理员控制台",
+        adminSub: "管理商品、库存与系统设置",
+        adminAddBtn: "➕ 添加商品",
+        adminTabProds: "📦 商品列表",
+        adminTabOrders: "📋 订单管理",
+        adminTabSettings: "⚙️ 系统设置",
+        adminSearchPlaceholder: "按名称或类别搜索...",
+        adminFilterActive: "⚡ 进行中",
+        adminFilterAll: "全部",
+        adminFilterCompleted: "🟢 已完成",
+        adminFilterCanceled: "🔴 已取消",
+        adminSettingsShipping: "🚚 配送费用设置",
+        adminSettingsPP: "金边运费 ($)",
+        adminSettingsProv: "外省运费 ($)",
+        adminSettingsFreeShip: "🎉 免运费消费门槛 ($)",
+        adminSettingsBanner: "🖼️ 启用促销幻灯片横幅 (Banner)",
+        adminSaveSettingsBtn: "💾 保存设置"
       }
     };
 
@@ -801,9 +847,15 @@
       }
       localStorage.setItem('app_user_lang', currentLang);
       applyLanguageUI();
-      renderDynamicCategories();
-      applyCustomerFilter();
-      renderCartItems();
+
+      if (currentRole === 'customer') {
+        renderDynamicCategories();
+        applyCustomerFilter();
+        renderCartItems();
+      } else {
+        filterAdminProducts();
+        applyOrderFilter();
+      }
     }
 
     function applyLanguageUI() {
@@ -812,11 +864,12 @@
       if (el = document.getElementById('langFlag')) el.innerText = t.flag;
       if (el = document.getElementById('subHeaderText')) {
         if (currentRole === 'customer') el.innerText = t.statusOpen;
+        else el.innerText = 'Admin Control';
       }
+
+      // --- Customer UI ---
       if (el = document.getElementById('custSearchInput')) el.placeholder = t.searchPlaceholder;
       if (el = document.getElementById('custLoaderText')) el.innerText = t.loaderText;
-
-      // Product Modal
       if (el = document.getElementById('modalZoomNotice')) el.innerText = t.zoomNotice;
       if (el = document.getElementById('lblSelectColor')) el.innerText = t.lblColor;
       if (el = document.getElementById('lblSelectSize')) el.innerText = t.lblSize;
@@ -824,8 +877,6 @@
       if (el = document.getElementById('btnAddToCartText')) el.innerText = t.btnAddToCart;
       if (el = document.getElementById('btnBuyNowText')) el.innerText = t.btnBuyNow;
       if (el = document.getElementById('custCustomNameInput')) el.placeholder = t.customPlaceholder;
-
-      // Cart Modal
       if (el = document.getElementById('cartModalTitle')) el.innerText = t.cartTitle;
       if (el = document.getElementById('cartEmptyText')) el.innerText = t.cartEmpty;
       if (el = document.getElementById('lblCartZone')) el.innerText = t.lblZone;
@@ -835,17 +886,32 @@
       if (el = document.getElementById('cartLocInput')) el.placeholder = t.locPlaceholder;
       if (el = document.getElementById('lblCartTotal')) el.innerText = t.cartTotal;
       if (el = document.getElementById('btnCartCheckout')) el.innerText = t.btnCheckout;
-
-      // Bottom Nav
       if (el = document.getElementById('navHomeText')) el.innerText = t.navHome;
       if (el = document.getElementById('navOrdersText')) el.innerText = t.navOrders;
       if (el = document.getElementById('navCartText')) el.innerText = t.navCart;
-
-      // My Orders Modal
       if (el = document.getElementById('myOrdersModalTitle')) el.innerText = t.myOrdersTitle;
       if (el = document.getElementById('myOrdersModalSub')) el.innerText = t.myOrdersSub;
-
       updateDeliveryDropdownUI();
+
+      // --- Admin UI (បកប្រែផ្នែក Admin ទាំងអស់) ---
+      if (el = document.getElementById('adminBackBtn')) el.innerText = t.adminBackToShop;
+      if (el = document.getElementById('adminTitleText')) el.innerText = t.adminTitle;
+      if (el = document.getElementById('adminSubText')) el.innerText = t.adminSub;
+      if (el = document.getElementById('adminAddBtnText')) el.innerText = t.adminAddBtn;
+      if (el = document.getElementById('adminTabProds')) el.innerText = t.adminTabProds;
+      if (el = document.getElementById('adminTabOrders')) el.innerText = t.adminTabOrders;
+      if (el = document.getElementById('adminTabSettings')) el.innerText = t.adminTabSettings;
+      if (el = document.getElementById('adminSearchInput')) el.placeholder = t.adminSearchPlaceholder;
+      if (el = document.getElementById('filterBtnActive')) el.innerText = t.adminFilterActive;
+      if (el = document.getElementById('filterBtnAll')) el.innerText = t.adminFilterAll;
+      if (el = document.getElementById('filterBtnCompleted')) el.innerText = t.adminFilterCompleted;
+      if (el = document.getElementById('filterBtnCanceled')) el.innerText = t.adminFilterCanceled;
+      if (el = document.getElementById('adminSetShippingTitle')) el.innerText = t.adminSettingsShipping;
+      if (el = document.getElementById('lblSetShipPP')) el.innerText = t.adminSettingsPP;
+      if (el = document.getElementById('lblSetShipProv')) el.innerText = t.adminSettingsProv;
+      if (el = document.getElementById('lblSetFreeShipMin')) el.innerText = t.adminSettingsFreeShip;
+      if (el = document.getElementById('lblSetBannerText')) el.innerText = t.adminSettingsBanner;
+      if (el = document.getElementById('btnSaveSettings')) el.innerText = t.adminSaveSettingsBtn;
     }
 
     function openSellerChat() {
