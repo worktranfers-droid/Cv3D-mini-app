@@ -54,9 +54,9 @@
         🛒 ទៅហាងវិញ
       </button>
 
-      <!-- ប៊ូតុង Icon ភាសា -->
+      <!-- ប៊ូតុង Icon ភាសា (ដាក់ទង់ជាតិខ្មែរជាគោល) -->
       <button id="langToggleBtn" type="button" onclick="toggleLanguage()" title="ប្តូរភាសា" class="w-9 h-9 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl border border-slate-200 flex items-center justify-center text-base transition-all active:scale-90 shadow-2xs">
-        <span id="langFlag">🇬🇧</span>
+        <span id="langFlag">🇰🇭</span>
       </button>
     </div>
   </header>
@@ -577,9 +577,10 @@
     // --- 6.1 CONFIGURATION & STATE ---
     var API_URL = "https://script.google.com/macros/s/AKfycbxdsFeRnhFqZDwoPovJLhpJQxprKcoix3kU5WGp9aTtvfmnoreawVHrZsQh7NzrC1k6cA/exec"; 
 
+    // ១. កាតាឡុកពាក្យ ៣ ភាសា (ខ្មែរ, English, 中文)
     var i18n = {
       km: {
-        flag: "🇬🇧", langText: "EN", chatSeller: "ឆាត", statusOpen: "កំពុងទទួលការកុម្ម៉ង់",
+        flag: "🇰🇭", langName: "ខ្មែរ", chatSeller: "ឆាត", statusOpen: "កំពុងទទួលការកុម្ម៉ង់",
         searchPlaceholder: "ស្វែងរកប្រដាប់ក្មេងលេង ជើងទម្រ Fidget...", catAll: "ទាំងអស់",
         loaderText: "កំពុងទាញទិន្នន័យពីហាង...", emptyShop: "មិនទាន់មានទំនិញដាក់លក់ទេ ឬកំពុងផ្ទុកទិន្នន័យ...",
         btnView: "មើល", lblColor: "ជ្រើសរើសពណ៌ (Color):", lblSize: "ជ្រើសរើសទំហំ (Size):",
@@ -591,7 +592,7 @@
         alertFillInfo: "សូមបញ្ចូលលេខទូរសព្ទ និងទីតាំងដឹកជញ្ជូនរបស់អ្នក!"
       },
       en: {
-        flag: "🇰🇭", langText: "ខ្មែរ", chatSeller: "Chat", statusOpen: "Accepting Orders",
+        flag: "🇬🇧", langName: "EN", chatSeller: "Chat", statusOpen: "Accepting Orders",
         searchPlaceholder: "Search fidget toys, desk stands...", catAll: "All",
         loaderText: "Loading shop catalog...", emptyShop: "No products available or loading...",
         btnView: "View", lblColor: "Select Color:", lblSize: "Select Size:",
@@ -601,9 +602,22 @@
         phonePlaceholder: "e.g., 012 345 678", locPlaceholder: "House No, Street, Sangkat, Khan or City...",
         cartTotal: "Total Amount:", btnCheckout: "🚀 Send Order Now",
         alertFillInfo: "Please enter your phone number and delivery location!"
+      },
+      zh: {
+        flag: "🇨🇳", langName: "中文", chatSeller: "客服", statusOpen: "营业中 (接受预订)",
+        searchPlaceholder: "搜索减压玩具、桌面支架...", catAll: "全部",
+        loaderText: "正在加载商品列表...", emptyShop: "暂无在售商品或正在加载...",
+        btnView: "查看", lblColor: "选择颜色:", lblSize: "选择尺寸:",
+        lblQty: "数量:", btnAddToCart: "加入购物车", btnBuyNow: "立即购买",
+        cartTitle: "您的购物车", cartEmpty: "购物车空空如也",
+        lblPhone: "电话号码: *", lblLoc: "配送地址: *",
+        phonePlaceholder: "例如: 012 345 678", locPlaceholder: "门牌号、街道、区域、省市...",
+        cartTotal: "总计金额:", btnCheckout: "🚀 立即提交订单",
+        alertFillInfo: "请输入您的电话号码和配送地址！"
       }
     };
 
+    // ២. កំណត់ភាសាខ្មែរ ('km') ជាភាសាគោលលំនាំដើម
     var currentLang = localStorage.getItem('app_user_lang') || 'km';
     var currentRole = 'customer';
     var adminPin = localStorage.getItem('saved_admin_pin') || '';
@@ -671,8 +685,16 @@
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
+    // អនុគមន៍ចុចប្តូរភាសាវិលជុំ៖ ខ្មែរ (km) -> English (en) -> 中文 (zh) -> ខ្មែរ (km)
     function toggleLanguage() {
-      currentLang = (currentLang === 'km') ? 'en' : 'km';
+      if (currentLang === 'km') {
+        currentLang = 'en';
+      } else if (currentLang === 'en') {
+        currentLang = 'zh';
+      } else {
+        currentLang = 'km';
+      }
+      
       localStorage.setItem('app_user_lang', currentLang);
       applyLanguageUI();
       renderDynamicCategories();
