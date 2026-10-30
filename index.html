@@ -359,12 +359,8 @@
 
   <!-- ==================== MODAL: PINCH-TO-ZOOM (SWIPABLE GALLERY) ==================== -->
   <div id="imageZoomModal" class="fixed inset-0 z-[60] bg-black/95 backdrop-blur-md hidden flex flex-col justify-between items-center p-3 select-none touch-none">
-    <!-- ផ្នែកខាងលើ៖ បង្ហាញការណែនាំ និងប៊ូតុងបិទ ✕ -->
-    <div class="w-full flex justify-between items-center z-20 px-2 pt-2">
-      <div class="flex items-center gap-2">
-        <span class="text-[11px] text-white/70 bg-white/10 px-3 py-1 rounded-full backdrop-blur-sm">🖐️ ពង្រីក ឬអូសឆ្វេងស្តាំ</span>
-        <span id="zoomCounter" class="text-[11px] font-bold text-white bg-blue-600/80 px-2.5 py-0.5 rounded-full">1/1</span>
-      </div>
+    <!-- ផ្នែកខាងលើ៖ ទុកតែប៊ូតុងបិទ ✕ ឱ្យស្រឡះភ្នែក -->
+    <div class="w-full flex justify-end items-center z-20 px-2 pt-2">
       <button type="button" onclick="closeZoomModal()" class="bg-white/20 hover:bg-white/30 text-white w-9 h-9 rounded-full flex items-center justify-center font-bold text-sm transition-all active:scale-95">✕</button>
     </div>
     
@@ -382,11 +378,16 @@
       <button id="zoomNextBtn" type="button" onclick="navigateZoomImage(1)" class="absolute right-2 z-30 w-10 h-10 bg-black/50 hover:bg-black/75 text-white text-lg font-bold rounded-full flex items-center justify-center backdrop-blur-sm transition-all active:scale-90 shadow-md">›</button>
     </div>
 
-    <!-- ផ្នែកខាងក្រោម៖ ប៊ូតុងពង្រីក/បង្រួម (-) Reset (+) -->
+    <!-- ផ្នែកខាងក្រោម៖ ប៊ូតុង (-) | លេខរៀង 1/3 (Reset) | (+) -->
     <div class="flex items-center gap-3 z-20 pb-4">
-      <button type="button" onclick="adjustZoom(-0.5)" class="w-10 h-10 bg-white/15 hover:bg-white/25 text-white font-bold rounded-full text-base flex items-center justify-center backdrop-blur-sm active:scale-95">-</button>
-      <button type="button" onclick="resetZoomState()" class="px-3.5 py-1.5 bg-white/15 hover:bg-white/25 text-white text-xs font-semibold rounded-full backdrop-blur-sm active:scale-95">Reset</button>
-      <button type="button" onclick="adjustZoom(0.5)" class="w-10 h-10 bg-white/15 hover:bg-white/25 text-white font-bold rounded-full text-base flex items-center justify-center backdrop-blur-sm active:scale-95">+</button>
+      <button type="button" onclick="adjustZoom(-0.5)" title="បង្រួម" class="w-10 h-10 bg-white/15 hover:bg-white/25 text-white font-bold rounded-full text-base flex items-center justify-center backdrop-blur-sm active:scale-95">-</button>
+      
+      <!-- ប្តូរពីពាក្យ Reset មកជាកន្លែងបង្ហាញលេខ 1/3 (ចុចលើវាដើម្បី Reset Zoom) -->
+      <button id="zoomCounterBtn" type="button" onclick="resetZoomState()" title="ចុចដើម្បីកំណត់រូបដើមវិញ" class="px-4 py-2 bg-white/20 hover:bg-white/30 text-white text-xs font-bold font-mono rounded-full backdrop-blur-sm active:scale-95 shadow-sm border border-white/10">
+        1/1
+      </button>
+
+      <button type="button" onclick="adjustZoom(0.5)" title="ពង្រីក" class="w-10 h-10 bg-white/15 hover:bg-white/25 text-white font-bold rounded-full text-base flex items-center justify-center backdrop-blur-sm active:scale-95">+</button>
     </div>
   </div>
 
