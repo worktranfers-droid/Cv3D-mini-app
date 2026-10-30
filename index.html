@@ -1450,21 +1450,25 @@
     function updateZoomView() {
       if (!currentSliderImages || currentSliderImages.length === 0) return;
       var zoomedImg = document.getElementById('zoomedImg');
-      var counter = document.getElementById('zoomCounter');
+      var counterBtn = document.getElementById('zoomCounterBtn');
       var prevBtn = document.getElementById('zoomPrevBtn');
       var nextBtn = document.getElementById('zoomNextBtn');
 
       if (zoomedImg) zoomedImg.src = currentSliderImages[zoomIndex];
-      if (counter) counter.innerText = (zoomIndex + 1) + " / " + currentSliderImages.length;
+      
+      // បង្ហាញលេខរៀងរូបភាព (ឧទាហរណ៍៖ 1/3, 2/3, 3/3)
+      if (counterBtn) {
+        counterBtn.innerText = (zoomIndex + 1) + " / " + currentSliderImages.length;
+      }
 
-      // បង្ហាញ ឬលាក់ប៊ូតុងព្រួញ ‹ › អាស្រ័យលើចំនួនរូបភាព
+      // បង្ហាញ ឬលាក់ប៊ូតុងព្រួញ ‹ › អាស្រ័យលើចំនួនរូបភាពជាក់ស្ដែង
       var hasMultiple = currentSliderImages.length > 1;
       if (prevBtn) prevBtn.style.display = hasMultiple ? "flex" : "none";
       if (nextBtn) nextBtn.style.display = hasMultiple ? "flex" : "none";
 
       resetZoomState();
     }
-
+    
     // អនុគមន៍ប្តូរទៅរូបមុន ឬរូបបន្ទាប់
     function navigateZoomImage(direction) {
       if (!currentSliderImages || currentSliderImages.length <= 1) return;
