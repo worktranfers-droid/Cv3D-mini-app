@@ -154,11 +154,12 @@
         <button id="clearAdminBtn" type="button" onclick="clearAdminSearch()" class="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400 hidden text-xs font-bold">✕</button>
       </div>
 
+      <!-- ដាក់ class="hidden ..." ដើម្បីកុំឱ្យវិលចោលមុនពេលទាញទិន្នន័យ -->
       <div id="adminLoader" class="text-center py-10 text-slate-400 text-xs hidden">
         <div class="w-6 h-6 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-2"></div>
-        កំពុងធ្វើបច្ចុប្បន្នភាព...
+        <span>កំពុងធ្វើបច្ចុប្បន្នភាព...</span>
       </div>
-
+      
       <div id="adminList" class="space-y-2.5"></div>
     </div>
 
@@ -179,10 +180,12 @@
         </button>
       </div>
 
+      <!-- ដាក់ class="hidden ..." ដូចគ្នា -->
       <div id="adminOrdersLoader" class="text-center py-10 text-slate-400 text-xs hidden">
         <div class="w-6 h-6 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-2"></div>
-        កំពុងទាញបញ្ជីការកុម្ម៉ង់...
+        <span>កំពុងទាញបញ្ជីការកុម្ម៉ង់...</span>
       </div>
+      
       <div id="adminOrdersList" class="space-y-3"></div>
     </div>
 
@@ -1993,11 +1996,13 @@
     // --- 6.10 ADMIN CATALOG MANAGEMENT ---
     function loadAdminData() {
       var loader = document.getElementById('adminLoader');
-      if (loader) loader.className = "text-center py-10 text-slate-400 text-xs";
+      // បង្ហាញ Loader តែពេលកំពុងទាញទិន្នន័យ
+      if (loader) loader.className = "text-center py-10 text-slate-400 text-xs block";
 
       callBackendPost({ action: "getAdminCatalog", pin: adminPin })
         .then(function(data) {
           adminProducts = data || [];
+          // លាក់ Loader វិញភ្លាមៗពេលទិន្នន័យមកដល់
           if (loader) loader.className = "hidden";
           filterAdminProducts();
 
@@ -2013,11 +2018,11 @@
             });
         })
         .catch(function(err) {
+          // បើមាន Error បង្ហាញប៊ូតុងសាកល្បងឡើងវិញ ហើយលុប spinner ចេញ
           if (loader) {
-            loader.innerHTML = '<div class="text-center py-6 text-rose-500 text-xs">' +
-              'កំហុសទាញទិន្នន័យ៖ ' + err.message + 
-              '<br><button type="button" onclick="loadAdminData()" class="mt-2 px-3 py-1 bg-blue-600 text-white rounded-lg">សាកល្បងម្តងទៀត 🔄</button>' +
-              '</div>';
+            loader.className = "text-center py-6 text-rose-500 text-xs block";
+            loader.innerHTML = 'កំហុសទាញទិន្នន័យ៖ ' + err.message + 
+              '<br><button type="button" onclick="loadAdminData()" class="mt-2 px-3 py-1 bg-blue-600 text-white rounded-lg active:scale-95">សាកល្បងម្តងទៀត 🔄</button>';
           }
         });
     }
@@ -2243,17 +2248,23 @@
 
     function loadAdminOrders() {
       var loader = document.getElementById('adminOrdersLoader');
-      if (loader) loader.className = "text-center py-10 text-slate-400 text-xs";
+      var list = document.getElementById('adminOrdersList');
+      
+      if (loader) loader.className = "text-center py-10 text-slate-400 text-xs block";
+      if (list && allAdminOrders.length === 0) list.innerHTML = '';
 
       callBackendPost({ action: "getAllOrdersAdmin", pin: adminPin })
         .then(function(res) {
+          // លាក់ Loader វិញភ្លាមៗ
           if (loader) loader.className = "hidden";
           allAdminOrders = (res && res.orders) ? res.orders : [];
           applyOrderFilter();
         })
         .catch(function(err) {
           if (loader) {
-            loader.innerHTML = '<p class="text-rose-500 text-xs py-4">កំហុសទាញទិន្នន័យ៖ ' + err.message + '</p>';
+            loader.className = "text-center py-6 text-rose-500 text-xs block";
+            loader.innerHTML = '<p class="py-2">កំហុសទាញទិន្នន័យ៖ ' + err.message + '</p>' +
+              '<button type="button" onclick="loadAdminOrders()" class="px-3 py-1 bg-blue-600 text-white rounded-lg active:scale-95">សាកល្បងម្តងទៀត 🔄</button>';
           }
         });
     }
