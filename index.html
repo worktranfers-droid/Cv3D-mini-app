@@ -210,6 +210,17 @@
           <input id="setFreeShipMin" type="number" step="1" class="w-full border border-emerald-300 p-2.5 rounded-xl text-xs outline-none bg-white font-bold text-emerald-700">
         </div>
 
+        <!-- ប្លុករៀបលំដាប់ Category លើ Admin Page -->
+        <div class="bg-slate-50 p-3.5 rounded-2xl border border-slate-200 space-y-2">
+          <div class="flex justify-between items-center">
+            <h4 class="text-xs font-bold text-slate-800">🏷️ រៀបលំដាប់ Category (Home Page)</h4>
+            <span class="text-[10px] text-slate-400">ចុចព្រួញដើម្បីរុញលំដាប់</span>
+          </div>
+          <div id="adminCategoryOrderList" class="space-y-1.5">
+            <!-- បញ្ជី Category នឹងត្រូវបង្ហាញទីនេះដោយស្វ័យប្រវត្តិ -->
+          </div>
+        </div>
+
         <div class="bg-indigo-50/70 p-3 rounded-xl border border-indigo-200 space-y-2.5">
           <label class="flex items-center gap-2 cursor-pointer">
             <input id="setBannerEnabled" type="checkbox" onchange="toggleBannerInputUI()" class="w-4 h-4 text-blue-600 rounded">
@@ -903,20 +914,31 @@
       var dataList = document.getElementById('categoryDataList');
       if (!container) return;
 
-      // ១. រាប់ចំនួនទំនិញតាមប្រភេទនីមួយៗ (Category Count)
-      var categories = ['all'];
-      var categoryCounts = { 'all': customerProducts.length };
+      // ១. រាប់ចំនួនទំនិញ
+      var categories = [];
+      var totalCount = customerProducts.length;
 
       for (var i = 0; i < customerProducts.length; i++) {
         var cat = (customerProducts[i].category || '').trim();
-        if (cat) {
-          if (categories.indexOf(cat) === -1) {
-            categories.push(cat);
-            categoryCounts[cat] = 0;
-          }
-          categoryCounts[cat]++;
+        if (cat && categories.indexOf(cat) === -1) {
+          categories.push(cat);
         }
       }
+
+      // ២. តម្រៀបតាមលំដាប់ដែល Admin បានកំណត់ទុក (បើមាន)
+      var savedOrder = JSON.parse(localStorage.getItem('app_category_order') || '[]');
+      if (savedOrder && savedOrder.length > 0) {
+        categories.sort(function(a, b) {
+          var idxA = savedOrder.indexOf(a);
+          var idxB = savedOrder.indexOf(b);
+          if (idxA === -1) return 1;
+          if (idxB === -1) return -1;
+          return idxA - idxB;
+        });
+      }
+
+      // ដាក់ 'all' នៅខាងមុខគេជានិច្ច
+      categories.unshift('all');
 
       container.innerHTML = '';
       for (var j = 0; j < categories.length; j++) {
@@ -924,21 +946,23 @@
           var btn = document.createElement('button');
           btn.type = "button";
           var isActive = (currentCustomerCategory === cat);
-          var label = (cat === 'all') ? (i18n[currentLang] ? i18n[currentLang].catAll : 'All') : cat;
-          var count = categoryCounts[cat] || 0;
+          var t = (typeof i18n !== 'undefined' && i18n[currentLang]) ? i18n[currentLang] : null;
+          var label = (cat === 'all') ? (t ? t.catAll : 'ទាំងអស់') : cat;
 
-          // ប៊ូតុងរចនាបែប Pill ដែលមាន Badge បង្ហាញចំនួនទំនិញ
           btn.className = isActive 
-            ? "cat-pill active bg-slate-900 text-white text-xs px-3 py-1.5 rounded-full font-medium whitespace-nowrap shadow-sm capitalize flex items-center gap-1.5 transition-all"
-            : "cat-pill bg-white border border-slate-200 text-slate-600 text-xs px-3 py-1.5 rounded-full font-medium whitespace-nowrap capitalize flex items-center gap-1.5 hover:bg-slate-50 transition-all";
+            ? "cat-pill active bg-slate-900 text-white text-xs px-3.5 py-1.5 rounded-full font-medium whitespace-nowrap shadow-sm capitalize flex items-center gap-1.5 transition-all"
+            : "cat-pill bg-white border border-slate-200 text-slate-600 text-xs px-3.5 py-1.5 rounded-full font-medium whitespace-nowrap capitalize flex items-center gap-1.5 hover:bg-slate-50 transition-all";
           
-          // បង្ហាញឈ្មោះប្រភេទ អមដោយចំនួនទំនិញ
-          btn.innerHTML = '<span>' + label + '</span>' +
-                          '<span class="' + (isActive ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-500') + ' text-[10px] font-bold px-1.5 py-0.2 rounded-full">' + count + '</span>';
+          // បង្ហាញ Badge រាប់ចំនួន តែលើ 'all' មួយគត់
+          if (cat === 'all') {
+            btn.innerHTML = '<span>' + label + '</span>' +
+                            '<span class="' + (isActive ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-500') + ' text-[10px] font-bold px-1.5 py-0.2 rounded-full">' + totalCount + '</span>';
+          } else {
+            btn.innerHTML = '<span>' + label + '</span>';
+          }
 
           btn.onclick = function() {
             currentCustomerCategory = cat;
-            // ហៅ render ឡើងវិញដើម្បីឱ្យ Badge ប្តូរពណ៌ទៅតាមប៊ូតុងដែលកំពុង Active
             renderDynamicCategories();
             applyCustomerFilter();
           };
@@ -2287,6 +2311,7 @@
         if (document.getElementById('setBannerEnabled')) document.getElementById('setBannerEnabled').checked = appSettings.banner_enabled;
         if (document.getElementById('setBannerImages')) document.getElementById('setBannerImages').value = appSettings.banner_images || '';
         if (typeof toggleBannerInputUI === "function") toggleBannerInputUI();
+        renderAdminCategoryOrderManager(); // ហៅឱ្យបង្ហាញបញ្ជីរៀបលំដាប់ Category
       }
     } 
 
@@ -2832,6 +2857,104 @@
           btn.innerText = "💾 រក្សាទុកការកែប្រែ (Update)";
           alert("Error: " + err.message);
         });
+      // បង្ហាញបញ្ជី Category ក្នុង Admin Settings ដើម្បីរុញលំដាប់
+    function renderAdminCategoryOrderManager() {
+      var container = document.getElementById('adminCategoryOrderList');
+      if (!container) return;
+
+      var categories = [];
+      for (var i = 0; i < adminProducts.length; i++) {
+        var cat = (adminProducts[i].category || '').trim();
+        if (cat && categories.indexOf(cat) === -1) {
+          categories.push(cat);
+        }
+      }
+
+      var savedOrder = JSON.parse(localStorage.getItem('app_category_order') || '[]');
+      if (savedOrder && savedOrder.length > 0) {
+        categories.sort(function(a, b) {
+          var idxA = savedOrder.indexOf(a);
+          var idxB = savedOrder.indexOf(b);
+          if (idxA === -1) return 1;
+          if (idxB === -1) return -1;
+          return idxA - idxB;
+        });
+      }
+
+      container.innerHTML = '';
+      if (categories.length === 0) {
+        container.innerHTML = '<p class="text-[11px] text-slate-400">មិនទាន់មាន Category ទេ</p>';
+        return;
+      }
+
+      for (var idx = 0; idx < categories.length; idx++) {
+        (function(cName, index) {
+          var row = document.createElement('div');
+          row.className = "flex items-center justify-between bg-white px-3 py-1.5 rounded-xl border border-slate-200 text-xs";
+
+          var nameSpan = document.createElement('span');
+          nameSpan.className = "font-bold text-slate-700 capitalize";
+          nameSpan.innerText = (index + 1) + ". " + cName;
+
+          var btnGroup = document.createElement('div');
+          btnGroup.className = "flex items-center gap-1";
+
+          // ប៊ូតុងរុញឡើងលើ / ទៅមុខ (▲)
+          var upBtn = document.createElement('button');
+          upBtn.type = "button";
+          upBtn.className = "w-6 h-6 rounded-lg bg-slate-100 hover:bg-slate-200 font-bold text-xs flex items-center justify-center " + (index === 0 ? "opacity-30 cursor-not-allowed" : "active:scale-90");
+          upBtn.innerText = "▲";
+          upBtn.disabled = (index === 0);
+          upBtn.onclick = function() { moveCategoryPosition(index, -1); };
+
+          // ប៊ូតុងរុញចុះក្រោម / ទៅក្រោយ (▼)
+          var downBtn = document.createElement('button');
+          downBtn.type = "button";
+          downBtn.className = "w-6 h-6 rounded-lg bg-slate-100 hover:bg-slate-200 font-bold text-xs flex items-center justify-center " + (index === categories.length - 1 ? "opacity-30 cursor-not-allowed" : "active:scale-90");
+          downBtn.innerText = "▼";
+          downBtn.disabled = (index === categories.length - 1);
+          downBtn.onclick = function() { moveCategoryPosition(index, 1); };
+
+          btnGroup.appendChild(upBtn);
+          btnGroup.appendChild(downBtn);
+          row.appendChild(nameSpan);
+          row.appendChild(btnGroup);
+          container.appendChild(row);
+        })(categories[idx], idx);
+      }
+    }
+
+    // អនុគមន៍ប្តូរទីតាំង Category
+    function moveCategoryPosition(currentIndex, delta) {
+      var categories = [];
+      for (var i = 0; i < adminProducts.length; i++) {
+        var cat = (adminProducts[i].category || '').trim();
+        if (cat && categories.indexOf(cat) === -1) {
+          categories.push(cat);
+        }
+      }
+
+      var savedOrder = JSON.parse(localStorage.getItem('app_category_order') || '[]');
+      if (savedOrder && savedOrder.length > 0) {
+        categories.sort(function(a, b) {
+          var idxA = savedOrder.indexOf(a);
+          var idxB = savedOrder.indexOf(b);
+          if (idxA === -1) return 1;
+          if (idxB === -1) return -1;
+          return idxA - idxB;
+        });
+      }
+
+      var targetIndex = currentIndex + delta;
+      if (targetIndex < 0 || targetIndex >= categories.length) return;
+
+      var temp = categories[currentIndex];
+      categories[currentIndex] = categories[targetIndex];
+      categories[targetIndex] = temp;
+
+      localStorage.setItem('app_category_order', JSON.stringify(categories));
+      renderAdminCategoryOrderManager();
+      renderDynamicCategories();
     }
   </script>
 </body>
