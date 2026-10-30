@@ -35,19 +35,24 @@
       </div>
     </div>
     
-    <!-- ប៊ូតុង Icon ទាំង ៣៖ ស្វែងរក, ឆាត, និង ភាសា -->
+    <!-- ប៊ូតុងខាងស្ដាំនៃ Header -->
     <div class="flex items-center gap-1.5">
-      <!-- ១. ប៊ូតុង Icon ស្វែងរក -->
-      <button type="button" onclick="toggleSearchBox()" title="ស្វែងរកទំនិញ" class="w-9 h-9 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl border border-slate-200/80 flex items-center justify-center text-sm transition-all active:scale-90 shadow-2xs">
-        🔍
+      <!-- ប៊ូតុងសម្រាប់ Customer (លាក់ពេលចូល Admin) -->
+      <div id="custHeaderBtns" class="flex items-center gap-1.5">
+        <button type="button" onclick="toggleSearchBox()" title="ស្វែងរកទំនិញ" class="w-9 h-9 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl border border-slate-200/80 flex items-center justify-center text-sm transition-all active:scale-90 shadow-2xs">
+          🔍
+        </button>
+        <button type="button" onclick="openSellerChat()" title="ឆាតសួរនាំ" class="w-9 h-9 bg-blue-50 hover:bg-blue-100 text-blue-600 rounded-xl border border-blue-200/80 flex items-center justify-center text-sm transition-all active:scale-90 shadow-2xs">
+          💬
+        </button>
+      </div>
+
+      <!-- ប៊ូតុងសម្រាប់ Admin (បង្ហាញតែពេលចូល Admin Dashboard) -->
+      <button id="adminBackBtn" type="button" onclick="switchToCustomer()" class="hidden text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-3 py-1.5 rounded-xl border border-slate-200 transition-all active:scale-95 shadow-2xs">
+        🛒 ទៅហាងវិញ
       </button>
 
-      <!-- ២. ប៊ូតុង Icon ឆាត -->
-      <button type="button" onclick="openSellerChat()" title="ឆាតសួរនាំ" class="w-9 h-9 bg-blue-50 hover:bg-blue-100 text-blue-600 rounded-xl border border-blue-200/80 flex items-center justify-center text-sm transition-all active:scale-90 shadow-2xs">
-        💬
-      </button>
-
-      <!-- ៣. ប៊ូតុង Icon ភាសា (ដាក់តែរូប Icon ទង់ជាតិ) -->
+      <!-- ប៊ូតុង Icon ភាសា -->
       <button id="langToggleBtn" type="button" onclick="toggleLanguage()" title="ប្តូរភាសា" class="w-9 h-9 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl border border-slate-200 flex items-center justify-center text-base transition-all active:scale-90 shadow-2xs">
         <span id="langFlag">🇬🇧</span>
       </button>
@@ -111,30 +116,6 @@
         </button>
       </div>
     </div>
-
-      <!-- ប៊ូតុងខាងស្ដាំនៃ Header -->
-    <div class="flex items-center gap-1.5">
-      <!-- ប៊ូតុងសម្រាប់ Customer (លាក់ពេលចូល Admin) -->
-      <div id="custHeaderBtns" class="flex items-center gap-1.5">
-        <button type="button" onclick="toggleSearchBox()" title="ស្វែងរក" class="w-9 h-9 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl border border-slate-200/80 flex items-center justify-center text-sm transition-all active:scale-90 shadow-2xs">
-          🔍
-        </button>
-        <button type="button" onclick="openSellerChat()" title="ឆាតសួរនាំ" class="w-9 h-9 bg-blue-50 hover:bg-blue-100 text-blue-600 rounded-xl border border-blue-200/80 flex items-center justify-center text-sm transition-all active:scale-90 shadow-2xs">
-          💬
-        </button>
-      </div>
-
-      <!-- ប៊ូតុងសម្រាប់ Admin តែប៉ុណ្ណោះ (លាក់ពេលនៅ Customer, បង្ហាញពេលចូល Admin) -->
-      <button id="adminBackBtn" type="button" onclick="switchToCustomer()" class="hidden text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-3 py-1.5 rounded-xl border border-slate-200 transition-all active:scale-95 shadow-2xs">
-        🛒 ទៅហាងវិញ
-      </button>
-
-      <!-- ប៊ូតុង Icon ភាសា -->
-      <button id="langToggleBtn" type="button" onclick="toggleLanguage()" title="ប្តូរភាសា" class="w-9 h-9 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl border border-slate-200 flex items-center justify-center text-base transition-all active:scale-90 shadow-2xs">
-        <span id="langFlag">🇬🇧</span>
-      </button>
-    </div>
-  </header>
 
     <!-- ប៊ូតុងរើសផ្ទាំង Tab: ផលិតផល, ការកុម្ម៉ង់, ឬ ការកំណត់ -->
     <div class="flex gap-2 bg-slate-200/70 p-1 rounded-2xl">
@@ -2028,7 +2009,7 @@
             if (res && res.valid) {
               adminPin = pin;
               localStorage.setItem('saved_admin_pin', pin);
-              ;
+              switchToAdmin(); // <--- បញ្ជាឱ្យប្តូរទៅផ្ទាំង Admin Dashboard ភ្លាមៗ
             } else {
               alert("❌ លេខកូដ PIN មិនត្រឹមត្រូវ!");
             }
