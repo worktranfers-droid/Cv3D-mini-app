@@ -2604,7 +2604,44 @@
         });
     }
 
-    // --- 6.13 DIRECT IMAGE UPLOAD & PRODUCT MODAL CONTROLLER ---
+    // អនុគមន៍ជំនួយសម្រាប់បង្រួមរូបភាព (Image Compression)
+    function compressImageFile(file, maxWidth, maxHeight, quality, callback) {
+      var reader = new FileReader();
+      reader.onload = function(e) {
+        var img = new Image();
+        img.onload = function() {
+          var width = img.width;
+          var height = img.height;
+
+          // គណនាទំហំឱ្យសមាមាត្រមិនឱ្យលើសពី maxWidth / maxHeight
+          if (width > height) {
+            if (width > maxWidth) {
+              height = Math.round((height * maxWidth) / width);
+              width = maxWidth;
+            }
+          } else {
+            if (height > maxHeight) {
+              width = Math.round((width * maxHeight) / height);
+              height = maxHeight;
+            }
+          }
+
+          var canvas = document.createElement('canvas');
+          canvas.width = width;
+          canvas.height = height;
+          var ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+
+          // បំលែងទៅជា JPEG ដែលបានបង្រួមគុណភាព (Quality 0.7 = 70%)
+          var compressedBase64 = canvas.toDataURL('image/jpeg', quality);
+          callback(compressedBase64);
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    // អនុគមន៍ Upload រូបភាពដែលបានបង្រួមរួច
     function handleDirectImageUpload(event, targetInputId, statusSpanId) {
       var file = event.target.files[0];
       if (!file) return;
@@ -2612,24 +2649,22 @@
       var statusSpan = document.getElementById(statusSpanId);
       if (statusSpan) {
         statusSpan.className = "text-[10px] text-blue-600 font-bold block mt-1";
-        statusSpan.innerText = "⏳ កំពុង Upload ចូល Google Drive សូមរង់ចាំបន្តិច...";
+        statusSpan.innerText = "⏳ កំពុងបង្រួម និង Upload ចូល Google Drive...";
       }
 
-      var reader = new FileReader();
-      reader.onload = function(e) {
-        var base64Data = e.target.result;
-
+      // បង្រួមរូបភាពឱ្យនៅត្រឹម Max 1000px និង Quality 75% (~150KB - 250KB)
+      compressImageFile(file, 1000, 1000, 0.75, function(compressedBase64) {
         callBackendPost({
           action: "uploadImage",
           pin: adminPin,
-          base64Data: base64Data,
-          fileName: file.name
+          base64Data: compressedBase64,
+          fileName: file.name.replace(/\.[^/.]+$/, "") + ".jpg"
         })
         .then(function(res) {
           if (res && res.success) {
             if (statusSpan) {
               statusSpan.className = "text-[10px] text-emerald-600 font-bold block mt-1";
-              statusSpan.innerText = "✓ Upload ជោគជ័យ និងបានបំពេញ Link រួចរាល់!";
+              statusSpan.innerText = "✓ Upload ជោគជ័យ (ទំហំស្រាល)!";
             }
             var targetInput = document.getElementById(targetInputId);
             if (targetInput) {
@@ -2654,8 +2689,7 @@
           alert("Error: " + err.message);
           if (statusSpan) statusSpan.className = "hidden";
         });
-      };
-      reader.readAsDataURL(file);
+      });
     }
 
     function renderProductThumbnailsUI() {
