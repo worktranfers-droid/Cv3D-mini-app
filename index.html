@@ -47,7 +47,7 @@
         </button>
       </div>
 
-      <!-- ប៊ូតុងសម្រាប់ Admin (បង្ហាញតែពេលចូល Admin Dashboard) -->
+      <!-- ប៊ូតុងសម្រាប់ Admin តែប៉ុណ្ណោះ (លាក់ពេលនៅ Customer, បង្ហាញពេលចូល Admin) -->
       <button id="adminBackBtn" type="button" onclick="switchToCustomer()" class="hidden text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-3 py-1.5 rounded-xl border border-slate-200 transition-all active:scale-95 shadow-2xs">
         🛒 ទៅហាងវិញ
       </button>
@@ -116,6 +116,8 @@
         </button>
       </div>
     </div>
+
+
 
     <!-- ប៊ូតុងរើសផ្ទាំង Tab: ផលិតផល, ការកុម្ម៉ង់, ឬ ការកំណត់ -->
     <div class="flex gap-2 bg-slate-200/70 p-1 rounded-2xl">
@@ -2009,7 +2011,7 @@
             if (res && res.valid) {
               adminPin = pin;
               localStorage.setItem('saved_admin_pin', pin);
-              switchToAdmin(); // <--- បញ្ជាឱ្យប្តូរទៅផ្ទាំង Admin Dashboard ភ្លាមៗ
+              switchToAdmin();
             } else {
               alert("❌ លេខកូដ PIN មិនត្រឹមត្រូវ!");
             }
