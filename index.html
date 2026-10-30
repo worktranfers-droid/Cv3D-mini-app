@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>3D Print Studio</title>
+  <title>Cv3D Print Studio</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@300;400;600;700&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
@@ -14,10 +14,12 @@
 </head>
 <body class="bg-slate-50 text-slate-800 font-sans pb-24 select-none">
 
-  <!-- ==================== CLEAN & MODERN HEADER ==================== -->
+  <!-- ========================================================= -->
+  <!-- 1. HEADER (LOGO + ACTION BUTTONS)                         -->
+  <!-- ========================================================= -->
   <header class="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-slate-100 px-4 py-2.5 shadow-sm flex items-center justify-between">
     <div class="flex items-center gap-2.5">
-      <!-- ប្រអប់ Logo រូបភាព -->
+      <!-- Logo ហាង -->
       <div class="w-9 h-9 rounded-xl overflow-hidden bg-white border border-slate-200/80 shadow-xs flex-shrink-0 flex items-center justify-center p-0.5">
         <img 
           src="./Logo.png" 
@@ -47,7 +49,7 @@
         </button>
       </div>
 
-      <!-- ប៊ូតុងសម្រាប់ Admin តែប៉ុណ្ណោះ (លាក់ពេលនៅ Customer, បង្ហាញពេលចូល Admin) -->
+      <!-- ប៊ូតុងសម្រាប់ Admin (បង្ហាញតែពេលចូល Admin Dashboard) -->
       <button id="adminBackBtn" type="button" onclick="switchToCustomer()" class="hidden text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-3 py-1.5 rounded-xl border border-slate-200 transition-all active:scale-95 shadow-2xs">
         🛒 ទៅហាងវិញ
       </button>
@@ -59,8 +61,10 @@
     </div>
   </header>
 
-  <!-- ==================== CUSTOMER VIEW ==================== -->
-  <section id="customerSection">
+  <!-- ========================================================= -->
+  <!-- 2. CUSTOMER VIEW                                          -->
+  <!-- ========================================================= -->
+  <section id="customerSection" class="max-w-4xl mx-auto">
     <!-- ប្រអប់ Search (លាក់ទុកជាមុន hidden - ពេលចុច Icon 🔍 ទើបបង្ហាញចុះមក) -->
     <div id="custSearchWrapper" class="hidden px-4 pt-3 transition-all duration-300">
       <div class="relative">
@@ -76,7 +80,7 @@
       </div>
     </div>
 
-    <!-- ==================== PROMO IMAGE SLIDER BANNER ==================== -->
+    <!-- Slide Banner ផ្សព្វផ្សាយ -->
     <div id="promoBannerSection" class="hidden px-4 pt-3">
       <div class="w-full h-36 rounded-2xl overflow-hidden bg-slate-100 shadow-sm relative select-none">
         <div id="bannerSliderContainer" class="w-full h-full flex overflow-x-auto snap-x snap-mandatory scroll-smooth no-scrollbar" onscroll="handleBannerScroll()"></div>
@@ -84,8 +88,10 @@
       </div>
     </div>
     
+    <!-- ប្រភេទផលិតផល (Categories) -->
     <div id="categoryContainer" class="flex gap-2 px-4 py-3 overflow-x-auto no-scrollbar"></div>
 
+    <!-- បញ្ជីទំនិញ (Product Grid) -->
     <main class="px-4">
       <div id="customerGrid" class="grid grid-cols-2 gap-3"></div>
       <div id="custLoader" class="text-center py-16 text-slate-400 text-xs">
@@ -94,6 +100,7 @@
       </div>
     </main>
 
+    <!-- Footer / Admin Entry -->
     <div class="text-center py-10 text-slate-400">
       <button type="button" onclick="handleRoleClick()" class="text-xs text-slate-400 hover:text-slate-600 transition-colors py-1 px-3 rounded-lg hover:bg-slate-100">
         🔒 Admin Portal
@@ -102,8 +109,11 @@
     </div>
   </section>
 
-  <!-- ==================== ADMIN VIEW ==================== -->
-  <section id="adminSection" class="hidden px-4 pt-3 space-y-3">
+  <!-- ========================================================= -->
+  <!-- 3. ADMIN VIEW                                             -->
+  <!-- ========================================================= -->
+  <section id="adminSection" class="hidden px-4 pt-3 space-y-3 max-w-4xl mx-auto">
+    <!-- Admin Dashboard Title & Add Button -->
     <div class="flex justify-between items-center bg-white p-3 rounded-2xl border border-slate-200 shadow-sm">
       <div>
         <h2 class="text-xs font-bold text-slate-800">🛠️ Admin Dashboard</h2>
@@ -117,9 +127,7 @@
       </div>
     </div>
 
-
-
-    <!-- ប៊ូតុងរើសផ្ទាំង Tab: ផលិតផល, ការកុម្ម៉ង់, ឬ ការកំណត់ -->
+    <!-- Admin Tabs: ផលិតផល, ការកុម្ម៉ង់, ការកំណត់ -->
     <div class="flex gap-2 bg-slate-200/70 p-1 rounded-2xl">
       <button id="adminTabProds" type="button" onclick="switchAdminTab('products')" class="flex-1 py-2 rounded-xl text-xs font-bold bg-white text-slate-800 shadow-xs transition-all">
         📦 ផលិតផល
@@ -132,7 +140,7 @@
       </button>
     </div>
 
-    <!-- កុងតឺន័រទី ១៖ គ្រប់គ្រងផលិតផល -->
+    <!-- Admin Tab 1: គ្រប់គ្រងផលិតផល -->
     <div id="adminProductsContainer" class="space-y-3">
       <div class="relative">
         <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-slate-400 text-xs">🔍</span>
@@ -154,9 +162,8 @@
       <div id="adminList" class="space-y-2.5"></div>
     </div>
 
-    <!-- កុងតឺន័រទី ២៖ គ្រប់គ្រងការកុម្ម៉ង់ទិញ -->
+    <!-- Admin Tab 2: គ្រប់គ្រងការកុម្ម៉ង់ទិញ -->
     <div id="adminOrdersContainer" class="hidden space-y-3">
-      <!-- ប៊ូតុង Filter ស្ថានភាពការកុម្ម៉ង់ -->
       <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-1">
         <button type="button" onclick="setOrderFilter('active')" id="filterBtnActive" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-900 text-white shadow-xs whitespace-nowrap">
           ⚡ កំពុងដំណើរការ
@@ -179,7 +186,7 @@
       <div id="adminOrdersList" class="space-y-3"></div>
     </div>
 
-    <!-- កុងតឺន័រទី ៣៖ ការកំណត់ថ្លៃដឹកជញ្ជូន & Free Shipping -->
+    <!-- Admin Tab 3: ការកំណត់ថ្លៃដឹក & Banner -->
     <div id="adminSettingsContainer" class="hidden space-y-3">
       <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-3">
         <h3 class="text-xs font-bold text-slate-800 border-b border-slate-100 pb-2">🚚 កំណត់តម្លៃសេវាដឹកជញ្ជូន</h3>
@@ -208,7 +215,6 @@
           </label>
 
           <div id="bannerInputsBox" class="hidden space-y-2.5 pt-1">
-            <!-- ជម្រើសទី ១៖ រើសរូបភាព Upload ពីម៉ាស៊ីន -->
             <div>
               <label class="block text-[11px] font-semibold text-indigo-900 mb-1">📁 រើសរូបភាពផ្ទាល់ (Upload ពីម៉ាស៊ីន)៖</label>
               <input 
@@ -224,7 +230,6 @@
             <!-- 🖼️ បង្ហាញតែរូបភាព និងសញ្ញាខ្វែងប៉ុណ្ណោះ -->
             <div id="bannerThumbnailsContainer" class="flex flex-wrap gap-2.5 py-1 items-center"></div>
 
-            <!-- ជម្រើសទី ២៖ Link រូបភាព Banner (ទុកឱ្យប្រព័ន្ធបំពេញ ឬវាយដោយដៃ) -->
             <div>
               <label class="block text-[11px] font-semibold text-indigo-900 mb-1">🔗 Link រូបភាព Banner (បំបែកដោយក្បៀស ,)៖</label>
               <textarea 
@@ -237,6 +242,7 @@
               <p class="text-[10px] text-indigo-600">* ទំហំរូបដែលស្អាតបំផុតគឺសមាមាត្រ 16:7 ឬ 2:1 (ឧ. 800x350px)</p>
             </div>
           </div>
+        </div> <!-- ស្លាកបិទដែលបានជួសជុលត្រង់ចំណុចនេះ -->
         
         <button type="button" onclick="saveDeliverySettings()" id="btnSaveSettings" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl text-xs shadow-md active:scale-95 transition-all">
           💾 រក្សាទុកការកំណត់
@@ -245,30 +251,35 @@
     </div>
   </section>
 
-  <!-- ==================== BOTTOM NAVIGATION BAR (៣ ប៊ូតុង) ==================== -->
+  <!-- ========================================================= -->
+  <!-- 4. BOTTOM NAVIGATION BAR                                  -->
+  <!-- ========================================================= -->
   <nav id="bottomNavContainer" class="fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-slate-200/80 px-8 py-2 shadow-lg flex justify-around items-center select-none">
-    <!-- ១. 🏠 ទំព័រដើម (Home) -->
+    <!-- 🏠 Home -->
     <button type="button" onclick="scrollToTop()" class="flex flex-col items-center gap-0.5 text-blue-600 active:scale-90 transition-all">
       <span class="text-xl">🏠</span>
       <span class="text-[11px] font-bold">ទំព័រដើម</span>
     </button>
 
-    <!-- ២. 📦 ការកុម្ម៉ង់ (Orders) -->
+    <!-- 📦 Orders -->
     <button type="button" onclick="openMyOrdersModal()" class="flex flex-col items-center gap-0.5 text-slate-500 hover:text-slate-800 active:scale-90 transition-all">
       <span class="text-xl">📦</span>
       <span class="text-[11px] font-semibold">ការកុម្ម៉ង់</span>
     </button>
 
-    <!-- ៣. 🛒 កន្រ្តកទំនិញ (Cart) -->
+    <!-- 🛒 Cart -->
     <button type="button" onclick="openCartModal()" class="flex flex-col items-center gap-0.5 text-slate-500 hover:text-slate-800 active:scale-90 transition-all relative">
       <span class="text-xl">🛒</span>
       <span class="text-[11px] font-semibold">កន្រ្តក</span>
-      <!-- Badge ចំនួនទំនិញក្នុងកន្រ្តក -->
       <span id="floatingCartBadge" class="hidden absolute -top-1 -right-2 bg-rose-500 text-white text-[9px] font-extrabold w-4 h-4 rounded-full flex items-center justify-center border border-white shadow-xs">0</span>
     </button>
   </nav>
 
-  <!-- ==================== MODAL: PRODUCT DETAIL (CAROUSEL) ==================== -->
+  <!-- ========================================================= -->
+  <!-- 5. MODALS (PRODUCT DETAIL, ZOOM, CART, ORDERS, ADD/EDIT)  -->
+  <!-- ========================================================= -->
+
+  <!-- Modal 1: Product Detail -->
   <div id="productModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
     <div class="bg-white w-full max-w-md rounded-t-3xl sm:rounded-3xl max-h-[90vh] overflow-y-auto p-5 shadow-2xl relative">
       <button type="button" onclick="closeModal()" class="absolute top-4 right-4 bg-slate-100 hover:bg-slate-200 w-8 h-8 rounded-full flex items-center justify-center text-slate-500 font-bold z-20">✕</button>
@@ -302,13 +313,12 @@
         <div id="sizeContainer" class="flex gap-2"></div>
       </div>
 
-      <!-- ផ្នែកសម្រាប់ទំនិញ Custom (ដូចក្នុងរូបភាពរបស់អ្នក) -->
+      <!-- Custom Info -->
       <div id="custCustomSection" class="hidden mb-4 bg-blue-50/70 p-3 rounded-2xl border border-blue-200 space-y-2">
         <div class="flex justify-between items-center">
           <label class="text-xs font-bold text-blue-900">✍️ បញ្ចូលឈ្មោះ/អក្សរដែលចង់ឆ្លាក់៖ *</label>
           <span id="custCustomFeeBadge" class="text-[10px] font-bold bg-blue-200 text-blue-800 px-2 py-0.5 rounded-full"></span>
         </div>
-        
         <input 
           id="custCustomNameInput" 
           type="text" 
@@ -316,15 +326,13 @@
           placeholder="ឧ. Milo, Lucky, ឬឈ្មោះរបស់អ្នក..." 
           class="w-full px-3 py-2 bg-white border border-blue-300 rounded-xl text-xs outline-none focus:ring-2 focus:ring-blue-500 shadow-xs"
         >
-        
-        <!-- បន្ទាត់ពន្យល់ និងរាប់ចំនួនតួអក្សរជាក់ស្តែង -->
         <div class="flex justify-between items-center text-[11px] pt-0.5">
           <span id="charCountNotice" class="text-slate-500 font-medium"></span>
           <span id="charCountDisplay" class="font-mono font-bold text-blue-600 bg-white px-2 py-0.5 rounded-md border border-blue-100">0 តួអក្សរ</span>
         </div>
       </div>
 
-      <!-- ប្រអប់ជ្រើសរើសចំនួន (Quantity Selector) -->
+      <!-- Quantity Selector -->
       <div class="flex items-center justify-between mb-4 bg-slate-50 p-2.5 rounded-2xl border border-slate-100">
         <label id="lblSelectQty" class="text-xs font-bold text-slate-700">ចំនួន (Quantity):</label>
         <div class="flex items-center gap-2 bg-white px-2 py-1 rounded-xl border border-slate-200 shadow-xs">
@@ -334,7 +342,7 @@
         </div>
       </div>
       
-      <!-- ប៊ូតុងដាក់ចូលកន្ត្រក និងទិញឥឡូវនេះ -->
+      <!-- Cart & Buy Buttons -->
       <div class="grid grid-cols-2 gap-2.5">
         <button type="button" onclick="addToCart()" class="w-full bg-blue-50 hover:bg-blue-100 text-blue-600 font-bold py-3.5 rounded-2xl border border-blue-200 flex items-center justify-center gap-1.5 active:scale-95 transition-all text-xs">
           <span>🛒</span>
@@ -348,17 +356,15 @@
     </div>
   </div>
 
-  <!-- ==================== MODAL: PINCH-TO-ZOOM ==================== -->
+  <!-- Modal 2: Pinch to Zoom -->
   <div id="imageZoomModal" class="fixed inset-0 z-[60] bg-black/95 backdrop-blur-md hidden flex flex-col justify-between items-center p-3 select-none touch-none">
     <div class="w-full flex justify-between items-center z-20 px-2 pt-2">
       <span class="text-[11px] text-white/70 bg-white/10 px-3 py-1 rounded-full backdrop-blur-sm">🖐️ ប្រើម្រាមដៃពីរពង្រីក ឬចុច ២ ដង</span>
       <button type="button" onclick="closeZoomModal()" class="bg-white/20 hover:bg-white/30 text-white w-9 h-9 rounded-full flex items-center justify-center font-bold text-sm transition-all active:scale-95">✕</button>
     </div>
-    
     <div id="zoomViewport" class="w-full h-full flex items-center justify-center overflow-hidden relative">
       <img id="zoomedImg" src="" alt="Zoomed Product" class="max-w-full max-h-[85vh] object-contain rounded-2xl will-change-transform origin-center transition-transform duration-75">
     </div>
-
     <div class="flex items-center gap-3 z-20 pb-4">
       <button type="button" onclick="adjustZoom(-0.5)" class="w-10 h-10 bg-white/15 hover:bg-white/25 text-white font-bold rounded-full text-base flex items-center justify-center backdrop-blur-sm active:scale-95">-</button>
       <button type="button" onclick="resetZoomState()" class="px-3.5 py-1.5 bg-white/15 hover:bg-white/25 text-white text-xs font-semibold rounded-full backdrop-blur-sm active:scale-95">Reset</button>
@@ -366,7 +372,7 @@
     </div>
   </div>
 
-<!-- ==================== MODAL: SHOPPING CART ==================== -->
+  <!-- Modal 3: Shopping Cart -->
   <div id="cartModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
     <div class="bg-white w-full max-w-md rounded-t-3xl sm:rounded-3xl max-h-[92vh] overflow-y-auto p-5 shadow-2xl relative flex flex-col justify-between">
       <div>
@@ -386,7 +392,6 @@
         </div>
 
         <div id="cartOrderForm" class="space-y-2.5 bg-slate-50 p-3.5 rounded-2xl border border-slate-200 my-3">
-          <!-- ១. ជ្រើសរើសតំបន់ដឹកជញ្ជូន -->
           <div>
             <label class="block text-xs font-bold text-slate-700 mb-1">🚚 តំបន់ដឹកជញ្ជូន (Delivery Zone): *</label>
             <select id="cartDeliveryZone" onchange="updateCartDeliveryCost()" class="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs outline-none focus:ring-2 focus:ring-blue-500 shadow-sm font-medium">
@@ -394,25 +399,18 @@
               <option value="province" data-cost="2.00">🚐 បណ្តាខេត្ត (+$2.00)</option>
             </select>
           </div>
-
-          <!-- ២. លេខទូរសព្ទ -->
           <div>
             <label id="lblCartPhone" class="block text-xs font-bold text-slate-700 mb-1">លេខទូរសព្ទ (Phone Number): *</label>
             <input id="cartPhoneInput" type="tel" placeholder="ឧ. 012 345 678" class="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs outline-none focus:ring-2 focus:ring-blue-500 shadow-sm">
           </div>
-
-          <!-- ៣. ទីតាំងដឹកជញ្ជូន -->
           <div>
             <label id="lblCartLoc" class="block text-xs font-bold text-slate-700 mb-1">ទីតាំងដឹកជញ្ជូន (Delivery Address): *</label>
             <textarea id="cartLocInput" rows="2" placeholder="ភ្នំពេញ៖ លេខផ្ទះ ផ្លូវ សង្កាត់ | តាមខេត្ត៖ ឈ្មោះខេត្ត និងសាខាឡាន..." class="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs outline-none focus:ring-2 focus:ring-blue-500 shadow-sm"></textarea>
           </div>
-
-          <!-- ៤. ប្រអប់ជូនដំណឹងអំពីលក្ខខណ្ឌទូទាត់ប្រាក់ -->
           <div id="paymentPolicyNotice" class="p-2.5 rounded-xl text-xs space-y-1 border"></div>
         </div>
       </div>
 
-      <!-- ផ្នែកខាងក្រោម៖ បង្ហាញតម្លៃសរុប និងប៊ូតុង Check Out -->
       <div id="cartBottomBar" class="pt-2 border-t border-slate-100">
         <div class="flex justify-between items-center mb-3">
           <span id="lblCartTotal" class="text-xs text-slate-500 font-bold">តម្លៃសរុបទាំងអស់៖</span>
@@ -425,7 +423,7 @@
     </div>
   </div>
 
-  <!-- ==================== MODAL: SUCCESS POPUP ==================== -->
+  <!-- Modal 4: Order Success Popup -->
   <div id="orderSuccessModal" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden flex items-center justify-center p-4">
     <div class="bg-white w-full max-w-sm rounded-3xl p-6 shadow-2xl text-center space-y-4">
       <div class="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center text-3xl mx-auto shadow-inner animate-bounce">✓</div>
@@ -454,7 +452,7 @@
     </div>
   </div>
 
-  <!-- ==================== MODAL: MY ORDERS LIST ==================== -->
+  <!-- Modal 5: My Orders History -->
   <div id="myOrdersModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
     <div class="bg-white w-full max-w-md rounded-t-3xl sm:rounded-3xl max-h-[85vh] overflow-y-auto p-5 shadow-2xl relative">
       <button type="button" onclick="closeMyOrdersModal()" class="absolute top-4 right-4 bg-slate-100 hover:bg-slate-200 w-8 h-8 rounded-full flex items-center justify-center text-slate-500 font-bold text-xs">✕</button>
@@ -477,7 +475,7 @@
     </div>
   </div>
 
-  <!-- ==================== MODAL: ADD / EDIT PRODUCT ==================== -->
+  <!-- Modal 6: Add / Edit Product -->
   <div id="addModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
     <div class="bg-white w-full max-w-md rounded-3xl p-5 shadow-2xl relative max-h-[92vh] overflow-y-auto">
       <button type="button" onclick="closeAddModal()" class="absolute top-4 right-4 bg-slate-100 w-8 h-8 rounded-full font-bold text-slate-500">✕</button>
@@ -513,7 +511,8 @@
           <label class="block text-xs font-semibold text-slate-600 mb-1">ការពិពណ៌នា</label>
           <textarea id="addDesc" rows="2" placeholder="ព័ត៌មានលម្អិត..." class="w-full border border-slate-300 p-2 rounded-xl text-xs outline-none"></textarea>
         </div>
-        <!-- កន្លែង Upload រូបភាពផលិតផល & Preview តូចៗ (ស្អាត គ្មានអក្សរវែងៗ) -->
+        
+        <!-- កន្លែង Upload & Preview រូបភាពផលិតផល -->
         <div class="space-y-2">
           <input 
             type="file" 
@@ -523,11 +522,7 @@
             class="w-full text-xs text-slate-500 file:mr-2 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700 cursor-pointer bg-slate-50 p-1 rounded-xl border border-slate-200"
           >
           <span id="prodUploadStatus" class="text-[10px] text-blue-600 font-bold hidden"></span>
-
-          <!-- 🖼️ បង្ហាញរូបភាពតូចៗ និងសញ្ញាខ្វែង ✕ (ដូច Banner) -->
           <div id="prodThumbnailsContainer" class="flex flex-wrap gap-2.5 py-1 items-center"></div>
-
-          <!-- ប្រអប់ Link សម្រាប់រក្សាទុក ឬវាយ Link បន្ថែម -->
           <input 
             id="addImage" 
             type="text" 
@@ -536,6 +531,7 @@
             class="w-full border border-slate-300 p-2 rounded-xl text-xs outline-none"
           >
         </div>
+
         <div>
           <label class="block text-xs font-semibold text-slate-600 mb-1">ជម្រើសពណ៌ (បំបែកដោយក្បៀស ,)</label>
           <input id="addColors" type="text" placeholder="Silk Gold, Rainbow, Black" class="w-full border border-slate-300 p-2 rounded-xl text-xs outline-none">
@@ -544,7 +540,8 @@
           <label class="block text-xs font-semibold text-slate-600 mb-1">ជម្រើសទំហំ (បំបែកដោយក្បៀស ,)</label>
           <input id="addSizes" type="text" placeholder="Standard, Giant" class="w-full border border-slate-300 p-2 rounded-xl text-xs outline-none">
         </div>
-        <!-- កំណត់ថាជាទំនិញ Custom -->
+        
+        <!-- Custom Product Settings -->
         <div class="bg-amber-50 p-3 rounded-2xl border border-amber-200 space-y-2">
           <label class="flex items-center gap-2 cursor-pointer">
             <input id="addIsCustom" type="checkbox" onchange="toggleCustomFeeInput()" class="w-4 h-4 text-blue-600 rounded">
@@ -559,7 +556,6 @@
                 <option value="per_char">គិតតាមចំនួនអក្សរ (Per Char - សម្រាប់ Keychain)</option>
               </select>
             </div>
-
             <div>
               <label id="lblCustomFeeVal" class="block text-[11px] font-semibold text-amber-800 mb-1">ថ្លៃសេវាថេរ ($)</label>
               <input id="addCustomFee" type="number" step="0.1" placeholder="ឧ. 1.50 (ដាក់ 0 បើមិនគិតថ្លៃបន្ថែម)" class="w-full border border-amber-300 p-2 rounded-xl text-xs bg-white outline-none">
@@ -574,9 +570,11 @@
     </div>
   </div>
 
-  <!-- ==================== JAVASCRIPT ==================== -->
+  <!-- ========================================================= -->
+  <!-- 6. JAVASCRIPT CONTROLLERS                                 -->
+  <!-- ========================================================= -->
   <script>
-    // URL Web App API
+    // --- 6.1 CONFIGURATION & STATE ---
     var API_URL = "https://script.google.com/macros/s/AKfycbxdsFeRnhFqZDwoPovJLhpJQxprKcoix3kU5WGp9aTtvfmnoreawVHrZsQh7NzrC1k6cA/exec"; 
 
     var i18n = {
@@ -612,7 +610,7 @@
     var customerProducts = [];
     var adminProducts = [];
     var currentCustomerCategory = 'all';
-    var adminCostData = {}; // អថេរសម្រាប់ផ្ទុកទិន្នន័យថ្លៃដើមពី Sheet1
+    var adminCostData = {};
 
     var selectedProduct = null;
     var selectedColor = "";
@@ -625,18 +623,23 @@
     var currentSliderImages = [];
     var activeImageIndex = 0;
 
-    var currentScale = 1;
-    var minScale = 1;
-    var maxScale = 4;
-    var posX = 0;
-    var posY = 0;
-    var startDist = 0;
-    var initialScale = 1;
-    var startX = 0;
-    var startY = 0;
-    var isDragging = false;
-    var lastTapTime = 0;
+    var currentScale = 1, minScale = 1, maxScale = 4, posX = 0, posY = 0, startDist = 0, initialScale = 1, startX = 0, startY = 0, isDragging = false, lastTapTime = 0;
 
+    var appSettings = {
+      ship_phnom_penh: 1.50,
+      ship_province: 2.00,
+      free_shipping_min: 20.00,
+      banner_enabled: true,
+      banner_images: ""
+    };
+    var currentBannerImages = [];
+    var activeBannerIndex = 0;
+
+    var currentAdminTab = 'products';
+    var allAdminOrders = [];
+    var currentOrderFilter = 'active';
+
+    // --- 6.2 INITIALIZATION ---
     window.onload = function() {
       try {
         if (window.Telegram && window.Telegram.WebApp) {
@@ -652,7 +655,6 @@
       updateCartBadge();
     };
 
-    // Helper POST ប្រើ text/plain ដើម្បីបញ្ចៀស CORS Preflight Block និង Redirect issues
     function callBackendPost(payload) {
       return fetch(API_URL, {
         method: "POST",
@@ -662,6 +664,11 @@
         if (!res.ok) throw new Error("HTTP " + res.status);
         return res.json(); 
       });
+    }
+
+    // --- 6.3 NAVIGATION & LANGUAGE ---
+    function scrollToTop() {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     function toggleLanguage() {
@@ -698,18 +705,105 @@
     }
 
     function openSellerChat() {
-      var username = "Vireak699";
-      var tgUrl = "https://t.me/" + username;
+      var tgUrl = "https://t.me/" + MY_TELEGRAM_USERNAME;
       if (window.Telegram && window.Telegram.WebApp && typeof window.Telegram.WebApp.openLink === "function") {
         window.Telegram.WebApp.openLink(tgUrl);
         return;
       }
-      if (confirm("💬 តើអ្នកចង់ឆាតទៅកាន់អ្នកលក់ (@" + username + ") ផ្ទាល់មែនទេ?")) {
+      if (confirm("💬 តើអ្នកចង់ឆាតទៅកាន់អ្នកលក់ (@" + MY_TELEGRAM_USERNAME + ") ផ្ទាល់មែនទេ?")) {
         window.location.href = tgUrl;
       }
     }
 
-    // --- CUSTOMER CATALOG (ប្រើ POST ជៀសវាង CORS Redirect) ---
+    // --- 6.4 SEARCH & BANNER SLIDER ---
+    function toggleSearchBox() {
+      var box = document.getElementById('custSearchWrapper');
+      var input = document.getElementById('custSearchInput');
+      if (!box) return;
+
+      if (box.classList.contains('hidden')) {
+        box.classList.remove('hidden');
+        if (input) input.focus();
+      } else {
+        box.classList.add('hidden');
+        if (input && input.value.trim() !== '') {
+          clearCustSearch();
+        }
+      }
+    }
+
+    function clearCustSearch() {
+      var input = document.getElementById('custSearchInput');
+      if (input) input.value = '';
+      var clearBtn = document.getElementById('clearCustSearchBtn');
+      if (clearBtn) clearBtn.className = "absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400 hidden text-xs font-bold";
+      applyCustomerFilter();
+    }
+
+    function renderPromoBanner() {
+      var bannerSection = document.getElementById('promoBannerSection');
+      var container = document.getElementById('bannerSliderContainer');
+      var dotsContainer = document.getElementById('bannerSliderDots');
+
+      if (!bannerSection || !container || !dotsContainer) return;
+
+      if (!appSettings.banner_enabled || !appSettings.banner_images) {
+        bannerSection.className = "hidden";
+        return;
+      }
+
+      currentBannerImages = appSettings.banner_images.split(',').map(function(u){ return u.trim(); }).filter(function(u){ return u.length > 0; });
+      if (currentBannerImages.length === 0) {
+        bannerSection.className = "hidden";
+        return;
+      }
+
+      bannerSection.className = "px-4 pt-3 block";
+      container.innerHTML = '';
+      dotsContainer.innerHTML = '';
+
+      for (var i = 0; i < currentBannerImages.length; i++) {
+        (function(imgUrl, idx) {
+          var slide = document.createElement('div');
+          slide.className = "w-full h-full flex-shrink-0 snap-center flex items-center justify-center cursor-pointer";
+
+          var img = document.createElement('img');
+          img.src = imgUrl;
+          img.className = "w-full h-full object-cover rounded-2xl";
+          img.onerror = function() { 
+            this.src = "https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&w=800&q=80"; 
+          };
+
+          slide.appendChild(img);
+          container.appendChild(slide);
+
+          var dot = document.createElement('span');
+          dot.className = "h-1 rounded-full transition-all " + (idx === 0 ? "bg-white w-3" : "bg-white/40 w-1");
+          dotsContainer.appendChild(dot);
+        })(currentBannerImages[i], i);
+      }
+
+      dotsContainer.className = currentBannerImages.length > 1
+        ? "absolute bottom-2 left-1/2 -translate-x-1/2 flex items-center gap-1.5 bg-black/40 backdrop-blur-md px-2 py-0.5 rounded-full z-10"
+        : "hidden";
+    }
+
+    function handleBannerScroll() {
+      var container = document.getElementById('bannerSliderContainer');
+      var dotsContainer = document.getElementById('bannerSliderDots');
+      if (!container || !dotsContainer) return;
+
+      var newIndex = Math.round(container.scrollLeft / container.offsetWidth);
+      if (newIndex !== activeBannerIndex && newIndex < currentBannerImages.length) {
+        activeBannerIndex = newIndex;
+        var dots = dotsContainer.children;
+        for (var i = 0; i < dots.length; i++) {
+          dots[i].className = (i === activeBannerIndex) ? "w-3 h-1 rounded-full bg-white transition-all" : "w-1 h-1 rounded-full bg-white/40 transition-all";
+        }
+      }
+    }
+
+    // --- 6.5 CUSTOMER CATALOG & FILTER ---
     function loadCustomerData() {
       var loader = document.getElementById('custLoader');
       if (loader) {
@@ -799,31 +893,6 @@
       renderCustomerGrid(filtered);
     }
 
-    function clearCustSearch() {
-      var input = document.getElementById('custSearchInput');
-      if (input) input.value = '';
-      var clearBtn = document.getElementById('clearCustSearchBtn');
-      if (clearBtn) clearBtn.className = "absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400 hidden text-xs font-bold";
-      applyCustomerFilter();
-    }
-
-    // អនុគមន៍ បើក/បិទ ប្រអប់ Search ពេលចុចលើ Icon 🔍
-    function toggleSearchBox() {
-      var box = document.getElementById('custSearchWrapper');
-      var input = document.getElementById('custSearchInput');
-      if (!box) return;
-
-      if (box.classList.contains('hidden')) {
-        box.classList.remove('hidden');
-        if (input) input.focus(); // ឱ្យ cursor លោតចូលប្រអប់វាយភ្លាមៗ
-      } else {
-        box.classList.add('hidden');
-        if (input && input.value.trim() !== '') {
-          clearCustSearch(); // សម្អាតអក្សរស្វែងរកវិញពេលបិទ
-        }
-      }
-    }
-
     function renderCustomerGrid(items) {
       var grid = document.getElementById('customerGrid');
       var t = i18n[currentLang];
@@ -895,7 +964,7 @@
       }
     }
 
-    // --- MODAL CONTROLLER ---
+    // --- 6.6 PRODUCT DETAIL MODAL & ZOOM ---
     function openModal(p) {
       selectedProduct = p;
       selectedColor = (p.colors && p.colors.length > 0) ? p.colors[0] : "Standard";
@@ -955,16 +1024,15 @@
             sizeBox.appendChild(btn);
           })(p.sizes[s], s);
         }
-      } // <--- សញ្ញា } នេះគឺបិទ if (sizeBox) ដែលពីមុនបានភ្លេចដាក់
+      }
 
-      // ត្រួតពិនិត្យទំនិញ Custom
       var customSection = document.getElementById('custCustomSection');
       var nameInput = document.getElementById('custCustomNameInput');
       if (nameInput) nameInput.value = '';
 
       if (p.isCustom) {
         if (customSection) customSection.className = "mb-4 bg-blue-50/70 p-3 rounded-2xl border border-blue-200 space-y-2 block";
-        updateModalLivePrice(); // ហៅឱ្យ Refresh ទិន្នន័យតម្លៃ និងទម្រង់ភ្លាមៗ
+        updateModalLivePrice();
       } else {
         if (customSection) customSection.className = "hidden";
       }
@@ -1033,7 +1101,7 @@
         quantity += delta;
         var qEl = document.getElementById('qtyVal');
         if (qEl) qEl.innerText = quantity;
-        updateModalLivePrice(); // ហៅឱ្យគណនាតម្លៃសរុបឡើងវិញភ្លាមៗពេលចុច + ឬ -
+        updateModalLivePrice();
       }
     }
 
@@ -1050,7 +1118,6 @@
       }
     }
     
-    /// អនុគមន៍គណនាតម្លៃ និង Refresh បង្ហាញលើអេក្រង់ភ្លាមៗ (គុណនឹងចំនួន Quantity)
     function updateModalLivePrice() {
       if (!selectedProduct) return;
 
@@ -1105,7 +1172,6 @@
 
       if (countEl) countEl.innerText = charLength + " តួអក្សរ";
 
-      // គណនាតម្លៃក្នុង ១ ឯកតា រួចគុណនឹងចំនួន Quantity
       var unitPrice = basePrice + totalFee;
       var totalProductPrice = unitPrice * (quantity || 1);
 
@@ -1118,7 +1184,6 @@
       }
     }
 
-    // --- PINCH TO ZOOM ---
     function openZoomForImage(imgUrl) {
       var zoomedImg = document.getElementById('zoomedImg');
       var zoomModal = document.getElementById('imageZoomModal');
@@ -1139,9 +1204,7 @@
     }
 
     function resetZoomState() {
-      currentScale = 1;
-      posX = 0;
-      posY = 0;
+      currentScale = 1; posX = 0; posY = 0;
       applyImageTransform();
     }
 
@@ -1168,27 +1231,17 @@
       viewport.addEventListener('touchstart', function(e) {
         if (e.touches.length === 2) {
           isDragging = false;
-          startDist = Math.hypot(
-            e.touches[0].clientX - e.touches[1].clientX,
-            e.touches[0].clientY - e.touches[1].clientY
-          );
+          startDist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
           initialScale = currentScale;
         } else if (e.touches.length === 1) {
           var currentTime = new Date().getTime();
           var tapGap = currentTime - lastTapTime;
-          
           if (tapGap < 300 && tapGap > 0) {
-            if (currentScale > 1) {
-              resetZoomState();
-            } else {
-              currentScale = 2.5;
-              applyImageTransform();
-            }
+            if (currentScale > 1) { resetZoomState(); } else { currentScale = 2.5; applyImageTransform(); }
             lastTapTime = 0;
             return;
           }
           lastTapTime = currentTime;
-
           if (currentScale > 1) {
             isDragging = true;
             startX = e.touches[0].clientX - posX;
@@ -1199,12 +1252,8 @@
 
       viewport.addEventListener('touchmove', function(e) {
         e.preventDefault();
-
         if (e.touches.length === 2) {
-          var dist = Math.hypot(
-            e.touches[0].clientX - e.touches[1].clientX,
-            e.touches[0].clientY - e.touches[1].clientY
-          );
+          var dist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
           if (startDist > 0) {
             var newScale = initialScale * (dist / startDist);
             if (newScale < minScale) newScale = minScale;
@@ -1222,23 +1271,17 @@
       viewport.addEventListener('touchend', function(e) {
         if (e.touches.length < 2) startDist = 0;
         if (e.touches.length === 0) isDragging = false;
-        if (currentScale <= 1) {
-          currentScale = 1;
-          posX = 0;
-          posY = 0;
-          applyImageTransform();
-        }
+        if (currentScale <= 1) { resetZoomState(); }
       });
     }
 
-    // --- CART ---
+    // --- 6.7 SHOPPING CART ---
     function addToCart() {
       if (!selectedProduct) return;
 
       var customText = "";
       var finalUnitPrice = selectedProduct.price;
 
-      // ពិនិត្យមើលទំនិញប្រភេទ Custom ពេលចុចដាក់ចូលកន្ត្រក
       if (selectedProduct.isCustom) {
         var nameInput = document.getElementById('custCustomNameInput');
         customText = nameInput ? nameInput.value.trim() : "";
@@ -1304,7 +1347,7 @@
       if (badge) {
         badge.innerText = totalCount;
         badge.className = totalCount > 0 
-          ? "absolute -top-1 -right-1 bg-rose-500 text-white text-[10px] font-extrabold w-5 h-5 rounded-full flex items-center justify-center border-2 border-white shadow-sm animate-pulse" 
+          ? "absolute -top-1 -right-2 bg-rose-500 text-white text-[9px] font-extrabold w-4 h-4 rounded-full flex items-center justify-center border border-white shadow-xs animate-pulse" 
           : "hidden";
       }
     }
@@ -1318,253 +1361,6 @@
     function closeCartModal() {
       var modal = document.getElementById('cartModal');
       if (modal) modal.className = "fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden flex items-end sm:items-center justify-center p-0 sm:p-4";
-    }
-
-    // អនុគមន៍ទាញយកថ្លៃដឹកជញ្ជូនតាមតំបន់ដែលភ្ញៀវរើស
-    function getDeliveryFee() {
-      var zoneSelect = document.getElementById('cartDeliveryZone');
-      if (!zoneSelect) return 1.50;
-      var selectedOpt = zoneSelect.options[zoneSelect.selectedIndex];
-      return parseFloat(selectedOpt.getAttribute('data-cost')) || 1.50;
-    }
-
-    function updateCartDeliveryCost() {
-      renderCartItems(); // ហៅឱ្យគណនាតម្លៃសរុបឡើងវិញភ្លាមៗ
-    }
-
-    // ==================== SETTINGS & SHIPPING CONTROLLER ====================
-    var appSettings = {
-      ship_phnom_penh: 1.50,
-      ship_province: 2.00,
-      free_shipping_min: 20.00
-    };
-
-    // ==================== PROMO BANNER CONTROLLER ====================
-    var currentBannerImages = [];
-    var activeBannerIndex = 0;
-
-    // ១. បង្ហាញ Slide Banner លើទំព័រ Customer (បើបិទ ឬគ្មានរូប វានឹងលាក់បាត់ស្វ័យប្រវត្តិ)
-    function renderPromoBanner() {
-      var bannerSection = document.getElementById('promoBannerSection');
-      var container = document.getElementById('bannerSliderContainer');
-      var dotsContainer = document.getElementById('bannerSliderDots');
-
-      if (!bannerSection || !container || !dotsContainer) return;
-
-      // ឆែកមើលលក្ខខណ្ឌបើក/បិទ (បើ banner_enabled = false ឬគ្មានរូប ត្រូវលាក់)
-      if (!appSettings.banner_enabled || !appSettings.banner_images) {
-        bannerSection.className = "hidden";
-        return;
-      }
-
-      currentBannerImages = appSettings.banner_images.split(',').map(function(u){ return u.trim(); }).filter(function(u){ return u.length > 0; });
-      if (currentBannerImages.length === 0) {
-        bannerSection.className = "hidden";
-        return;
-      }
-
-      bannerSection.className = "px-4 pt-3 block";
-      container.innerHTML = '';
-      dotsContainer.innerHTML = '';
-
-      for (var i = 0; i < currentBannerImages.length; i++) {
-        (function(imgUrl, idx) {
-          var slide = document.createElement('div');
-          slide.className = "w-full h-full flex-shrink-0 snap-center flex items-center justify-center cursor-pointer";
-
-          var img = document.createElement('img');
-          img.src = imgUrl;
-          img.className = "w-full h-full object-cover rounded-2xl";
-          img.onerror = function() { 
-            this.src = "https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&w=800&q=80"; 
-          };
-
-          slide.appendChild(img);
-          container.appendChild(slide);
-
-          var dot = document.createElement('span');
-          dot.className = "h-1 rounded-full transition-all " + (idx === 0 ? "bg-white w-3" : "bg-white/40 w-1");
-          dotsContainer.appendChild(dot);
-        })(currentBannerImages[i], i);
-      }
-
-      dotsContainer.className = currentBannerImages.length > 1
-        ? "absolute bottom-2 left-1/2 -translate-x-1/2 flex items-center gap-1.5 bg-black/40 backdrop-blur-md px-2 py-0.5 rounded-full z-10"
-        : "hidden";
-    }
-
-    // ២. ដំណើរការចំណុចចុច (Dots Indicator) ពេលអតិថិជនអូស Slide Banner
-    function handleBannerScroll() {
-      var container = document.getElementById('bannerSliderContainer');
-      var dotsContainer = document.getElementById('bannerSliderDots');
-      if (!container || !dotsContainer) return;
-
-      var newIndex = Math.round(container.scrollLeft / container.offsetWidth);
-      if (newIndex !== activeBannerIndex && newIndex < currentBannerImages.length) {
-        activeBannerIndex = newIndex;
-        var dots = dotsContainer.children;
-        for (var i = 0; i < dots.length; i++) {
-          dots[i].className = (i === activeBannerIndex) ? "w-3 h-1 rounded-full bg-white transition-all" : "w-1 h-1 rounded-full bg-white/40 transition-all";
-        }
-      }
-    }
-
-    // ៣. បង្ហាញ ឬលាក់ប្រអប់បញ្ចូល Link រូបភាព Banner ក្នុង Admin Settings
-    function toggleBannerInputUI() {
-      var isCheck = document.getElementById('setBannerEnabled') ? document.getElementById('setBannerEnabled').checked : false;
-      var box = document.getElementById('bannerInputsBox');
-      if (box) box.className = isCheck ? "space-y-1.5 pt-1 block" : "hidden";
-    }
-
-    // បង្ហាញតែរូបភាព និងសញ្ញាខ្វែង (គ្មានអក្សរ គ្មានប្រអប់ធំ)
-    function renderBannerThumbnailsUI() {
-      var container = document.getElementById('bannerThumbnailsContainer');
-      var textarea = document.getElementById('setBannerImages');
-      if (!container || !textarea) return;
-
-      var urls = textarea.value.split(',')
-        .map(function(u) { return u.trim(); })
-        .filter(function(u) { return u.length > 0; });
-
-      container.innerHTML = '';
-
-      // បើគ្មានរូបភាព គឺមិនបាច់បង្ហាញអ្វីឡើយ
-      if (urls.length === 0) return;
-
-      for (var i = 0; i < urls.length; i++) {
-        (function(imgUrl, idx) {
-          var wrapper = document.createElement('div');
-          wrapper.className = "relative w-20 h-12 rounded-xl overflow-visible shadow-xs flex-shrink-0";
-
-          var img = document.createElement('img');
-          img.src = imgUrl;
-          img.className = "w-full h-full object-cover rounded-xl border border-slate-200";
-          img.onerror = function() { 
-            this.src = "https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&w=200&q=80"; 
-          };
-
-          // ប៊ូតុង ✕ សម្រាប់លុប (នៅជ្រុងលើខាងស្តាំ)
-          var delBtn = document.createElement('button');
-          delBtn.type = "button";
-          delBtn.className = "absolute -top-1.5 -right-1.5 w-5 h-5 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-full text-[10px] flex items-center justify-center shadow-md active:scale-90 transition-all z-10";
-          delBtn.innerText = "✕";
-          delBtn.onclick = function() {
-            removeBannerImageByIndex(idx);
-          };
-
-          wrapper.appendChild(img);
-          wrapper.appendChild(delBtn);
-          container.appendChild(wrapper);
-        })(urls[i], i);
-      }
-    }
-
-    // ២. អនុគមន៍លុបរូបភាពចេញ ដោយមាន Popup សួរបញ្ជាក់មុនលុប
-    function removeBannerImageByIndex(targetIndex) {
-      var textarea = document.getElementById('setBannerImages');
-      if (!textarea) return;
-
-      var urls = textarea.value.split(',')
-        .map(function(u) { return u.trim(); })
-        .filter(function(u) { return u.length > 0; });
-
-      if (targetIndex < 0 || targetIndex >= urls.length) return;
-
-      // Popup សួរបញ្ជាក់ (Confirmation)
-      var confirmDelete = confirm("⚠️ តើអ្នកពិតជាចង់លុបរូបភាពមួយនេះចេញពី Banner មែនទេ?");
-      if (confirmDelete) {
-        urls.splice(targetIndex, 1); // ដករូបភាពត្រង់ចំណុចនោះចេញ
-        textarea.value = urls.join(', '); // បំពេញតម្លៃថ្មីចូល Textarea
-        renderBannerThumbnailsUI(); // Refresh Preview ភ្លាមៗ
-      }
-    }
-
-    // បង្ហាញរូបភាព Thumbnail របស់ផលិតផលជាមួយប៊ូតុង ✕
-    function renderProductThumbnailsUI() {
-      var container = document.getElementById('prodThumbnailsContainer');
-      var input = document.getElementById('addImage');
-      if (!container || !input) return;
-
-      var urls = input.value.split(',')
-        .map(function(u) { return u.trim(); })
-        .filter(function(u) { return u.length > 0; });
-
-      container.innerHTML = '';
-      if (urls.length === 0) return;
-
-      for (var i = 0; i < urls.length; i++) {
-        (function(imgUrl, idx) {
-          var displaySrc = imgUrl;
-          if (imgUrl.indexOf('drive.google.com') !== -1) {
-            var match = imgUrl.match(/[-\w]{25,}/);
-            if (match && match[0]) displaySrc = "https://lh3.googleusercontent.com/d/" + match[0] + "=s800";
-          }
-
-          var wrapper = document.createElement('div');
-          wrapper.className = "relative w-16 h-12 rounded-xl overflow-visible shadow-xs flex-shrink-0";
-
-          var img = document.createElement('img');
-          img.src = displaySrc;
-          img.className = "w-full h-full object-cover rounded-xl border border-slate-200 bg-slate-100";
-          img.onerror = function() { 
-            this.src = "https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&w=200&q=80"; 
-          };
-
-          // ប៊ូតុង ✕ សម្រាប់លុបរូប
-          var delBtn = document.createElement('button');
-          delBtn.type = "button";
-          delBtn.className = "absolute -top-1.5 -right-1.5 w-5 h-5 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-full text-[10px] flex items-center justify-center shadow-md active:scale-90 transition-all z-10";
-          delBtn.innerText = "✕";
-          delBtn.onclick = function() {
-            removeProductImageByIndex(idx);
-          };
-
-          wrapper.appendChild(img);
-          wrapper.appendChild(delBtn);
-          container.appendChild(wrapper);
-        })(urls[i], i);
-      }
-    }
-
-    // អនុគមន៍លុបរូបភាពផលិតផល ដោយមាន Popup សួរបញ្ជាក់ជាមុន
-    function removeProductImageByIndex(targetIndex) {
-      var input = document.getElementById('addImage');
-      if (!input) return;
-
-      var urls = input.value.split(',')
-        .map(function(u) { return u.trim(); })
-        .filter(function(u) { return u.length > 0; });
-
-      if (targetIndex < 0 || targetIndex >= urls.length) return;
-
-      if (confirm("⚠️ តើអ្នកពិតជាចង់លុបរូបភាពមួយនេះចេញពីផលិតផលមែនទេ?")) {
-        urls.splice(targetIndex, 1);
-        input.value = urls.join(', ');
-        renderProductThumbnailsUI(); // ធ្វើបច្ចុប្បន្នភាពរូបភាពឡើងវិញភ្លាមៗ
-      }
-    }
-    
-    function loadAppSettings() {
-      callBackendPost({ action: "getSettings" })
-        .then(function(res) {
-          if (res) {
-            appSettings = {
-              ship_phnom_penh: parseFloat(res.ship_phnom_penh) || 1.50,
-              ship_province: parseFloat(res.ship_province) || 2.00,
-              free_shipping_min: parseFloat(res.free_shipping_min) || 20.00,
-              banner_enabled: (String(res.banner_enabled).toLowerCase() === 'yes' || res.banner_enabled === true),
-              banner_images: String(res.banner_images || '').trim()
-            };
-            updateDeliveryDropdownUI();
-            renderPromoBanner(); // <--- ហៅឱ្យ Render Banner ភ្លាមៗពេលបើក App
-            if (typeof renderCartItems === "function") renderCartItems();
-          }
-        })
-        .catch(function(err) {
-          console.warn("ប្រើតម្លៃកំណត់លំនាំដើម:", err);
-          updateDeliveryDropdownUI();
-          renderPromoBanner();
-        });
     }
 
     function updateDeliveryDropdownUI() {
@@ -1589,7 +1385,6 @@
       renderCartItems();
     }
 
-    // អនុគមន៍ Render បញ្ជីទំនិញក្នុងកន្ត្រក និងគណនាតម្លៃសរុប
     function renderCartItems() {
       var list = document.getElementById('cartItemList');
       var emptyState = document.getElementById('cartEmptyState');
@@ -1612,7 +1407,6 @@
       form.className = "space-y-2.5 bg-slate-50 p-3.5 rounded-2xl border border-slate-200 my-3";
       bottomBar.className = "pt-2 border-t border-slate-100";
 
-      // ១. ពិនិត្យមើលថាតើក្នុងកន្ត្រកមានទំនិញ Custom (ឆ្លាក់ឈ្មោះ) ដែរឬទេ
       var hasCustomItem = false;
       for (var c = 0; c < cart.length; c++) {
         if (cart[c].customText && cart[c].customText.trim().length > 0) {
@@ -1644,9 +1438,7 @@
         }
       }
 
-      // ២. បូកសរុបតម្លៃទំនិញទាំងអស់ក្នុងកន្ត្រក (Subtotal)
       var subTotal = 0;
-
       for (var i = 0; i < cart.length; i++) {
         (function(idx) {
           var item = cart[idx];
@@ -1724,14 +1516,7 @@
         })(i);
       }
 
-      // ៣. គណនាថ្លៃដឹក និង Free Delivery
-      var zoneSelect = document.getElementById('cartDeliveryZone');
-      var baseShipFee = 1.50;
-      if (zoneSelect) {
-        var selectedOpt = zoneSelect.options[zoneSelect.selectedIndex];
-        baseShipFee = parseFloat(selectedOpt.getAttribute('data-cost')) || 1.50;
-      }
-
+      var baseShipFee = getDeliveryFee();
       var isFreeShipping = (subTotal >= appSettings.free_shipping_min);
       var shippingFee = isFreeShipping ? 0 : baseShipFee;
       var grandTotal = subTotal + shippingFee;
@@ -1754,7 +1539,7 @@
             '</div>';
         }
       }
-    } // <--- សញ្ញា } បិទ renderCartItems() ត្រឹមត្រូវនៅត្រង់នេះ
+    }
     
     function changeCartItemQty(index, delta) {
       if (!cart[index]) return;
@@ -1772,13 +1557,12 @@
       renderCartItems();
     }
 
-    // --- CHECKOUT VIA FETCH API ---
     function submitCartOrder() {
       if (cart.length === 0) return;
 
       var phoneEl = document.getElementById('cartPhoneInput');
       var locEl = document.getElementById('cartLocInput');
-      var zoneSelect = document.getElementById('cartDeliveryZone'); // ចាប់យក Dropdown តំបន់ដឹក
+      var zoneSelect = document.getElementById('cartDeliveryZone');
 
       var phone = phoneEl ? phoneEl.value.trim() : '';
       var location = locEl ? locEl.value.trim() : '';
@@ -1795,19 +1579,16 @@
         submitBtn.disabled = true;
       }
 
-      // ១. គណនាតម្លៃទំនិញសរុប (Subtotal)
       var subTotal = 0;
       for (var i = 0; i < cart.length; i++) {
         subTotal += (cart[i].price * cart[i].qty);
       }
 
-      // ២. ពិនិត្យលក្ខខណ្ឌដឹកឥតគិតថ្លៃ (Free Shipping)
-      var baseShipFee = typeof getDeliveryFee === "function" ? getDeliveryFee() : 1.50;
+      var baseShipFee = getDeliveryFee();
       var isFreeShipping = (subTotal >= appSettings.free_shipping_min);
       var shippingFee = isFreeShipping ? 0 : baseShipFee;
       var grandTotal = subTotal + shippingFee;
 
-      // ឈ្មោះតំបន់ដឹកជញ្ជូន និងសម្គាល់ការដឹកឥតគិតថ្លៃ
       var zoneText = zoneSelect ? zoneSelect.options[zoneSelect.selectedIndex].text : "ភ្នំពេញ";
       var zoneLabel = isFreeShipping ? (zoneText.split('(')[0].trim() + " (🎉 ដឹកឥតគិតថ្លៃ)") : zoneText;
 
@@ -1823,12 +1604,11 @@
         tgUserId = u.id || "";
       }
 
-      // បញ្ជូនទិន្នន័យទៅកាន់ Google Apps Script
       callBackendPost({
         action: "recordOrder",
         orderData: {
           items: cart,
-          total: grandTotal.toFixed(2), // តម្លៃសរុបដែលបានកាត់ថ្លៃដឹកជញ្ជូនត្រឹមត្រូវ
+          total: grandTotal.toFixed(2),
           customerName: custName,
           tgUsername: tgUsername,
           tgUserId: tgUserId,
@@ -1877,7 +1657,7 @@
       if (modal) modal.className = "fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden flex items-center justify-center p-4";
     }
 
-    // --- MY ORDERS ---
+    // --- 6.8 MY ORDERS MODAL ---
     function openMyOrdersModal() {
       var modal = document.getElementById('myOrdersModal');
       var loader = document.getElementById('myOrdersLoader');
@@ -2000,7 +1780,7 @@
       }
     }
 
-    // --- ADMIN ACTIONS VIA FETCH API ---
+    // --- 6.9 ADMIN AUTH & ROLE SWITCH ---
     function handleRoleClick() {
       if (currentRole === 'customer') {
         var pin = prompt("សូមបញ្ចូលលេខកូដសម្ងាត់ Admin PIN:");
@@ -2026,9 +1806,9 @@
       currentRole = 'admin';
       var el;
       if (el = document.getElementById('customerSection')) el.className = "hidden";
-      if (el = document.getElementById('bottomNavContainer')) el.className = "hidden"; // លាក់ Bottom Nav
-      if (el = document.getElementById('custHeaderBtns')) el.className = "hidden"; // លាក់ប៊ូតុង Search & Chat
-      if (el = document.getElementById('adminBackBtn')) el.className = "text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-3 py-1.5 rounded-xl border border-slate-200 transition-all active:scale-95 shadow-2xs block"; // បង្ហាញប៊ូតុងទៅហាងវិញ
+      if (el = document.getElementById('bottomNavContainer')) el.className = "hidden";
+      if (el = document.getElementById('custHeaderBtns')) el.className = "hidden";
+      if (el = document.getElementById('adminBackBtn')) el.className = "text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-3 py-1.5 rounded-xl border border-slate-200 transition-all active:scale-95 shadow-2xs block";
       if (el = document.getElementById('adminSection')) el.className = "px-4 pt-3 space-y-3 max-w-4xl mx-auto";
       if (el = document.getElementById('subHeaderText')) el.innerText = 'Admin Control';
       
@@ -2041,13 +1821,14 @@
       var el;
       if (el = document.getElementById('adminSection')) el.className = "hidden";
       if (el = document.getElementById('adminBackBtn')) el.className = "hidden";
-      if (el = document.getElementById('custHeaderBtns')) el.className = "flex items-center gap-1.5"; // បង្ហាញប៊ូតុង Search & Chat វិញ
+      if (el = document.getElementById('custHeaderBtns')) el.className = "flex items-center gap-1.5";
       if (el = document.getElementById('customerSection')) el.className = "max-w-4xl mx-auto";
       if (el = document.getElementById('bottomNavContainer')) el.className = "fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-slate-200/80 px-8 py-2 shadow-lg flex justify-around items-center select-none";
       applyLanguageUI();
       loadCustomerData();
     }
 
+    // --- 6.10 ADMIN CATALOG MANAGEMENT ---
     function loadAdminData() {
       var loader = document.getElementById('adminLoader');
       if (loader) loader.className = "text-center py-10 text-slate-400 text-xs";
@@ -2058,7 +1839,6 @@
           if (loader) loader.className = "hidden";
           filterAdminProducts();
 
-          // ទាញយកទិន្នន័យថ្លៃដើមពី Sheet1
           callBackendPost({ action: "getCostCalculations", pin: adminPin })
             .then(function(res) {
               if (res && res.costMap) {
@@ -2123,7 +1903,6 @@
           imgDiv.className = "w-12 h-12 rounded-xl bg-slate-100 overflow-hidden flex-shrink-0 relative";
           var img = document.createElement('img');
 
-          // ១. ស្វែងរក Link រូបភាព
           var finalThumb = p.displayImage || "";
           if (!finalThumb && p.image && p.image.indexOf("googleusercontent.com") !== -1) {
             finalThumb = p.image.split(",")[0].trim();
@@ -2162,9 +1941,7 @@
           price.className = "text-[11px] text-blue-600 font-bold";
           price.innerText = "តម្លៃលក់៖ $" + p.price.toFixed(2);
 
-          // យកទិន្នន័យដែលបានភ្ជាប់ស្រាប់ពី Backend
           var calc = p.costAnalysis || (adminCostData ? (adminCostData[(p.id || "").trim()] || adminCostData[(p.title || "").trim().toLowerCase()]) : null);
-
           var costInfo = document.createElement('div');
           costInfo.className = "flex flex-wrap items-center gap-1.5 mt-1 text-[10px]";
 
@@ -2227,57 +2004,39 @@
           .then(function() { loadAdminData(); });
       }
     }
-// ==================== ADMIN ORDERS CONTROLLER ====================
-    var currentAdminTab = 'products';
-    var allAdminOrders = [];
-    var currentOrderFilter = 'active'; // លំនាំដើម៖ បង្ហាញតែការកុម្ម៉ង់ដែលកំពុងដំណើរការ (លាក់ Completed & Canceled)
 
-    // ១. អនុគមន៍ប្តូរពណ៌ប៊ូតុង Filter និងកំណត់ប្រភេទ Filter
+    // --- 6.11 ADMIN ORDERS MANAGEMENT ---
     function setOrderFilter(filterType) {
       currentOrderFilter = filterType;
-
       var filterKeys = ['active', 'all', 'completed', 'canceled'];
       for (var b = 0; b < filterKeys.length; b++) {
         var key = filterKeys[b];
-        // ផ្គូផ្គង ID ប៊ូតុង: filterBtnActive, filterBtnAll, filterBtnCompleted, filterBtnCanceled
         var btnId = 'filterBtn' + key.charAt(0).toUpperCase() + key.slice(1);
         var btn = document.getElementById(btnId);
         if (btn) {
-          if (key === filterType) {
-            btn.className = "px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-900 text-white shadow-xs whitespace-nowrap transition-all";
-          } else {
-            btn.className = "px-3 py-1.5 rounded-xl text-xs font-bold bg-white text-slate-600 border border-slate-200 whitespace-nowrap transition-all";
-          }
+          btn.className = (key === filterType) 
+            ? "px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-900 text-white shadow-xs whitespace-nowrap transition-all"
+            : "px-3 py-1.5 rounded-xl text-xs font-bold bg-white text-slate-600 border border-slate-200 whitespace-nowrap transition-all";
         }
       }
-
       applyOrderFilter();
     }
 
-    // ២. អនុគមន៍ចម្រាញ់ទិន្នន័យ (Filter) មុនពេលបញ្ជូនទៅបង្ហាញលើអេក្រង់
     function applyOrderFilter() {
       if (!allAdminOrders) return;
-
       var filtered = allAdminOrders.filter(function(ord) {
         var st = ord.status || "";
         var isCompleted = st.indexOf("Completed") !== -1 || st.indexOf("បានបញ្ចប់") !== -1;
         var isCanceled = st.indexOf("Canceled") !== -1 || st.indexOf("បានបោះបង់") !== -1;
 
-        if (currentOrderFilter === 'active') {
-          // បង្ហាញតែ Pending, Printing, Shipping (លាក់ Completed & Canceled)
-          return !isCompleted && !isCanceled;
-        } else if (currentOrderFilter === 'completed') {
-          return isCompleted;
-        } else if (currentOrderFilter === 'canceled') {
-          return isCanceled;
-        }
-        return true; // 'all': បង្ហាញទាំងអស់មិនលាក់ឡើយ
+        if (currentOrderFilter === 'active') { return !isCompleted && !isCanceled; }
+        else if (currentOrderFilter === 'completed') { return isCompleted; }
+        else if (currentOrderFilter === 'canceled') { return isCanceled; }
+        return true;
       });
-
       renderAdminOrdersList(filtered);
     }
 
-    // ៣. ប្តូរ Tab ក្នុង Admin (ផលិតផល, ការកុម្ម៉ង់, ការកំណត់)
     function switchAdminTab(tab) {
       currentAdminTab = tab;
       var tabP = document.getElementById('adminTabProds');
@@ -2298,7 +2057,7 @@
       if (tab === 'products') {
         if (tabP) tabP.className = "flex-1 py-2 rounded-xl text-xs font-bold bg-white text-slate-800 shadow-xs transition-all";
         if (conP) conP.className = "space-y-3";
-        if (addBtn) addBtn.className = "text-xs bg-blue-600 text-white font-semibold px-3 py-1.5 rounded-xl shadow-sm hover:bg-blue-700";
+        if (addBtn) addBtn.className = "text-xs bg-blue-600 text-white font-bold px-3.5 py-2 rounded-xl shadow-sm hover:bg-blue-700 active:scale-95 transition-all flex items-center gap-1.5";
       } else if (tab === 'orders') {
         if (tabO) tabO.className = "flex-1 py-2 rounded-xl text-xs font-bold bg-white text-slate-800 shadow-xs transition-all";
         if (conO) conO.className = "space-y-3";
@@ -2314,120 +2073,12 @@
         if (document.getElementById('setFreeShipMin')) document.getElementById('setFreeShipMin').value = appSettings.free_shipping_min;
         if (typeof renderBannerThumbnailsUI === "function") renderBannerThumbnailsUI();
 
-        // បំពេញទិន្នន័យ Banner ចាស់ចូល Form
         if (document.getElementById('setBannerEnabled')) document.getElementById('setBannerEnabled').checked = appSettings.banner_enabled;
         if (document.getElementById('setBannerImages')) document.getElementById('setBannerImages').value = appSettings.banner_images || '';
         if (typeof toggleBannerInputUI === "function") toggleBannerInputUI();
       }
     } 
 
-    // អនុគមន៍បម្លែងរូបភាព និង Upload ចូល Google Drive ស្វ័យប្រវត្តិ
-    function handleDirectImageUpload(event, targetInputId, statusSpanId) {
-      var file = event.target.files[0];
-      if (!file) return;
-
-      var statusSpan = document.getElementById(statusSpanId);
-      if (statusSpan) {
-        statusSpan.className = "text-[10px] text-blue-600 font-bold block mt-1";
-        statusSpan.innerText = "⏳ កំពុង Upload ចូល Google Drive សូមរង់ចាំបន្តិច...";
-      }
-
-      var reader = new FileReader();
-      reader.onload = function(e) {
-        var base64Data = e.target.result;
-
-        callBackendPost({
-          action: "uploadImage",
-          pin: adminPin,
-          base64Data: base64Data,
-          fileName: file.name
-        })
-        .then(function(res) {
-          if (res && res.success) {
-            if (statusSpan) {
-              statusSpan.className = "text-[10px] text-emerald-600 font-bold block mt-1";
-              statusSpan.innerText = "✓ Upload ជោគជ័យ និងបានបំពេញ Link រួចរាល់!";
-            }
-            var targetInput = document.getElementById(targetInputId);
-            if (targetInput) {
-              if (targetInput.value.trim() === "") {
-                targetInput.value = res.imageUrl;
-              } else {
-                targetInput.value += ", " + res.imageUrl;
-              }
-              // បង្ហាញរូបភាពតូចៗភ្លាមៗបន្ទាប់ពី Upload រួច
-              if (targetInputId === 'setBannerImages' && typeof renderBannerThumbnailsUI === "function") {
-             renderBannerThumbnailsUI();
-           }
-              if (targetInputId === 'addImage' && typeof renderProductThumbnailsUI === "function") {
-             renderProductThumbnailsUI();
-           }
-            }
-          } else {
-            alert("❌ មិនអាច Upload រូបភាពបាន៖ " + (res.message || ""));
-            if (statusSpan) statusSpan.className = "hidden";
-          }
-        })
-        .catch(function(err) {
-          alert("Error: " + err.message);
-          if (statusSpan) statusSpan.className = "hidden";
-        });
-      };
-      reader.readAsDataURL(file);
-    }
-    
-    // អនុគមន៍រក្សាទុក Settings ពី Page Admin ចូល Google Sheet
-    function saveDeliverySettings() {
-      var btn = document.getElementById('btnSaveSettings');
-      var ppVal = parseFloat(document.getElementById('setShipPP').value);
-      var provVal = parseFloat(document.getElementById('setShipProv').value);
-      var freeMinVal = parseFloat(document.getElementById('setFreeShipMin').value);
-      var isBannerOn = document.getElementById('setBannerEnabled') ? document.getElementById('setBannerEnabled').checked : false;
-      var bannerImgs = document.getElementById('setBannerImages') ? document.getElementById('setBannerImages').value.trim() : '';
-
-      if (isNaN(ppVal) || isNaN(provVal) || isNaN(freeMinVal)) {
-        alert("សូមបញ្ចូលតួលេខតម្លៃឱ្យបានត្រឹមត្រូវ!");
-        return;
-      }
-
-      var newSettings = {
-        ship_phnom_penh: ppVal,
-        ship_province: provVal,
-        free_shipping_min: freeMinVal,
-        banner_enabled: isBannerOn,
-        banner_images: bannerImgs
-      };
-
-      if (btn) {
-        btn.disabled = true;
-        btn.innerText = "⏳ កំពុងរក្សាទុក...";
-      }
-
-      callBackendPost({ action: "updateSettings", pin: adminPin, settings: newSettings })
-        .then(function(res) {
-          if (btn) {
-            btn.disabled = false;
-            btn.innerText = "💾 រក្សាទុកការកំណត់";
-          }
-          if (res && res.success) {
-            appSettings = newSettings;
-            updateDeliveryDropdownUI();
-            renderPromoBanner(); // Update រូបភាព Banner លើ App ភ្លាមៗ
-            alert("✓ ការកំណត់ថ្លៃដឹក និង Banner ត្រូវបានរក្សាទុកជោគជ័យ!");
-          } else {
-            alert("❌ មិនអាចរក្សាទុកបាន៖ " + (res.message || ""));
-          }
-        })
-        .catch(function(err) {
-          if (btn) {
-            btn.disabled = false;
-            btn.innerText = "💾 រក្សាទុកការកំណត់";
-          }
-          alert("Error: " + err.message);
-        });
-    }
-
-    // ៤. ទាញយកបញ្ជីកុម្ម៉ង់ទាំងអស់ពី Server រួចហៅ applyOrderFilter()
     function loadAdminOrders() {
       var loader = document.getElementById('adminOrdersLoader');
       if (loader) loader.className = "text-center py-10 text-slate-400 text-xs";
@@ -2436,7 +2087,7 @@
         .then(function(res) {
           if (loader) loader.className = "hidden";
           allAdminOrders = (res && res.orders) ? res.orders : [];
-          applyOrderFilter(); // ហៅ Filter មកដំណើរការជាស្វ័យប្រវត្តិ
+          applyOrderFilter();
         })
         .catch(function(err) {
           if (loader) {
@@ -2445,11 +2096,8 @@
         });
     }
 
-// ជំនួយការស្វែងរករូបភាពតូច (Thumbnail) របស់ទំនិញតាម ID ឬ តាមឈ្មោះ
     function findProductThumb(textLine) {
       if (!adminProducts || adminProducts.length === 0) return "";
-      
-      // ១. ស្វែងរកតាម [Product ID] ដូចជា [P-001], [P-002]
       var idMatch = textLine.match(/\[(P-\d+|P\d+)\]/i);
       if (idMatch && idMatch[1]) {
         var searchId = idMatch[1].trim().toLowerCase();
@@ -2459,19 +2107,15 @@
           }
         }
       }
-
-      // ២. ស្វែងរកតាមឈ្មោះទំនិញបម្រុងទុក (សម្រាប់ Order ចាស់ៗដែលគ្មានកូដ ID)
       for (var j = 0; j < adminProducts.length; j++) {
         var pTitle = String(adminProducts[j].title || "").trim().toLowerCase();
         if (pTitle && textLine.toLowerCase().indexOf(pTitle) !== -1) {
           return adminProducts[j].displayImage || adminProducts[j].image || "";
         }
       }
-
       return "";
     }
 
-    // បង្ហាញកាតកុម្ម៉ង់នីមួយៗ ព្រមទាំងរូបភាព Thumbnail របស់មុខទំនិញ
     function renderAdminOrdersList(orders) {
       var container = document.getElementById('adminOrdersList');
       if (!container) return;
@@ -2487,14 +2131,12 @@
           var card = document.createElement('div');
           card.className = "bg-white p-3.5 rounded-2xl border border-slate-200 shadow-sm space-y-2.5 text-xs";
 
-          // ១. បន្ទាត់លើ៖ លេខកូដកុម្ម៉ង់ និង កាលបរិច្ឆេទ
           var top = document.createElement('div');
           top.className = "flex justify-between items-center border-b border-slate-100 pb-2";
           top.innerHTML = '<span class="font-bold font-mono text-blue-600 text-xs select-all">' + ord.orderId + '</span>' +
                           '<span class="text-[10px] text-slate-400">' + ord.date + '</span>';
           card.appendChild(top);
 
-          // ២. ព័ត៌មានអតិថិជន (ឈ្មោះ, Telegram, ទូរសព្ទ, ទីតាំង)
           var custInfo = document.createElement('div');
           custInfo.className = "text-[11px] space-y-1 text-slate-600 bg-slate-50/70 p-2.5 rounded-xl border border-slate-100";
           var tgDisplay = ord.tgUsername ? ('<a href="https://t.me/' + ord.tgUsername.replace('@','') + '" target="_blank" class="text-blue-500 font-semibold underline">' + ord.tgUsername + '</a>') : '<span class="text-slate-400">គ្មាន</span>';
@@ -2505,7 +2147,6 @@
                                '<div>📍 <b>ទីតាំង៖</b> ' + ord.location + '</div>';
           card.appendChild(custInfo);
 
-          // ៣. បញ្ជីទំនិញដែលបានកុម្ម៉ង់ (បង្ហាញរូបភាព Thumbnail ភ្ជាប់ជាមួយមុខទំនិញនីមួយៗ)
           var itemsBox = document.createElement('div');
           itemsBox.className = "space-y-1.5 bg-slate-50/40 p-2 rounded-xl border border-slate-100";
 
@@ -2517,7 +2158,6 @@
             var itemRow = document.createElement('div');
             itemRow.className = "flex items-center gap-2.5 bg-white p-2 rounded-lg border border-slate-200/70 shadow-2xs";
 
-            // រកមើលរូបភាពរបស់ទំនិញនោះ
             var thumbUrl = findProductThumb(lineText) || "https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&w=600&q=80";
 
             var itemImg = document.createElement('img');
@@ -2537,7 +2177,6 @@
           }
           card.appendChild(itemsBox);
 
-          // ៤. តម្លៃសរុប និង Dropdown ប្តូរស្ថានភាពការងារ
           var bottom = document.createElement('div');
           bottom.className = "flex justify-between items-center pt-1";
           bottom.innerHTML = '<div class="leading-none">' +
@@ -2573,10 +2212,7 @@
             callBackendPost({ action: "updateOrderStatus", pin: adminPin, orderId: ord.orderId, newStatus: chosen })
               .then(function() {
                 select.disabled = false;
-                ord.status = chosen; // កែប្រែស្ថានភាពក្នុងទិន្នន័យជាក់ស្តែង
-
-                // បញ្ជាឱ្យដំណើរការ Filter ឡើងវិញភ្លាមៗ
-                // ប្រសិនបើកំពុងនៅផ្ទាំង "⚡ កំពុងដំណើរការ" ហើយប្តូរទៅ Completed ឬ Canceled កាតនេះនឹងរលត់បាត់ភ្លាម
+                ord.status = chosen;
                 applyOrderFilter();
               })
               .catch(function(err) {
@@ -2589,6 +2225,254 @@
           card.appendChild(bottom);
           container.appendChild(card);
         })(orders[i]);
+      }
+    }
+
+    // --- 6.12 ADMIN SETTINGS & BANNER CONTROLLER ---
+    function loadAppSettings() {
+      callBackendPost({ action: "getSettings" })
+        .then(function(res) {
+          if (res) {
+            appSettings = {
+              ship_phnom_penh: parseFloat(res.ship_phnom_penh) || 1.50,
+              ship_province: parseFloat(res.ship_province) || 2.00,
+              free_shipping_min: parseFloat(res.free_shipping_min) || 20.00,
+              banner_enabled: (String(res.banner_enabled).toLowerCase() === 'yes' || res.banner_enabled === true),
+              banner_images: String(res.banner_images || '').trim()
+            };
+            updateDeliveryDropdownUI();
+            renderPromoBanner();
+            if (typeof renderCartItems === "function") renderCartItems();
+          }
+        })
+        .catch(function(err) {
+          console.warn("ប្រើតម្លៃកំណត់លំនាំដើម:", err);
+          updateDeliveryDropdownUI();
+          renderPromoBanner();
+        });
+    }
+
+    function toggleBannerInputUI() {
+      var isCheck = document.getElementById('setBannerEnabled') ? document.getElementById('setBannerEnabled').checked : false;
+      var box = document.getElementById('bannerInputsBox');
+      if (box) box.className = isCheck ? "space-y-2.5 pt-1 block" : "hidden";
+    }
+
+    function renderBannerThumbnailsUI() {
+      var container = document.getElementById('bannerThumbnailsContainer');
+      var textarea = document.getElementById('setBannerImages');
+      if (!container || !textarea) return;
+
+      var urls = textarea.value.split(',')
+        .map(function(u) { return u.trim(); })
+        .filter(function(u) { return u.length > 0; });
+
+      container.innerHTML = '';
+      if (urls.length === 0) return;
+
+      for (var i = 0; i < urls.length; i++) {
+        (function(imgUrl, idx) {
+          var wrapper = document.createElement('div');
+          wrapper.className = "relative w-20 h-12 rounded-xl overflow-visible shadow-xs flex-shrink-0";
+
+          var img = document.createElement('img');
+          img.src = imgUrl;
+          img.className = "w-full h-full object-cover rounded-xl border border-slate-200";
+          img.onerror = function() { 
+            this.src = "https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&w=200&q=80"; 
+          };
+
+          var delBtn = document.createElement('button');
+          delBtn.type = "button";
+          delBtn.className = "absolute -top-1.5 -right-1.5 w-5 h-5 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-full text-[10px] flex items-center justify-center shadow-md active:scale-90 transition-all z-10";
+          delBtn.innerText = "✕";
+          delBtn.onclick = function() { removeBannerImageByIndex(idx); };
+
+          wrapper.appendChild(img);
+          wrapper.appendChild(delBtn);
+          container.appendChild(wrapper);
+        })(urls[i], i);
+      }
+    }
+
+    function removeBannerImageByIndex(targetIndex) {
+      var textarea = document.getElementById('setBannerImages');
+      if (!textarea) return;
+
+      var urls = textarea.value.split(',')
+        .map(function(u) { return u.trim(); })
+        .filter(function(u) { return u.length > 0; });
+
+      if (targetIndex < 0 || targetIndex >= urls.length) return;
+
+      if (confirm("⚠️ តើអ្នកពិតជាចង់លុបរូបភាពមួយនេះចេញពី Banner មែនទេ?")) {
+        urls.splice(targetIndex, 1);
+        textarea.value = urls.join(', ');
+        renderBannerThumbnailsUI();
+      }
+    }
+
+    function saveDeliverySettings() {
+      var btn = document.getElementById('btnSaveSettings');
+      var ppVal = parseFloat(document.getElementById('setShipPP').value);
+      var provVal = parseFloat(document.getElementById('setShipProv').value);
+      var freeMinVal = parseFloat(document.getElementById('setFreeShipMin').value);
+      var isBannerOn = document.getElementById('setBannerEnabled') ? document.getElementById('setBannerEnabled').checked : false;
+      var bannerImgs = document.getElementById('setBannerImages') ? document.getElementById('setBannerImages').value.trim() : '';
+
+      if (isNaN(ppVal) || isNaN(provVal) || isNaN(freeMinVal)) {
+        alert("សូមបញ្ចូលតួលេខតម្លៃឱ្យបានត្រឹមត្រូវ!");
+        return;
+      }
+
+      var newSettings = {
+        ship_phnom_penh: ppVal,
+        ship_province: provVal,
+        free_shipping_min: freeMinVal,
+        banner_enabled: isBannerOn,
+        banner_images: bannerImgs
+      };
+
+      if (btn) {
+        btn.disabled = true;
+        btn.innerText = "⏳ កំពុងរក្សាទុក...";
+      }
+
+      callBackendPost({ action: "updateSettings", pin: adminPin, settings: newSettings })
+        .then(function(res) {
+          if (btn) {
+            btn.disabled = false;
+            btn.innerText = "💾 រក្សាទុកការកំណត់";
+          }
+          if (res && res.success) {
+            appSettings = newSettings;
+            updateDeliveryDropdownUI();
+            renderPromoBanner();
+            alert("✓ ការកំណត់ថ្លៃដឹក និង Banner ត្រូវបានរក្សាទុកជោគជ័យ!");
+          } else {
+            alert("❌ មិនអាចរក្សាទុកបាន៖ " + (res.message || ""));
+          }
+        })
+        .catch(function(err) {
+          if (btn) {
+            btn.disabled = false;
+            btn.innerText = "💾 រក្សាទុកការកំណត់";
+          }
+          alert("Error: " + err.message);
+        });
+    }
+
+    // --- 6.13 DIRECT IMAGE UPLOAD & PRODUCT MODAL CONTROLLER ---
+    function handleDirectImageUpload(event, targetInputId, statusSpanId) {
+      var file = event.target.files[0];
+      if (!file) return;
+
+      var statusSpan = document.getElementById(statusSpanId);
+      if (statusSpan) {
+        statusSpan.className = "text-[10px] text-blue-600 font-bold block mt-1";
+        statusSpan.innerText = "⏳ កំពុង Upload ចូល Google Drive សូមរង់ចាំបន្តិច...";
+      }
+
+      var reader = new FileReader();
+      reader.onload = function(e) {
+        var base64Data = e.target.result;
+
+        callBackendPost({
+          action: "uploadImage",
+          pin: adminPin,
+          base64Data: base64Data,
+          fileName: file.name
+        })
+        .then(function(res) {
+          if (res && res.success) {
+            if (statusSpan) {
+              statusSpan.className = "text-[10px] text-emerald-600 font-bold block mt-1";
+              statusSpan.innerText = "✓ Upload ជោគជ័យ និងបានបំពេញ Link រួចរាល់!";
+            }
+            var targetInput = document.getElementById(targetInputId);
+            if (targetInput) {
+              if (targetInput.value.trim() === "") {
+                targetInput.value = res.imageUrl;
+              } else {
+                targetInput.value += ", " + res.imageUrl;
+              }
+              if (targetInputId === 'setBannerImages' && typeof renderBannerThumbnailsUI === "function") {
+                renderBannerThumbnailsUI();
+              }
+              if (targetInputId === 'addImage' && typeof renderProductThumbnailsUI === "function") {
+                renderProductThumbnailsUI();
+              }
+            }
+          } else {
+            alert("❌ មិនអាច Upload រូបភាពបាន៖ " + (res.message || ""));
+            if (statusSpan) statusSpan.className = "hidden";
+          }
+        })
+        .catch(function(err) {
+          alert("Error: " + err.message);
+          if (statusSpan) statusSpan.className = "hidden";
+        });
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function renderProductThumbnailsUI() {
+      var container = document.getElementById('prodThumbnailsContainer');
+      var input = document.getElementById('addImage');
+      if (!container || !input) return;
+
+      var urls = input.value.split(',')
+        .map(function(u) { return u.trim(); })
+        .filter(function(u) { return u.length > 0; });
+
+      container.innerHTML = '';
+      if (urls.length === 0) return;
+
+      for (var i = 0; i < urls.length; i++) {
+        (function(imgUrl, idx) {
+          var displaySrc = imgUrl;
+          if (imgUrl.indexOf('drive.google.com') !== -1) {
+            var match = imgUrl.match(/[-\w]{25,}/);
+            if (match && match[0]) displaySrc = "https://lh3.googleusercontent.com/d/" + match[0] + "=s800";
+          }
+
+          var wrapper = document.createElement('div');
+          wrapper.className = "relative w-16 h-12 rounded-xl overflow-visible shadow-xs flex-shrink-0";
+
+          var img = document.createElement('img');
+          img.src = displaySrc;
+          img.className = "w-full h-full object-cover rounded-xl border border-slate-200 bg-slate-100";
+          img.onerror = function() { 
+            this.src = "https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&w=200&q=80"; 
+          };
+
+          var delBtn = document.createElement('button');
+          delBtn.type = "button";
+          delBtn.className = "absolute -top-1.5 -right-1.5 w-5 h-5 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-full text-[10px] flex items-center justify-center shadow-md active:scale-90 transition-all z-10";
+          delBtn.innerText = "✕";
+          delBtn.onclick = function() { removeProductImageByIndex(idx); };
+
+          wrapper.appendChild(img);
+          wrapper.appendChild(delBtn);
+          container.appendChild(wrapper);
+        })(urls[i], i);
+      }
+    }
+
+    function removeProductImageByIndex(targetIndex) {
+      var input = document.getElementById('addImage');
+      if (!input) return;
+
+      var urls = input.value.split(',')
+        .map(function(u) { return u.trim(); })
+        .filter(function(u) { return u.length > 0; });
+
+      if (targetIndex < 0 || targetIndex >= urls.length) return;
+
+      if (confirm("⚠️ តើអ្នកពិតជាចង់លុបរូបភាពមួយនេះចេញពីផលិតផលមែនទេ?")) {
+        urls.splice(targetIndex, 1);
+        input.value = urls.join(', ');
+        renderProductThumbnailsUI();
       }
     }
 
@@ -2605,7 +2489,6 @@
       if (el = document.getElementById('addSizes')) el.value = '';
       if (el = document.getElementById('addBadge')) el.value = '';
       
-      // Reset Custom Checkbox & Fee
       if (document.getElementById('addIsCustom')) document.getElementById('addIsCustom').checked = false;
       if (document.getElementById('addCustomMode')) document.getElementById('addCustomMode').value = 'flat';
       if (document.getElementById('addCustomFee')) document.getElementById('addCustomFee').value = '';
@@ -2640,7 +2523,6 @@
       if (el = document.getElementById('addSizes')) el.value = Array.isArray(p.sizes) ? p.sizes.join(', ') : (p.sizes || '');
       if (el = document.getElementById('addBadge')) el.value = p.badge || '';
 
-      // បំពេញតម្លៃ Custom ចាស់មកវិញ
       var isCust = (p.isCustom === true || String(p.isCustom).toLowerCase() === 'yes');
       if (document.getElementById('addIsCustom')) document.getElementById('addIsCustom').checked = isCust;
       if (document.getElementById('addCustomMode')) document.getElementById('addCustomMode').value = p.customMode || 'flat';
@@ -2702,7 +2584,6 @@
           btn.disabled = false;
           btn.innerText = "💾 រក្សាទុកការកែប្រែ (Update)";
 
-          // --- ធ្វើបច្ចុប្បន្នភាពក្នុង App ភ្លាមៗ ដើម្បីកុំឱ្យបាត់ទិន្នន័យពេលចុច Edit លើកទី២ ---
           if (editId) {
             for (var i = 0; i < adminProducts.length; i++) {
               if (String(adminProducts[i].id) === String(editId)) {
@@ -2724,18 +2605,14 @@
           }
 
           closeAddModal();
-          loadAdminData();    // ទាញទិន្នន័យថ្មីពី Google Sheet មកផ្ទៀងផ្ទាត់
-          loadCustomerData(); // ធ្វើបច្ចុប្បន្នភាពផ្ទាំង Customer
+          loadAdminData();
+          loadCustomerData();
         })
         .catch(function(err) {
           btn.disabled = false;
           btn.innerText = "💾 រក្សាទុកការកែប្រែ (Update)";
           alert("Error: " + err.message);
         });
-    }
-    
-    function scrollToTop() {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   </script>
 </body>
