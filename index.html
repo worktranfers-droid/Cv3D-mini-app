@@ -367,20 +367,20 @@
       <button type="button" onclick="closeZoomModal()" class="bg-white/20 hover:bg-white/30 text-white w-9 h-9 rounded-full flex items-center justify-center font-bold text-sm transition-all active:scale-95">✕</button>
     </div>
     
-    <!-- ផ្នែកកណ្ដាល៖ កន្លែងបង្ហាញរូបភាព និងប៊ូតុងព្រួញ ‹ › -->
+    <!-- ផ្នែកកណ្ដាល៖ កន្លែងបង្ហាញរូបភាព និងប៊ូតុងព្រួញ ‹ › បែបថ្លាស្រាល -->
     <div class="w-full h-full flex items-center justify-center relative overflow-hidden">
-      <!-- ប៊ូតុងត្រឡប់ក្រោយ ‹ -->
-      <button id="zoomPrevBtn" type="button" onclick="navigateZoomImage(-1)" class="absolute left-2 z-30 w-10 h-10 bg-black/50 hover:bg-black/75 text-white text-lg font-bold rounded-full flex items-center justify-center backdrop-blur-sm transition-all active:scale-90 shadow-md">‹</button>
+      <!-- ប៊ូតុងត្រឡប់ក្រោយ ‹ (ថ្លា ស្រាល មិនបាំងរូប) -->
+      <button id="zoomPrevBtn" type="button" onclick="navigateZoomImage(-1)" class="absolute left-3 z-30 w-8 h-8 bg-white/10 hover:bg-white/20 active:bg-white/30 text-white/80 text-sm font-bold rounded-full flex items-center justify-center backdrop-blur-md border border-white/10 transition-all active:scale-90 shadow-sm">‹</button>
 
       <!-- Viewport រូបភាព Zoom -->
       <div id="zoomViewport" class="w-full h-full flex items-center justify-center overflow-hidden relative">
         <img id="zoomedImg" src="" alt="Zoomed Product" class="max-w-full max-h-[80vh] object-contain rounded-2xl will-change-transform origin-center transition-transform duration-75">
       </div>
 
-      <!-- ប៊ូតុងទៅមុខ › -->
-      <button id="zoomNextBtn" type="button" onclick="navigateZoomImage(1)" class="absolute right-2 z-30 w-10 h-10 bg-black/50 hover:bg-black/75 text-white text-lg font-bold rounded-full flex items-center justify-center backdrop-blur-sm transition-all active:scale-90 shadow-md">›</button>
+      <!-- ប៊ូតុងទៅមុខ › (ថ្លា ស្រាល មិនបាំងរូប) -->
+      <button id="zoomNextBtn" type="button" onclick="navigateZoomImage(1)" class="absolute right-3 z-30 w-8 h-8 bg-white/10 hover:bg-white/20 active:bg-white/30 text-white/80 text-sm font-bold rounded-full flex items-center justify-center backdrop-blur-md border border-white/10 transition-all active:scale-90 shadow-sm">›</button>
     </div>
-
+    
     <!-- ផ្នែកខាងក្រោម៖ ប៊ូតុង (-) | លេខរៀង 1/3 (Reset) | (+) -->
     <div class="flex items-center gap-3 z-20 pb-4">
       <button type="button" onclick="adjustZoom(-0.5)" title="បង្រួម" class="w-10 h-10 bg-white/15 hover:bg-white/25 text-white font-bold rounded-full text-base flex items-center justify-center backdrop-blur-sm active:scale-95">-</button>
