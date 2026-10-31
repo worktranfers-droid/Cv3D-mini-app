@@ -367,6 +367,12 @@
           <button type="button" onclick="changeQty(1)" class="w-6 h-6 bg-slate-100 hover:bg-slate-200 rounded-lg font-black text-slate-600 flex items-center justify-center text-xs active:scale-90 transition-all">+</button>
         </div>
       </div>
+
+      <!-- 💬 ប៊ូតុងសួរនាំអ្នកលក់ពីទំនិញនេះ -->
+      <button type="button" onclick="askAboutCurrentProduct()" class="w-full mb-3 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-bold py-2.5 rounded-2xl border border-emerald-200 flex items-center justify-center gap-2 active:scale-95 transition-all text-xs shadow-2xs">
+        <span class="text-sm">💬</span>
+        <span id="btnAskProdText">សួរនាំពីទំនិញនេះ</span>
+      </button>
       
       <!-- Cart & Buy Buttons -->
       <div class="grid grid-cols-2 gap-2.5">
@@ -804,6 +810,8 @@
       if (el = document.getElementById('lblSettingShipProv')) el.innerText = t.lblShipProv;
       if (el = document.getElementById('lblSettingShipFree')) el.innerText = t.lblShipFreeMin;
       updateShippingSummaryText();
+
+      if (el = document.getElementById('btnAskProdText')) el.innerText = t.btnAskProduct;
     }
 
     function openSellerChat() {
@@ -3083,6 +3091,46 @@
         summaryEl.innerText = "PP: $" + Number(pp).toFixed(2) + " | Prov: $" + Number(prov).toFixed(2) + " | Free over: $" + Number(free).toFixed(2);
       } else {
         summaryEl.innerText = "ភ្នំពេញ: $" + Number(pp).toFixed(2) + " | ខេត្ត: $" + Number(prov).toFixed(2) + " | ឥតគិតថ្លៃ: $" + Number(free).toFixed(2);
+      }
+    }
+
+    // អនុគមន៍ផ្ញើសារសួរនាំពីផលិតផលទៅកាន់ Telegram Admin
+    function askAboutCurrentProduct() {
+      if (!selectedProduct) return;
+
+      // ១. រៀបចំរូបភាពសម្រាប់ភ្ជាប់ជាមួយសារ
+      var imgUrl = selectedProduct.image || "";
+      if (selectedProduct.images && selectedProduct.images.length > 0) {
+        imgUrl = selectedProduct.images[0];
+      }
+
+      // ២. បង្កើតទម្រង់សារដែលមាន ID, ឈ្មោះ, តម្លៃ, ពណ៌ និងតំណភ្ជាប់រូបភាព
+      var msg = "👋 ជម្រាបសួរ Admin! ខ្ញុំចង់សួរព័ត៌មានបន្ថែមពីទំនិញនេះ៖\n\n" +
+                "🆔 កូដទំនិញ: " + (selectedProduct.id || "N/A") + "\n" +
+                "📦 ឈ្មោះ: " + selectedProduct.title + "\n" +
+                "💵 តម្លៃ: $" + Number(selectedProduct.price).toFixed(2) + "\n";
+
+      if (selectedColor) {
+        msg += "🎨 ពណ៌: " + selectedColor + "\n";
+      }
+      if (selectedSize) {
+        msg += "📏 ទំហំ: " + selectedSize + "\n";
+      }
+      if (imgUrl) {
+        msg += "🖼️ រូបភាព: " + imgUrl + "\n";
+      }
+
+      // ៣. បម្លែងសារទៅជា Link Telegram (https://t.me/username?text=...)
+      var encodedMsg = encodeURIComponent(msg);
+      var tgUrl = "https://t.me/" + MY_TELEGRAM_USERNAME + "?text=" + encodedMsg;
+
+      // បើកតាម Telegram WebApp SDK ឬ Browser
+      if (window.Telegram && window.Telegram.WebApp && typeof window.Telegram.WebApp.openTelegramLink === "function") {
+        window.Telegram.WebApp.openTelegramLink(tgUrl);
+      } else if (window.Telegram && window.Telegram.WebApp && typeof window.Telegram.WebApp.openLink === "function") {
+        window.Telegram.WebApp.openLink(tgUrl);
+      } else {
+        window.open(tgUrl, '_blank');
       }
     }
   </script>
