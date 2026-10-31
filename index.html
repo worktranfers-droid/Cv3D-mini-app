@@ -441,25 +441,60 @@
           <p id="cartEmptyText">កន្រ្តករបស់អ្នកនៅទទេស្អាត</p>
         </div>
 
-        <div id="cartOrderForm" class="space-y-2.5 bg-slate-50 p-3.5 rounded-2xl border border-slate-200 my-3">
-         <div>
-            <label id="lblCartZone" class="block text-xs font-bold text-slate-700 mb-1">🚚 តំបន់ដឹកជញ្ជូន (Delivery Zone): *</label>
-            <select id="cartDeliveryZone" onchange="updateCartDeliveryCost()" class="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs outline-none focus:ring-2 focus:ring-blue-500 shadow-sm font-medium">
-              <option value="phnom_penh" data-cost="1.50"> ភ្នំពេញ (+$1.50)</option>
-              <option value="province" data-cost="2.00"> បណ្តាខេត្ត (+$2.00)</option>
-            </select>
+        <!-- ប្លុកកំណត់តម្លៃដឹកជញ្ជូន (បែប Accordion / Collapsible Dropdown) -->
+        <div class="bg-slate-50 rounded-2xl border border-slate-200 overflow-hidden shadow-xs">
+          <!-- ក្បាល Header អាចចុចដើម្បីបើក/បិទ -->
+          <div onclick="toggleShippingPanel()" class="p-3.5 flex justify-between items-center cursor-pointer hover:bg-slate-100 transition-colors select-none">
+            <div>
+              <h4 id="lblAdminShippingTitle" class="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                🚚 កំណត់តម្លៃដឹកជញ្ជូន
+              </h4>
+              <p id="lblAdminShippingSummary" class="text-[10px] text-slate-400 font-mono mt-0.5 truncate max-w-[240px]">
+                ភ្នំពេញ: $1.50 | ខេត្ត: $2.00 | ឥតគិតថ្លៃ: $20.00
+              </p>
+            </div>
+            <div class="flex items-center gap-2">
+              <span id="shippingToggleIcon" class="text-xs text-slate-400 font-bold transition-transform duration-200">▼</span>
+            </div>
           </div>
-          <div>
-            <label id="lblCartPhone" class="block text-xs font-bold text-slate-700 mb-1">លេខទូរសព្ទ (Phone Number): *</label>
-            <input id="cartPhoneInput" type="tel" placeholder="ឧ. 012 345 678" class="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs outline-none focus:ring-2 focus:ring-blue-500 shadow-sm">
+
+          <!-- តួខាងក្នុងដែលលាក់/បង្ហាញ -->
+          <div id="shippingPanelBody" class="hidden px-3.5 pb-3.5 pt-1 border-t border-slate-100 space-y-3">
+            <div>
+              <label id="lblSettingShipPP" class="block text-[11px] font-semibold text-slate-600 mb-1">ថ្លៃដឹកក្នុងភ្នំពេញ ($)</label>
+              <input 
+                id="setShipPP" 
+                type="number" 
+                step="0.25" 
+                oninput="updateShippingSummaryText()" 
+                placeholder="1.50" 
+                class="w-full bg-white border border-slate-300 p-2 rounded-xl text-xs outline-none focus:ring-2 focus:ring-blue-500"
+              >
+            </div>
+            <div>
+              <label id="lblSettingShipProv" class="block text-[11px] font-semibold text-slate-600 mb-1">ថ្លៃដឹកតាមបណ្តាខេត្ត ($)</label>
+              <input 
+                id="setShipProv" 
+                type="number" 
+                step="0.25" 
+                oninput="updateShippingSummaryText()" 
+                placeholder="2.00" 
+                class="w-full bg-white border border-slate-300 p-2 rounded-xl text-xs outline-none focus:ring-2 focus:ring-blue-500"
+              >
+            </div>
+            <div>
+              <label id="lblSettingShipFree" class="block text-[11px] font-semibold text-slate-600 mb-1">ដឹកឥតគិតថ្លៃពេលទិញចាប់ពី ($)</label>
+              <input 
+                id="setFreeShipMin" 
+                type="number" 
+                step="1" 
+                oninput="updateShippingSummaryText()" 
+                placeholder="20.00" 
+                class="w-full bg-white border border-slate-300 p-2 rounded-xl text-xs outline-none focus:ring-2 focus:ring-blue-500"
+              >
+            </div>
           </div>
-          <div>
-            <label id="lblCartLoc" class="block text-xs font-bold text-slate-700 mb-1">ទីតាំងដឹកជញ្ជូន (Delivery Address): *</label>
-            <textarea id="cartLocInput" rows="2" placeholder="ភ្នំពេញ៖ លេខផ្ទះ ផ្លូវ សង្កាត់ | តាមខេត្ត៖ ឈ្មោះខេត្ត និងសាខាឡាន..." class="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs outline-none focus:ring-2 focus:ring-blue-500 shadow-sm"></textarea>
-          </div>
-          <div id="paymentPolicyNotice" class="p-2.5 rounded-xl text-xs space-y-1 border"></div>
         </div>
-      </div>
 
       <div id="cartBottomBar" class="pt-2 border-t border-slate-100">
         <div class="flex justify-between items-center mb-3">
@@ -814,6 +849,13 @@
       if (confirm("💬 តើអ្នកចង់ឆាតទៅកាន់អ្នកលក់ (@" + MY_TELEGRAM_USERNAME + ") ផ្ទាល់មែនទេ?")) {
         window.location.href = tgUrl;
       }
+
+      // Delivery Settings Translation
+      if (el = document.getElementById('lblAdminShippingTitle')) el.innerText = t.adminShippingTitle;
+      if (el = document.getElementById('lblSettingShipPP')) el.innerText = t.lblShipPP;
+      if (el = document.getElementById('lblSettingShipProv')) el.innerText = t.lblShipProv;
+      if (el = document.getElementById('lblSettingShipFree')) el.innerText = t.lblShipFreeMin;
+      updateShippingSummaryText();
     }
 
     // --- 6.4 SEARCH & BANNER SLIDER ---
@@ -3051,6 +3093,38 @@
       localStorage.setItem('app_category_order', JSON.stringify(categories));
       renderAdminCategoryOrderManager();
       renderDynamicCategories();
+
+      // អនុគមន៍ បើក/បិទ ផ្ទាំងកំណត់តម្លៃដឹកជញ្ជូន
+    function toggleShippingPanel() {
+      var body = document.getElementById('shippingPanelBody');
+      var icon = document.getElementById('shippingToggleIcon');
+      if (!body) return;
+      var isHidden = body.classList.contains('hidden');
+      if (isHidden) {
+        body.classList.remove('hidden');
+        if (icon) icon.style.transform = 'rotate(180deg)';
+      } else {
+        body.classList.add('hidden');
+        if (icon) icon.style.transform = 'rotate(0deg)';
+      }
+    }
+
+    // អនុគមន៍ធ្វើបច្ចុប្បន្នភាពអក្សរសង្ខេបលើ Header
+    function updateShippingSummaryText() {
+      var summaryEl = document.getElementById('lblAdminShippingSummary');
+      if (!summaryEl) return;
+      var pp = document.getElementById('setShipPP') ? document.getElementById('setShipPP').value : "1.50";
+      var prov = document.getElementById('setShipProv') ? document.getElementById('setShipProv').value : "2.00";
+      var free = document.getElementById('setFreeShipMin') ? document.getElementById('setFreeShipMin').value : "20.00";
+
+      if (currentLang === 'zh') {
+        summaryEl.innerText = "金边: $" + Number(pp).toFixed(2) + " | 外省: $" + Number(prov).toFixed(2) + " | 满 $" + Number(free).toFixed(2) + " 包邮";
+      } else if (currentLang === 'en') {
+        summaryEl.innerText = "PP: $" + Number(pp).toFixed(2) + " | Prov: $" + Number(prov).toFixed(2) + " | Free over: $" + Number(free).toFixed(2);
+      } else {
+        summaryEl.innerText = "ភ្នំពេញ: $" + Number(pp).toFixed(2) + " | ខេត្ត: $" + Number(prov).toFixed(2) + " | ឥតគិតថ្លៃ: $" + Number(free).toFixed(2);
+      }
+    }
     }
   </script>
 </body>
