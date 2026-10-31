@@ -800,6 +800,9 @@
         el.innerText = editId ? t.btnSaveProdEdit : t.btnSaveProdAdd;
       }
       if (typeof updateCustomModeUI === "function") updateCustomModeUI();
+      if (typeof renderAdminCategoryOrderManager === "function") {
+        renderAdminCategoryOrderManager();
+      }
     }
 
     function openSellerChat() {
