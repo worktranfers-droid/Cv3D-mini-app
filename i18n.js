@@ -98,9 +98,10 @@
         btnSaveProdAdd: "💾 រក្សាទុកចូល Google Sheet",
         btnSaveProdEdit: "💾 រក្សាទុកការកែប្រែ (Update)",
         badgeNone: "គ្មាន",
-        adminCategoryOrderTitle: "🏷️ រៀបលំដាប់ Category (Home Page)",
-        adminCategoryOrderHint: "ចុចព្រួញដើម្បីរុញលំដាប់",
-        adminNoCategories: "មិនទាន់មាន Category ទេ"
+        adminCatOrderTitle: "🏷️ រៀបលំដាប់ Category (Home Page)",
+        adminCatOrderHint: "ចុចព្រួញដើម្បីរុញលំដាប់",
+        adminCatOrderToggle: "ចុចដើម្បីកែសម្រួលលំដាប់",
+        adminCatNoData: "មិនទាន់មាន Category ទេ",
       },
       en: {
         flag: "🇬🇧",
@@ -200,9 +201,10 @@
         btnSaveProdAdd: "💾 Save to Google Sheet",
         btnSaveProdEdit: "💾 Update Product",
         badgeNone: "None",
-        adminCategoryOrderTitle: "🏷️ Reorder Categories (Home Page)",
-        adminCategoryOrderHint: "Click arrows to change order",
-        adminNoCategories: "No categories found",
+        adminCatOrderTitle: "🏷️ Category Order (Home Page)",
+        adminCatOrderHint: "Tap arrows to reorder",
+        adminCatOrderToggle: "Tap to customize order",
+        adminCatNoData: "No categories found",
       },
       zh: {
         flag: "🇨🇳",
@@ -302,8 +304,9 @@
         btnSaveProdAdd: "💾 保存至 Google 表格",
         btnSaveProdEdit: "💾 保存修改 (Update)",
         badgeNone: "无",
-        adminCategoryOrderTitle: "🏷️ 调整分类顺序 (首页)",
-        adminCategoryOrderHint: "点击箭头调整显示顺序",
-        adminNoCategories: "暂无商品分类",
+        adminCatOrderTitle: "🏷️ 分类排序 (首页展示)",
+        adminCatOrderHint: "点击箭头调整顺序",
+        adminCatOrderToggle: "点击展开调整排序",
+        adminCatNoData: "暂无商品分类",
       }
     };
