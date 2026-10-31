@@ -914,38 +914,48 @@
       var dataList = document.getElementById('categoryDataList');
       if (!container) return;
 
-      // ១. រាប់ចំនួនទំនិញ
+      // ១. ប្រមូលប្រភេទ Category ទាំងអស់ដែលមិនស្ទួន
       var categories = [];
       var totalCount = customerProducts.length;
 
       for (var i = 0; i < customerProducts.length; i++) {
-        var cat = (customerProducts[i].category || '').trim();
-        if (cat && categories.indexOf(cat) === -1) {
-          categories.push(cat);
+        var rawCat = (customerProducts[i].category || '').trim();
+        if (rawCat) {
+          // ពិនិត្យកុំឱ្យស្ទួន (Case-insensitive)
+          var alreadyExists = categories.some(function(c) {
+            return c.toLowerCase() === rawCat.toLowerCase();
+          });
+          if (!alreadyExists) {
+            categories.push(rawCat);
+          }
         }
       }
 
-      // ២. តម្រៀបតាមលំដាប់ដែល Admin បានកំណត់ទុក (បើមាន)
+      // ២. តម្រៀបលំដាប់ Category តាមការកំណត់របស់ Admin (Case-insensitive)
       var savedOrder = JSON.parse(localStorage.getItem('app_category_order') || '[]');
       if (savedOrder && savedOrder.length > 0) {
+        var lowerSavedOrder = savedOrder.map(function(s) { return String(s).toLowerCase().trim(); });
+
         categories.sort(function(a, b) {
-          var idxA = savedOrder.indexOf(a);
-          var idxB = savedOrder.indexOf(b);
+          var idxA = lowerSavedOrder.indexOf(a.toLowerCase());
+          var idxB = lowerSavedOrder.indexOf(b.toLowerCase());
+          if (idxA === -1 && idxB === -1) return 0;
           if (idxA === -1) return 1;
           if (idxB === -1) return -1;
           return idxA - idxB;
         });
       }
 
-      // ដាក់ 'all' នៅខាងមុខគេជានិច្ច
+      // ដាក់ 'all' នៅដើមគេបង្អស់ជានិច្ច
       categories.unshift('all');
 
+      // ៣. បង្ហាញប៊ូតុង Category លើអេក្រង់
       container.innerHTML = '';
       for (var j = 0; j < categories.length; j++) {
         (function(cat) {
           var btn = document.createElement('button');
           btn.type = "button";
-          var isActive = (currentCustomerCategory === cat);
+          var isActive = (currentCustomerCategory.toLowerCase() === cat.toLowerCase());
           var t = (typeof i18n !== 'undefined' && i18n[currentLang]) ? i18n[currentLang] : null;
           var label = (cat === 'all') ? (t ? t.catAll : 'ទាំងអស់') : cat;
 
@@ -953,7 +963,7 @@
             ? "cat-pill active bg-slate-900 text-white text-xs px-3.5 py-1.5 rounded-full font-medium whitespace-nowrap shadow-sm capitalize flex items-center gap-1.5 transition-all"
             : "cat-pill bg-white border border-slate-200 text-slate-600 text-xs px-3.5 py-1.5 rounded-full font-medium whitespace-nowrap capitalize flex items-center gap-1.5 hover:bg-slate-50 transition-all";
           
-          // បង្ហាញ Badge រាប់ចំនួន តែលើ 'all' មួយគត់
+          // បង្ហាញ Badge រាប់ចំនួនទំនិញតែលើប៊ូតុង 'all' មួយគត់
           if (cat === 'all') {
             btn.innerHTML = '<span>' + label + '</span>' +
                             '<span class="' + (isActive ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-500') + ' text-[10px] font-bold px-1.5 py-0.2 rounded-full">' + totalCount + '</span>';
@@ -981,7 +991,7 @@
         }
       }
     }
-
+    
     function applyCustomerFilter() {
       var input = document.getElementById('custSearchInput');
       var query = (input ? input.value : '').toLowerCase().trim();
