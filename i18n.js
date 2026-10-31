@@ -97,7 +97,10 @@
         lblCustomFeePerCharAmount: "ថ្លៃបន្ថែមក្នុង ១ អក្សរ ($) (គិតចាប់ពីអក្សរទី ៦ ឡើងទៅ)",
         btnSaveProdAdd: "💾 រក្សាទុកចូល Google Sheet",
         btnSaveProdEdit: "💾 រក្សាទុកការកែប្រែ (Update)",
-        badgeNone: "គ្មាន"
+        badgeNone: "គ្មាន",
+        adminCategoryOrderTitle: "🏷️ រៀបលំដាប់ Category (Home Page)",
+        adminCategoryOrderHint: "ចុចព្រួញដើម្បីរុញលំដាប់",
+        adminNoCategories: "មិនទាន់មាន Category ទេ"
       },
       en: {
         flag: "🇬🇧",
@@ -197,6 +200,9 @@
         btnSaveProdAdd: "💾 Save to Google Sheet",
         btnSaveProdEdit: "💾 Update Product",
         badgeNone: "None",
+        adminCategoryOrderTitle: "🏷️ Reorder Categories (Home Page)",
+        adminCategoryOrderHint: "Click arrows to change order",
+        adminNoCategories: "No categories found",
       },
       zh: {
         flag: "🇨🇳",
@@ -296,5 +302,8 @@
         btnSaveProdAdd: "💾 保存至 Google 表格",
         btnSaveProdEdit: "💾 保存修改 (Update)",
         badgeNone: "无",
+        adminCategoryOrderTitle: "🏷️ 调整分类顺序 (首页)",
+        adminCategoryOrderHint: "点击箭头调整显示顺序",
+        adminNoCategories: "暂无商品分类",
       }
     };
