@@ -102,6 +102,11 @@
         adminCatOrderHint: "ចុចព្រួញដើម្បីរុញលំដាប់",
         adminCatOrderToggle: "ចុចដើម្បីកែសម្រួលលំដាប់",
         adminCatNoData: "មិនទាន់មាន Category ទេ",
+        adminShippingTitle: "🚚 កំណត់តម្លៃដឹកជញ្ជូន",
+        adminShippingToggle: "ចុចដើម្បីកែប្រែថ្លៃដឹក និងលក្ខខណ្ឌដឹកឥតគិតថ្លៃ",
+        lblShipPP: "ថ្លៃដឹកក្នុងភ្នំពេញ ($)",
+        lblShipProv: "ថ្លៃដឹកតាមបណ្តាខេត្ត ($)",
+        lblShipFreeMin: "ដឹកឥតគិតថ្លៃពេលទិញចាប់ពី ($)",
       },
       en: {
         flag: "🇬🇧",
@@ -205,6 +210,11 @@
         adminCatOrderHint: "Tap arrows to reorder",
         adminCatOrderToggle: "Tap to customize order",
         adminCatNoData: "No categories found",
+        adminShippingTitle: "🚚 Delivery Fee Settings",
+        adminShippingToggle: "Tap to adjust delivery fees & free shipping threshold",
+        lblShipPP: "Phnom Penh Delivery Fee ($)",
+        lblShipProv: "Provinces Delivery Fee ($)",
+        lblShipFreeMin: "Free Shipping on Orders Over ($)",
       },
       zh: {
         flag: "🇨🇳",
@@ -308,5 +318,10 @@
         adminCatOrderHint: "点击箭头调整顺序",
         adminCatOrderToggle: "点击展开调整排序",
         adminCatNoData: "暂无商品分类",
+        adminShippingTitle: "🚚 配送费用设置",
+        adminShippingToggle: "点击调整运费及包邮门槛",
+        lblShipPP: "金边市内运费 ($)",
+        lblShipProv: "外省运费 ($)",
+        lblShipFreeMin: "满额免运费门槛 ($)",
       }
     };
