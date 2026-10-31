@@ -107,6 +107,7 @@
         lblShipPP: "ថ្លៃដឹកក្នុងភ្នំពេញ ($)",
         lblShipProv: "ថ្លៃដឹកតាមបណ្តាខេត្ត ($)",
         lblShipFreeMin: "ដឹកឥតគិតថ្លៃពេលទិញចាប់ពី ($)",
+        btnAskProduct: "សួរនាំពីទំនិញនេះ",
       },
       en: {
         flag: "🇬🇧",
@@ -215,6 +216,7 @@
         lblShipPP: "Phnom Penh Delivery Fee ($)",
         lblShipProv: "Provinces Delivery Fee ($)",
         lblShipFreeMin: "Free Shipping on Orders Over ($)",
+        btnAskProduct: "Chat about Product",
       },
       zh: {
         flag: "🇨🇳",
@@ -323,5 +325,6 @@
         lblShipPP: "金边市内运费 ($)",
         lblShipProv: "外省运费 ($)",
         lblShipFreeMin: "满额免运费门槛 ($)",
+        btnAskProduct: "咨询此商品",
       }
     };
