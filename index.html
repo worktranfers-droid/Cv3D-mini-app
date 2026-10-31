@@ -190,116 +190,91 @@
       <div id="adminOrdersList" class="space-y-3"></div>
     </div>
 
-    <!-- កុងតឺន័រទី ៣៖ ការកំណត់ថ្លៃដឹក & Banner -->
-    <!-- ប្លុកកំណត់តម្លៃសេវាដឹកជញ្ជូន (បែប Dropdown / Accordion) -->
-        <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-xs">
-          <!-- Header អាចចុចដើម្បីបង្រួម ឬពន្លាត -->
-          <div onclick="toggleShippingPanel()" class="p-3.5 flex justify-between items-center cursor-pointer hover:bg-slate-50 transition-colors select-none">
-            <div>
-              <h4 id="lblAdminShippingTitle" class="text-xs font-bold text-slate-800 flex items-center gap-1.5">
-                🚚 កំណត់តម្លៃសេវាដឹកជញ្ជូន
-              </h4>
-              <p id="lblAdminShippingSummary" class="text-[10px] text-slate-500 font-mono mt-0.5">
-                ភ្នំពេញ: $1.50 | ខេត្ត: $2.00 | ឥតគិតថ្លៃ: $20.00
-              </p>
-            </div>
-            <span id="shippingToggleIcon" class="text-xs text-slate-400 font-bold transition-transform duration-200">▼</span>
+    <!-- កុងតឺន័រទី ៣៖ ការកំណត់ (Settings Tab) -->
+    <div id="adminSettingsContainer" class="hidden space-y-3">
+      
+      <!-- ១. ប្លុករៀបលំដាប់ Category (Accordion) -->
+      <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-xs">
+        <div onclick="toggleCategoryOrderPanel()" class="p-3.5 flex justify-between items-center cursor-pointer hover:bg-slate-50 transition-colors select-none">
+          <div>
+            <h4 id="lblCatOrderTitle" class="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+              🏷️ រៀបលំដាប់ Category (Home Page)
+            </h4>
+            <p id="lblCatOrderSummary" class="text-[10px] text-slate-400 font-mono mt-0.5 truncate max-w-[220px]">
+              ចុចដើម្បីកែសម្រួលលំដាប់
+            </p>
           </div>
-
-          <!-- តួខាងក្នុងដែលលាក់/បង្ហាញ -->
-          <div id="shippingPanelBody" class="hidden px-3.5 pb-3.5 pt-1 border-t border-slate-100 space-y-3">
-            <div>
-              <label id="lblSettingShipPP" class="block text-[11px] font-semibold text-slate-600 mb-1">ថ្លៃដឹកជញ្ជូន ភ្នំពេញ ($)</label>
-              <input 
-                id="setShipPP" 
-                type="number" 
-                step="0.25" 
-                oninput="updateShippingSummaryText()" 
-                placeholder="1.50" 
-                class="w-full bg-slate-50/50 border border-slate-200 p-2 rounded-xl text-xs outline-none focus:ring-2 focus:ring-blue-500"
-              >
-            </div>
-
-            <div>
-              <label id="lblSettingShipProv" class="block text-[11px] font-semibold text-slate-600 mb-1">ថ្លៃដឹកជញ្ជូន បណ្តាខេត្ត ($)</label>
-              <input 
-                id="setShipProv" 
-                type="number" 
-                step="0.25" 
-                oninput="updateShippingSummaryText()" 
-                placeholder="2.00" 
-                class="w-full bg-slate-50/50 border border-slate-200 p-2 rounded-xl text-xs outline-none focus:ring-2 focus:ring-blue-500"
-              >
-            </div>
-
-            <div class="bg-emerald-50/70 p-3 rounded-xl border border-emerald-200">
-              <label id="lblSettingShipFree" class="block text-[11px] font-bold text-emerald-800 mb-1">🎉 ចំណាយចាប់ពីប៉ុន្មានឡើងទៅ ដឹកឥតគិតថ្លៃ ($)</label>
-              <input 
-                id="setFreeShipMin" 
-                type="number" 
-                step="1" 
-                oninput="updateShippingSummaryText()" 
-                placeholder="20.00" 
-                class="w-full bg-white border border-emerald-300 p-2 rounded-xl text-xs outline-none focus:ring-2 focus:ring-emerald-500"
-              >
-            </div>
-          </div>
+          <span id="catOrderToggleIcon" class="text-xs text-slate-400 font-bold transition-transform duration-200">▼</span>
         </div>
 
-          <!-- តួខាងក្នុងដែលលាក់/បង្ហាញ -->
-          <div id="catOrderPanelBody" class="hidden px-3.5 pb-3.5 pt-1 border-t border-slate-100 space-y-2">
-            <div class="flex justify-between items-center text-[10px] text-slate-400 pb-1">
-              <span id="lblCatOrderHint">ចុចព្រួញដើម្បីរុញលំដាប់</span>
-            </div>
-            <div id="adminCategoryOrderList" class="space-y-1.5">
-              <!-- បញ្ជី Category នឹងបង្ហាញទីនេះ -->
-            </div>
+        <div id="catOrderPanelBody" class="hidden px-3.5 pb-3.5 pt-1 border-t border-slate-100 space-y-2">
+          <div class="flex justify-between items-center text-[10px] text-slate-400 pb-1">
+            <span id="lblCatOrderHint">ចុចព្រួញដើម្បីរុញលំដាប់</span>
           </div>
+          <div id="adminCategoryOrderList" class="space-y-1.5"></div>
         </div>
-
-        <div class="bg-indigo-50/70 p-3 rounded-xl border border-indigo-200 space-y-2.5">
-          <label class="flex items-center gap-2 cursor-pointer">
-            <input id="setBannerEnabled" type="checkbox" onchange="toggleBannerInputUI()" class="w-4 h-4 text-blue-600 rounded">
-            <span id="lblSetBannerText" class="text-xs font-bold text-indigo-900">🖼️ បង្ហាញ Slide Banner ផ្សព្វផ្សាយ (Promotional Banner)</span>
-          </label>
-
-          <div id="bannerInputsBox" class="hidden space-y-2.5 pt-1">
-            <div>
-              <label class="block text-[11px] font-semibold text-indigo-900 mb-1">📁 រើសរូបភាពផ្ទាល់ (Upload ពីម៉ាស៊ីន)៖</label>
-              <input 
-                type="file" 
-                id="bannerFileInput"
-                accept="image/*" 
-                onchange="handleDirectImageUpload(event, 'setBannerImages', 'bannerUploadStatus')"
-                class="w-full text-xs text-slate-500 file:mr-2 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-indigo-600 file:text-white hover:file:bg-indigo-700 cursor-pointer bg-white p-1 rounded-xl border border-indigo-200"
-              >
-              <span id="bannerUploadStatus" class="text-[10px] text-blue-600 font-bold hidden mt-1"></span>
-            </div>
-
-            <!-- 🖼️ បង្ហាញតែរូបភាព និងសញ្ញាខ្វែងប៉ុណ្ណោះ -->
-            <div id="bannerThumbnailsContainer" class="flex flex-wrap gap-2.5 py-1 items-center"></div>
-
-            <div>
-              <label class="block text-[11px] font-semibold text-indigo-900 mb-1">🔗 Link រូបភាព Banner (បំបែកដោយក្បៀស ,)៖</label>
-              <textarea 
-                id="setBannerImages" 
-                rows="2" 
-                oninput="renderBannerThumbnailsUI()" 
-                placeholder="https://lh3.googleusercontent.com/..., https://..." 
-                class="w-full border border-indigo-300 p-2 rounded-xl text-xs outline-none bg-white font-mono"
-              ></textarea>
-              <p class="text-[10px] text-indigo-600">* ទំហំរូបដែលស្អាតបំផុតគឺសមាមាត្រ 16:7 ឬ 2:1 (ឧ. 800x350px)</p>
-            </div>
-          </div>
-        </div> <!-- ស្លាកបិទដែលបានជួសជុលត្រង់ចំណុចនេះ -->
-        
-        <button type="button" onclick="saveDeliverySettings()" id="btnSaveSettings" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl text-xs shadow-md active:scale-95 transition-all">
-          💾 រក្សាទុកការកំណត់
-        </button>
       </div>
+
+      <!-- ២. ប្លុកកំណត់តម្លៃសេវាដឹកជញ្ជូន (Accordion) -->
+      <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-xs">
+        <div onclick="toggleShippingPanel()" class="p-3.5 flex justify-between items-center cursor-pointer hover:bg-slate-50 transition-colors select-none">
+          <div>
+            <h4 id="lblAdminShippingTitle" class="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+              🚚 កំណត់តម្លៃសេវាដឹកជញ្ជូន
+            </h4>
+            <p id="lblAdminShippingSummary" class="text-[10px] text-slate-500 font-mono mt-0.5">
+              ភ្នំពេញ: $1.50 | ខេត្ត: $2.00 | ឥតគិតថ្លៃ: $20.00
+            </p>
+          </div>
+          <span id="shippingToggleIcon" class="text-xs text-slate-400 font-bold transition-transform duration-200">▼</span>
+        </div>
+
+        <div id="shippingPanelBody" class="hidden px-3.5 pb-3.5 pt-1 border-t border-slate-100 space-y-3">
+          <div>
+            <label id="lblSettingShipPP" class="block text-[11px] font-semibold text-slate-600 mb-1">ថ្លៃដឹកជញ្ជូន ភ្នំពេញ ($)</label>
+            <input id="setShipPP" type="number" step="0.25" oninput="updateShippingSummaryText()" placeholder="1.50" class="w-full bg-slate-50/50 border border-slate-200 p-2 rounded-xl text-xs outline-none focus:ring-2 focus:ring-blue-500">
+          </div>
+          <div>
+            <label id="lblSettingShipProv" class="block text-[11px] font-semibold text-slate-600 mb-1">ថ្លៃដឹកជញ្ជូន បណ្តាខេត្ត ($)</label>
+            <input id="setShipProv" type="number" step="0.25" oninput="updateShippingSummaryText()" placeholder="2.00" class="w-full bg-slate-50/50 border border-slate-200 p-2 rounded-xl text-xs outline-none focus:ring-2 focus:ring-blue-500">
+          </div>
+          <div class="bg-emerald-50/70 p-3 rounded-xl border border-emerald-200">
+            <label id="lblSettingShipFree" class="block text-[11px] font-bold text-emerald-800 mb-1">🎉 ចំណាយចាប់ពីប៉ុន្មានឡើងទៅ ដឹកឥតគិតថ្លៃ ($)</label>
+            <input id="setFreeShipMin" type="number" step="1" oninput="updateShippingSummaryText()" placeholder="20.00" class="w-full bg-white border border-emerald-300 p-2 rounded-xl text-xs outline-none focus:ring-2 focus:ring-emerald-500">
+          </div>
+        </div>
+      </div>
+
+      <!-- ៣. ប្លុក Slide Banner -->
+      <div class="bg-indigo-50/70 p-3 rounded-xl border border-indigo-200 space-y-2.5">
+        <label class="flex items-center gap-2 cursor-pointer">
+          <input id="setBannerEnabled" type="checkbox" onchange="toggleBannerInputUI()" class="w-4 h-4 text-blue-600 rounded">
+          <span id="lblSetBannerText" class="text-xs font-bold text-indigo-900">🖼️ បង្ហាញ Slide Banner ផ្សព្វផ្សាយ (Promotional Banner)</span>
+        </label>
+
+        <div id="bannerInputsBox" class="hidden space-y-2.5 pt-1">
+          <div>
+            <label class="block text-[11px] font-semibold text-indigo-900 mb-1">📁 រើសរូបភាពផ្ទាល់ (Upload ពីម៉ាស៊ីន)៖</label>
+            <input type="file" id="bannerFileInput" accept="image/*" onchange="handleDirectImageUpload(event, 'setBannerImages', 'bannerUploadStatus')" class="w-full text-xs text-slate-500 file:mr-2 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-indigo-600 file:text-white hover:file:bg-indigo-700 cursor-pointer bg-white p-1 rounded-xl border border-indigo-200">
+            <span id="bannerUploadStatus" class="text-[10px] text-blue-600 font-bold hidden mt-1"></span>
+          </div>
+
+          <div id="bannerThumbnailsContainer" class="flex flex-wrap gap-2.5 py-1 items-center"></div>
+
+          <div>
+            <label class="block text-[11px] font-semibold text-indigo-900 mb-1">🔗 Link រូបភាព Banner (បំបែកដោយក្បៀស ,)៖</label>
+            <textarea id="setBannerImages" rows="2" oninput="renderBannerThumbnailsUI()" placeholder="https://lh3.googleusercontent.com/..., https://..." class="w-full border border-indigo-300 p-2 rounded-xl text-xs outline-none bg-white font-mono"></textarea>
+            <p class="text-[10px] text-indigo-600">* ទំហំរូបដែលស្អាតបំផុតគឺសមាមាត្រ 16:7 ឬ 2:1 (ឧ. 800x350px)</p>
+          </div>
+        </div>
+      </div>
+      
+      <button type="button" onclick="saveDeliverySettings()" id="btnSaveSettings" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl text-xs shadow-md active:scale-95 transition-all">
+        💾 រក្សាទុកការកំណត់
+      </button>
     </div>
   </section>
-
+  
   <!-- ========================================================= -->
   <!-- 4. BOTTOM NAVIGATION BAR                                  -->
   <!-- ========================================================= -->
@@ -460,59 +435,21 @@
           <p id="cartEmptyText">កន្រ្តករបស់អ្នកនៅទទេស្អាត</p>
         </div>
 
-        <!-- ប្លុកកំណត់តម្លៃដឹកជញ្ជូន (បែប Accordion / Collapsible Dropdown) -->
-        <div class="bg-slate-50 rounded-2xl border border-slate-200 overflow-hidden shadow-xs">
-          <!-- ក្បាល Header អាចចុចដើម្បីបើក/បិទ -->
-          <div onclick="toggleShippingPanel()" class="p-3.5 flex justify-between items-center cursor-pointer hover:bg-slate-100 transition-colors select-none">
-            <div>
-              <h4 id="lblAdminShippingTitle" class="text-xs font-bold text-slate-800 flex items-center gap-1.5">
-                🚚 កំណត់តម្លៃដឹកជញ្ជូន
-              </h4>
-              <p id="lblAdminShippingSummary" class="text-[10px] text-slate-400 font-mono mt-0.5 truncate max-w-[240px]">
-                ភ្នំពេញ: $1.50 | ខេត្ត: $2.00 | ឥតគិតថ្លៃ: $20.00
-              </p>
-            </div>
-            <div class="flex items-center gap-2">
-              <span id="shippingToggleIcon" class="text-xs text-slate-400 font-bold transition-transform duration-200">▼</span>
-            </div>
+        <!-- Form បំពេញព័ត៌មានដឹកជញ្ជូនសម្រាប់ភ្ញៀវ (Customer Checkout Form) -->
+        <div id="cartOrderForm" class="space-y-2.5 bg-slate-50 p-3.5 rounded-2xl border border-slate-200 my-3">
+          <div>
+            <label id="lblCartZone" class="block text-xs font-bold text-slate-700 mb-1">🚚 តំបន់ដឹកជញ្ជូន (Delivery Zone): *</label>
+            <select id="cartDeliveryZone" onchange="updateCartDeliveryCost()" class="w-full p-2 bg-white border border-slate-200 rounded-xl text-xs outline-none focus:ring-2 focus:ring-blue-500 font-medium"></select>
           </div>
-
-          <!-- តួខាងក្នុងដែលលាក់/បង្ហាញ -->
-          <div id="shippingPanelBody" class="hidden px-3.5 pb-3.5 pt-1 border-t border-slate-100 space-y-3">
-            <div>
-              <label id="lblSettingShipPP" class="block text-[11px] font-semibold text-slate-600 mb-1">ថ្លៃដឹកក្នុងភ្នំពេញ ($)</label>
-              <input 
-                id="setShipPP" 
-                type="number" 
-                step="0.25" 
-                oninput="updateShippingSummaryText()" 
-                placeholder="1.50" 
-                class="w-full bg-white border border-slate-300 p-2 rounded-xl text-xs outline-none focus:ring-2 focus:ring-blue-500"
-              >
-            </div>
-            <div>
-              <label id="lblSettingShipProv" class="block text-[11px] font-semibold text-slate-600 mb-1">ថ្លៃដឹកតាមបណ្តាខេត្ត ($)</label>
-              <input 
-                id="setShipProv" 
-                type="number" 
-                step="0.25" 
-                oninput="updateShippingSummaryText()" 
-                placeholder="2.00" 
-                class="w-full bg-white border border-slate-300 p-2 rounded-xl text-xs outline-none focus:ring-2 focus:ring-blue-500"
-              >
-            </div>
-            <div>
-              <label id="lblSettingShipFree" class="block text-[11px] font-semibold text-slate-600 mb-1">ដឹកឥតគិតថ្លៃពេលទិញចាប់ពី ($)</label>
-              <input 
-                id="setFreeShipMin" 
-                type="number" 
-                step="1" 
-                oninput="updateShippingSummaryText()" 
-                placeholder="20.00" 
-                class="w-full bg-white border border-slate-300 p-2 rounded-xl text-xs outline-none focus:ring-2 focus:ring-blue-500"
-              >
-            </div>
+          <div>
+            <label id="lblCartPhone" class="block text-xs font-bold text-slate-700 mb-1">លេខទូរសព្ទ (Phone Number): *</label>
+            <input id="cartPhoneInput" type="tel" placeholder="ឧ. 012 345 678" class="w-full p-2 bg-white border border-slate-200 rounded-xl text-xs outline-none focus:ring-2 focus:ring-blue-500">
           </div>
+          <div>
+            <label id="lblCartLoc" class="block text-xs font-bold text-slate-700 mb-1">ទីតាំងដឹកជញ្ជូន (Delivery Address): *</label>
+            <textarea id="cartLocInput" rows="2" placeholder="ភ្នំពេញ៖ លេខផ្ទះ ផ្លូវ... | តាមខេត្ត៖ ឈ្មោះខេត្ត និងសាខាឡាន..." class="w-full p-2 bg-white border border-slate-200 rounded-xl text-xs outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+          </div>
+          <div id="paymentPolicyNotice"></div>
         </div>
 
       <div id="cartBottomBar" class="pt-2 border-t border-slate-100">
@@ -857,6 +794,12 @@
       if (typeof renderAdminCategoryOrderManager === "function") {
         renderAdminCategoryOrderManager();
       }
+
+      if (el = document.getElementById('lblAdminShippingTitle')) el.innerText = t.adminShippingTitle;
+      if (el = document.getElementById('lblSettingShipPP')) el.innerText = t.lblShipPP;
+      if (el = document.getElementById('lblSettingShipProv')) el.innerText = t.lblShipProv;
+      if (el = document.getElementById('lblSettingShipFree')) el.innerText = t.lblShipFreeMin;
+      updateShippingSummaryText();
     }
 
     function openSellerChat() {
@@ -868,14 +811,6 @@
       if (confirm("💬 តើអ្នកចង់ឆាតទៅកាន់អ្នកលក់ (@" + MY_TELEGRAM_USERNAME + ") ផ្ទាល់មែនទេ?")) {
         window.location.href = tgUrl;
       }
-
-      // Delivery Settings Translation
-      if (el = document.getElementById('lblAdminShippingTitle')) el.innerText = t.adminShippingTitle;
-      if (el = document.getElementById('lblSettingShipPP')) el.innerText = t.lblShipPP;
-      if (el = document.getElementById('lblSettingShipProv')) el.innerText = t.lblShipProv;
-      if (el = document.getElementById('lblSettingShipFree')) el.innerText = t.lblShipFreeMin;
-      updateShippingSummaryText();
-    }
 
     // --- 6.4 SEARCH & BANNER SLIDER ---
     function toggleSearchBox() {
@@ -3081,7 +3016,7 @@
       }
     }
 
-    // ២. អនុគមន៍រុញប្តូរទីតាំង Category
+    // អនុគមន៍រុញប្តូរទីតាំង Category
     function moveCategoryPosition(currentIndex, delta) {
       var categories = [];
       for (var i = 0; i < adminProducts.length; i++) {
@@ -3112,8 +3047,9 @@
       localStorage.setItem('app_category_order', JSON.stringify(categories));
       renderAdminCategoryOrderManager();
       renderDynamicCategories();
+    } // <--- បិទ moveCategoryPosition ត្រឹមត្រូវនៅត្រង់នេះ!
 
-      // អនុគមន៍ បើក ឬបិទផ្ទាំងកំណត់ថ្លៃដឹក
+    // អនុគមន៍ បើក ឬបិទផ្ទាំងកំណត់ថ្លៃដឹក
     function toggleShippingPanel() {
       var body = document.getElementById('shippingPanelBody');
       var icon = document.getElementById('shippingToggleIcon');
@@ -3143,7 +3079,6 @@
       } else {
         summaryEl.innerText = "ភ្នំពេញ: $" + Number(pp).toFixed(2) + " | ខេត្ត: $" + Number(prov).toFixed(2) + " | ឥតគិតថ្លៃ: $" + Number(free).toFixed(2);
       }
-    }
     }
   </script>
 </body>
