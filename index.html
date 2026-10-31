@@ -210,14 +210,31 @@
           <input id="setFreeShipMin" type="number" step="1" class="w-full border border-emerald-300 p-2.5 rounded-xl text-xs outline-none bg-white font-bold text-emerald-700">
         </div>
 
-        <!-- ប្លុករៀបលំដាប់ Category លើ Admin Page -->
-        <div class="bg-slate-50 p-3.5 rounded-2xl border border-slate-200 space-y-2">
-          <div class="flex justify-between items-center">
-            <h4 class="text-xs font-bold text-slate-800">🏷️ រៀបលំដាប់ Category (Home Page)</h4>
-            <span class="text-[10px] text-slate-400">ចុចព្រួញដើម្បីរុញលំដាប់</span>
+        <!-- ប្លុករៀបលំដាប់ Category (បែប Accordion / Dropdown មិនរញ៉េរញ៉ៃ) -->
+        <div class="bg-slate-50 rounded-2xl border border-slate-200 overflow-hidden shadow-xs">
+          <!-- ក្បាល Header អាចចុចដើម្បីបើក/បិទ -->
+          <div onclick="toggleCategoryOrderPanel()" class="p-3.5 flex justify-between items-center cursor-pointer hover:bg-slate-100 transition-colors select-none">
+            <div>
+              <h4 id="lblCatOrderTitle" class="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                🏷️ រៀបលំដាប់ Category (Home Page)
+              </h4>
+              <p id="lblCatOrderSummary" class="text-[10px] text-slate-400 font-mono mt-0.5 truncate max-w-[220px]">
+                ចុចដើម្បីកែសម្រួលលំដាប់
+              </p>
+            </div>
+            <div class="flex items-center gap-2">
+              <span id="catOrderToggleIcon" class="text-xs text-slate-400 font-bold transition-transform duration-200">▼</span>
+            </div>
           </div>
-          <div id="adminCategoryOrderList" class="space-y-1.5">
-            <!-- បញ្ជី Category នឹងត្រូវបង្ហាញទីនេះដោយស្វ័យប្រវត្តិ -->
+
+          <!-- តួខាងក្នុងដែលលាក់/បង្ហាញ -->
+          <div id="catOrderPanelBody" class="hidden px-3.5 pb-3.5 pt-1 border-t border-slate-100 space-y-2">
+            <div class="flex justify-between items-center text-[10px] text-slate-400 pb-1">
+              <span id="lblCatOrderHint">ចុចព្រួញដើម្បីរុញលំដាប់</span>
+            </div>
+            <div id="adminCategoryOrderList" class="space-y-1.5">
+              <!-- បញ្ជី Category នឹងបង្ហាញទីនេះ -->
+            </div>
           </div>
         </div>
 
@@ -2897,58 +2914,96 @@
         });
       }
     
-      // ១. បង្ហាញបញ្ជី Category ក្នុង Admin Settings
+    // អនុគមន៍ បើក/បិទ ផ្ទាំង Dropdown
+    function toggleCategoryOrderPanel() {
+      var body = document.getElementById('catOrderPanelBody');
+      var icon = document.getElementById('catOrderToggleIcon');
+      if (!body) return;
+      var isHidden = body.classList.contains('hidden');
+      if (isHidden) {
+        body.classList.remove('hidden');
+        if (icon) icon.style.transform = 'rotate(180deg)';
+      } else {
+        body.classList.add('hidden');
+        if (icon) icon.style.transform = 'rotate(0deg)';
+      }
+    }
+
+    // អនុគមន៍ បង្ហាញបញ្ជី និងបកប្រែភាសា
     function renderAdminCategoryOrderManager() {
       var container = document.getElementById('adminCategoryOrderList');
+      var summaryEl = document.getElementById('lblCatOrderSummary');
+      var titleEl = document.getElementById('lblCatOrderTitle');
+      var hintEl = document.getElementById('lblCatOrderHint');
+
+      var t = (typeof i18n !== 'undefined' && i18n[currentLang]) ? i18n[currentLang] : (i18n ? i18n['km'] : null);
+
+      if (titleEl && t) titleEl.innerText = t.adminCatOrderTitle;
+      if (hintEl && t) hintEl.innerText = t.adminCatOrderHint;
+
       if (!container) return;
 
       var categories = [];
       for (var i = 0; i < adminProducts.length; i++) {
         var cat = (adminProducts[i].category || '').trim();
-        if (cat && categories.indexOf(cat) === -1) {
-          categories.push(cat);
+        if (cat) {
+          var exists = categories.some(function(c) { return c.toLowerCase() === cat.toLowerCase(); });
+          if (!exists) categories.push(cat);
         }
       }
 
       var savedOrder = JSON.parse(localStorage.getItem('app_category_order') || '[]');
       if (savedOrder && savedOrder.length > 0) {
+        var lowerSavedOrder = savedOrder.map(function(s) { return String(s).toLowerCase().trim(); });
         categories.sort(function(a, b) {
-          var idxA = savedOrder.indexOf(a);
-          var idxB = savedOrder.indexOf(b);
+          var idxA = lowerSavedOrder.indexOf(a.toLowerCase());
+          var idxB = lowerSavedOrder.indexOf(b.toLowerCase());
+          if (idxA === -1 && idxB === -1) return 0;
           if (idxA === -1) return 1;
           if (idxB === -1) return -1;
           return idxA - idxB;
         });
       }
 
+      // បង្ហាញលំដាប់សង្ខេបនៅខាងក្រៅ Header ពេលបិទ Panel
+      if (summaryEl) {
+        if (categories.length > 0) {
+          summaryEl.innerText = categories.join(' ➔ ');
+        } else {
+          summaryEl.innerText = t ? t.adminCatNoData : "មិនទាន់មាន Category ទេ";
+        }
+      }
+
       container.innerHTML = '';
       if (categories.length === 0) {
-        container.innerHTML = '<p class="text-[11px] text-slate-400">មិនទាន់មាន Category ទេ</p>';
+        container.innerHTML = '<p class="text-[11px] text-slate-400">' + (t ? t.adminCatNoData : "មិនទាន់មាន Category ទេ") + '</p>';
         return;
       }
 
       for (var idx = 0; idx < categories.length; idx++) {
         (function(cName, index) {
           var row = document.createElement('div');
-          row.className = "flex items-center justify-between bg-white px-3 py-1.5 rounded-xl border border-slate-200 text-xs";
+          row.className = "flex items-center justify-between bg-white px-3 py-2 rounded-xl border border-slate-200 text-xs shadow-2xs";
 
           var nameSpan = document.createElement('span');
           nameSpan.className = "font-bold text-slate-700 capitalize";
           nameSpan.innerText = (index + 1) + ". " + cName;
 
           var btnGroup = document.createElement('div');
-          btnGroup.className = "flex items-center gap-1";
+          btnGroup.className = "flex items-center gap-1.5";
 
+          // ប៊ូតុងរុញឡើងលើ (▲)
           var upBtn = document.createElement('button');
           upBtn.type = "button";
-          upBtn.className = "w-6 h-6 rounded-lg bg-slate-100 hover:bg-slate-200 font-bold text-xs flex items-center justify-center " + (index === 0 ? "opacity-30 cursor-not-allowed" : "active:scale-90");
+          upBtn.className = "w-7 h-7 rounded-lg bg-slate-50 border border-slate-200 text-slate-600 hover:bg-slate-200 font-bold text-xs flex items-center justify-center " + (index === 0 ? "opacity-25 cursor-not-allowed" : "active:scale-90");
           upBtn.innerText = "▲";
           upBtn.disabled = (index === 0);
           upBtn.onclick = function() { moveCategoryPosition(index, -1); };
 
+          // ប៊ូតុងរុញចុះក្រោម (▼)
           var downBtn = document.createElement('button');
           downBtn.type = "button";
-          downBtn.className = "w-6 h-6 rounded-lg bg-slate-100 hover:bg-slate-200 font-bold text-xs flex items-center justify-center " + (index === categories.length - 1 ? "opacity-30 cursor-not-allowed" : "active:scale-90");
+          downBtn.className = "w-7 h-7 rounded-lg bg-slate-50 border border-slate-200 text-slate-600 hover:bg-slate-200 font-bold text-xs flex items-center justify-center " + (index === categories.length - 1 ? "opacity-25 cursor-not-allowed" : "active:scale-90");
           downBtn.innerText = "▼";
           downBtn.disabled = (index === categories.length - 1);
           downBtn.onclick = function() { moveCategoryPosition(index, 1); };
