@@ -3020,7 +3020,7 @@
       }
     }
 
-    // អនុគមន៍រុញប្តូរទីតាំង Category
+    // ២. អនុគមន៍រុញប្តូរទីតាំង Category
     function moveCategoryPosition(currentIndex, delta) {
       var categories = [];
       for (var i = 0; i < adminProducts.length; i++) {
@@ -3051,7 +3051,7 @@
       localStorage.setItem('app_category_order', JSON.stringify(categories));
       renderAdminCategoryOrderManager();
       renderDynamicCategories();
-    } // <--- បិទ moveCategoryPosition ត្រឹមត្រូវនៅត្រង់នេះ!
+    } // <--- សញ្ញាបិទ } របស់ moveCategoryPosition ត្រូវនៅត្រង់នេះ!
 
     // អនុគមន៍ បើក ឬបិទផ្ទាំងកំណត់ថ្លៃដឹក
     function toggleShippingPanel() {
