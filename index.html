@@ -2199,12 +2199,12 @@
 
     function renderAdminList(items) {
       var container = document.getElementById('adminList');
-      var t = i18n[currentLang] || i18n['km']; // ចាប់យកភាសាដែលកំពុងជ្រើសរើស
+      var t = i18n[currentLang] || i18n['km'];
       if (!container) return;
       container.innerHTML = '';
 
       if (!items || items.length === 0) {
-        container.innerHTML = '<p class="text-center text-xs text-slate-400 py-10">' + t.adminNoProdFound + '</p>';
+        container.innerHTML = '<p class="text-center text-xs text-slate-400 py-10">' + (t.adminNoProdFound || 'រកមិនឃើញផលិតផលទេ') + '</p>';
         return;
       }
 
@@ -2254,7 +2254,7 @@
             titleWrap.appendChild(bSpan);
           }
 
-          // គណនា Discount សម្រាប់បង្ហាញក្នុង Admin List
+          // គណនា Discount
           var disc = parseFloat(String(p.discount || '0').replace('%', '')) || 0;
           if (disc > 0 && disc < 1) disc = disc * 100;
           var salePrice = (disc > 0 && disc < 100) ? (p.price * (1 - disc / 100)) : p.price;
@@ -2270,14 +2270,17 @@
             price.innerText = (t.adminSalePrice || 'តម្លៃលក់: $') + p.price.toFixed(2);
           }
 
-          // ប្តូរភាសា "ថ្លៃដើម" និង "ចំណេញ"
+          var calc = p.costAnalysis || (adminCostData ? (adminCostData[(p.id || "").trim()] || adminCostData[(p.title || "").trim().toLowerCase()]) : null);
+          var costInfo = document.createElement('div');
+          costInfo.className = "flex flex-wrap items-center gap-1.5 mt-1 text-[10px]";
+
           if (calc && calc.totalCost > 0) {
             costInfo.innerHTML = 
-              '<span class="text-slate-600 bg-slate-100 border border-slate-200 px-1.5 py-0.5 rounded-md font-medium">' + t.adminCostPrice + calc.totalCost.toFixed(2) + '</span>' +
-              '<span class="text-emerald-700 bg-emerald-50 border border-emerald-200 px-1.5 py-0.5 rounded-md font-bold">' + t.adminProfit + calc.estimatedProfit.toFixed(2) + '</span>' +
+              '<span class="text-slate-600 bg-slate-100 border border-slate-200 px-1.5 py-0.5 rounded-md font-medium">' + (t.adminCostPrice || 'ថ្លៃដើម: $') + calc.totalCost.toFixed(2) + '</span>' +
+              '<span class="text-emerald-700 bg-emerald-50 border border-emerald-200 px-1.5 py-0.5 rounded-md font-bold">' + (t.adminProfit || 'ចំណេញ: $') + calc.estimatedProfit.toFixed(2) + '</span>' +
               '<span class="text-slate-400 text-[9px]">(' + calc.printTime + 'h | ' + calc.weight + 'g)</span>';
           } else {
-            costInfo.innerHTML = '<span class="text-slate-300 text-[9px] italic">' + t.adminNoSheetData + '</span>';
+            costInfo.innerHTML = '<span class="text-slate-300 text-[9px] italic">' + (t.adminNoSheetData || 'គ្មានទិន្នន័យ Sheet') + '</span>';
           }
 
           infoDiv.appendChild(titleWrap);
@@ -2290,11 +2293,10 @@
           var rightDiv = document.createElement('div');
           rightDiv.className = "flex items-center gap-1.5";
 
-          // ប្តូរភាសាប៊ូតុង "មានស្តុក / ដាច់ស្តុក"
           var stockBtn = document.createElement('button');
           stockBtn.type = "button";
           stockBtn.className = "text-[11px] px-2.5 py-1 rounded-xl font-bold " + (p.inStock ? "bg-emerald-50 text-emerald-600 border border-emerald-200" : "bg-red-50 text-red-500 border border-red-200");
-          stockBtn.innerText = p.inStock ? t.adminInStock : t.adminOutOfStock;
+          stockBtn.innerText = p.inStock ? (t.adminInStock || 'មានស្តុក') : (t.adminOutOfStock || 'ដាច់ស្តុក');
           stockBtn.onclick = function() { toggleStock(p.id, !p.inStock); };
 
           var editBtn = document.createElement('button');
