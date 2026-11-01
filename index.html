@@ -368,20 +368,36 @@
         </div>
       </div>
 
-      <!-- 💬 ប៊ូតុងសួរនាំអ្នកលក់ពីទំនិញនេះ -->
-      <button type="button" onclick="askAboutCurrentProduct()" class="w-full mb-3 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-bold py-2.5 rounded-2xl border border-emerald-200 flex items-center justify-center gap-2 active:scale-95 transition-all text-xs shadow-2xs">
-        <span class="text-sm">💬</span>
-        <span id="btnAskProdText">សួរនាំពីទំនិញនេះ</span>
-      </button>
-      
-      <!-- Cart & Buy Buttons -->
-      <div class="grid grid-cols-2 gap-2.5">
-        <button type="button" onclick="addToCart()" class="w-full bg-blue-50 hover:bg-blue-100 text-blue-600 font-bold py-3.5 rounded-2xl border border-blue-200 flex items-center justify-center gap-1.5 active:scale-95 transition-all text-xs">
-          <span>🛒</span>
+      <!-- របារ Action Buttons រួមបញ្ចូលគ្នា ១ ជួរ (Modern E-Commerce Action Bar) -->
+      <div class="flex items-center gap-2 pt-1">
+        <!-- ១. ប៊ូតុងឆាតសួរនាំ (Icon Button តូចស្អាត មិនទើសភ្នែក) -->
+        <button 
+          type="button" 
+          onclick="askAboutCurrentProduct()" 
+          title="ឆាតសួរនាំពីទំនិញនេះ" 
+          class="w-12 h-12 bg-emerald-50 hover:bg-emerald-100 text-emerald-600 rounded-2xl border border-emerald-200 flex flex-col items-center justify-center flex-shrink-0 active:scale-90 transition-all shadow-2xs"
+        >
+          <span class="text-base leading-none">💬</span>
+          <span class="text-[9px] font-bold text-emerald-700 mt-0.5">ឆាត</span>
+        </button>
+
+        <!-- ២. ប៊ូតុងដាក់ចូលកន្រ្តក -->
+        <button 
+          type="button" 
+          onclick="addToCart()" 
+          class="flex-1 h-12 bg-blue-50 hover:bg-blue-100 text-blue-600 font-bold rounded-2xl border border-blue-200 flex items-center justify-center gap-1.5 active:scale-95 transition-all text-xs shadow-2xs"
+        >
+          <span class="text-sm">🛒</span>
           <span id="btnAddToCartText">ដាក់ចូលកន្រ្តក</span>
         </button>
-        <button type="button" onclick="buyNowDirectly()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 rounded-2xl shadow-lg shadow-blue-500/25 flex items-center justify-center gap-1.5 active:scale-95 transition-all text-xs">
-          <span>⚡</span>
+
+        <!-- ៣. ប៊ូតុងទិញឥឡូវនេះ (ប៊ូតុងលេចធ្លោរជាងគេ) -->
+        <button 
+          type="button" 
+          onclick="buyNowDirectly()" 
+          class="flex-1 h-12 bg-blue-600 hover:bg-blue-700 active:scale-95 text-white font-bold rounded-2xl shadow-lg shadow-blue-500/25 flex items-center justify-center gap-1.5 transition-all text-xs"
+        >
+          <span class="text-sm">⚡</span>
           <span id="btnBuyNowText">ទិញឥឡូវនេះ</span>
         </button>
       </div>
