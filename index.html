@@ -3280,24 +3280,6 @@
       }
     } // <--- បិទ toggleProdLinkInput ត្រឹមត្រូវនៅត្រង់នេះ!
 
-    // អនុគមន៍ Refresh ទាញយកទិន្នន័យថ្មីពី Google Sheets ឡើងវិញ
-    function refreshHomeData() {
-      var icon = document.getElementById('refreshIcon');
-      if (icon) icon.classList.add('animate-spin'); // ឱ្យវិលពេលកំពុង Refresh
-
-      // ១. ទាញទិន្នន័យទំនិញថ្មី
-      loadCustomerData();
-
-      // ២. ទាញការកំណត់ថ្មី (ថ្លៃដឹក និង Banner)
-      if (typeof loadAppSettings === 'function') {
-        loadAppSettings();
-      }
-
-      // បញ្ឈប់ការវិលក្រោយពេល ១.៥ វិនាទី
-      setTimeout(function() {
-        if (icon) icon.classList.remove('animate-spin');
-      }, 1500);
-
       // អនុគមន៍ Refresh ទាញយកទិន្នន័យថ្មីពី Google Sheets + រំកិលឡើងលើកំពូល
     function refreshHomeData() {
       // ១. រំកិលអេក្រង់ឡើងទៅលើគេបង្អស់ដោយរលូន
