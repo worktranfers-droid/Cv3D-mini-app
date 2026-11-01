@@ -358,9 +358,10 @@ var colorTranslations = {
     'grey': 'ប្រផេះ',
     'gray': 'ប្រផេះ',
     'gold': 'មាស',
-    'silk gold': 'សូតមាស',
+    'silk gold': 'មាសរលើប',
     'silver': 'ប្រាក់',
     'red': 'ក្រហម',
+    'fire red': 'ក្រហមភ្លើង', 
     'blue': 'ខៀវ',
     'green': 'បៃតង',
     'yellow': 'លឿង',
@@ -368,7 +369,7 @@ var colorTranslations = {
     'purple': 'ស្វាយ',
     'orange': 'ទឹកក្រូច',
     'rainbow': 'ឥន្ទធនូ',
-    'silk rainbow': 'សូតឥន្ទធនូ'
+    'silk rainbow': 'ឥន្ទធនូរលើប'
   },
   en: {
     'black': 'Black',
@@ -379,6 +380,7 @@ var colorTranslations = {
     'silk gold': 'Silk Gold',
     'silver': 'Silver',
     'red': 'Red',
+    'fire red': 'Fire Red', 
     'blue': 'Blue',
     'green': 'Green',
     'yellow': 'Yellow',
@@ -397,6 +399,7 @@ var colorTranslations = {
     'silk gold': '丝绸金',
     'silver': '银色',
     'red': '红色',
+    'fire red': '火红', 
     'blue': '蓝色',
     'green': '绿色',
     'yellow': '黄色',
