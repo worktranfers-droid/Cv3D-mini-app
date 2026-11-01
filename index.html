@@ -45,6 +45,9 @@
         <button type="button" onclick="toggleSearchBox()" title="ស្វែងរកទំនិញ" class="w-9 h-9 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl border border-slate-200/80 flex items-center justify-center text-sm transition-all active:scale-90 shadow-2xs">
           🔍
         </button>
+        <button type="button" onclick="refreshHomeData()" title="ទាញទិន្នន័យថ្មីឡើងវិញ" class="w-9 h-9 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl border border-slate-200/80 flex items-center justify-center text-sm transition-all active:scale-90 shadow-2xs">
+          <span id="refreshIcon">🔄</span>
+        </button>
         <button type="button" onclick="openSellerChat()" title="ឆាតសួរនាំ" class="w-9 h-9 bg-blue-50 hover:bg-blue-100 text-blue-600 rounded-xl border border-blue-200/80 flex items-center justify-center text-sm transition-all active:scale-90 shadow-2xs">
           💬
         </button>
@@ -53,15 +56,6 @@
       <!-- ប៊ូតុងសម្រាប់ Admin (បង្ហាញតែពេលចូល Admin Dashboard) -->
       <button id="adminBackBtn" type="button" onclick="switchToCustomer()" class="hidden text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-3 py-1.5 rounded-xl border border-slate-200 transition-all active:scale-95 shadow-2xs">
         🛒 ទៅហាងវិញ
-      </button>
-
-      <button 
-      type="button" 
-      onclick="refreshHomeData()" 
-      title="ទាញទិន្នន័យថ្មីឡើងវិញ" 
-      class="w-9 h-9 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl border border-slate-200/80 flex items-center justify-center text-sm transition-all active:scale-90 shadow-2xs"
-      >
-      <span id="refreshIcon">🔄</span>
       </button>
 
       <!-- ប៊ូតុង Icon ភាសា (ដាក់ទង់ជាតិខ្មែរជាគោល) -->
@@ -1117,11 +1111,21 @@
           img.onerror = function() { this.src = "https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&w=600&q=80"; };
           imgContainer.appendChild(img);
 
-          // គណនា Discount
+          // គណនា Discount សម្រាប់បង្ហាញក្នុង Admin
           var disc = parseFloat(String(p.discount || '0').replace('%', '')) || 0;
           if (disc > 0 && disc < 1) disc = disc * 100;
-          var origPrice = Number(p.price) || 0;
-          var salePrice = (disc > 0 && disc < 100) ? (origPrice * (1 - disc / 100)) : origPrice;
+          var salePrice = (disc > 0 && disc < 100) ? (p.price * (1 - disc / 100)) : p.price;
+
+          var price = document.createElement('p');
+          price.className = "text-[11px] font-bold";
+          if (disc > 0) {
+            price.innerHTML = '<span class="text-rose-600 font-extrabold">' + t.adminSalePrice + salePrice.toFixed(2) + '</span> ' +
+                              '<span class="text-slate-400 line-through text-[10px]">$' + p.price.toFixed(2) + '</span> ' +
+                              '<span class="bg-rose-100 text-rose-700 text-[9px] px-1 py-0.2 rounded font-black">-' + Math.round(disc) + '%</span>';
+          } else {
+            price.className = "text-[11px] text-blue-600 font-bold";
+            price.innerText = t.adminSalePrice + p.price.toFixed(2);
+          }
 
           // បង្ហាញ Badge Discount
           if (disc > 0) {
@@ -3275,8 +3279,10 @@
         wrapper.style.display = 'none';
         wrapper.classList.add('hidden');
       }
+    } // <--- បិទ toggleProdLinkInput ត្រឹមត្រូវនៅត្រង់នេះ!
 
-      function refreshHomeData() {
+    // អនុគមន៍ Refresh ទាញយកទិន្នន័យថ្មីពី Google Sheets ឡើងវិញ
+    function refreshHomeData() {
       var icon = document.getElementById('refreshIcon');
       if (icon) icon.classList.add('animate-spin'); // ឱ្យវិលពេលកំពុង Refresh
 
@@ -3288,16 +3294,10 @@
         loadAppSettings();
       }
 
-      // បញ្ឈប់ការវិលក្រោយពេល ២ វិនាទី
+      // បញ្ឈប់ការវិលក្រោយពេល ១.៥ វិនាទី
       setTimeout(function() {
         if (icon) icon.classList.remove('animate-spin');
       }, 1500);
-    }
-
-      function scrollToTop() {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-      loadCustomerData(); // ទាញយកទិន្នន័យថ្មីមកជាមួយ
-    }
     }
   </script>
 </body>
