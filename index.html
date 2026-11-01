@@ -3297,6 +3297,27 @@
       setTimeout(function() {
         if (icon) icon.classList.remove('animate-spin');
       }, 1500);
+
+      // អនុគមន៍ Refresh ទាញយកទិន្នន័យថ្មីពី Google Sheets + រំកិលឡើងលើកំពូល
+    function refreshHomeData() {
+      // ១. រំកិលអេក្រង់ឡើងទៅលើគេបង្អស់ដោយរលូន
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+
+      // ២. បើកចលនាវិលលើ Icon 🔄
+      var icon = document.getElementById('refreshIcon');
+      if (icon) icon.classList.add('animate-spin');
+
+      // ៣. ទាញទិន្នន័យទំនិញ និងការកំណត់ថ្មី
+      loadCustomerData();
+      if (typeof loadAppSettings === 'function') {
+        loadAppSettings();
+      }
+
+      // ៤. បញ្ឈប់ការវិលក្រោយពេល ១.៥ វិនាទី
+      setTimeout(function() {
+        if (icon) icon.classList.remove('animate-spin');
+      }, 1500);
+    }
     }
   </script>
 </body>
