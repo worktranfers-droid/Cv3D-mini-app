@@ -2829,7 +2829,10 @@
       if (modal) modal.className = "fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4";
 
       var linkWrap = document.getElementById('prodLinkWrapper');
-      if (linkWrap) linkWrap.classList.add('hidden');
+      if (linkWrap) {
+        linkWrap.style.display = 'none';
+        linkWrap.classList.add('hidden');
+      }
     }
 
     function openEditModalById(id) {
@@ -2869,7 +2872,10 @@
       if (modal) modal.className = "fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4";
 
       var linkWrap = document.getElementById('prodLinkWrapper');
-      if (linkWrap) linkWrap.classList.add('hidden');
+      if (linkWrap) {
+        linkWrap.style.display = 'none';
+        linkWrap.classList.add('hidden');
+      }
     }
     
     function closeAddModal() {
