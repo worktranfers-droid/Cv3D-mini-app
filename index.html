@@ -1611,7 +1611,15 @@
           finalUnitPrice += (Number(selectedProduct.customFee) || 0);
         }
       }
+
       var itemTitleDisplay = selectedProduct.title;
+
+      // បញ្ជាក់ភាគរយបញ្ចុះតម្លៃកុំឱ្យយល់ច្រឡំ
+      var disc = selectedProduct.discountPercent || 0;
+      if (disc > 0 && disc < 100) {
+        itemTitleDisplay += " [-" + Math.round(disc) + "%]";
+      }
+
       if (customText) {
         itemTitleDisplay += " (ឆ្លាក់ឈ្មោះ: " + customText + ")";
       }
