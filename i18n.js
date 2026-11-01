@@ -108,6 +108,10 @@
         lblShipProv: "ថ្លៃដឹកតាមបណ្តាខេត្ត ($)",
         lblShipFreeMin: "ដឹកឥតគិតថ្លៃពេលទិញចាប់ពី ($)",
         btnAskProduct: "សួរនាំពីទំនិញនេះ",
+        myOrdersTgNotFound: "⚠️ មិនអាចចាប់យកគណនី Telegram ដោយស្វ័យប្រវត្តិបានទេ។",
+        myOrdersPhonePrompt: "សូមបញ្ចូលលេខទូរសព្ទដែលអ្នកធ្លាប់កុម្ម៉ង់ទិញដើម្បីពិនិត្យ៖",
+        myOrdersPhonePlaceholder: "ឧ. 012345678",
+        myOrdersSearchBtn: "ស្វែងរក",
       },
       en: {
         flag: "🇬🇧",
@@ -217,6 +221,10 @@
         lblShipProv: "Provinces Delivery Fee ($)",
         lblShipFreeMin: "Free Shipping on Orders Over ($)",
         btnAskProduct: "Chat about Product",
+        myOrdersTgNotFound: "⚠️ Unable to detect your Telegram account automatically.",
+        myOrdersPhonePrompt: "Please enter your order phone number to view history:",
+        myOrdersPhonePlaceholder: "e.g. 012345678",
+        myOrdersSearchBtn: "Search",
       },
       zh: {
         flag: "🇨🇳",
@@ -326,5 +334,9 @@
         lblShipProv: "外省运费 ($)",
         lblShipFreeMin: "满额免运费门槛 ($)",
         btnAskProduct: "咨询此商品",
+        myOrdersTgNotFound: "⚠️ 无法自动获取您的 Telegram 账号信息。",
+        myOrdersPhonePrompt: "请输入您下单时预留的手机号码以查询订单：",
+        myOrdersPhonePlaceholder: "例如：012345678",
+        myOrdersSearchBtn: "查询",
       }
     };
