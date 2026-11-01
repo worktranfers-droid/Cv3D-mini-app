@@ -1892,7 +1892,6 @@
       
       // បង្ហាញ Modal ជាផ្ទាំង Pop-up ពេញអេក្រង់
       if (modal) modal.className = "fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4";
-      // បង្ហាញ Loader វិលតែពេលកំពុងទាញទិន្នន័យ
       if (loader) loader.className = "text-center py-10 text-slate-400 text-xs block";
 
       var currentUserId = "";
@@ -1907,13 +1906,14 @@
       if (!currentUserId) {
         if (loader) loader.className = "hidden";
         if (container) {
+          var t = (typeof i18n !== 'undefined' && i18n[currentLang]) ? i18n[currentLang] : (i18n ? i18n['km'] : {});
           container.innerHTML = 
             '<div class="bg-amber-50 border border-amber-200 rounded-2xl p-4 text-center space-y-3">' +
-              '<p class="text-xs text-amber-800 font-medium">⚠️ មិនអាចចាប់យកគណនី Telegram ដោយស្វ័យប្រវត្តិបានទេ។</p>' +
-              '<p class="text-[11px] text-slate-500">សូមបញ្ចូលលេខទូរសព្ទដែលអ្នកធ្លាប់កុម្ម៉ង់ទិញដើម្បីពិនិត្យ៖</p>' +
+              '<p class="text-xs text-amber-800 font-medium">' + (t.myOrdersTgNotFound || "⚠️ មិនអាចចាប់យកគណនី Telegram ដោយស្វ័យប្រវត្តិបានទេ។") + '</p>' +
+              '<p class="text-[11px] text-slate-500">' + (t.myOrdersPhonePrompt || "សូមបញ្ចូលលេខទូរសព្ទដែលអ្នកធ្លាប់កុម្ម៉ង់ទិញដើម្បីពិនិត្យ៖") + '</p>' +
               '<div class="flex gap-2">' +
-                '<input id="manualPhoneInput" type="tel" placeholder="ឧ. 012345678" class="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs outline-none focus:ring-2 focus:ring-blue-500">' +
-                '<button type="button" onclick="searchOrderByPhone()" class="bg-blue-600 text-white text-xs px-3 py-2 rounded-xl font-bold whitespace-nowrap shadow-sm">ស្វែងរក</button>' +
+                '<input id="manualPhoneInput" type="tel" placeholder="' + (t.myOrdersPhonePlaceholder || "ឧ. 012345678") + '" class="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs outline-none focus:ring-2 focus:ring-blue-500">' +
+                '<button type="button" onclick="searchOrderByPhone()" class="bg-blue-600 hover:bg-blue-700 text-white text-xs px-3 py-2 rounded-xl font-bold whitespace-nowrap shadow-sm active:scale-95 transition-all">' + (t.myOrdersSearchBtn || "ស្វែងរក") + '</button>' +
               '</div>' +
             '</div>';
         }
