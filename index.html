@@ -1344,7 +1344,7 @@
             }
 
             var labelSpan = document.createElement('span');
-            labelSpan.innerText = col;
+            labelSpan.innerText = getTranslatedColorName(col);
 
             btn.appendChild(dotWrapper);
             btn.appendChild(labelSpan);
@@ -3512,6 +3512,7 @@
         input.value = arr.join(', ');
       }
     }
+    
     
   </script>
 </body>
