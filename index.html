@@ -568,7 +568,7 @@
         
         <!-- ផ្នែក Upload រូបភាព និងប៊ូតុងបើក Link នៅខាងស្ដាំ -->
         <div class="space-y-2">
-          <!-- ជួរ Choose File + ប៊ូតុង 🔗 Link នៅខាងស្ដាំ -->
+          <!-- ជួរ Choose File + ប៊ូតុង 🔗 Link -->
           <div class="flex items-center gap-1.5">
             <input 
               type="file" 
@@ -589,11 +589,10 @@
 
           <span id="prodUploadStatus" class="text-[10px] text-blue-600 font-bold hidden"></span>
           
-          <!-- រូបភាព Thumbnail ដែលបាន Upload -->
           <div id="prodThumbnailsContainer" class="flex flex-wrap gap-2.5 py-1 items-center"></div>
 
-          <!-- ប្រអប់ Paste Link (លាក់ hidden ទុកជាមុន ពេលចុចប៊ូតុងទើបបង្ហាញ) -->
-          <div id="prodLinkWrapper" class="hidden transition-all duration-200">
+          <!-- ប្រអប់ Link ប្រើ style="display: none;" ផ្ទាល់តែម្ដង ធានាថាមិនជាន់ Class Tailwind -->
+          <div id="prodLinkWrapper" style="display: none;" class="space-y-1 pt-1">
             <input 
               id="addImage" 
               type="text" 
@@ -601,9 +600,8 @@
               placeholder="https://drive.google.com/file/d/..., https://..." 
               class="w-full border border-slate-300 p-2 rounded-xl text-xs outline-none focus:ring-2 focus:ring-blue-500 bg-white font-mono"
             >
-            <p class="text-[10px] text-slate-400 mt-1">* អាច Paste Link រូបភាព Google Drive ច្រើនដោយបំបែកដោយក្បៀស (,)</p>
+            <p class="text-[10px] text-slate-400">* អាច Paste Link រូបភាព Google Drive ច្រើនដោយបំបែកដោយក្បៀស (,)</p>
           </div>
-        </div>
 
         <div>
           <label id="lblAddColors" class="block text-xs font-semibold text-slate-600 mb-1">ជម្រើសពណ៌ (បំបែកដោយក្បៀស ,)</label>
@@ -3159,17 +3157,19 @@
         window.open(tgUrl, '_blank');
       }
 
-      // អនុគមន៍ បើក ឬបិទ ប្រអប់ Paste Link រូបភាពផលិតផល
+      // អនុគមន៍ បើក ឬបិទ ប្រអប់ Paste Link រូបភាព
     function toggleProdLinkInput() {
       var wrapper = document.getElementById('prodLinkWrapper');
       var input = document.getElementById('addImage');
       if (!wrapper) return;
-      
-      var isHidden = wrapper.classList.contains('hidden');
-      if (isHidden) {
+
+      // ពិនិត្យមើល display ជាក់ស្ដែង
+      if (wrapper.style.display === 'none' || wrapper.classList.contains('hidden')) {
+        wrapper.style.display = 'block';
         wrapper.classList.remove('hidden');
         if (input) input.focus();
       } else {
+        wrapper.style.display = 'none';
         wrapper.classList.add('hidden');
       }
     }
