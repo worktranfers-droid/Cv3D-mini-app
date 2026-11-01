@@ -1316,6 +1316,7 @@
             dotWrapper.className = "flex items-center -space-x-1 flex-shrink-0";
 
             if (parts.length > 1) {
+              // ករណីឈុត ២ ពណ៌ (បង្ហាញរង្វង់ ២ គ្រាប់ត្រួតគ្នា)
               var c1 = parts[0].trim().toLowerCase();
               var c2 = parts[1].split('(')[0].trim().toLowerCase();
 
@@ -1334,6 +1335,7 @@
               dotWrapper.appendChild(dot1);
               dotWrapper.appendChild(dot2);
             } else {
+              // ករណី ១ ពណ៌ទោល (បង្ហាញរង្វង់ ១ គ្រាប់)
               var singleDot = document.createElement('span');
               singleDot.className = "w-3.5 h-3.5 rounded-full border border-black/10 shadow-2xs";
               var bgSingle = getSimpleColorHex(col.toLowerCase());
@@ -1344,7 +1346,8 @@
             }
 
             var labelSpan = document.createElement('span');
-            labelSpan.innerText = getTranslatedColorName(col);
+            // បកប្រែឈ្មោះពណ៌តាមភាសាបច្ចុប្បន្ន (ទាញពី i18n.js)
+            labelSpan.innerText = (typeof getTranslatedColorName === 'function') ? getTranslatedColorName(col) : col; 
 
             btn.appendChild(dotWrapper);
             btn.appendChild(labelSpan);
