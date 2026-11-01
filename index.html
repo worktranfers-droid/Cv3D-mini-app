@@ -566,23 +566,43 @@
           <textarea id="addDesc" rows="2" placeholder="ព័ត៌មានលម្អិត..." class="w-full border border-slate-300 p-2 rounded-xl text-xs outline-none"></textarea>
         </div>
         
+        <!-- ផ្នែក Upload រូបភាព និងប៊ូតុងបើក Link នៅខាងស្ដាំ -->
         <div class="space-y-2">
-          <input 
-            type="file" 
-            id="prodFileInput"
-            accept="image/*" 
-            onchange="handleDirectImageUpload(event, 'addImage', 'prodUploadStatus')"
-            class="w-full text-xs text-slate-500 file:mr-2 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700 cursor-pointer bg-slate-50 p-1 rounded-xl border border-slate-200"
-          >
+          <!-- ជួរ Choose File + ប៊ូតុង 🔗 Link នៅខាងស្ដាំ -->
+          <div class="flex items-center gap-1.5">
+            <input 
+              type="file" 
+              id="prodFileInput"
+              accept="image/*" 
+              onchange="handleDirectImageUpload(event, 'addImage', 'prodUploadStatus')"
+              class="flex-1 text-xs text-slate-500 file:mr-2 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700 cursor-pointer bg-slate-50 p-1 rounded-xl border border-slate-200"
+            >
+            <button 
+              type="button" 
+              onclick="toggleProdLinkInput()" 
+              title="បញ្ចូល Link រូបភាពដោយដៃ" 
+              class="px-2.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-xl border border-slate-200 font-bold text-xs flex items-center gap-1 active:scale-95 transition-all flex-shrink-0"
+            >
+              <span>🔗 Link</span>
+            </button>
+          </div>
+
           <span id="prodUploadStatus" class="text-[10px] text-blue-600 font-bold hidden"></span>
+          
+          <!-- រូបភាព Thumbnail ដែលបាន Upload -->
           <div id="prodThumbnailsContainer" class="flex flex-wrap gap-2.5 py-1 items-center"></div>
-          <input 
-            id="addImage" 
-            type="text" 
-            oninput="renderProductThumbnailsUI()" 
-            placeholder="https://drive.google.com/file/d/..., https://..." 
-            class="w-full border border-slate-300 p-2 rounded-xl text-xs outline-none"
-          >
+
+          <!-- ប្រអប់ Paste Link (លាក់ hidden ទុកជាមុន ពេលចុចប៊ូតុងទើបបង្ហាញ) -->
+          <div id="prodLinkWrapper" class="hidden transition-all duration-200">
+            <input 
+              id="addImage" 
+              type="text" 
+              oninput="renderProductThumbnailsUI()" 
+              placeholder="https://drive.google.com/file/d/..., https://..." 
+              class="w-full border border-slate-300 p-2 rounded-xl text-xs outline-none focus:ring-2 focus:ring-blue-500 bg-white font-mono"
+            >
+            <p class="text-[10px] text-slate-400 mt-1">* អាច Paste Link រូបភាព Google Drive ច្រើនដោយបំបែកដោយក្បៀស (,)</p>
+          </div>
         </div>
 
         <div>
@@ -2809,6 +2829,9 @@
       if (el = document.getElementById('saveProdBtn')) el.innerText = t.btnSaveProdAdd;
       var modal = document.getElementById('addModal');
       if (modal) modal.className = "fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4";
+
+      var linkWrap = document.getElementById('prodLinkWrapper');
+      if (linkWrap) linkWrap.classList.add('hidden');
     }
 
     function openEditModalById(id) {
@@ -2846,6 +2869,9 @@
       if (el = document.getElementById('saveProdBtn')) el.innerText = t.btnSaveProdEdit;
       var modal = document.getElementById('addModal');
       if (modal) modal.className = "fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4";
+
+      var linkWrap = document.getElementById('prodLinkWrapper');
+      if (linkWrap) linkWrap.classList.add('hidden');
     }
     
     function closeAddModal() {
@@ -3132,6 +3158,21 @@
       } else {
         window.open(tgUrl, '_blank');
       }
+
+      // អនុគមន៍ បើក ឬបិទ ប្រអប់ Paste Link រូបភាពផលិតផល
+    function toggleProdLinkInput() {
+      var wrapper = document.getElementById('prodLinkWrapper');
+      var input = document.getElementById('addImage');
+      if (!wrapper) return;
+      
+      var isHidden = wrapper.classList.contains('hidden');
+      if (isHidden) {
+        wrapper.classList.remove('hidden');
+        if (input) input.focus();
+      } else {
+        wrapper.classList.add('hidden');
+      }
+    }
     }
   </script>
 </body>
