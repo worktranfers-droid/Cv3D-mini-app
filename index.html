@@ -264,7 +264,7 @@
 
         <div id="bannerInputsBox" class="hidden space-y-2.5 pt-1">
           <div>
-            <label class="block text-[11px] font-semibold text-indigo-900 mb-1">📁 រើសរូបភាពផ្ទាល់ (Upload ពីម៉ាស៊ីន)៖</label>
+            <label id="lblBannerUpload" class="block text-[11px] font-semibold text-indigo-900 mb-1">📁 រើសរូបភាពផ្ទាល់ (Upload ពីម៉ាស៊ីន)៖</label>
             <input type="file" id="bannerFileInput" accept="image/*" onchange="handleDirectImageUpload(event, 'setBannerImages', 'bannerUploadStatus')" class="w-full text-xs text-slate-500 file:mr-2 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-indigo-600 file:text-white hover:file:bg-indigo-700 cursor-pointer bg-white p-1 rounded-xl border border-indigo-200">
             <span id="bannerUploadStatus" class="text-[10px] text-blue-600 font-bold hidden mt-1"></span>
           </div>
@@ -272,9 +272,9 @@
           <div id="bannerThumbnailsContainer" class="flex flex-wrap gap-2.5 py-1 items-center"></div>
 
           <div>
-            <label class="block text-[11px] font-semibold text-indigo-900 mb-1">🔗 Link រូបភាព Banner (បំបែកដោយក្បៀស ,)៖</label>
+            <label id="lblBannerLinks" class="block text-[11px] font-semibold text-indigo-900 mb-1">🔗 Link រូបភាព Banner (បំបែកដោយក្បៀស ,)៖</label>
             <textarea id="setBannerImages" rows="2" oninput="renderBannerThumbnailsUI()" placeholder="https://lh3.googleusercontent.com/..., https://..." class="w-full border border-indigo-300 p-2 rounded-xl text-xs outline-none bg-white font-mono"></textarea>
-            <p class="text-[10px] text-indigo-600">* ទំហំរូបដែលស្អាតបំផុតគឺសមាមាត្រ 16:7 ឬ 2:1 (ឧ. 800x350px)</p>
+            <p id="lblBannerHint" class="text-[10px] text-indigo-600">* ទំហំរូបដែលស្អាតបំផុតគឺសមាមាត្រ 16:7 ឬ 2:1 (ឧ. 800x350px)</p>
           </div>
         </div>
       </div>
@@ -917,6 +917,11 @@
 
       if (el = document.getElementById('lblAddDiscount')) el.innerText = t.lblAddDiscount;
       if (el = document.getElementById('addDiscount')) el.placeholder = t.discountPlaceholder;
+
+      if (el = document.getElementById('lblSetBannerText')) el.innerText = t.adminSettingsBanner || "🖼️ បង្ហាញ Slide Banner ផ្សព្វផ្សាយ (Promotional Banner)";
+      if (el = document.getElementById('lblBannerUpload')) el.innerText = t.lblBannerUpload || "📁 រើសរូបភាពផ្ទាល់ (Upload ពីម៉ាស៊ីន)៖";
+      if (el = document.getElementById('lblBannerLinks')) el.innerText = t.lblBannerLinks || "🔗 Link រូបភាព Banner (បំបែកដោយក្បៀស ,)៖";
+      if (el = document.getElementById('lblBannerHint')) el.innerText = t.lblBannerHint || "* ទំហំរូបដែលស្អាតបំផុតគឺសមាមាត្រ 16:7 ឬ 2:1 (ឧ. 800x350px)";
     }
 
     function openSellerChat() {
