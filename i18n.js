@@ -358,7 +358,7 @@ var colorTranslations = {
     'grey': 'ប្រផេះ',
     'gray': 'ប្រផេះ',
     'gold': 'មាស',
-    'silk gold': 'មាសរលើប',
+    'silk gold': 'សូតមាស',
     'silver': 'ប្រាក់',
     'red': 'ក្រហម',
     'blue': 'ខៀវ',
@@ -368,7 +368,7 @@ var colorTranslations = {
     'purple': 'ស្វាយ',
     'orange': 'ទឹកក្រូច',
     'rainbow': 'ឥន្ទធនូ',
-    'silk rainbow': 'ឥន្ទធនូរលើប'
+    'silk rainbow': 'សូតឥន្ទធនូ'
   },
   en: {
     'black': 'Black',
