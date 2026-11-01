@@ -3017,83 +3017,118 @@
       }
     }
 
+    // --- អនុគមន៍បើកផ្ទាំងបន្ថែមទំនិញថ្មី (មានសុវត្ថិភាព មិនគាំង) ---
     function openAddModal() {
-      var el;
-      if (el = document.getElementById('editProductId')) el.value = '';
-      if (el = document.getElementById('addTitle')) el.value = '';
-      if (el = document.getElementById('addCategory')) el.value = '';
-      if (el = document.getElementById('addPrice')) el.value = '';
-      if (el = document.getElementById('addDesc')) el.value = '';
-      if (el = document.getElementById('addImage')) el.value = '';
-      renderProductThumbnailsUI();
-      if (el = document.getElementById('addColors')) el.value = '';
-      if (el = document.getElementById('addSizes')) el.value = '';
-      if (el = document.getElementById('addBadge')) el.value = '';
-      
-      if (document.getElementById('addIsCustom')) document.getElementById('addIsCustom').checked = false;
-      if (document.getElementById('addCustomMode')) document.getElementById('addCustomMode').value = 'flat';
-      if (document.getElementById('addCustomFee')) document.getElementById('addCustomFee').value = '';
-      toggleCustomFeeInput();
-      updateCustomModeUI();
+      try {
+        var el;
+        if (el = document.getElementById('editProductId')) el.value = '';
+        if (el = document.getElementById('addTitle')) el.value = '';
+        if (el = document.getElementById('addCategory')) el.value = '';
+        if (el = document.getElementById('addPrice')) el.value = '';
+        if (el = document.getElementById('addDiscount')) el.value = '';
+        if (el = document.getElementById('addDesc')) el.value = '';
+        if (el = document.getElementById('addImage')) el.value = '';
+        if (el = document.getElementById('addColors')) el.value = '';
+        if (el = document.getElementById('addSizes')) el.value = '';
+        if (el = document.getElementById('addBadge')) el.value = '';
+        
+        if (document.getElementById('addIsCustom')) document.getElementById('addIsCustom').checked = false;
+        if (document.getElementById('addCustomMode')) document.getElementById('addCustomMode').value = 'flat';
+        if (document.getElementById('addCustomFee')) document.getElementById('addCustomFee').value = '';
 
-      var t = i18n[currentLang] || i18n['km'];
-      if (el = document.getElementById('modalFormTitle')) el.innerText = t.prodModalAddTitle;
-      if (el = document.getElementById('saveProdBtn')) el.innerText = t.btnSaveProdAdd;
-      var modal = document.getElementById('addModal');
-      if (modal) modal.className = "fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4";
+        if (typeof toggleCustomFeeInput === 'function') toggleCustomFeeInput();
+        if (typeof updateCustomModeUI === 'function') updateCustomModeUI();
+        if (typeof renderProductThumbnailsUI === 'function') {
+          try { renderProductThumbnailsUI(); } catch(e) { console.warn(e); }
+        }
 
-      var linkWrap = document.getElementById('prodLinkWrapper');
-      if (linkWrap) {
-        linkWrap.style.display = 'none';
-        linkWrap.classList.add('hidden');
+        var t = (typeof i18n !== 'undefined' && i18n[currentLang]) ? i18n[currentLang] : {};
+        if (el = document.getElementById('modalFormTitle')) {
+          el.innerText = t.prodModalAddTitle || "➕ បន្ថែមផលិតផលថ្មី";
+        }
+        if (el = document.getElementById('saveProdBtn')) {
+          el.innerText = t.btnSaveProdAdd || "➕ រក្សាទុកផលិតផលថ្មី";
+        }
+
+        var linkWrap = document.getElementById('prodLinkWrapper');
+        if (linkWrap) linkWrap.classList.add('hidden');
+
+        // បង្ហាញ Modal ចេញមកក្រៅ
+        var modal = document.getElementById('addModal');
+        if (modal) {
+          modal.classList.remove('hidden');
+          modal.className = "fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4";
+        }
+      } catch (err) {
+        console.error("កំហុសពេលបើកផ្ទាំងបន្ថែមទំនិញ:", err);
+        alert("មិនអាចបើកផ្ទាំងបន្ថែមបានទេ៖ " + err.message);
       }
-      if (el = document.getElementById('addDiscount')) el.value = '';
     }
 
+    // --- អនុគមន៍បើកផ្ទាំងកែប្រែទំនិញ (Edit Product) ---
     function openEditModalById(id) {
-      var p = null;
-      for (var i = 0; i < adminProducts.length; i++) {
-        if (String(adminProducts[i].id) === String(id)) {
-          p = adminProducts[i];
-          break;
+      try {
+        var p = null;
+        if (typeof adminProducts !== 'undefined' && adminProducts) {
+          for (var i = 0; i < adminProducts.length; i++) {
+            if (String(adminProducts[i].id) === String(id)) {
+              p = adminProducts[i];
+              break;
+            }
+          }
         }
+        if (!p) {
+          alert("រកមិនឃើញទិន្នន័យទំនិញលេខកូដ " + id + " ឡើយ!");
+          return;
+        }
+
+        var el;
+        if (el = document.getElementById('editProductId')) el.value = p.id;
+        if (el = document.getElementById('addTitle')) el.value = p.title || '';
+        if (el = document.getElementById('addCategory')) el.value = p.category || '';
+        if (el = document.getElementById('addPrice')) el.value = p.price || '';
+        if (el = document.getElementById('addDesc')) el.value = p.desc || '';
+        if (el = document.getElementById('addImage')) el.value = p.image || '';
+        if (el = document.getElementById('addColors')) el.value = Array.isArray(p.colors) ? p.colors.join(', ') : (p.colors || '');
+        if (el = document.getElementById('addSizes')) el.value = Array.isArray(p.sizes) ? p.sizes.join(', ') : (p.sizes || '');
+        if (el = document.getElementById('addBadge')) el.value = p.badge || '';
+
+        // បញ្ចូលភាគរយ Discount
+        var rawDisc = p.discount ? String(p.discount).replace('%', '') : '';
+        if (el = document.getElementById('addDiscount')) el.value = rawDisc;
+
+        var isCust = (p.isCustom === true || String(p.isCustom).toLowerCase() === 'yes');
+        if (document.getElementById('addIsCustom')) document.getElementById('addIsCustom').checked = isCust;
+        if (document.getElementById('addCustomMode')) document.getElementById('addCustomMode').value = p.customMode || 'flat';
+        if (document.getElementById('addCustomFee')) document.getElementById('addCustomFee').value = (p.customFee !== undefined && p.customFee !== null) ? p.customFee : '';
+
+        if (typeof toggleCustomFeeInput === 'function') toggleCustomFeeInput();
+        if (typeof updateCustomModeUI === 'function') updateCustomModeUI();
+        if (typeof renderProductThumbnailsUI === 'function') {
+          try { renderProductThumbnailsUI(); } catch(e) { console.warn(e); }
+        }
+
+        var t = (typeof i18n !== 'undefined' && i18n[currentLang]) ? i18n[currentLang] : {};
+        if (el = document.getElementById('modalFormTitle')) {
+          el.innerText = t.prodModalEditTitle || "✏️ កែសម្រួលផលិតផល";
+        }
+        if (el = document.getElementById('saveProdBtn')) {
+          el.innerText = t.btnSaveProdEdit || "💾 រក្សាទុកការកែប្រែ (Update)";
+        }
+
+        var linkWrap = document.getElementById('prodLinkWrapper');
+        if (linkWrap) linkWrap.classList.add('hidden');
+
+        // បង្ហាញ Modal ចេញមកក្រៅ
+        var modal = document.getElementById('addModal');
+        if (modal) {
+          modal.classList.remove('hidden');
+          modal.className = "fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4";
+        }
+      } catch (err) {
+        console.error("កំហុសពេលបើកផ្ទាំងកែប្រែ:", err);
+        alert("មិនអាចបើកផ្ទាំងកែប្រែបានទេ៖ " + err.message);
       }
-      if (!p) return;
-
-      var el;
-      if (el = document.getElementById('editProductId')) el.value = p.id;
-      if (el = document.getElementById('addTitle')) el.value = p.title || '';
-      if (el = document.getElementById('addCategory')) el.value = p.category || '';
-      if (el = document.getElementById('addPrice')) el.value = p.price || '';
-      if (el = document.getElementById('addDesc')) el.value = p.desc || '';
-      if (el = document.getElementById('addImage')) el.value = p.image || '';
-      renderProductThumbnailsUI();
-      if (el = document.getElementById('addColors')) el.value = Array.isArray(p.colors) ? p.colors.join(', ') : (p.colors || '');
-      if (el = document.getElementById('addSizes')) el.value = Array.isArray(p.sizes) ? p.sizes.join(', ') : (p.sizes || '');
-      if (el = document.getElementById('addBadge')) el.value = p.badge || '';
-
-      var isCust = (p.isCustom === true || String(p.isCustom).toLowerCase() === 'yes');
-      if (document.getElementById('addIsCustom')) document.getElementById('addIsCustom').checked = isCust;
-      if (document.getElementById('addCustomMode')) document.getElementById('addCustomMode').value = p.customMode || 'flat';
-      if (document.getElementById('addCustomFee')) document.getElementById('addCustomFee').value = (p.customFee !== undefined && p.customFee !== null) ? p.customFee : '';
-
-      toggleCustomFeeInput();
-      updateCustomModeUI();
-
-      var t = i18n[currentLang] || i18n['km'];
-      if (el = document.getElementById('modalFormTitle')) el.innerText = t.prodModalEditTitle;
-      if (el = document.getElementById('saveProdBtn')) el.innerText = t.btnSaveProdEdit;
-      var modal = document.getElementById('addModal');
-      if (modal) modal.className = "fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4";
-
-      var linkWrap = document.getElementById('prodLinkWrapper');
-      if (linkWrap) {
-        linkWrap.style.display = 'none';
-        linkWrap.classList.add('hidden');
-      }
-      var rawDisc = p.discount || '';
-      if (typeof rawDisc === 'string') rawDisc = rawDisc.replace('%', '');
-      if (el = document.getElementById('addDiscount')) el.value = rawDisc;
     }
     
     function closeAddModal() {
