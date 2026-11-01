@@ -380,12 +380,27 @@
       </div>
 
       <!-- Quantity Selector -->
-      <div class="flex items-center justify-between mb-4 bg-slate-50 p-2.5 rounded-2xl border border-slate-100">
+      <!-- ផ្នែកជ្រើសរើសចំនួន (Quantity - រចនាថ្មី ស្រឡះ និងងាយចុច) -->
+      <div class="flex items-center justify-between mb-4 py-1">
         <label id="lblSelectQty" class="text-xs font-bold text-slate-700">ចំនួន (Quantity):</label>
-        <div class="flex items-center gap-2 bg-white px-2 py-1 rounded-xl border border-slate-200 shadow-xs">
-          <button type="button" onclick="changeQty(-1)" class="w-6 h-6 bg-slate-100 hover:bg-slate-200 rounded-lg font-black text-slate-600 flex items-center justify-center text-xs active:scale-90 transition-all">-</button>
-          <span id="qtyVal" class="text-xs font-black text-slate-800 w-6 text-center">1</span>
-          <button type="button" onclick="changeQty(1)" class="w-6 h-6 bg-slate-100 hover:bg-slate-200 rounded-lg font-black text-slate-600 flex items-center justify-center text-xs active:scale-90 transition-all">+</button>
+        
+        <div class="flex items-center bg-slate-100 p-1 rounded-xl border border-slate-200/80 shadow-2xs">
+          <!-- ប៊ូតុងដក (-) -->
+          <button 
+            type="button" 
+            onclick="changeQty(-1)" 
+            class="w-7 h-7 bg-white hover:bg-slate-50 text-slate-700 font-bold rounded-lg shadow-xs flex items-center justify-center text-sm active:scale-90 transition-all"
+          >-</button>
+          
+          <!-- ចំនួនលេខកណ្តាល -->
+          <span id="qtyVal" class="text-xs font-black text-slate-900 w-8 text-center select-none">1</span>
+          
+          <!-- ប៊ូតុងបូក (+) -->
+          <button 
+            type="button" 
+            onclick="changeQty(1)" 
+            class="w-7 h-7 bg-white hover:bg-slate-50 text-slate-700 font-bold rounded-lg shadow-xs flex items-center justify-center text-sm active:scale-90 transition-all"
+          >+</button>
         </div>
       </div>
 
