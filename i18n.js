@@ -112,6 +112,9 @@
         myOrdersPhonePrompt: "សូមបញ្ចូលលេខទូរសព្ទដែលអ្នកធ្លាប់កុម្ម៉ង់ទិញដើម្បីពិនិត្យ៖",
         myOrdersPhonePlaceholder: "ឧ. 012345678",
         myOrdersSearchBtn: "ស្វែងរក",
+        lblAddDiscount: "បញ្ចុះ (%)",
+        discountPlaceholder: "ឧ. 20",
+        saveAmountPrefix: "ចំណេញ $",
       },
       en: {
         flag: "🇬🇧",
@@ -225,6 +228,9 @@
         myOrdersPhonePrompt: "Please enter your order phone number to view history:",
         myOrdersPhonePlaceholder: "e.g. 012345678",
         myOrdersSearchBtn: "Search",
+        lblAddDiscount: "Discount (%)",
+        discountPlaceholder: "e.g. 20",
+        saveAmountPrefix: "Save $",
       },
       zh: {
         flag: "🇨🇳",
@@ -338,5 +344,8 @@
         myOrdersPhonePrompt: "请输入您下单时预留的手机号码以查询订单：",
         myOrdersPhonePlaceholder: "例如：012345678",
         myOrdersSearchBtn: "查询",
+        lblAddDiscount: "折扣 (%)",
+        discountPlaceholder: "例：20",
+        saveAmountPrefix: "立省 $",
       }
     };
