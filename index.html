@@ -331,11 +331,18 @@
         <!-- ឈ្មោះទំនិញពេញលេញ ១ ជួរ (មិនបាច់ដណ្ដើមកន្លែងជាមួយតម្លៃទៀតទេ) -->
         <h2 id="modalTitle" class="text-base font-bold text-slate-900 leading-snug"></h2>
         
-        <!-- ជួរតម្លៃ និង Category នៅជាមួយគ្នា -->
-        <div class="flex items-center justify-between pt-0.5">
-          <span id="modalCategory" class="text-[10px] font-bold text-slate-400 uppercase tracking-wider bg-slate-100 px-2 py-0.5 rounded-md"></span>
-          <div id="modalPrice"></div>
+        <!-- ផ្នែកព័ត៌មានក្បាលទំនិញ (រៀបចំថ្មីបែប Premium Left-aligned) -->
+      <div class="space-y-1.5 mb-3">
+        <!-- ១. ស្លាក Category -->
+        <div>
+          <span id="modalCategory" class="text-[10px] font-bold text-slate-500 uppercase tracking-wider bg-slate-100 px-2 py-0.5 rounded-md inline-block"></span>
         </div>
+
+        <!-- ២. ឈ្មោះទំនិញពេញលេញ -->
+        <h2 id="modalTitle" class="text-base font-bold text-slate-900 leading-snug"></h2>
+
+        <!-- ៣. ជួរតម្លៃ (តម្រង់មកខាងឆ្វេងទាំងអស់ ជាប់គ្នាស្អាត) -->
+        <div id="modalPrice" class="pt-0.5"></div>
       </div>
       
       <p id="modalDesc" class="text-xs text-slate-500 mb-4 leading-relaxed"></p>
@@ -1419,16 +1426,20 @@
       if (priceEl) {
         if (disc > 0) {
           priceEl.innerHTML = 
-            '<div class="flex items-baseline gap-2">' +
-              '<span class="text-2xl font-black text-rose-600">$' + totalProductPrice.toFixed(2) + '</span>' +
+            '<div class="flex items-center gap-2 flex-wrap">' +
+              '<span class="text-2xl font-black text-rose-600 leading-none">$' + totalProductPrice.toFixed(2) + '</span>' +
               '<span class="text-xs text-slate-400 line-through font-medium">$' + totalOrigPrice.toFixed(2) + '</span>' +
-              '<span class="bg-rose-500 text-white text-[10px] font-black px-1.5 py-0.5 rounded-md shadow-2xs">-' + Math.round(disc) + '%</span>' +
+              '<span class="bg-rose-50 text-rose-600 border border-rose-200 text-[10px] font-extrabold px-2 py-0.5 rounded-md">-' + Math.round(disc) + '%</span>' +
             '</div>';
         } else {
           if (quantity > 1) {
-            priceEl.innerHTML = '<span class="text-[11px] text-slate-400 font-normal mr-1">($' + finalUnitPrice.toFixed(2) + ' x ' + quantity + ')</span> <span class="text-xl font-extrabold text-blue-600">$' + totalProductPrice.toFixed(2) + '</span>';
+            priceEl.innerHTML = 
+              '<div class="flex items-baseline gap-1.5">' +
+                '<span class="text-2xl font-black text-blue-600 leading-none">$' + totalProductPrice.toFixed(2) + '</span>' +
+                '<span class="text-[11px] text-slate-400 font-normal">($' + finalUnitPrice.toFixed(2) + ' x ' + quantity + ')</span>' +
+              '</div>';
           } else {
-            priceEl.innerHTML = '<span class="text-xl font-extrabold text-blue-600">$' + totalProductPrice.toFixed(2) + '</span>';
+            priceEl.innerHTML = '<span class="text-2xl font-black text-blue-600 leading-none">$' + totalProductPrice.toFixed(2) + '</span>';
           }
         }
       }
