@@ -1084,12 +1084,22 @@
           img.onerror = function() { this.src = "https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&w=600&q=80"; };
           imgContainer.appendChild(img);
 
-          // គណនា Discount
+          // គណនា និងបង្ហាញតម្លៃលក់ក្នុងបញ្ជី Admin
           var disc = parseFloat(String(p.discount || '0').replace('%', '')) || 0;
           if (disc > 0 && disc < 1) disc = disc * 100;
-          var origPrice = Number(p.price) || 0;
-          var salePrice = (disc > 0 && disc < 100) ? (origPrice * (1 - disc / 100)) : origPrice;
+          var salePrice = (disc > 0 && disc < 100) ? (p.price * (1 - disc / 100)) : p.price;
 
+          var price = document.createElement('p');
+          price.className = "text-[11px] font-bold";
+          if (disc > 0) {
+            price.innerHTML = '<span class="text-rose-600 font-extrabold">' + t.adminSalePrice + salePrice.toFixed(2) + '</span> ' +
+                              '<span class="text-slate-400 line-through text-[10px]">$' + p.price.toFixed(2) + '</span> ' +
+                              '<span class="bg-rose-100 text-rose-700 text-[9px] px-1 py-0.2 rounded font-black">-' + Math.round(disc) + '%</span>';
+          } else {
+            price.className = "text-[11px] text-blue-600 font-bold";
+            price.innerText = t.adminSalePrice + p.price.toFixed(2);
+          }
+          
           // បង្ហាញ Badge លើរូបភាព
           if (disc > 0) {
             var discSpan = document.createElement('span');
@@ -2955,12 +2965,14 @@
       var isCust = document.getElementById('addIsCustom') ? document.getElementById('addIsCustom').checked : false;
       var cMode = document.getElementById('addCustomMode') ? document.getElementById('addCustomMode').value : 'flat';
       var cFee = document.getElementById('addCustomFee') ? (parseFloat(document.getElementById('addCustomFee').value) || 0) : 0;
+      var disc = document.getElementById('addDiscount') ? (parseFloat(document.getElementById('addDiscount').value) || 0) : 0;
 
       var p = {
         id: editId,
         title: document.getElementById('addTitle').value.trim(),
         category: (document.getElementById('addCategory').value || 'other').trim(),
         price: parseFloat(document.getElementById('addPrice').value) || 0,
+        discount: disc, // <--- ដាក់ discount ត្រង់នេះដើម្បីផ្ញើទៅ Google Sheet
         desc: document.getElementById('addDesc').value.trim(),
         image: document.getElementById('addImage').value.trim(),
         colors: document.getElementById('addColors').value.trim(),
@@ -2992,6 +3004,7 @@
                 adminProducts[i].title = p.title;
                 adminProducts[i].category = p.category;
                 adminProducts[i].price = p.price;
+                adminProducts[i].discount = p.discount; // <--- update ក្នុង Admin Cache
                 adminProducts[i].desc = p.desc;
                 adminProducts[i].image = p.image;
                 adminProducts[i].colors = p.colors ? p.colors.split(',').map(function(s){return s.trim();}) : [];
@@ -3015,22 +3028,6 @@
           btn.innerText = "💾 រក្សាទុកការកែប្រែ (Update)";
           alert("Error: " + err.message);
         });
-
-      var p = {
-      id: editId,
-      title: document.getElementById('addTitle').value.trim(),
-      category: (document.getElementById('addCategory').value || 'other').trim(),
-      price: parseFloat(document.getElementById('addPrice').value) || 0,
-      discount: parseFloat(document.getElementById('addDiscount').value) || 0, // <--- បន្ថែមជួរនេះ
-      desc: document.getElementById('addDesc').value.trim(),
-      image: document.getElementById('addImage').value.trim(),
-      colors: document.getElementById('addColors').value.trim(),
-      sizes: document.getElementById('addSizes').value.trim() || "Standard",
-      badge: document.getElementById('addBadge').value,
-      isCustom: isCust,
-      customMode: cMode,
-      customFee: cFee
-      };
     }
     
     // អនុគមន៍ បើក/បិទ ផ្ទាំង Dropdown
