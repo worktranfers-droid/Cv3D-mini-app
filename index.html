@@ -55,6 +55,15 @@
         🛒 ទៅហាងវិញ
       </button>
 
+      <button 
+      type="button" 
+      onclick="refreshHomeData()" 
+      title="ទាញទិន្នន័យថ្មីឡើងវិញ" 
+      class="w-9 h-9 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl border border-slate-200/80 flex items-center justify-center text-sm transition-all active:scale-90 shadow-2xs"
+      >
+      <span id="refreshIcon">🔄</span>
+      </button>
+
       <!-- ប៊ូតុង Icon ភាសា (ដាក់ទង់ជាតិខ្មែរជាគោល) -->
       <button id="langToggleBtn" type="button" onclick="toggleLanguage()" title="ប្តូរភាសា" class="w-9 h-9 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl border border-slate-200 flex items-center justify-center text-base transition-all active:scale-90 shadow-2xs">
         <span id="langFlag">🇰🇭</span>
@@ -3266,6 +3275,29 @@
         wrapper.style.display = 'none';
         wrapper.classList.add('hidden');
       }
+
+      function refreshHomeData() {
+      var icon = document.getElementById('refreshIcon');
+      if (icon) icon.classList.add('animate-spin'); // ឱ្យវិលពេលកំពុង Refresh
+
+      // ១. ទាញទិន្នន័យទំនិញថ្មី
+      loadCustomerData();
+
+      // ២. ទាញការកំណត់ថ្មី (ថ្លៃដឹក និង Banner)
+      if (typeof loadAppSettings === 'function') {
+        loadAppSettings();
+      }
+
+      // បញ្ឈប់ការវិលក្រោយពេល ២ វិនាទី
+      setTimeout(function() {
+        if (icon) icon.classList.remove('animate-spin');
+      }, 1500);
+    }
+
+      function scrollToTop() {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      loadCustomerData(); // ទាញយកទិន្នន័យថ្មីមកជាមួយ
+    }
     }
   </script>
 </body>
