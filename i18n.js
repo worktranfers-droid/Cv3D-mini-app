@@ -115,6 +115,9 @@
         lblAddDiscount: "បញ្ចុះ (%)",
         discountPlaceholder: "ឧ. 20",
         saveAmountPrefix: "ចំណេញ $",
+        lblBannerUpload: "📁 រើសរូបភាពផ្ទាល់ (Upload ពីម៉ាស៊ីន)៖",    
+        lblBannerLinks: "🔗 Link រូបភាព Banner (បំបែកដោយក្បៀស ,)៖",
+        lblBannerHint: "* ទំហំរូបដែលស្អាតបំផុតគឺសមាមាត្រ 16:7 ឬ 2:1 (ឧ. 800x350px)",
       },
       en: {
         flag: "🇬🇧",
@@ -231,6 +234,10 @@
         lblAddDiscount: "Discount (%)",
         discountPlaceholder: "e.g. 20",
         saveAmountPrefix: "Save $",
+        adminSettingsBanner: "🖼️ Enable Promotional Slide Banner",
+        lblBannerUpload: "📁 Upload Image from Device:",
+        lblBannerLinks: "🔗 Banner Image URLs (comma separated):",
+        lblBannerHint: "* Recommended aspect ratio: 16:7 or 2:1 (e.g., 800x350px)",
       },
       zh: {
         flag: "🇨🇳",
@@ -347,6 +354,10 @@
         lblAddDiscount: "折扣 (%)",
         discountPlaceholder: "例：20",
         saveAmountPrefix: "立省 $",
+        adminSettingsBanner: "🖼️ 开启轮播横幅广告 (Promotional Banner)",
+        lblBannerUpload: "📁 从设备上传图片：",
+        lblBannerLinks: "🔗 横幅图片链接（用逗号隔开）：",
+        lblBannerHint: "* 建议图片比例为 16:7 或 2:1（如 800x350px）",
       }
     };
 
