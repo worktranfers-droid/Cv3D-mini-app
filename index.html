@@ -1251,7 +1251,7 @@
       if (el = document.getElementById('modalDesc')) el.innerText = p.desc;
       if (el = document.getElementById('qtyVal')) el.innerText = quantity;
 
-      // ផ្នែក Render ប៊ូតុងពណ៌ឆ្លាតវៃ (Option 2: ស្គាល់ទាំង ១ ពណ៌ និង ២ ពណ៌ Combos)
+      // ផ្នែក Render ប៊ូតុងពណ៌ (មិនលោត ឬរលាក់ទំហំប៊ូតុងពេលចុច)
       var colorBox = document.getElementById('colorContainer');
       if (colorBox) {
         colorBox.innerHTML = '';
@@ -1261,18 +1261,16 @@
             btn.type = "button";
             var isSelected = (idx === 0);
             
-            btn.className = "flex items-center gap-2 px-3 py-1.5 rounded-xl border text-xs font-semibold transition-all " +
+            btn.className = "flex items-center gap-2 px-3 py-1.5 rounded-xl border text-xs font-semibold transition-colors " +
               (isSelected 
-                ? "border-blue-600 bg-blue-50/80 text-blue-700 font-bold shadow-2xs" 
+                ? "border-blue-600 bg-blue-50 text-blue-700 font-bold ring-1 ring-blue-500/30" 
                 : "border-slate-200 bg-white text-slate-700 hover:bg-slate-50");
 
-            // បំបែកពណ៌ប្រសិនបើមានសញ្ញា + (ករណី ២ ពណ៌)
             var parts = col.split('+');
             var dotWrapper = document.createElement('span');
             dotWrapper.className = "flex items-center -space-x-1 flex-shrink-0";
 
             if (parts.length > 1) {
-              // ករណី ២ ពណ៌៖ បង្ហាញរង្វង់ពណ៌ ២ គ្រាប់ត្រួតគ្នាបន្តិច
               var c1 = parts[0].trim().toLowerCase();
               var c2 = parts[1].split('(')[0].trim().toLowerCase();
 
@@ -1291,7 +1289,6 @@
               dotWrapper.appendChild(dot1);
               dotWrapper.appendChild(dot2);
             } else {
-              // ករណី ១ ពណ៌ទោលធម្មតា៖ បង្ហាញរង្វង់ពណ៌តែ ១ គ្រាប់
               var singleDot = document.createElement('span');
               singleDot.className = "w-3.5 h-3.5 rounded-full border border-black/10 shadow-2xs";
               var bgSingle = getSimpleColorHex(col.toLowerCase());
@@ -1311,9 +1308,9 @@
               selectedColor = col;
               var cChildren = colorBox.children;
               for (var j = 0; j < cChildren.length; j++) {
-                cChildren[j].className = "flex items-center gap-2 px-3 py-1.5 rounded-xl border border-slate-200 bg-white text-slate-700 text-xs font-semibold hover:bg-slate-50 transition-all";
+                cChildren[j].className = "flex items-center gap-2 px-3 py-1.5 rounded-xl border border-slate-200 bg-white text-slate-700 text-xs font-semibold hover:bg-slate-50 transition-colors";
               }
-              btn.className = "flex items-center gap-2 px-3 py-1.5 rounded-xl border-2 border-blue-600 bg-blue-50/80 text-blue-700 text-xs font-bold shadow-2xs transition-all";
+              btn.className = "flex items-center gap-2 px-3 py-1.5 rounded-xl border border-blue-600 bg-blue-50 text-blue-700 text-xs font-bold ring-1 ring-blue-500/30 transition-colors";
             };
 
             colorBox.appendChild(btn);
