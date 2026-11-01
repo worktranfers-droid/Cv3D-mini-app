@@ -541,7 +541,7 @@
           <label id="lblAddTitle" class="block text-xs font-semibold text-slate-600 mb-1">ឈ្មោះផលិតផល</label>
           <input id="addTitle" type="text" placeholder="ឧ. Articulated Dragon" class="w-full border border-slate-300 p-2 rounded-xl text-xs outline-none focus:ring-2 focus:ring-blue-500">
         </div>
-        <div class="grid grid-cols-3 gap-2">
+        <div class="grid grid-cols-4 gap-2">
           <div>
             <label id="lblAddCategory" class="block text-xs font-semibold text-slate-600 mb-1">ប្រភេទ</label>
             <input id="addCategory" list="categoryDataList" placeholder="រើស ឬវាយថ្មី..." class="w-full border border-slate-300 p-2 rounded-xl text-xs outline-none bg-white focus:ring-2 focus:ring-blue-500">
@@ -550,6 +550,10 @@
           <div>
             <label id="lblAddPrice" class="block text-xs font-semibold text-slate-600 mb-1">តម្លៃ ($)</label>
             <input id="addPrice" type="number" step="0.5" placeholder="12.00" class="w-full border border-slate-300 p-2 rounded-xl text-xs outline-none">
+          </div>
+          <div>
+            <label id="lblAddDiscount" class="block text-xs font-semibold text-rose-600 mb-1">បញ្ចុះ (%)</label>
+            <input id="addDiscount" type="number" min="0" max="99" placeholder="20" class="w-full border border-rose-300 bg-rose-50/40 p-2 rounded-xl text-xs outline-none font-bold text-rose-600 focus:ring-2 focus:ring-rose-500">
           </div>
           <div>
             <label id="lblAddBadge" class="block text-xs font-semibold text-slate-600 mb-1">Badge</label>
@@ -831,6 +835,9 @@
       updateShippingSummaryText();
 
       if (el = document.getElementById('btnAskProdText')) el.innerText = t.btnAskProduct;
+
+      if (el = document.getElementById('lblAddDiscount')) el.innerText = t.lblAddDiscount;
+      if (el = document.getElementById('addDiscount')) el.placeholder = t.discountPlaceholder;
     }
 
     function openSellerChat() {
@@ -1077,6 +1084,20 @@
           img.onerror = function() { this.src = "https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&w=600&q=80"; };
           imgContainer.appendChild(img);
 
+          // គណនា Discount
+          var disc = parseFloat(String(p.discount || '0').replace('%', '')) || 0;
+          if (disc > 0 && disc < 1) disc = disc * 100;
+          var origPrice = Number(p.price) || 0;
+          var salePrice = (disc > 0 && disc < 100) ? (origPrice * (1 - disc / 100)) : origPrice;
+
+          // បង្ហាញ Badge លើរូបភាព
+          if (disc > 0) {
+            var discSpan = document.createElement('span');
+            discSpan.className = "absolute top-2 right-2 bg-rose-500 text-white text-[10px] font-black px-1.5 py-0.5 rounded-lg shadow-sm";
+            discSpan.innerText = "-" + Math.round(disc) + "%";
+            imgContainer.appendChild(discSpan);
+          }
+
           if (p.badge) {
             var badgeSpan = document.createElement('span');
             var b = p.badge.toLowerCase();
@@ -1103,15 +1124,24 @@
           var bottomDiv = document.createElement('div');
           bottomDiv.className = "flex items-center justify-between mt-2 pt-2 border-t border-slate-50";
 
-          var priceSpan = document.createElement('span');
-          priceSpan.className = "text-sm font-extrabold text-blue-600";
-          priceSpan.innerText = "$" + p.price.toFixed(2);
+          // បង្ហាញតម្លៃឆូតចោល និងតម្លៃលក់ជាក់ស្ដែង
+          var priceContainer = document.createElement('div');
+          priceContainer.className = "flex items-baseline gap-1.5";
+
+          if (disc > 0) {
+            priceContainer.innerHTML = 
+              '<span class="text-sm font-extrabold text-rose-600">$' + salePrice.toFixed(2) + '</span>' +
+              '<span class="text-[10px] text-slate-400 line-through font-medium">$' + origPrice.toFixed(2) + '</span>';
+          } else {
+            priceContainer.innerHTML = 
+              '<span class="text-sm font-extrabold text-blue-600">$' + origPrice.toFixed(2) + '</span>';
+          }
 
           var btnView = document.createElement('span');
           btnView.className = "bg-blue-50 text-blue-600 text-[10px] font-bold px-2 py-0.5 rounded-lg";
           btnView.innerText = t.btnView;
 
-          bottomDiv.appendChild(priceSpan);
+          bottomDiv.appendChild(priceContainer);
           bottomDiv.appendChild(btnView);
 
           card.appendChild(topDiv);
@@ -1129,12 +1159,18 @@
       quantity = 1;
       activeImageIndex = 0;
 
+      // កំណត់តម្លៃបញ្ចុះសម្រាប់ទំនិញ
+      var disc = parseFloat(String(p.discount || '0').replace('%', '')) || 0;
+      if (disc > 0 && disc < 1) disc = disc * 100;
+      var orig = Number(p.price) || 0;
+      selectedProduct.discountPercent = disc;
+      selectedProduct.baseUnitPrice = (disc > 0 && disc < 100) ? (orig * (1 - disc / 100)) : orig;
+
       currentSliderImages = (p.images && p.images.length > 0) ? p.images : [p.image];
       renderProductSlider(currentSliderImages);
 
       var el;
       if (el = document.getElementById('modalTitle')) el.innerText = p.title;
-      if (el = document.getElementById('modalPrice')) el.innerText = '$' + p.price.toFixed(2);
       if (el = document.getElementById('modalCategory')) el.innerText = p.category.toUpperCase();
       if (el = document.getElementById('modalDesc')) el.innerText = p.desc;
       if (el = document.getElementById('qtyVal')) el.innerText = quantity;
@@ -1189,15 +1225,16 @@
 
       if (p.isCustom) {
         if (customSection) customSection.className = "mb-4 bg-blue-50/70 p-3 rounded-2xl border border-blue-200 space-y-2 block";
-        updateModalLivePrice();
       } else {
         if (customSection) customSection.className = "hidden";
       }
 
+      updateModalLivePrice();
+
       var modal = document.getElementById('productModal');
       if (modal) modal.className = "fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4";
     }
-
+    
     function renderProductSlider(images) {
       var container = document.getElementById('modalSliderContainer');
       var dotsContainer = document.getElementById('sliderDots');
@@ -1280,7 +1317,10 @@
       if (!selectedProduct) return;
 
       var t = i18n[currentLang] || i18n['km'];
-      var basePrice = Number(selectedProduct.price) || 0;
+      var origUnitPrice = Number(selectedProduct.price) || 0;
+      var disc = selectedProduct.discountPercent || 0;
+      var baseSalePrice = selectedProduct.baseUnitPrice || origUnitPrice;
+
       var nameInput = document.getElementById('custCustomNameInput');
       var customText = nameInput ? nameInput.value.trim() : "";
       var charLength = customText.length;
@@ -1334,14 +1374,29 @@
 
       if (countEl) countEl.innerText = charLength + t.customCharUnit;
 
-      var unitPrice = basePrice + totalFee;
-      var totalProductPrice = unitPrice * (quantity || 1);
+      var finalUnitPrice = baseSalePrice + totalFee;
+      var totalProductPrice = finalUnitPrice * (quantity || 1);
+      var totalOrigPrice = (origUnitPrice + totalFee) * (quantity || 1);
+      var totalSaved = totalOrigPrice - totalProductPrice;
 
       if (priceEl) {
-        if (quantity > 1) {
-          priceEl.innerHTML = '<span class="text-[11px] text-slate-400 font-normal mr-1">($' + unitPrice.toFixed(2) + ' x ' + quantity + ')</span> $' + totalProductPrice.toFixed(2);
+        if (disc > 0) {
+          priceEl.innerHTML = 
+            '<div class="flex flex-col items-end">' +
+              '<div class="flex items-center gap-1.5">' +
+                '<span class="text-xl font-extrabold text-rose-600">$' + totalProductPrice.toFixed(2) + '</span>' +
+                '<span class="text-xs text-slate-400 line-through">$' + totalOrigPrice.toFixed(2) + '</span>' +
+              '</div>' +
+              '<span class="bg-rose-50 text-rose-600 border border-rose-200 text-[10px] font-bold px-1.5 py-0.2 rounded-full mt-0.5">' +
+                (t.saveAmountPrefix || 'ចំណេញ $') + totalSaved.toFixed(2) + ' (-' + Math.round(disc) + '%)' +
+              '</span>' +
+            '</div>';
         } else {
-          priceEl.innerText = '$' + totalProductPrice.toFixed(2);
+          if (quantity > 1) {
+            priceEl.innerHTML = '<span class="text-[11px] text-slate-400 font-normal mr-1">($' + finalUnitPrice.toFixed(2) + ' x ' + quantity + ')</span> $' + totalProductPrice.toFixed(2);
+          } else {
+            priceEl.innerText = '$' + totalProductPrice.toFixed(2);
+          }
         }
       }
     }
@@ -1501,7 +1556,8 @@
       if (!selectedProduct) return;
 
       var customText = "";
-      var finalUnitPrice = selectedProduct.price;
+      // ប្រើតម្លៃលក់ជាក់ស្តែងក្រោយ Discount
+      var finalUnitPrice = selectedProduct.baseUnitPrice || selectedProduct.price;
 
       if (selectedProduct.isCustom) {
         var nameInput = document.getElementById('custCustomNameInput');
@@ -2834,6 +2890,7 @@
         linkWrap.style.display = 'none';
         linkWrap.classList.add('hidden');
       }
+      if (el = document.getElementById('addDiscount')) el.value = '';
     }
 
     function openEditModalById(id) {
@@ -2877,6 +2934,9 @@
         linkWrap.style.display = 'none';
         linkWrap.classList.add('hidden');
       }
+      var rawDisc = p.discount || '';
+      if (typeof rawDisc === 'string') rawDisc = rawDisc.replace('%', '');
+      if (el = document.getElementById('addDiscount')) el.value = rawDisc;
     }
     
     function closeAddModal() {
@@ -2955,7 +3015,23 @@
           btn.innerText = "💾 រក្សាទុកការកែប្រែ (Update)";
           alert("Error: " + err.message);
         });
-      }
+
+      var p = {
+      id: editId,
+      title: document.getElementById('addTitle').value.trim(),
+      category: (document.getElementById('addCategory').value || 'other').trim(),
+      price: parseFloat(document.getElementById('addPrice').value) || 0,
+      discount: parseFloat(document.getElementById('addDiscount').value) || 0, // <--- បន្ថែមជួរនេះ
+      desc: document.getElementById('addDesc').value.trim(),
+      image: document.getElementById('addImage').value.trim(),
+      colors: document.getElementById('addColors').value.trim(),
+      sizes: document.getElementById('addSizes').value.trim() || "Standard",
+      badge: document.getElementById('addBadge').value,
+      isCustom: isCust,
+      customMode: cMode,
+      customFee: cFee
+      };
+    }
     
     // អនុគមន៍ បើក/បិទ ផ្ទាំង Dropdown
     function toggleCategoryOrderPanel() {
