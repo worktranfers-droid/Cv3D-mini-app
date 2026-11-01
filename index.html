@@ -2398,7 +2398,14 @@
 
           var infoDiv = document.createElement('div');
           var titleWrap = document.createElement('div');
-          titleWrap.className = "flex items-center gap-1.5";
+          titleWrap.className = "flex items-center gap-1.5 flex-wrap";
+
+          // បន្ថែមស្លាក ID number ត្រង់នេះ
+          var idBadge = document.createElement('span');
+          idBadge.className = "text-[10px] font-mono font-bold bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded-md border border-slate-200/80 shadow-2xs";
+          idBadge.innerText = p.id;
+          titleWrap.appendChild(idBadge);
+
           var title = document.createElement('h4');
           title.className = "text-xs font-bold text-slate-800 line-clamp-1";
           title.innerText = p.title;
