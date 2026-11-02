@@ -954,6 +954,7 @@
         renderDynamicCategories();
         applyCustomerFilter();
         renderCartItems();
+        renderMyOrdersList();
       } else {
         filterAdminProducts();
         applyOrderFilter();
@@ -2373,6 +2374,8 @@
       fetchOrdersFromServer(currentUserId, 'id');
     }
 
+    var myCustomerOrders = []; // រក្សាទុកបញ្ជីការកុម្ម៉ង់ដើម្បីងាយស្រួលប្តូរភាសា
+
     function fetchOrdersFromServer(queryValue, type) {
       var loader = document.getElementById('myOrdersLoader');
       var container = document.getElementById('myOrdersContainer');
@@ -2386,15 +2389,18 @@
         .then(function(res) {
           loader.className = "hidden";
           if (res && res.success && res.orders && res.orders.length > 0) {
-            renderMyOrdersList(res.orders);
+            myCustomerOrders = res.orders; // ចងចាំទិន្នន័យ
+            renderMyOrdersList();
           } else {
+            myCustomerOrders = [];
             emptyState.className = "text-center py-10 text-slate-400 text-xs";
-            emptyState.innerHTML = '<span class="text-3xl block mb-2">🛍️</span><p class="text-xs text-slate-400">មិនទាន់មានប្រវត្តិការកុម្ម៉ង់ទិញនៅឡើយទេ!</p>';
+            var t = (typeof i18n !== 'undefined' && i18n[currentLang]) ? i18n[currentLang] : {};
+            emptyState.innerHTML = '<span class="text-3xl block mb-2">🛍️</span><p class="text-xs text-slate-400">' + (t.cartEmpty || "មិនទាន់មានប្រវត្តិការកុម្ម៉ង់ទិញនៅឡើយទេ!") + '</p>';
           }
         })
         .catch(function(err) {
           loader.className = "hidden";
-          container.innerHTML = '<p class="text-center text-xs text-rose-500 py-6">កំហុសទាញទិន្នន័យ៖ ' + err.message + '</p>';
+          container.innerHTML = '<p class="text-center text-xs text-rose-500 py-6">Error: ' + err.message + '</p>';
         });
     }
 
@@ -2415,13 +2421,15 @@
       if (loader) loader.className = "hidden";
     }
 
-    function renderMyOrdersList(orders) {
+    function renderMyOrdersList() {
       var container = document.getElementById('myOrdersContainer');
-      var t = (typeof i18n !== 'undefined' && i18n[currentLang]) ? i18n[currentLang] : (i18n ? i18n['km'] : {});
+      if (!container || !myCustomerOrders) return;
       container.innerHTML = '';
 
-      for (var i = 0; i < orders.length; i++) {
-        var ord = orders[i];
+      var t = (typeof i18n !== 'undefined' && i18n[currentLang]) ? i18n[currentLang] : {};
+
+      for (var i = 0; i < myCustomerOrders.length; i++) {
+        var ord = myCustomerOrders[i];
         var card = document.createElement('div');
         card.className = "bg-slate-50 border border-slate-200 rounded-2xl p-3.5 space-y-2 text-xs shadow-sm";
 
@@ -2432,35 +2440,35 @@
                            '<span class="text-[10px] text-slate-400 font-mono">' + (ord.date || '') + '</span>';
         card.appendChild(topRow);
 
-        // ២. បកប្រែស្ថានភាព Status តាមភាសាបច្ចុប្បន្ន (ខ្មែរ / English / 中文)
-        var st = ord.status || "";
-        var statusText = st;
+        // ២. ស្វែងរកស្ថានភាព និងបកប្រែតាមភាសាបច្ចុប្បន្ន (KM / EN / ZH)
+        var rawStatus = String(ord.status || "");
+        var statusLabel = rawStatus;
         var badgeClass = "p-1.5 rounded-xl text-center font-bold text-xs shadow-sm ";
 
-        if (st.indexOf("Pending") !== -1 || st.indexOf("រង់ចាំពិនិត្យ") !== -1 || st.indexOf("待处理") !== -1) {
+        if (rawStatus.indexOf("Pending") !== -1 || rawStatus.indexOf("រង់ចាំ") !== -1 || rawStatus.indexOf("待处理") !== -1) {
           badgeClass += "bg-amber-100 text-amber-800 border border-amber-200";
-          statusText = (currentLang === 'zh') ? "🟡 待处理 (Pending)" :
-                       (currentLang === 'en') ? "🟡 Pending" : "🟡 រង់ចាំពិនិត្យ (Pending)";
-        } else if (st.indexOf("Printing") !== -1 || st.indexOf("កំពុងព្រីន") !== -1 || st.indexOf("打印中") !== -1) {
+          statusLabel = (currentLang === 'zh') ? "🟡 待处理 (Pending)" :
+                        (currentLang === 'en') ? "🟡 Pending" : "🟡 រង់ចាំពិនិត្យ (Pending)";
+        } else if (rawStatus.indexOf("Printing") !== -1 || rawStatus.indexOf("ព្រីន") !== -1 || rawStatus.indexOf("打印") !== -1) {
           badgeClass += "bg-blue-100 text-blue-800 border border-blue-200 animate-pulse";
-          statusText = (currentLang === 'zh') ? "🔵 打印中 (Printing)" :
-                       (currentLang === 'en') ? "🔵 Printing" : "🔵 កំពុងព្រីន (Printing)";
-        } else if (st.indexOf("Shipping") !== -1 || st.indexOf("កំពុងដឹក") !== -1 || st.indexOf("配送中") !== -1) {
+          statusLabel = (currentLang === 'zh') ? "🔵 打印中 (Printing)" :
+                        (currentLang === 'en') ? "🔵 Printing" : "🔵 កំពុងព្រីន (Printing)";
+        } else if (rawStatus.indexOf("Shipping") !== -1 || rawStatus.indexOf("ដឹក") !== -1 || rawStatus.indexOf("配送") !== -1) {
           badgeClass += "bg-purple-100 text-purple-800 border border-purple-200";
-          statusText = (currentLang === 'zh') ? "🟣 配送中 (Shipping)" :
-                       (currentLang === 'en') ? "🟣 Shipping" : "🟣 កំពុងដឹកជញ្ជូន (Shipping)";
-        } else if (st.indexOf("Completed") !== -1 || st.indexOf("បានបញ្ចប់") !== -1 || st.indexOf("已完成") !== -1) {
+          statusLabel = (currentLang === 'zh') ? "🟣 配送中 (Shipping)" :
+                        (currentLang === 'en') ? "🟣 Shipping" : "🟣 កំពុងដឹកជញ្ជូន (Shipping)";
+        } else if (rawStatus.indexOf("Completed") !== -1 || rawStatus.indexOf("បញ្ចប់") !== -1 || rawStatus.indexOf("已完成") !== -1) {
           badgeClass += "bg-emerald-100 text-emerald-800 border border-emerald-200";
-          statusText = (currentLang === 'zh') ? "🟢 已完成 (Completed)" :
-                       (currentLang === 'en') ? "🟢 Completed" : "🟢 បានបញ្ចប់ (Completed)";
+          statusLabel = (currentLang === 'zh') ? "🟢 已完成 (Completed)" :
+                        (currentLang === 'en') ? "🟢 Completed" : "🟢 បានបញ្ចប់ (Completed)";
         } else {
           badgeClass += "bg-rose-100 text-rose-800 border border-rose-200";
-          statusText = (currentLang === 'zh') ? "🔴 已取消 (Canceled)" :
-                       (currentLang === 'en') ? "🔴 Canceled" : "🔴 បានបោះបង់ (Canceled)";
+          statusLabel = (currentLang === 'zh') ? "🔴 已取消 (Canceled)" :
+                        (currentLang === 'en') ? "🔴 Canceled" : "🔴 បានបោះបង់ (Canceled)";
         }
 
         var badgeRow = document.createElement('div');
-        badgeRow.innerHTML = '<div class="' + badgeClass + '">' + statusText + '</div>';
+        badgeRow.innerHTML = '<div class="' + badgeClass + '">' + statusLabel + '</div>';
         card.appendChild(badgeRow);
 
         // ៣. បញ្ជីទំនិញ
@@ -2469,13 +2477,13 @@
         itemRow.innerText = ord.items;
         card.appendChild(itemRow);
 
-        // ៤. បកប្រែពាក្យ តម្លៃសរុប (Total / 总计)
-        var totalLabel = (currentLang === 'zh') ? "总金额：" :
-                         (currentLang === 'en') ? "Total:" : (t.cartTotal || "តម្លៃសរុប៖");
+        // ៤. ពាក្យតម្លៃសរុប (Total / 总计) តាមភាសា
+        var totalText = (currentLang === 'zh') ? "总计：" :
+                        (currentLang === 'en') ? "Total:" : "តម្លៃសរុប៖";
 
         var bottomRow = document.createElement('div');
         bottomRow.className = "flex justify-between items-center pt-1 font-bold";
-        bottomRow.innerHTML = '<span class="text-slate-500 text-[11px]">' + totalLabel + '</span>' +
+        bottomRow.innerHTML = '<span class="text-slate-500 text-[11px]">' + totalText + '</span>' +
                               '<span class="text-blue-600 font-extrabold text-xs">$' + Number(ord.totalPrice).toFixed(2) + '</span>';
         card.appendChild(bottomRow);
 
