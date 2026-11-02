@@ -1350,8 +1350,8 @@
             }
 
             var labelSpan = document.createElement('span');
-            // បកប្រែឈ្មោះពណ៌តាមភាសាបច្ចុប្បន្ន (ទាញពី i18n.js)
-            labelSpan.innerText = (typeof getTranslatedColorName === 'function') ? getTranslatedColorName(col) : col; 
+            // មកប្រើកូដសាមញ្ញនេះវិញ (បង្ហាញឈ្មោះអង់គ្លេសពី Google Sheet ផ្ទាល់)
+            labelSpan.innerText = col; 
 
             btn.appendChild(dotWrapper);
             btn.appendChild(labelSpan);
