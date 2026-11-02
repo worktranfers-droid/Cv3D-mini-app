@@ -725,11 +725,11 @@
         <div class="grid grid-cols-4 gap-2">
           <div>
             <label id="lblAddCategory" class="block text-xs font-semibold text-slate-600 mb-1">ប្រភេទ (Category)</label>
-            <div class="flex gap-1">
-              <select id="addCategorySelect" onchange="handleCategorySelect(this)" class="w-full border border-slate-300 p-2 rounded-xl text-xs outline-none bg-white focus:ring-2 focus:ring-blue-500 font-medium">
-                <!-- ជម្រើស Category នឹងត្រូវបញ្ចូលដោយស្វ័យប្រវត្តិតាម JS -->
-              </select>
-            </div>
+            <!-- Dropdown សុទ្ធ សម្រាប់រើស Category តែមួយមុខគត់ គ្មានប្រអប់វាយអក្សរទើសទៀតឡើយ -->
+            <select id="addCategory" class="w-full border border-slate-300 p-2 rounded-xl text-xs outline-none bg-white focus:ring-2 focus:ring-blue-500 font-semibold text-slate-700 cursor-pointer shadow-2xs">
+              <!-- ជម្រើស Category នឹងទាញចូលដោយស្វ័យប្រវត្តិ -->
+            </select>
+          </div>
             <!-- ប្រអប់លាក់ សម្រាប់វាយឈ្មោះ Category ថ្មីពេលរើសយក '+ ផ្សេងទៀត (វាយថ្មី)' -->
             <input id="addCategoryCustom" type="text" placeholder="វាយឈ្មោះ Category ថ្មី..." class="hidden w-full mt-1.5 border border-blue-300 p-2 rounded-xl text-xs outline-none bg-blue-50/40 focus:ring-2 focus:ring-blue-500">
             <!-- Input លាក់សម្រាប់ផ្ទុកតម្លៃជាក់ស្តែងផ្ញើទៅ Google Sheet -->
@@ -4178,11 +4178,11 @@
       }
     }
 
-    // ១. អនុគមន៍ទាញយកបញ្ជី Category ទាំងអស់ (Unique Categories ពី Products + LocalStorage)
+    // ទាញយក Category ទាំងអស់ (ពី Google Sheet + LocalStorage)
     function getAllAvailableCategories() {
-      var categories = ['Pet', 'Fidget', 'Desk', 'Custom']; // ប្រភេទគោល
+      var categories = ['Pet', 'Fidget', 'Desk', 'Custom']; // ប្រភេទដើម
       
-      // ទាញបន្ថែមពីទំនិញទាំងអស់ដែលបានទាញពី Google Sheet
+      // ទាញពីទំនិញដែលមានក្នុង Google Sheet
       var prods = (typeof adminProducts !== 'undefined' && adminProducts.length > 0) ? adminProducts : customerProducts;
       for (var i = 0; i < prods.length; i++) {
         var cat = (prods[i].category || '').trim();
@@ -4192,7 +4192,7 @@
         }
       }
 
-      // ទាញពី Category Order ដែលបានរក្សាទុក
+      // ទាញពី Category Order ដែលបាន Save
       var savedOrder = JSON.parse(localStorage.getItem('app_category_order') || '[]');
       for (var s = 0; s < savedOrder.length; s++) {
         var sCat = savedOrder[s].trim();
@@ -4204,69 +4204,26 @@
       return categories;
     }
 
-    // ២. បញ្ចូលបញ្ជី Category ទៅក្នុង Dropdown នៃ Modal បន្ថែម/កែប្រែទំនិញ
+    // បញ្ចូល Category ចូល Dropdown (សុទ្ធសាធ គ្មាន option វាយថ្មីឡើយ)
     function updateCategoryDropdownUI(selectedVal) {
-      var sel = document.getElementById('addCategorySelect');
-      var hiddenInput = document.getElementById('addCategory');
-      var customInput = document.getElementById('addCategoryCustom');
+      var sel = document.getElementById('addCategory');
       if (!sel) return;
 
       var cats = getAllAvailableCategories();
       sel.innerHTML = '';
 
-      var isMatched = false;
       for (var i = 0; i < cats.length; i++) {
         var opt = document.createElement('option');
         opt.value = cats[i];
         opt.innerText = cats[i];
         if (selectedVal && cats[i].toLowerCase() === selectedVal.toLowerCase()) {
           opt.selected = true;
-          isMatched = true;
         }
         sel.appendChild(opt);
       }
-
-      // ជម្រើសសម្រាប់វាយប្រភេទថ្មីដោយដៃ
-      var customOpt = document.createElement('option');
-      customOpt.value = "__custom__";
-      customOpt.innerText = "➕ បញ្ចូលប្រភេទថ្មីផ្សេងទៀត...";
-      sel.appendChild(customOpt);
-
-      if (selectedVal && !isMatched) {
-        customOpt.selected = true;
-        if (customInput) {
-          customInput.classList.remove('hidden');
-          customInput.value = selectedVal;
-        }
-        if (hiddenInput) hiddenInput.value = selectedVal;
-      } else {
-        if (customInput) customInput.classList.add('hidden');
-        if (hiddenInput) hiddenInput.value = sel.value;
-      }
     }
 
-    // ពេលរើស Dropdown Category
-    function handleCategorySelect(selectEl) {
-      var customInput = document.getElementById('addCategoryCustom');
-      var hiddenInput = document.getElementById('addCategory');
-      if (selectEl.value === '__custom__') {
-        if (customInput) {
-          customInput.classList.remove('hidden');
-          customInput.focus();
-          customInput.oninput = function() {
-            if (hiddenInput) hiddenInput.value = this.value.trim();
-          };
-        }
-      } else {
-        if (customInput) {
-          customInput.classList.add('hidden');
-          customInput.value = '';
-        }
-        if (hiddenInput) hiddenInput.value = selectEl.value;
-      }
-    }
-
-    // ៣. អនុគមន៍បន្ថែម Category ថ្មីពីផ្ទាំង Admin Category Order
+    // អនុគមន៍បន្ថែម Category ថ្មីពីផ្ទាំង Setting និងរក្សាទុកចូល Google Sheet
     function addNewCategoryFromAdmin() {
       var input = document.getElementById('newCategoryInput');
       if (!input) return;
@@ -4277,6 +4234,7 @@
         return;
       }
 
+      // ១. រក្សាទុកក្នុង Local Storage
       var savedOrder = JSON.parse(localStorage.getItem('app_category_order') || '[]');
       var exists = savedOrder.some(function(c) { return c.toLowerCase() === newCat.toLowerCase(); });
       
@@ -4285,11 +4243,21 @@
         localStorage.setItem('app_category_order', JSON.stringify(savedOrder));
       }
 
+      // ២. បញ្ជូនទៅ Update ក្នុង Google Sheet ភ្លាមៗ
+      callBackendPost({ action: "addCategorySetting", pin: adminPin, category: newCat })
+        .then(function(res) {
+          console.log("Category synced to Sheet:", res);
+        })
+        .catch(function(err) {
+          console.warn("Failed to sync category to Sheet:", err);
+        });
+
+      // ៣. Update UI គ្រប់កន្លែង (ផ្ទាំង Setting, ទំព័រ Home, និង Dropdown)
       input.value = '';
       renderAdminCategoryOrderManager();
       renderDynamicCategories();
-      updateCategoryDropdownUI();
-      alert("✓ បានបន្ថែម Category '" + newCat + "' ចូលក្នុង Dropdown រួចរាល់!");
+      updateCategoryDropdownUI(newCat);
+      alert("✓ បានបន្ថែម Category '" + newCat + "' និងរក្សាទុកចូល Google Sheet ជោគជ័យ!");
     }
     
   </script>
