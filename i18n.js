@@ -126,7 +126,16 @@
         comboColor3None: "(គ្មានពណ៌ទី ៣)",
         comboHintText: "* អាចផ្គុំ ២ ពណ៌ ឬ ៣ ពណ៌",
         btnUndoColor: "⌫ លុប",
-        btnAddComboBtn: "➕ បញ្ចូលឈុតនេះ"
+        btnAddComboBtn: "➕ បញ្ចូលឈុតនេះ",
+        filamentTitle: "🧵 គ្រប់គ្រងស្តុកជ័រ & ពណ៌ (Filament Inventory)",
+        filamentAddTitle: "➕ បន្ថែមពណ៌ជ័រថ្មីចូល Google Sheet៖",
+        filamentColorPlh: "ឈ្មោះពណ៌ (ឧ. Fire Red)...",
+        filamentBrandPlh: "ម៉ាកជ័រ (eSUN)...",
+        filamentPricePlh: "តម្លៃ $...",
+        filamentInStockBtn: "✓ មានស្តុក",
+        filamentOutOfStockBtn: "✕ អស់ស្តុក",
+        filamentSummaryInUse: "មាន {count} ពណ៌កំពុងប្រើ (សរុប {total} ដុំ)",
+        filamentLoading: "កំពុងផ្ទុកទិន្នន័យស្តុកជ័រ..."
       },
       en: {
         flag: "🇬🇧",
@@ -255,7 +264,16 @@
         comboColor3None: "(No 3rd color)",
         comboHintText: "* Combine 2 or 3 colors",
         btnUndoColor: "⌫ Undo",
-        btnAddComboBtn: "➕ Add Combo"
+        btnAddComboBtn: "➕ Add Combo",
+        filamentTitle: "🧵 Filament & Color Inventory",
+        filamentAddTitle: "➕ Add New Filament to Google Sheet:",
+        filamentColorPlh: "Color Name (e.g. Fire Red)...",
+        filamentBrandPlh: "Brand (e.g. eSUN)...",
+        filamentPricePlh: "Price $...",
+        filamentInStockBtn: "✓ In Stock",
+        filamentOutOfStockBtn: "✕ Out of Stock",
+        filamentSummaryInUse: "{count} in use ({total} rolls total)",
+        filamentLoading: "Loading filament inventory..."
       },
       zh: {
         flag: "🇨🇳",
@@ -384,7 +402,16 @@
         comboColor3None: "(无第三色)",
         comboHintText: "* 支持拼 2 色或 3 色",
         btnUndoColor: "⌫ 撤销",
-        btnAddComboBtn: "➕ 添加此组合"
+        btnAddComboBtn: "➕ 添加此组合",
+        filamentTitle: "🧵 耗材库存与颜色管理 (Filament Inventory)",
+        filamentAddTitle: "➕ 添加新耗材至 Google Sheet：",
+        filamentColorPlh: "颜色名称 (例: Fire Red)...",
+        filamentBrandPlh: "品牌 (例: eSUN)...",
+        filamentPricePlh: "价格 $...",
+        filamentInStockBtn: "✓ 有货",
+        filamentOutOfStockBtn: "✕ 缺货",
+        filamentSummaryInUse: "{count} 种使用中 (共 {total} 卷)",
+        filamentLoading: "正在加载耗材库存..."
       }
     };
 
