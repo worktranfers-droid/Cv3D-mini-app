@@ -2892,10 +2892,24 @@
           var card = document.createElement('div');
           card.className = "bg-white p-3.5 rounded-2xl border border-slate-200 shadow-sm space-y-2.5 text-xs";
 
+          // បំប្លែងកាលបរិច្ឆេទវែង ឱ្យចេញជាទម្រង់ខ្លី (ឧ. 11-01-2026 18:17)
+          var shortDate = ord.date || "";
+          try {
+            var d = new Date(ord.date);
+            if (!isNaN(d.getTime())) {
+              var day = ("0" + d.getDate()).slice(-2);
+              var mon = ("0" + (d.getMonth() + 1)).slice(-2);
+              var yr = d.getFullYear();
+              var hr = ("0" + d.getHours()).slice(-2);
+              var min = ("0" + d.getMinutes()).slice(-2);
+              shortDate = day + "-" + mon + "-" + yr + " " + hr + ":" + min;
+            }
+          } catch(e) {}
+
           var top = document.createElement('div');
           top.className = "flex justify-between items-center border-b border-slate-100 pb-2";
           top.innerHTML = '<span class="font-bold font-mono text-blue-600 text-xs select-all">' + ord.orderId + '</span>' +
-                          '<span class="text-[10px] text-slate-400">' + ord.date + '</span>';
+                          '<span class="text-[10px] text-slate-400 font-mono">' + shortDate + '</span>';
           card.appendChild(top);
 
           var custInfo = document.createElement('div');
@@ -2938,12 +2952,28 @@
           }
           card.appendChild(itemsBox);
 
+          // ពិនិត្យមើលថាតើទំនិញក្នុង Order នេះមាន Discount ដែរឬទេ (មានសញ្ញា % ឬ [-XX%])
+          var hasDiscount = (ord.items && (ord.items.indexOf('%') !== -1 || ord.items.indexOf('[-') !== -1));
+
           var bottom = document.createElement('div');
           bottom.className = "flex justify-between items-center pt-1";
-          bottom.innerHTML = '<div class="leading-none">' +
-                               '<span class="text-[10px] text-slate-400 block">តម្លៃសរុប</span>' +
-                               '<span class="font-black text-sm text-blue-600">$' + ord.totalPrice.toFixed(2) + '</span>' +
-                             '</div>';
+          
+          if (hasDiscount) {
+            // បើមានបញ្ចុះតម្លៃ៖ តម្លៃលោតពណ៌ក្រហមដិត និងមានស្លាកបញ្ជាក់
+            bottom.innerHTML = '<div class="leading-none">' +
+                                 '<div class="flex items-center gap-1.5 mb-1">' +
+                                   '<span class="text-[10px] text-slate-400">តម្លៃសរុប</span>' +
+                                   '<span class="text-[9px] bg-rose-50 text-rose-600 border border-rose-200 px-1.5 py-0.2 rounded font-bold">បញ្ចុះតម្លៃ</span>' +
+                                 '</div>' +
+                                 '<span class="font-black text-sm text-rose-600">$' + ord.totalPrice.toFixed(2) + '</span>' +
+                               '</div>';
+          } else {
+            // តម្លៃធម្មតាគ្មាន Discount៖ ពណ៌ខៀវស្តង់ដារ
+            bottom.innerHTML = '<div class="leading-none">' +
+                                 '<span class="text-[10px] text-slate-400 block mb-1">តម្លៃសរុប</span>' +
+                                 '<span class="font-black text-sm text-blue-600">$' + ord.totalPrice.toFixed(2) + '</span>' +
+                               '</div>';
+          }
 
           var select = document.createElement('select');
           select.className = "text-xs border border-slate-300 rounded-xl px-2.5 py-1.5 bg-white font-bold outline-none shadow-xs text-slate-700 cursor-pointer focus:ring-2 focus:ring-blue-500";
