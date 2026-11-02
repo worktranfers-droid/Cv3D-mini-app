@@ -3113,7 +3113,6 @@
         alert("មិនអាចបើកផ្ទាំងបន្ថែមបានទេ៖ " + err.message);
       }
 
-        renderSelectedColorChips();
     }
 
     // --- អនុគមន៍បើកផ្ទាំងកែប្រែទំនិញ (Edit Product) ---
@@ -3181,7 +3180,6 @@
         alert("មិនអាចបើកផ្ទាំងកែប្រែបានទេ៖ " + err.message);
       }
 
-        renderSelectedColorChips();
     }
     
     function closeAddModal() {
@@ -3510,12 +3508,39 @@
         if (icon) icon.classList.remove('animate-spin');
       }, 1500);
     }
-    // បញ្ជីពណ៌ស្តង់ដារសម្រាប់បង្ហាញឱ្យ Admin ចុចរើស
-    var availablePresetColors = [
-      "Black", "White", "Grey", "Silver", "Red", "Blue", 
-      "Silk Gold", "Silk Rainbow", "Fire Red",
-      "Black + Gold", "White + Grey", "Grey + White", "Black + Red"
-    ]
+    // អនុគមន៍ពេលជ្រើសរើសពណ៌ពី Dropdown
+    function handleColorDropdown(selectEl) {
+      var chosenColor = selectEl.value;
+      if (!chosenColor) return;
+
+      var input = document.getElementById('addColors');
+      if (input) {
+        var current = input.value.trim();
+        var arr = current ? current.split(',').map(function(s) { return s.trim(); }).filter(Boolean) : [];
+
+        // បញ្ចូលពណ៌ថ្មី ប្រសិនបើមិនទាន់មាន (ការពារកុំឱ្យស្ទួន)
+        if (arr.indexOf(chosenColor) === -1) {
+          arr.push(chosenColor);
+          input.value = arr.join(', ');
+        }
+      }
+
+      // កំណត់ Dropdown ឱ្យវិលមកបង្ហាញជម្រើសដើមវិញ
+      selectEl.value = "";
+    }
+
+    // អនុគមន៍ចុចលុបពណ៌ចុងក្រោយចេញវិញ (Undo)
+    function removeLastColor() {
+      var input = document.getElementById('addColors');
+      if (!input) return;
+
+      var current = input.value.trim();
+      var arr = current ? current.split(',').map(function(s) { return s.trim(); }).filter(Boolean) : [];
+      if (arr.length > 0) {
+        arr.pop();
+        input.value = arr.join(', ');
+      }
+    }
     
     
   </script>
