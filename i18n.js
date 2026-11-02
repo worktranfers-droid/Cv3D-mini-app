@@ -118,6 +118,15 @@
         lblBannerUpload: "📁 រើសរូបភាពផ្ទាល់ (Upload ពីម៉ាស៊ីន)៖",    
         lblBannerLinks: "🔗 Link រូបភាព Banner (បំបែកដោយក្បៀស ,)៖",
         lblBannerHint: "* ទំហំរូបដែលស្អាតបំផុតគឺសមាមាត្រ 16:7 ឬ 2:1 (ឧ. 800x350px)",
+        colorModeSingle: "១ ពណ៌",
+        colorModeCombo: "២-៣ ពណ៌",
+        optSelectSingleColor: "➕ ចុចរើសពណ៌ទោលបន្ថែម...",
+        comboColor1: "ពណ៌ទី ១...",
+        comboColor2: "ពណ៌ទី ២...",
+        comboColor3None: "(គ្មានពណ៌ទី ៣)",
+        comboHintText: "* អាចផ្គុំ ២ ពណ៌ ឬ ៣ ពណ៌",
+        btnUndoColor: "⌫ លុប",
+        btnAddComboBtn: "➕ បញ្ចូលឈុតនេះ"
       },
       en: {
         flag: "🇬🇧",
@@ -238,6 +247,15 @@
         lblBannerUpload: "📁 Upload Image from Device:",
         lblBannerLinks: "🔗 Banner Image URLs (comma separated):",
         lblBannerHint: "* Recommended aspect ratio: 16:7 or 2:1 (e.g., 800x350px)",
+        colorModeSingle: "Single",
+        colorModeCombo: "2-3 Colors",
+        optSelectSingleColor: "➕ Select single color...",
+        comboColor1: "Color 1...",
+        comboColor2: "Color 2...",
+        comboColor3None: "(No 3rd color)",
+        comboHintText: "* Combine 2 or 3 colors",
+        btnUndoColor: "⌫ Undo",
+        btnAddComboBtn: "➕ Add Combo"
       },
       zh: {
         flag: "🇨🇳",
@@ -358,6 +376,15 @@
         lblBannerUpload: "📁 从设备上传图片：",
         lblBannerLinks: "🔗 横幅图片链接（用逗号隔开）：",
         lblBannerHint: "* 建议图片比例为 16:7 或 2:1（如 800x350px）",
+        colorModeSingle: "单色",
+        colorModeCombo: "2-3 拼色",
+        optSelectSingleColor: "➕ 选择单色...",
+        comboColor1: "颜色 1...",
+        comboColor2: "颜色 2...",
+        comboColor3None: "(无第三色)",
+        comboHintText: "* 支持拼 2 色或 3 色",
+        btnUndoColor: "⌫ 撤销",
+        btnAddComboBtn: "➕ 添加此组合"
       }
     };
 
