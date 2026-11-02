@@ -3700,16 +3700,15 @@
     }
 
     // អនុគមន៍ Reset Category Order ឱ្យដើរតាម Google Sheet ឡើងវិញ
+    // ១. អនុគមន៍ Reset Category Order
     function resetCategoryOrder() {
       var confirmMsg = (currentLang === 'zh') ? "确定要重置分类并清除多余的名称吗？" :
                        (currentLang === 'en') ? "Reset category order and remove extra test categories?" :
                        "តើអ្នកពិតជាចង់ Reset និងលុប Category ដែលលើសចោលទាំងអស់មែនទេ?";
 
       if (confirm(confirmMsg)) {
-        // ១. លុបទិន្នន័យចាស់ៗដែលជាប់ក្នុង Local Storage
         localStorage.removeItem('app_category_order');
 
-        // ២. ធ្វើបច្ចុប្បន្នភាព UI គ្រប់កន្លែងឡើងវិញភ្លាមៗ
         if (typeof renderAdminCategoryOrderManager === 'function') {
           renderAdminCategoryOrderManager();
         }
@@ -3720,43 +3719,11 @@
           updateCategoryDropdownUI();
         }
 
-        alert("✓ បាន Reset រួចរាល់! ប្រភេទទាំងអស់ត្រូវបានតម្រឹមតាម Google Sheet វិញ។");
+        alert("✓ បាន Reset រួចរាល់!");
       }
     }
 
-    // ២. អនុគមន៍រុញប្តូរទីតាំង Category
-    function moveCategoryPosition(currentIndex, delta) {
-      var categories = [];
-      for (var i = 0; i < adminProducts.length; i++) {
-        var cat = (adminProducts[i].category || '').trim();
-        if (cat && categories.indexOf(cat) === -1) {
-          categories.push(cat);
-        }
-      }
-
-      var savedOrder = JSON.parse(localStorage.getItem('app_category_order') || '[]');
-      if (savedOrder && savedOrder.length > 0) {
-        categories.sort(function(a, b) {
-          var idxA = savedOrder.indexOf(a);
-          var idxB = savedOrder.indexOf(b);
-          if (idxA === -1) return 1;
-          if (idxB === -1) return -1;
-          return idxA - idxB;
-        });
-      }
-
-      var targetIndex = currentIndex + delta;
-      if (targetIndex < 0 || targetIndex >= categories.length) return;
-
-      var temp = categories[currentIndex];
-      categories[currentIndex] = categories[targetIndex];
-      categories[targetIndex] = temp;
-
-      localStorage.setItem('app_category_order', JSON.stringify(categories));
-      renderAdminCategoryOrderManager();
-      renderDynamicCategories();
-    } // <--- សញ្ញាបិទ } របស់ moveCategoryPosition ត្រូវនៅត្រង់នេះដាច់ដោយឡែក!
-
+  
     // អនុគមន៍ បើក ឬបិទផ្ទាំងកំណត់ថ្លៃដឹក
     function toggleShippingPanel() {
       var body = document.getElementById('shippingPanelBody');
