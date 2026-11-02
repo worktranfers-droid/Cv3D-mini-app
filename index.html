@@ -3761,6 +3761,28 @@
    selectEl.value = "";
  }
 
+  // អនុគមន៍លុបពណ៌ចុងក្រោយចេញ (ដំណើរការ ១០០%)
+    function removeLastColor() {
+      var input = document.getElementById('addColors');
+      if (!input) return;
+
+      var current = input.value.trim();
+      if (!current) return;
+
+      // បំបែកតាមសញ្ញាក្បៀស (,) រួចដកចន្លោះទទេ
+      var arr = current.split(',').map(function(s) { 
+        return s.trim(); 
+      }).filter(function(s) { 
+        return s.length > 0; 
+      });
+
+      // ដកពណ៌ចុងក្រោយចេញ
+      if (arr.length > 0) {
+        arr.pop();
+        input.value = arr.join(', ');
+      }
+    }
+
  // បញ្ចូលពណ៌ផ្គុំ (Mode ២ ឬ ៣ ពណ៌)
  function applyComboColor() {
    var c1 = document.getElementById('comboC1') ? document.getElementById('comboC1').value : '';
