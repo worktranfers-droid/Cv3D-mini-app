@@ -247,6 +247,7 @@
           <!-- បញ្ជី Category សម្រាប់រុញឡើងចុះ -->
           <div id="adminCategoryOrderList" class="space-y-1.5"></div>
         </div>
+      </div>
 
       <!-- ២. ប្លុកកំណត់តម្លៃសេវាដឹកជញ្ជូន (Icon 💾 គ្មាន Background លើជួរ Header) -->
       <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-xs">
@@ -417,7 +418,7 @@
             <p id="lblBannerHint" class="text-[10px] text-indigo-600">* ទំហំរូបដែលស្អាតបំផុតគឺសមាមាត្រ 16:7 ឬ 2:1 (ឧ. 800x350px)</p>
           </div>
         </div>
-
+      </div>
     </div>
   </section>
   
@@ -3198,42 +3199,6 @@
         });
     }
     
-    // អនុគមន៍រក្សាទុក Slide Banner តែមួយមុខគត់ (ចុច Icon 💾 ក្នុង Banner)
-    function saveBannerSettings(btn) {
-      var isBannerOn = document.getElementById('setBannerEnabled') ? document.getElementById('setBannerEnabled').checked : false;
-      var bannerImgs = document.getElementById('setBannerImages') ? document.getElementById('setBannerImages').value.trim() : '';
-
-      appSettings.banner_enabled = isBannerOn;
-      appSettings.banner_images = bannerImgs;
-
-      if (btn) {
-        btn.disabled = true;
-        btn.innerText = "⏳";
-      }
-
-      callBackendPost({ action: "updateSettings", pin: adminPin, settings: appSettings })
-        .then(function(res) {
-          if (btn) {
-            btn.disabled = false;
-            btn.innerText = "✓";
-            setTimeout(function() { btn.innerText = "💾"; }, 1500);
-          }
-          if (res && res.success) {
-            renderPromoBanner();
-            alert("✓ ការកំណត់ Slide Banner ត្រូវបានរក្សាទុកជោគជ័យ!");
-          } else {
-            alert("❌ មិនអាចរក្សាទុកបាន៖ " + (res.message || ""));
-          }
-        })
-        .catch(function(err) {
-          if (btn) {
-            btn.disabled = false;
-            btn.innerText = "💾";
-          }
-          alert("Error: " + err.message);
-        });
-    }
-    
     // អនុគមន៍ជំនួយសម្រាប់បង្រួមរូបភាព (Image Compression)
     function compressImageFile(file, maxWidth, maxHeight, quality, callback) {
       var reader = new FileReader();
@@ -4219,17 +4184,30 @@
       var cats = getAllAvailableCategories();
       sel.innerHTML = '';
 
+      var targetVal = String(selectedVal || '').toLowerCase().trim();
+      var foundMatch = false;
+
       for (var i = 0; i < cats.length; i++) {
         var opt = document.createElement('option');
         opt.value = cats[i];
         opt.innerText = cats[i];
-        if (selectedVal && cats[i].toLowerCase() === selectedVal.toLowerCase()) {
+        if (targetVal && cats[i].toLowerCase().trim() === targetVal) {
           opt.selected = true;
+          foundMatch = true;
         }
         sel.appendChild(opt);
       }
-    }
 
+      // ប្រសិនបើតម្លៃដើមរបស់ទំនិញមិនទាន់មានក្នុង List បន្ថែមវាជា Option ថ្មីភ្លាម
+      if (selectedVal && !foundMatch) {
+        var extraOpt = document.createElement('option');
+        extraOpt.value = selectedVal;
+        extraOpt.innerText = selectedVal;
+        extraOpt.selected = true;
+        sel.appendChild(extraOpt);
+      }
+    }
+    
     // អនុគមន៍បន្ថែម Category ថ្មីពី App ទៅ Google Sheet Catalog Products ផ្ទាល់
     function addNewCategoryFromAdmin() {
       var input = document.getElementById('newCategoryInput');
@@ -4241,7 +4219,7 @@
         return;
       }
 
-      var btn = event ? event.target : null;
+      var btn = (typeof window !== 'undefined' && window.event) ? (window.event.target || window.event.srcElement) : null;
       if (btn) {
         btn.disabled = true;
         btn.innerText = "⏳...";
