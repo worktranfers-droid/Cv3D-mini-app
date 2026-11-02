@@ -767,11 +767,11 @@
           </div>
         </div>
 
-        <!-- ផ្នែកជម្រើសពណ៌បែបឆ្លាតវៃ (អាចរើស ១ ពណ៌ ឬផ្គុំ ២-៣ ពណ៌) -->
+        <!-- ផ្នែកជម្រើសពណ៌បែបឆ្លាតវៃ -->
         <div class="space-y-2">
           <div class="flex justify-between items-center">
             <label id="lblAddColors" class="block text-xs font-semibold text-slate-700">ជម្រើសពណ៌ (Colors)</label>
-            <!-- ផ្ទាំងប្តូរ Mode: ពណ៌ទោល ឬពណ៌ផ្គុំ -->
+            <!-- ផ្ទាំងប្តូរ Mode -->
             <div class="flex bg-slate-100 p-0.5 rounded-lg border border-slate-200 text-[10px] font-bold">
               <button type="button" onclick="setColorMode('single')" id="btnModeSingle" class="px-2 py-0.5 rounded-md bg-white text-blue-600 shadow-2xs">១ ពណ៌</button>
               <button type="button" onclick="setColorMode('combo')" id="btnModeCombo" class="px-2 py-0.5 rounded-md text-slate-500 hover:text-slate-800">២-៣ ពណ៌</button>
@@ -781,9 +781,9 @@
           <!-- Mode ១៖ រើសម្ដងមួយពណ៌ធម្មតា -->
           <div id="singleColorBox" class="flex gap-1.5 items-center">
             <select id="singleColorSelect" onchange="addSingleColor(this)" class="flex-1 border border-slate-300 p-2 rounded-xl text-xs outline-none bg-white focus:ring-2 focus:ring-blue-500 font-semibold text-slate-700 cursor-pointer shadow-2xs">
-              <option value="">➕ ចុចរើសពណ៌ទោលបន្ថែម...</option>
+              <option value="" id="optSinglePlaceholder">➕ ចុចរើសពណ៌ទោលបន្ថែម...</option>
             </select>
-            <button type="button" onclick="removeLastColor()" title="លុបពណ៌ចុងក្រោយ" class="px-3 py-2 bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 rounded-xl text-xs font-bold active:scale-95 transition-all flex-shrink-0">
+            <button type="button" onclick="removeLastColor()" id="btnColorUndo1" title="លុបពណ៌ចុងក្រោយ" class="px-3 py-2 bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 rounded-xl text-xs font-bold active:scale-95 transition-all flex-shrink-0">
               ⌫ លុប
             </button>
           </div>
@@ -795,15 +795,13 @@
               <span class="text-xs font-bold text-slate-400">+</span>
               <select id="comboC2" class="flex-1 min-w-[100px] border border-slate-300 p-1.5 rounded-lg text-xs bg-white font-medium"></select>
               <span class="text-xs font-bold text-slate-400">+</span>
-              <select id="comboC3" class="flex-1 min-w-[100px] border border-slate-300 p-1.5 rounded-lg text-xs bg-white font-medium">
-                <option value="">(គ្មានពណ៌ទី ៣)</option>
-              </select>
+              <select id="comboC3" class="flex-1 min-w-[100px] border border-slate-300 p-1.5 rounded-lg text-xs bg-white font-medium"></select>
             </div>
             <div class="flex justify-between items-center pt-1">
-              <span class="text-[10px] text-slate-400">* អាចផ្គុំ ២ ពណ៌ ឬ ៣ ពណ៌</span>
+              <span id="lblComboHint" class="text-[10px] text-slate-400">* អាចផ្គុំ ២ ពណ៌ ឬ ៣ ពណ៌</span>
               <div class="flex gap-1.5">
-                <button type="button" onclick="removeLastColor()" class="px-2.5 py-1 bg-rose-50 text-rose-600 border border-rose-200 rounded-lg text-xs font-bold active:scale-95">⌫ លុប</button>
-                <button type="button" onclick="applyComboColor()" class="px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold shadow-2xs active:scale-95">➕ បញ្ចូលឈុតនេះ</button>
+                <button type="button" onclick="removeLastColor()" id="btnColorUndo2" class="px-2.5 py-1 bg-rose-50 text-rose-600 border border-rose-200 rounded-lg text-xs font-bold active:scale-95">⌫ លុប</button>
+                <button type="button" onclick="applyComboColor()" id="btnApplyCombo" class="px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold shadow-2xs active:scale-95">➕ បញ្ចូលឈុតនេះ</button>
               </div>
             </div>
           </div>
@@ -1050,6 +1048,15 @@
       if (el = document.getElementById('lblBannerUpload')) el.innerText = t.lblBannerUpload || "📁 រើសរូបភាពផ្ទាល់ (Upload ពីម៉ាស៊ីន)៖";
       if (el = document.getElementById('lblBannerLinks')) el.innerText = t.lblBannerLinks || "🔗 Link រូបភាព Banner (បំបែកដោយក្បៀស ,)៖";
       if (el = document.getElementById('lblBannerHint')) el.innerText = t.lblBannerHint || "* ទំហំរូបដែលស្អាតបំផុតគឺសមាមាត្រ 16:7 ឬ 2:1 (ឧ. 800x350px)";
+
+      // បកប្រែផ្ទាំង Color Builder
+      if (el = document.getElementById('btnModeSingle')) el.innerText = t.colorModeSingle || "១ ពណ៌";
+      if (el = document.getElementById('btnModeCombo')) el.innerText = t.colorModeCombo || "២-៣ ពណ៌";
+      if (el = document.getElementById('lblComboHint')) el.innerText = t.comboHintText || "* អាចផ្គុំ ២ ពណ៌ ឬ ៣ ពណ៌";
+      if (el = document.getElementById('btnColorUndo1')) el.innerText = t.btnUndoColor || "⌫ លុប";
+      if (el = document.getElementById('btnColorUndo2')) el.innerText = t.btnUndoColor || "⌫ លុប";
+      if (el = document.getElementById('btnApplyCombo')) el.innerText = t.btnAddComboBtn || "➕ បញ្ចូលឈុតនេះ";
+      if (typeof updateColorDropdownOptions === 'function') updateColorDropdownOptions();
     }
 
     function openSellerChat() {
@@ -4012,18 +4019,16 @@
       });
     }
 
-    // អនុគមន៍បញ្ចូលបញ្ជីពណ៌ពី Filament Inventory ទៅក្នុង Dropdown ដោយបង្ហាញឈ្មោះពណ៌សុទ្ធ
     function updateColorDropdownOptions() {
       var sSingle = document.getElementById('singleColorSelect');
       var sC1 = document.getElementById('comboC1');
       var sC2 = document.getElementById('comboC2');
       var sC3 = document.getElementById('comboC3');
-
       if (!sSingle) return;
 
-      var inStockColors = [];
+      var t = (typeof i18n !== 'undefined' && i18n[currentLang]) ? i18n[currentLang] : (i18n ? i18n['km'] : {});
 
-      // ១. ទាញពណ៌ដែលមានស្តុកពី Filament Inventory
+      var inStockColors = [];
       if (typeof allFilamentsData !== 'undefined' && allFilamentsData && allFilamentsData.length > 0) {
         for (var i = 0; i < allFilamentsData.length; i++) {
           var f = allFilamentsData[i];
@@ -4033,25 +4038,24 @@
         }
       }
 
-      // ២. បើទិន្នន័យ Sheet មិនទាន់មកដល់ ប្រើពណ៌ស្តង់ដារបណ្តោះអាសន្ន
       if (inStockColors.length === 0) {
         inStockColors = ["Black", "White", "Grey", "Silver", "Red", "Blue", "Silk Gold", "Silk Rainbow", "Purple"];
       }
 
-      // ៣. បញ្ចូលទៅក្នុង Dropdown ពណ៌ទោល (បង្ហាញឈ្មោះពណ៌សុទ្ធ គ្មានរង្វង់មូល)
-      sSingle.innerHTML = '<option value="">➕ ចុចរើសពណ៌ទោលបន្ថែម...</option>';
+      // ១. Dropdown ពណ៌ទោល (ឈ្មោះពណ៌ជាអង់គ្លេស)
+      sSingle.innerHTML = '<option value="">' + (t.optSelectSingleColor || "➕ ចុចរើសពណ៌ទោលបន្ថែម...") + '</option>';
       for (var a = 0; a < inStockColors.length; a++) {
         var opt = document.createElement('option');
         opt.value = inStockColors[a];
-        opt.innerText = inStockColors[a];
+        opt.innerText = inStockColors[a]; // ឈ្មោះពណ៌អង់គ្លេសសុទ្ធ
         sSingle.appendChild(opt);
       }
 
-      // ៤. បញ្ចូលទៅក្នុង Dropdowns ពណ៌ផ្គុំ (ពណ៌ទី ១, ពណ៌ទី ២, ពណ៌ទី ៣)
+      // ២. Dropdowns ពណ៌ផ្គុំ (ឈ្មោះពណ៌ជាអង់គ្លេស)
       if (sC1 && sC2 && sC3) {
-        sC1.innerHTML = '<option value="">ពណ៌ទី ១...</option>';
-        sC2.innerHTML = '<option value="">ពណ៌ទី ២...</option>';
-        sC3.innerHTML = '<option value="">(គ្មានពណ៌ទី ៣)</option>';
+        sC1.innerHTML = '<option value="">' + (t.comboColor1 || "ពណ៌ទី ១...") + '</option>';
+        sC2.innerHTML = '<option value="">' + (t.comboColor2 || "ពណ៌ទី ២...") + '</option>';
+        sC3.innerHTML = '<option value="">' + (t.comboColor3None || "(គ្មានពណ៌ទី ៣)") + '</option>';
 
         for (var b = 0; b < inStockColors.length; b++) {
           var col = inStockColors[b];
