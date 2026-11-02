@@ -2884,6 +2884,7 @@
               banner_images: String(res.banner_images || '').trim()
             };
             updateDeliveryDropdownUI();
+            updateShippingSummaryText(); // <--- បន្ថែមត្រង់នេះ
             renderPromoBanner();
             if (typeof renderCartItems === "function") renderCartItems();
           }
@@ -2891,6 +2892,7 @@
         .catch(function(err) {
           console.warn("ប្រើតម្លៃកំណត់លំនាំដើម:", err);
           updateDeliveryDropdownUI();
+          updateShippingSummaryText(); // <--- បន្ថែមត្រង់នេះ
           renderPromoBanner();
         });
     }
@@ -3531,20 +3533,27 @@
       }
     }
 
-    // អនុគមន៍ធ្វើបច្ចុប្បន្នភាពអក្សរសង្ខេបលើ Header តាមភាសាបច្ចុប្បន្ន
+    // អនុគមន៍ធ្វើបច្ចុប្បន្នភាពអក្សរសង្ខេបលើ Header ថ្លៃដឹកជញ្ជូន
     function updateShippingSummaryText() {
       var summaryEl = document.getElementById('lblAdminShippingSummary');
       if (!summaryEl) return;
-      var pp = document.getElementById('setShipPP') ? document.getElementById('setShipPP').value : "1.5";
-      var prov = document.getElementById('setShipProv') ? document.getElementById('setShipProv').value : "2";
-      var free = document.getElementById('setFreeShipMin') ? document.getElementById('setFreeShipMin').value : "20";
 
+      // ១. ប្រសិនបើប្រអប់ Input មានវាយលេខ យកតាម Input បើនៅទទេ យកតាម appSettings ដែលមានស្រាប់
+      var inputPP = document.getElementById('setShipPP') ? document.getElementById('setShipPP').value : "";
+      var inputProv = document.getElementById('setShipProv') ? document.getElementById('setShipProv').value : "";
+      var inputFree = document.getElementById('setFreeShipMin') ? document.getElementById('setFreeShipMin').value : "";
+
+      var pp = (inputPP !== "" && !isNaN(inputPP)) ? parseFloat(inputPP) : (appSettings.ship_phnom_penh || 1.50);
+      var prov = (inputProv !== "" && !isNaN(inputProv)) ? parseFloat(inputProv) : (appSettings.ship_province || 2.00);
+      var free = (inputFree !== "" && !isNaN(inputFree)) ? parseFloat(inputFree) : (appSettings.free_shipping_min || 20.00);
+
+      // ២. បង្ហាញតាមភាសាបច្ចុប្បន្នដោយមិនចេញ $0.00 ទៀតឡើយ
       if (currentLang === 'zh') {
-        summaryEl.innerText = "金边: $" + Number(pp).toFixed(2) + " | 外省: $" + Number(prov).toFixed(2) + " | 满 $" + Number(free).toFixed(2) + " 包邮";
+        summaryEl.innerText = "金边: $" + pp.toFixed(2) + " | 外省: $" + prov.toFixed(2) + " | 满 $" + free.toFixed(2) + " 包邮";
       } else if (currentLang === 'en') {
-        summaryEl.innerText = "PP: $" + Number(pp).toFixed(2) + " | Prov: $" + Number(prov).toFixed(2) + " | Free over: $" + Number(free).toFixed(2);
+        summaryEl.innerText = "PP: $" + pp.toFixed(2) + " | Prov: $" + prov.toFixed(2) + " | Free over: $" + free.toFixed(2);
       } else {
-        summaryEl.innerText = "ភ្នំពេញ: $" + Number(pp).toFixed(2) + " | ខេត្ត: $" + Number(prov).toFixed(2) + " | ឥតគិតថ្លៃ: $" + Number(free).toFixed(2);
+        summaryEl.innerText = "ភ្នំពេញ: $" + pp.toFixed(2) + " | ខេត្ត: $" + prov.toFixed(2) + " | ឥតគិតថ្លៃ: $" + free.toFixed(2);
       }
     }
 
