@@ -238,10 +238,11 @@
         </div>
       </div>
 
-      <!-- ២. ប្លុកកំណត់តម្លៃសេវាដឹកជញ្ជូន (Accordion + Icon Button 💾) -->
+      <!-- ២. ប្លុកកំណត់តម្លៃសេវាដឹកជញ្ជូន (Icon 💾 គ្មាន Background លើជួរ Header) -->
       <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-xs">
+        <!-- ក្បាល Header ចុចបើក/បិទ Accordion -->
         <div onclick="toggleShippingPanel()" class="p-3.5 flex justify-between items-center cursor-pointer hover:bg-slate-50 transition-colors select-none">
-          <div>
+          <div class="flex-1 pr-2">
             <h4 id="lblAdminShippingTitle" class="text-xs font-bold text-slate-800 flex items-center gap-1.5">
               🚚 Delivery Fee Settings
             </h4>
@@ -249,10 +250,23 @@
               ភ្នំពេញ: $1.50 | ខេត្ត: $2.00 | ឥតគិតថ្លៃ: $20.00
             </p>
           </div>
-          <span id="shippingToggleIcon" class="text-xs text-slate-400 font-bold transition-transform duration-200">▼</span>
+
+          <!-- ផ្នែកខាងស្ដាំ៖ Icon 💾 គ្មាន Background + សញ្ញាព្រួញ ▼ -->
+          <div class="flex items-center gap-2">
+            <button 
+              type="button" 
+              onclick="event.stopPropagation(); saveShippingSettings(this);" 
+              title="រក្សាទុកតម្លៃដឹកជញ្ជូន" 
+              class="text-slate-600 hover:text-blue-600 active:scale-75 text-xl p-1 transition-all flex items-center justify-center rounded-lg hover:bg-slate-100"
+            >
+              💾
+            </button>
+            <span id="shippingToggleIcon" class="text-xs text-slate-400 font-bold transition-transform duration-200">▼</span>
+          </div>
         </div>
 
-        <div id="shippingPanelBody" class="hidden px-3.5 pb-3.5 pt-2 border-t border-slate-100 space-y-3">
+        <!-- ផ្ទៃខាងក្នុង Accordion (សល់តែប្រអប់វាយលេខ ស្រឡះស្អាត) -->
+        <div id="shippingPanelBody" class="hidden px-3.5 pb-3.5 pt-1 border-t border-slate-100 space-y-3">
           <div>
             <label id="lblSettingShipPP" class="block text-[11px] font-semibold text-slate-600 mb-1">ថ្លៃដឹកជញ្ជូន ភ្នំពេញ ($)</label>
             <input id="setShipPP" type="number" step="0.25" oninput="updateShippingSummaryText()" placeholder="1.50" class="w-full bg-slate-50/50 border border-slate-200 p-2 rounded-xl text-xs outline-none focus:ring-2 focus:ring-blue-500 font-medium">
@@ -264,18 +278,6 @@
           <div class="bg-emerald-50/70 p-3 rounded-xl border border-emerald-200">
             <label id="lblSettingShipFree" class="block text-[11px] font-bold text-emerald-800 mb-1">🎉 ចំណាយចាប់ពីប៉ុន្មានឡើងទៅ ដឹកឥតគិតថ្លៃ ($)</label>
             <input id="setFreeShipMin" type="number" step="1" oninput="updateShippingSummaryText()" placeholder="20.00" class="w-full bg-white border border-emerald-300 p-2 rounded-xl text-xs outline-none focus:ring-2 focus:ring-emerald-500 font-medium">
-          </div>
-
-          <!-- ជួរប៊ូតុង Icon រក្សាទុកថ្លៃដឹក 💾 -->
-          <div class="flex justify-end pt-1">
-            <button 
-              type="button" 
-              onclick="saveShippingSettings(this)" 
-              title="រក្សាទុកថ្លៃដឹកជញ្ជូន" 
-              class="w-10 h-10 bg-blue-600 hover:bg-blue-700 text-white rounded-xl shadow-sm flex items-center justify-center text-lg active:scale-90 transition-all"
-            >
-              💾
-            </button>
           </div>
         </div>
       </div>
@@ -3018,16 +3020,15 @@
       }
     }
 
-    // អនុគមន៍រក្សាទុកថ្លៃដឹកជញ្ជូនតែមួយមុខគត់ (ចុច Icon 💾 ក្នុង Delivery Fee)
+    // អនុគមន៍រក្សាទុកថ្លៃដឹកជញ្ជូនតាម Icon 💾 លើ Header
     function saveShippingSettings(btn) {
-      var ppVal = parseFloat(document.getElementById('setShipPP').value);
-      var provVal = parseFloat(document.getElementById('setShipProv').value);
-      var freeMinVal = parseFloat(document.getElementById('setFreeShipMin').value);
+      var inputPP = document.getElementById('setShipPP') ? document.getElementById('setShipPP').value : "";
+      var inputProv = document.getElementById('setShipProv') ? document.getElementById('setShipProv').value : "";
+      var inputFree = document.getElementById('setFreeShipMin') ? document.getElementById('setFreeShipMin').value : "";
 
-      if (isNaN(ppVal) || isNaN(provVal) || isNaN(freeMinVal)) {
-        alert("សូមបញ្ចូលតួលេខតម្លៃឱ្យបានត្រឹមត្រូវ!");
-        return;
-      }
+      var ppVal = (inputPP !== "" && !isNaN(inputPP)) ? parseFloat(inputPP) : appSettings.ship_phnom_penh;
+      var provVal = (inputProv !== "" && !isNaN(inputProv)) ? parseFloat(inputProv) : appSettings.ship_province;
+      var freeMinVal = (inputFree !== "" && !isNaN(inputFree)) ? parseFloat(inputFree) : appSettings.free_shipping_min;
 
       appSettings.ship_phnom_penh = ppVal;
       appSettings.ship_province = provVal;
@@ -3035,15 +3036,14 @@
 
       if (btn) {
         btn.disabled = true;
-        btn.innerText = "⏳";
+        btn.style.opacity = "0.4";
       }
 
       callBackendPost({ action: "updateSettings", pin: adminPin, settings: appSettings })
         .then(function(res) {
           if (btn) {
             btn.disabled = false;
-            btn.innerText = "✓";
-            setTimeout(function() { btn.innerText = "💾"; }, 1500);
+            btn.style.opacity = "1";
           }
           if (res && res.success) {
             updateDeliveryDropdownUI();
@@ -3056,12 +3056,12 @@
         .catch(function(err) {
           if (btn) {
             btn.disabled = false;
-            btn.innerText = "💾";
+            btn.style.opacity = "1";
           }
           alert("Error: " + err.message);
         });
     }
-
+    
     // អនុគមន៍រក្សាទុក Slide Banner តែមួយមុខគត់ (ចុច Icon 💾 ក្នុង Banner)
     function saveBannerSettings(btn) {
       var isBannerOn = document.getElementById('setBannerEnabled') ? document.getElementById('setBannerEnabled').checked : false;
