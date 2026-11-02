@@ -660,14 +660,26 @@
             <span class="text-[10px] text-blue-600 font-medium">ចុចលើពណ៌ដើម្បីបន្ថែម</span>
           </div>
 
-          <!-- ប្រអប់វាយអក្សរ (បិទ autocomplete កុំឱ្យចេញប្រអប់ចាស់ៗដែលទើសភ្នែក) -->
-          <input 
-            id="addColors" 
-            type="text" 
-            autocomplete="off" 
-            placeholder="Silk Gold, Rainbow, Black" 
-            class="w-full border border-slate-300 p-2 rounded-xl text-xs outline-none focus:ring-2 focus:ring-blue-500 bg-white"
-          >
+          <!-- ផ្នែកគ្រប់គ្រងពណ៌បែប Tag Chips ទំនើប -->
+        <div class="space-y-1.5">
+          <label class="block text-xs font-semibold text-slate-700">ជម្រើសពណ៌ទំនិញ (Selected Colors):</label>
+          
+          <!-- ប្រអប់ Tag Chips បង្ហាញពណ៌ដែលបានរើសរួច -->
+          <div id="colorChipsWrapper" class="min-h-[42px] p-1.5 bg-slate-50 border border-slate-300 rounded-xl flex flex-wrap gap-1.5 items-center">
+            <span id="noColorNotice" class="text-xs text-slate-400 pl-2">មិនទាន់បានរើសពណ៌នៅឡើយទេ...</span>
+          </div>
+
+          <!-- Input លាក់ទុកសម្រាប់ផ្ទុកអត្ថបទផ្ញើទៅ Google Sheet (ទុក ID ដដែល) -->
+          <input id="addColors" type="hidden" value="">
+
+          <!-- បញ្ជីពណ៌រហ័សសម្រាប់ចុចជ្រើសរើស (មានរង្វង់ពណ៌ពិតៗ) -->
+          <div class="pt-1">
+            <p class="text-[10px] text-slate-400 mb-1.5">ចុចពណ៌ខាងក្រោមដើម្បីបន្ថែម ឬដកចេញ៖</p>
+            <div id="quickPaletteContainer" class="flex flex-wrap gap-1.5">
+              <!-- នឹងត្រូវ Render ដោយស្វ័យប្រវត្តិតាម JS -->
+            </div>
+          </div>
+        </div>
 
           <!-- បញ្ជីស្លាកពណ៌រហ័ស (ចុចរើសម្ដងមួយៗ) -->
           <div class="mt-2 flex flex-wrap gap-1.5 items-center">
@@ -3105,6 +3117,8 @@
         console.error("កំហុសពេលបើកផ្ទាំងបន្ថែមទំនិញ:", err);
         alert("មិនអាចបើកផ្ទាំងបន្ថែមបានទេ៖ " + err.message);
       }
+
+        renderSelectedColorChips();
     }
 
     // --- អនុគមន៍បើកផ្ទាំងកែប្រែទំនិញ (Edit Product) ---
@@ -3171,6 +3185,8 @@
         console.error("កំហុសពេលបើកផ្ទាំងកែប្រែ:", err);
         alert("មិនអាចបើកផ្ទាំងកែប្រែបានទេ៖ " + err.message);
       }
+
+        renderSelectedColorChips();
     }
     
     function closeAddModal() {
@@ -3499,32 +3515,121 @@
         if (icon) icon.classList.remove('animate-spin');
       }, 1500);
     }
-    // អនុគមន៍ចុចបន្ថែមពណ៌ម្ដងមួយៗចូលក្នុងប្រអប់
-    function appendColorTag(colorName) {
-      var input = document.getElementById('addColors');
-      if (!input) return;
+    // បញ្ជីពណ៌ស្តង់ដារសម្រាប់បង្ហាញឱ្យ Admin ចុចរើស
+    var availablePresetColors = [
+      "Black", "White", "Grey", "Silver", "Red", "Blue", 
+      "Silk Gold", "Silk Rainbow", "Fire Red",
+      "Black + Gold", "White + Grey", "Grey + White", "Black + Red"
+    ];
 
-      var current = input.value.trim();
-      var arr = current ? current.split(',').map(function(s) { return s.trim(); }).filter(Boolean) : [];
+    // អនុគមន៍ Render បញ្ជី Tag Chips ដែលបានរើស
+    function renderSelectedColorChips() {
+      var wrapper = document.getElementById('colorChipsWrapper');
+      var hiddenInput = document.getElementById('addColors');
+      if (!wrapper || !hiddenInput) return;
 
-      // ការពារកុំឱ្យចុចជាន់ពណ៌ដដែល
-      if (arr.indexOf(colorName) === -1) {
-        arr.push(colorName);
-        input.value = arr.join(', ');
+      var raw = hiddenInput.value.trim();
+      var colors = raw ? raw.split(',').map(function(s) { return s.trim(); }).filter(Boolean) : [];
+
+      wrapper.innerHTML = '';
+
+      if (colors.length === 0) {
+        wrapper.innerHTML = '<span class="text-xs text-slate-400 pl-2 select-none">មិនទាន់បានរើសពណ៌នៅឡើយទេ...</span>';
+      } else {
+        for (var i = 0; i < colors.length; i++) {
+          (function(c, idx) {
+            var chip = document.createElement('span');
+            chip.className = "inline-flex items-center gap-1.5 bg-white border border-slate-200 text-slate-800 text-xs font-semibold px-2.5 py-1 rounded-lg shadow-2xs animate-fadeIn";
+
+            // បង្ហាញរង្វង់ពណ៌តូច
+            var dot = document.createElement('span');
+            dot.className = "w-3 h-3 rounded-full border border-black/10 flex-shrink-0";
+            var bg = (typeof getSimpleColorHex === 'function') ? getSimpleColorHex(c.split('+')[0].trim().toLowerCase()) : '#94a3b8';
+            if (bg.indexOf('gradient') !== -1) dot.style.background = bg;
+            else dot.style.backgroundColor = bg;
+
+            var txt = document.createElement('span');
+            txt.innerText = c;
+
+            // ប៊ូតុង ✕ សម្រាប់ចុចដកពណ៌ចេញ
+            var del = document.createElement('button');
+            del.type = "button";
+            del.className = "text-slate-400 hover:text-rose-500 font-bold ml-1 text-xs transition-colors";
+            del.innerText = "✕";
+            del.onclick = function(e) {
+              e.stopPropagation();
+              toggleColorSelection(c);
+            };
+
+            chip.appendChild(dot);
+            chip.appendChild(txt);
+            chip.appendChild(del);
+            wrapper.appendChild(chip);
+          })(colors[i], i);
+        }
+      }
+
+      renderQuickPaletteButtons();
+    }
+
+    // អនុគមន៍ Render ប៊ូតុងពណ៌រហ័សខាងក្រោម
+    function renderQuickPaletteButtons() {
+      var box = document.getElementById('quickPaletteContainer');
+      var hiddenInput = document.getElementById('addColors');
+      if (!box || !hiddenInput) return;
+
+      var raw = hiddenInput.value.trim();
+      var selectedList = raw ? raw.split(',').map(function(s) { return s.trim().toLowerCase(); }).filter(Boolean) : [];
+
+      box.innerHTML = '';
+      for (var j = 0; j < availablePresetColors.length; j++) {
+        (function(colorName) {
+          var isChosen = selectedList.indexOf(colorName.toLowerCase()) !== -1;
+          var btn = document.createElement('button');
+          btn.type = "button";
+          btn.className = "flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-semibold border transition-all active:scale-95 " +
+            (isChosen 
+              ? "bg-blue-600 text-white border-blue-600 shadow-xs" 
+              : "bg-white text-slate-700 border-slate-200 hover:bg-slate-50");
+
+          var dot = document.createElement('span');
+          dot.className = "w-2.5 h-2.5 rounded-full border border-black/10 flex-shrink-0";
+          var bg = (typeof getSimpleColorHex === 'function') ? getSimpleColorHex(colorName.split('+')[0].trim().toLowerCase()) : '#cbd5e1';
+          if (bg.indexOf('gradient') !== -1) dot.style.background = bg;
+          else dot.style.backgroundColor = bg;
+
+          var label = document.createElement('span');
+          label.innerText = (isChosen ? "✓ " : "+ ") + colorName;
+
+          btn.appendChild(dot);
+          btn.appendChild(label);
+          btn.onclick = function() { toggleColorSelection(colorName); };
+
+          box.appendChild(btn);
+        })(availablePresetColors[j]);
       }
     }
 
-    // អនុគមន៍លុបពណ៌ចុងក្រោយចេញវិញ
-    function removeLastColorTag() {
+    // អនុគមន៍ ចុចរើស ឬដកពណ៌ចេញ (Toggle)
+    function toggleColorSelection(colorName) {
       var input = document.getElementById('addColors');
       if (!input) return;
 
-      var current = input.value.trim();
-      var arr = current ? current.split(',').map(function(s) { return s.trim(); }).filter(Boolean) : [];
-      if (arr.length > 0) {
-        arr.pop();
-        input.value = arr.join(', ');
+      var raw = input.value.trim();
+      var arr = raw ? raw.split(',').map(function(s) { return s.trim(); }).filter(Boolean) : [];
+      var lowerArr = arr.map(function(s) { return s.toLowerCase(); });
+      var targetIdx = lowerArr.indexOf(colorName.toLowerCase());
+
+      if (targetIdx !== -1) {
+        // បើមានរួចហើយ ចុចម្តងទៀតគឺដកចេញ (Remove)
+        arr.splice(targetIdx, 1);
+      } else {
+        // បើមិនទាន់មាន បន្ថែមចូល (Add)
+        arr.push(colorName);
       }
+
+      input.value = arr.join(', ');
+      renderSelectedColorChips();
     }
     
     
