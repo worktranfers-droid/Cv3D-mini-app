@@ -4012,8 +4012,8 @@
       });
     }
 
-    // អនុគមន៍បញ្ចូលបញ្ជីពណ៌ពី Filament Inventory ទៅក្នុង Dropdown ទាំងអស់
- function updateColorDropdownOptions() {
+    // អនុគមន៍បញ្ចូលបញ្ជីពណ៌ពី Filament Inventory ទៅក្នុង Dropdown ដោយបង្ហាញឈ្មោះពណ៌សុទ្ធ
+    function updateColorDropdownOptions() {
       var sSingle = document.getElementById('singleColorSelect');
       var sC1 = document.getElementById('comboC1');
       var sC2 = document.getElementById('comboC2');
@@ -4023,7 +4023,7 @@
 
       var inStockColors = [];
 
-      // ១. ប្រសិនបើមានទិន្នន័យពី Filament Inventory យកពណ៌ដែលមានស្តុក
+      // ១. ទាញពណ៌ដែលមានស្តុកពី Filament Inventory
       if (typeof allFilamentsData !== 'undefined' && allFilamentsData && allFilamentsData.length > 0) {
         for (var i = 0; i < allFilamentsData.length; i++) {
           var f = allFilamentsData[i];
@@ -4038,26 +4038,27 @@
         inStockColors = ["Black", "White", "Grey", "Silver", "Red", "Blue", "Silk Gold", "Silk Rainbow", "Purple"];
       }
 
-      // បញ្ចូលទៅក្នុង Dropdown ពណ៌ទោល
+      // ៣. បញ្ចូលទៅក្នុង Dropdown ពណ៌ទោល (បង្ហាញឈ្មោះពណ៌សុទ្ធ គ្មានរង្វង់មូល)
       sSingle.innerHTML = '<option value="">➕ ចុចរើសពណ៌ទោលបន្ថែម...</option>';
       for (var a = 0; a < inStockColors.length; a++) {
         var opt = document.createElement('option');
         opt.value = inStockColors[a];
-        opt.innerText = "● " + inStockColors[a];
+        opt.innerText = inStockColors[a];
         sSingle.appendChild(opt);
       }
 
-      // បញ្ចូលទៅក្នុង Dropdowns ពណ៌ផ្គុំ (២-៣ ពណ៌)
+      // ៤. បញ្ចូលទៅក្នុង Dropdowns ពណ៌ផ្គុំ (ពណ៌ទី ១, ពណ៌ទី ២, ពណ៌ទី ៣)
       if (sC1 && sC2 && sC3) {
         sC1.innerHTML = '<option value="">ពណ៌ទី ១...</option>';
         sC2.innerHTML = '<option value="">ពណ៌ទី ២...</option>';
         sC3.innerHTML = '<option value="">(គ្មានពណ៌ទី ៣)</option>';
 
         for (var b = 0; b < inStockColors.length; b++) {
-          var cName = inStockColors[b];
-          var o1 = document.createElement('option'); o1.value = cName; o1.innerText = cName;
-          var o2 = document.createElement('option'); o2.value = cName; o2.innerText = cName;
-          var o3 = document.createElement('option'); o3.value = cName; o3.innerText = cName;
+          var col = inStockColors[b];
+          var o1 = document.createElement('option'); o1.value = col; o1.innerText = col;
+          var o2 = document.createElement('option'); o2.value = col; o2.innerText = col;
+          var o3 = document.createElement('option'); o3.value = col; o3.innerText = col;
+
           sC1.appendChild(o1);
           sC2.appendChild(o2);
           sC3.appendChild(o3);
