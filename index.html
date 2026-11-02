@@ -748,48 +748,55 @@
           </div>
         </div>
 
-        <!-- ផ្នែកជម្រើសពណ៌បែប Dropdown ស្រឡះភ្នែក (រៀបរយ និងងាយស្រួលប្រើ) -->
-        <div>
-          <label id="lblAddColors" class="block text-xs font-semibold text-slate-600 mb-1">ជម្រើសពណ៌ (Colors)</label>
+        <!-- ផ្នែកជម្រើសពណ៌បែបឆ្លាតវៃ (អាចរើស ១ ពណ៌ ឬផ្គុំ ២-៣ ពណ៌) -->
+        <div class="space-y-2">
+          <div class="flex justify-between items-center">
+            <label id="lblAddColors" class="block text-xs font-semibold text-slate-700">ជម្រើសពណ៌ (Colors)</label>
+            <!-- ផ្ទាំងប្តូរ Mode: ពណ៌ទោល ឬពណ៌ផ្គុំ -->
+            <div class="flex bg-slate-100 p-0.5 rounded-lg border border-slate-200 text-[10px] font-bold">
+              <button type="button" onclick="setColorMode('single')" id="btnModeSingle" class="px-2 py-0.5 rounded-md bg-white text-blue-600 shadow-2xs">១ ពណ៌</button>
+              <button type="button" onclick="setColorMode('combo')" id="btnModeCombo" class="px-2 py-0.5 rounded-md text-slate-500 hover:text-slate-800">២-៣ ពណ៌</button>
+            </div>
+          </div>
           
-          <div class="flex gap-2 items-center">
-            <!-- Dropdown សម្រាប់ជ្រើសរើសពណ៌ស្រាប់ៗ -->
-            <select id="colorDropdownSelect" onchange="handleColorDropdown(this)" class="flex-1 border border-slate-300 p-2 rounded-xl text-xs outline-none bg-white focus:ring-2 focus:ring-blue-500 font-semibold text-slate-700 cursor-pointer shadow-2xs">
-              <option value="">➕ ចុចទីនេះដើម្បីរើសពណ៌បន្ថែម...</option>
-              <optgroup label="🎨 ពណ៌ទោល (Single Colors)">
-                <option value="Black">⚫ Black (ខ្មៅ)</option>
-                <option value="White">⚪ White (ស)</option>
-                <option value="Grey">🔘 Grey (ប្រផេះ)</option>
-                <option value="Silver">⚪ Silver (ប្រាក់)</option>
-                <option value="Red">🔴 Red (ក្រហម)</option>
-                <option value="Blue">🔵 Blue (ខៀវ)</option>
-                <option value="Silk Gold">🟡 Silk Gold (មាសរលើប)</option>
-                <option value="Silk Rainbow">🌈 Silk Rainbow (ឥន្ទធនូរលើប)</option>
-                <option value="Fire Red">🔥 Fire Red (ក្រហមភ្លើង)</option>
-              </optgroup>
-              <optgroup label="✨ ឈុត ២ ពណ៌ (Dual Colors)">
-                <option value="Black + Gold">⚫🟡 Black + Gold</option>
-                <option value="White + Grey">⚪🔘 White + Grey</option>
-                <option value="Grey + White">🔘⚪ Grey + White</option>
-                <option value="Black + Red">⚫🔴 Black + Red</option>
-              </optgroup>
+          <!-- Mode ១៖ រើសម្ដងមួយពណ៌ធម្មតា -->
+          <div id="singleColorBox" class="flex gap-1.5 items-center">
+            <select id="singleColorSelect" onchange="addSingleColor(this)" class="flex-1 border border-slate-300 p-2 rounded-xl text-xs outline-none bg-white focus:ring-2 focus:ring-blue-500 font-semibold text-slate-700 cursor-pointer shadow-2xs">
+              <option value="">➕ ចុចរើសពណ៌ទោលបន្ថែម...</option>
             </select>
-
-            <!-- ប៊ូតុងលុបពណ៌ចុងក្រោយ -->
-            <button type="button" onclick="removeLastColor()" title="លុបពណ៌ចុងក្រោយចេញ" class="px-3 py-2 bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 rounded-xl text-xs font-bold active:scale-95 transition-all flex-shrink-0 shadow-2xs">
+            <button type="button" onclick="removeLastColor()" title="លុបពណ៌ចុងក្រោយ" class="px-3 py-2 bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 rounded-xl text-xs font-bold active:scale-95 transition-all flex-shrink-0">
               ⌫ លុប
             </button>
           </div>
 
-          <!-- ប្រអប់បង្ហាញបញ្ជីពណ៌ដែលបានរើស (អាច Edit ដោយដៃបាន) -->
+          <!-- Mode ២៖ ផ្គុំ ២ ទៅ ៣ ពណ៌តាមចិត្ត -->
+          <div id="comboColorBox" class="hidden p-2.5 bg-slate-50 border border-slate-200 rounded-xl space-y-2">
+            <div class="flex items-center gap-1.5 flex-wrap">
+              <select id="comboC1" class="flex-1 min-w-[100px] border border-slate-300 p-1.5 rounded-lg text-xs bg-white font-medium"></select>
+              <span class="text-xs font-bold text-slate-400">+</span>
+              <select id="comboC2" class="flex-1 min-w-[100px] border border-slate-300 p-1.5 rounded-lg text-xs bg-white font-medium"></select>
+              <span class="text-xs font-bold text-slate-400">+</span>
+              <select id="comboC3" class="flex-1 min-w-[100px] border border-slate-300 p-1.5 rounded-lg text-xs bg-white font-medium">
+                <option value="">(គ្មានពណ៌ទី ៣)</option>
+              </select>
+            </div>
+            <div class="flex justify-between items-center pt-1">
+              <span class="text-[10px] text-slate-400">* អាចផ្គុំ ២ ពណ៌ ឬ ៣ ពណ៌</span>
+              <div class="flex gap-1.5">
+                <button type="button" onclick="removeLastColor()" class="px-2.5 py-1 bg-rose-50 text-rose-600 border border-rose-200 rounded-lg text-xs font-bold active:scale-95">⌫ លុប</button>
+                <button type="button" onclick="applyComboColor()" class="px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold shadow-2xs active:scale-95">➕ បញ្ចូលឈុតនេះ</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- ប្រអប់បង្ហាញបញ្ជីពណ៌សរុប -->
           <input 
             id="addColors" 
             type="text" 
             autocomplete="off"
-            placeholder="ឧ. Silk Gold, Rainbow, Black" 
-            class="w-full mt-2 border border-slate-300 p-2 rounded-xl text-xs outline-none focus:ring-2 focus:ring-blue-500 bg-slate-50/70 font-mono text-slate-800"
+            placeholder="ឧ. Black, White, Black + Red" 
+            class="w-full border border-slate-300 p-2 rounded-xl text-xs outline-none focus:ring-2 focus:ring-blue-500 bg-slate-50/70 font-mono text-slate-800"
           >
-          <p class="text-[10px] text-slate-400 mt-1">* ជ្រើសរើសពី Dropdown ខាងលើ ឬវាយបញ្ចូលដោយដៃ (បំបែកដោយក្បៀស ,)</p>
         </div>
         
         <div>
@@ -3719,154 +3726,67 @@
       }, 1500);
     }
     
-    // អនុគមន៍ពេលជ្រើសរើសពណ៌ពី Dropdown
-    function handleColorDropdown(selectEl) {
-      var chosenColor = selectEl.value;
-      if (!chosenColor) return;
+    var activeColorMode = 'single';
 
-      var input = document.getElementById('addColors');
-      if (input) {
-        var current = input.value.trim();
-        var arr = current ? current.split(',').map(function(s) { return s.trim(); }).filter(Boolean) : [];
+ // ប្តូរ Mode រវាង "១ ពណ៌" និង "២-៣ ពណ៌"
+ function setColorMode(mode) {
+   activeColorMode = mode;
+   var bSingle = document.getElementById('btnModeSingle');
+   var bCombo = document.getElementById('btnModeCombo');
+   var boxSingle = document.getElementById('singleColorBox');
+   var boxCombo = document.getElementById('comboColorBox');
 
-        // បញ្ចូលពណ៌ថ្មី ប្រសិនបើមិនទាន់មាន (ការពារកុំឱ្យស្ទួន)
-        if (arr.indexOf(chosenColor) === -1) {
-          arr.push(chosenColor);
-          input.value = arr.join(', ');
-        }
-      }
+   if (mode === 'single') {
+     bSingle.className = "px-2 py-0.5 rounded-md bg-white text-blue-600 shadow-2xs";
+     bCombo.className = "px-2 py-0.5 rounded-md text-slate-500 hover:text-slate-800";
+     boxSingle.classList.remove('hidden');
+     boxCombo.classList.add('hidden');
+   } else {
+     bCombo.className = "px-2 py-0.5 rounded-md bg-white text-blue-600 shadow-2xs";
+     bSingle.className = "px-2 py-0.5 rounded-md text-slate-500 hover:text-slate-800";
+     boxCombo.classList.remove('hidden');
+     boxSingle.classList.add('hidden');
+   }
+ }
 
-      // កំណត់ Dropdown ឱ្យវិលមកបង្ហាញជម្រើសដើមវិញ
-      selectEl.value = "";
-    }
+ // បញ្ចូលពណ៌ទោល (Mode ១ ពណ៌)
+ function addSingleColor(selectEl) {
+   var val = selectEl.value;
+   if (!val) return;
+   pushColorToInput(val);
+   selectEl.value = "";
+ }
 
-    // អនុគមន៍ចុចលុបពណ៌ចុងក្រោយចេញវិញ (Undo)
-    function removeLastColor() {
-      var input = document.getElementById('addColors');
-      if (!input) return;
+ // បញ្ចូលពណ៌ផ្គុំ (Mode ២ ឬ ៣ ពណ៌)
+ function applyComboColor() {
+   var c1 = document.getElementById('comboC1') ? document.getElementById('comboC1').value : '';
+   var c2 = document.getElementById('comboC2') ? document.getElementById('comboC2').value : '';
+   var c3 = document.getElementById('comboC3') ? document.getElementById('comboC3').value : '';
 
-      var current = input.value.trim();
-      var arr = current ? current.split(',').map(function(s) { return s.trim(); }).filter(Boolean) : [];
-      if (arr.length > 0) {
-        arr.pop();
-        input.value = arr.join(', ');
-      }
-    }
+   if (!c1 || !c2) {
+     alert("សូមជ្រើសរើសយ៉ាងហោចណាស់ ២ ពណ៌ដើម្បីផ្គុំ!");
+     return;
+   }
 
-    var allFilamentsData = [];
+   var comboName = c1 + " + " + c2;
+   if (c3) comboName += " + " + c3;
 
-    // ១. អនុគមន៍ បើក/បិទ Dropdown Accordion (ដូចគ្នានឹង toggleShippingPanel)
-    function toggleFilamentPanel() {
-      var body = document.getElementById('filamentPanelBody');
-      var icon = document.getElementById('filamentToggleIcon');
-      if (!body) return;
-      var isHidden = body.classList.contains('hidden');
-      if (isHidden) {
-        body.classList.remove('hidden');
-        if (icon) icon.style.transform = 'rotate(180deg)';
-        loadFilamentInventory(); // ទាញទិន្នន័យភ្លាមៗពេលចុចបើក Dropdown
-      } else {
-        body.classList.add('hidden');
-        if (icon) icon.style.transform = 'rotate(0deg)';
-      }
-    }
+   pushColorToInput(comboName);
+ }
 
-    // ២. ទាញទិន្នន័យពី Sheet 'Filament Inventory'
-    function loadFilamentInventory() {
-      var summary = document.getElementById('lblFilamentSummary');
-      callBackendPost({ action: "getFilamentInventory", pin: adminPin })
-        .then(function(res) {
-          if (res && res.success) {
-            allFilamentsData = res.filaments || [];
-            renderFilamentAdminList();
-            updateColorDropdownOptions(); // ធ្វើបច្ចុប្បន្នភាព Dropdown ពណ៌ពេល Add/Edit ទំនិញ
+ // អនុគមន៍ជំនួយបញ្ចូលពណ៌ទៅក្នុងប្រអប់ Input (ការពារកុំឱ្យស្ទួន)
+ function pushColorToInput(colorStr) {
+   var input = document.getElementById('addColors');
+   if (!input) return;
 
-            if (summary) {
-              var inUse = allFilamentsData.filter(function(f){ return f.status !== 'Empty'; }).length;
-              summary.innerText = "មាន " + inUse + " ពណ៌កំពុងប្រើ (សរុប " + allFilamentsData.length + " ដុំ)";
-            }
-          }
-        })
-        .catch(function(err) {
-          console.warn("មិនអាចទាញស្តុក Filament:", err);
-          if (summary) summary.innerText = "មិនអាចទាញទិន្នន័យបានទេ";
-        });
-    }
+   var current = input.value.trim();
+   var arr = current ? current.split(',').map(function(s) { return s.trim(); }).filter(Boolean) : [];
 
-    // ៣. បង្ហាញបញ្ជីជ័រពណ៌ក្នុង Panel (មានប៊ូតុងប្តូរស្តុក និងលុប)
-    function renderFilamentAdminList() {
-      var container = document.getElementById('filamentAdminList');
-      if (!container) return;
-      container.innerHTML = '';
-
-      if (allFilamentsData.length === 0) {
-        container.innerHTML = '<p class="text-xs text-slate-400 py-3 text-center">មិនទាន់មានទិន្នន័យជ័រក្នុង Sheet ឡើយ</p>';
-        return;
-      }
-
-      for (var i = 0; i < allFilamentsData.length; i++) {
-        (function(f) {
-          var item = document.createElement('div');
-          item.className = "flex items-center justify-between p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs";
-
-          var left = document.createElement('div');
-          left.className = "flex items-center gap-2.5";
-
-          // រង្វង់ពណ៌ (Color Dot)
-          var dot = document.createElement('span');
-          dot.className = "w-4 h-4 rounded-full border border-black/15 flex-shrink-0 shadow-2xs";
-          var bg = (typeof getSimpleColorHex === 'function') ? getSimpleColorHex(f.color.toLowerCase()) : '#94a3b8';
-          if (bg.indexOf('gradient') !== -1) dot.style.background = bg;
-          else dot.style.backgroundColor = bg;
-
-          var info = document.createElement('div');
-          var isInStock = (f.status !== 'Empty');
-          info.innerHTML = '<span class="font-bold text-sm text-slate-800 ' + (!isInStock ? 'line-through text-slate-400' : '') + '">' + f.color + '</span> ' +
-                           '<span class="text-[10px] bg-white border border-slate-200 text-slate-500 px-1.5 py-0.5 rounded-md font-mono">' + f.type + '</span> ' +
-                           '<span class="text-[10px] text-slate-400 font-medium">(' + f.brand + ')</span>';
-
-          left.appendChild(dot);
-          left.appendChild(info);
-
-          var right = document.createElement('div');
-          right.className = "flex items-center gap-1.5";
-
-          // ប៊ូតុងប្តូរស្តុក
-          var toggleBtn = document.createElement('button');
-          toggleBtn.type = "button";
-          toggleBtn.className = "px-2.5 py-1 rounded-lg text-[10px] font-bold border transition-all active:scale-95 " + 
-            (isInStock ? "bg-emerald-50 text-emerald-700 border-emerald-200" : "bg-rose-50 text-rose-700 border-rose-200");
-          toggleBtn.innerText = isInStock ? "✓ មានស្តុក" : "✕ អស់ស្តុក";
-          
-          toggleBtn.onclick = function() {
-            var nextStatus = isInStock ? "Empty" : "In Use";
-            toggleBtn.disabled = true;
-            toggleBtn.innerText = "⏳...";
-            callBackendPost({ action: "toggleFilamentStatus", pin: adminPin, row: f.row, newStatus: nextStatus })
-              .then(function() { loadFilamentInventory(); });
-          };
-
-          // ប៊ូតុងលុប
-          var delBtn = document.createElement('button');
-          delBtn.type = "button";
-          delBtn.className = "text-slate-400 hover:text-rose-600 p-1 text-xs font-bold transition-colors";
-          delBtn.innerText = "🗑️";
-          delBtn.onclick = function() {
-            if (confirm("តើអ្នកពិតជាចង់លុបពណ៌ " + f.color + " ចេញពី Google Sheet មែនទេ?")) {
-              callBackendPost({ action: "deleteFilament", pin: adminPin, row: f.row })
-                .then(function() { loadFilamentInventory(); });
-            }
-          };
-
-          right.appendChild(toggleBtn);
-          right.appendChild(delBtn);
-
-          item.appendChild(left);
-          item.appendChild(right);
-          container.appendChild(item);
-        })(allFilamentsData[i]);
-      }
-    }
+   if (arr.indexOf(colorStr) === -1) {
+     arr.push(colorStr);
+     input.value = arr.join(', ');
+   }
+ }
 
     // ៤. អនុគមន៍បន្ថែមជ័រពណ៌ថ្មីចូល Google Sheet
     function submitNewFilament() {
@@ -3911,45 +3831,49 @@
       });
     }
 
-    // ៥. អនុគមន៍បញ្ចូលពណ៌ដែល «មានស្តុក» ទៅក្នុង Dropdown នៃផ្ទាំង Add/Edit ទំនិញ
-    function updateColorDropdownOptions() {
-      var select = document.getElementById('colorDropdownSelect');
-      if (!select) return;
+    // អនុគមន៍បញ្ចូលបញ្ជីពណ៌ពី Filament Inventory ទៅក្នុង Dropdown ទាំងអស់
+ function updateColorDropdownOptions() {
+   var sSingle = document.getElementById('singleColorSelect');
+   var sC1 = document.getElementById('comboC1');
+   var sC2 = document.getElementById('comboC2');
+   var sC3 = document.getElementById('comboC3');
 
-      var currentVal = select.value;
-      select.innerHTML = '<option value="">➕ ចុចទីនេះដើម្បីរើសពណ៌បន្ថែម...</option>';
+   if (!sSingle || !allFilamentsData) return;
 
-      var optGroupSingle = document.createElement('optgroup');
-      optGroupSingle.label = "🎨 ពណ៌ទោល (ពី Filament Inventory)";
+   var inStockColors = [];
+   for (var i = 0; i < allFilamentsData.length; i++) {
+     var f = allFilamentsData[i];
+     if (f.status !== 'Empty' && f.color && inStockColors.indexOf(f.color) === -1) {
+       inStockColors.push(f.color);
+     }
+   }
 
-      var availableColors = [];
-      for (var i = 0; i < allFilamentsData.length; i++) {
-        var f = allFilamentsData[i];
-        // បង្ហាញតែពណ៌ណាដែលមិនទាន់ Empty
-        if (f.status !== 'Empty' && f.color && availableColors.indexOf(f.color) === -1) {
-          availableColors.push(f.color);
-          var opt = document.createElement('option');
-          opt.value = f.color;
-          opt.innerText = "● " + f.color + " (" + f.type + ")";
-          optGroupSingle.appendChild(opt);
-        }
-      }
-      select.appendChild(optGroupSingle);
+   // Populate Dropdown ពណ៌ទោល
+   sSingle.innerHTML = '<option value="">➕ ចុចរើសពណ៌ទោលបន្ថែម...</option>';
+   for (var a = 0; a < inStockColors.length; a++) {
+     var opt = document.createElement('option');
+     opt.value = inStockColors[a];
+     opt.innerText = "● " + inStockColors[a];
+     sSingle.appendChild(opt);
+   }
 
-      // ឈុត ២ ពណ៌ពេញនិយម
-      var optGroupDual = document.createElement('optgroup');
-      optGroupDual.label = "✨ ឈុត ២ ពណ៌ពេញនិយម (Dual Colors)";
-      var duals = ["Black + Gold", "White + Grey", "Grey + White", "Black + Red"];
-      for (var d = 0; d < duals.length; d++) {
-        var optD = document.createElement('option');
-        optD.value = duals[d];
-        optD.innerText = "◐ " + duals[d];
-        optGroupDual.appendChild(optD);
-      }
-      select.appendChild(optGroupDual);
+   // Populate Dropdowns សម្រាប់ផ្គុំ ២-៣ ពណ៌
+   if (sC1 && sC2 && sC3) {
+     sC1.innerHTML = '<option value="">ពណ៌ទី ១...</option>';
+     sC2.innerHTML = '<option value="">ពណ៌ទី ២...</option>';
+     sC3.innerHTML = '<option value="">(គ្មានពណ៌ទី ៣)</option>';
 
-      select.value = currentVal;
-    }
+     for (var b = 0; b < inStockColors.length; b++) {
+       var cName = inStockColors[b];
+       var o1 = document.createElement('option'); o1.value = cName; o1.innerText = cName;
+       var o2 = document.createElement('option'); o2.value = cName; o2.innerText = cName;
+       var o3 = document.createElement('option'); o3.value = cName; o3.innerText = cName;
+       sC1.appendChild(o1);
+       sC2.appendChild(o2);
+       sC3.appendChild(o3);
+     }
+   }
+ }
     
   </script>
 </body>
