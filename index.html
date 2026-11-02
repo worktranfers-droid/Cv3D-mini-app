@@ -1281,41 +1281,45 @@
         });
     }
 
+    // អនុគមន៍បង្ហាញ Category លើទំព័រដើម (Home) ដោយអានផ្ទាល់ពីទំនិញក្នុង Google Sheet
     function renderDynamicCategories() {
       var container = document.getElementById('categoryContainer');
       var dataList = document.getElementById('categoryDataList');
       if (!container) return;
 
-      // ១. កំណត់លំដាប់ Category ដែលអ្នកចង់បាន (ដាក់ Pet នៅលំដាប់ទី ២ បន្ទាប់ពី all)
-      var customOrder = ['all', 'pet', 'fidget', 'desk', 'custom'];
-
+      // ១. ទាញរាល់ Category ទាំងអស់ដែលមានក្នុងទំនិញជាក់ស្តែង (Catalog Products)
       var foundCategories = {};
       var totalCount = customerProducts ? customerProducts.length : 0;
 
       for (var i = 0; i < totalCount; i++) {
         var rawCat = (customerProducts[i].category || '').trim();
         if (rawCat) {
+          // រក្សាឈ្មោះ Category ដូចទម្រង់ដើមក្នុង Sheet (ឧ. Pet, Fidget, etc.)
           foundCategories[rawCat.toLowerCase()] = rawCat;
         }
       }
 
-      // ២. រៀបចំបញ្ជី Category តាមលំដាប់ customOrder ខាងលើ
+      // ២. អានលំដាប់ Category ដែលបានរៀប (ពី LocalStorage ឬ Settings)
+      var savedOrder = JSON.parse(localStorage.getItem('app_category_order') || '[]');
       var categories = ['all'];
 
-      for (var k = 0; k < customOrder.length; k++) {
-        var orderKey = customOrder[k].toLowerCase();
-        if (orderKey !== 'all' && foundCategories[orderKey]) {
-          categories.push(foundCategories[orderKey]);
-          delete foundCategories[orderKey]; // ដកចេញកុំឱ្យស្ទួន
+      // បញ្ចូលតាមលំដាប់ដែលបានតម្រៀប
+      if (savedOrder && savedOrder.length > 0) {
+        for (var k = 0; k < savedOrder.length; k++) {
+          var key = savedOrder[k].toLowerCase().trim();
+          if (key !== 'all' && foundCategories[key]) {
+            categories.push(foundCategories[key]);
+            delete foundCategories[key]; // ដកចេញកុំឱ្យស្ទួន
+          }
         }
       }
 
-      // បើសិនមាន Category ណាផ្សេងទៀតដែលទើបបង្កើតថ្មី ដាក់នៅខាងចុង
-      for (var otherKey in foundCategories) {
-        categories.push(foundCategories[otherKey]);
+      // ៣. បញ្ចូល Category ថ្មីៗដែលទើបបន្ថែមក្នុង Google Sheet ហើយមិនទាន់បានតម្រៀប
+      for (var remainKey in foundCategories) {
+        categories.push(foundCategories[remainKey]);
       }
 
-      // ៣. បង្ហាញប៊ូតុង Category លើអេក្រង់
+      // ៤. បង្ហាញប៊ូតុង Category នៅលើអេក្រង់
       container.innerHTML = '';
       for (var j = 0; j < categories.length; j++) {
         (function(cat) {
@@ -1329,7 +1333,6 @@
             ? "cat-pill active bg-slate-900 text-white text-xs px-3.5 py-1.5 rounded-full font-medium whitespace-nowrap shadow-sm capitalize flex items-center gap-1.5 transition-all"
             : "cat-pill bg-white border border-slate-200 text-slate-600 text-xs px-3.5 py-1.5 rounded-full font-medium whitespace-nowrap capitalize flex items-center gap-1.5 hover:bg-slate-50 transition-all";
           
-          // បង្ហាញ Badge រាប់ចំនួនទំនិញតែលើប៊ូតុង 'all' មួយគត់
           if (cat === 'all') {
             btn.innerHTML = '<span>' + label + '</span>' +
                             '<span class="' + (isActive ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-500') + ' text-[10px] font-bold px-1.5 py-0.2 rounded-full">' + totalCount + '</span>';
@@ -1346,15 +1349,9 @@
         })(categories[j]);
       }
 
-      if (dataList) {
-        dataList.innerHTML = '';
-        for (var c = 0; c < categories.length; c++) {
-          if (categories[c] !== 'all') {
-            var opt = document.createElement('option');
-            opt.value = categories[c];
-            dataList.appendChild(opt);
-          }
-        }
+      // ៥. ធ្វើបច្ចុប្បន្នភាព Dropdown បន្ថែមទំនិញឱ្យស្គាល់ Category ទាំងនេះភ្លាមៗ
+      if (typeof updateCategoryDropdownUI === 'function') {
+        updateCategoryDropdownUI();
       }
     }
     
