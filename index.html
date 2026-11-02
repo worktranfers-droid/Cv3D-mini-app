@@ -280,11 +280,12 @@
         </div>
       </div>
 
-      <!-- ៣. ប្លុកគ្រប់គ្រងស្តុកជ័រ & ពណ៌ (Filament Inventory - មានប៊ូតុងក្នុងប្លុកស្រាប់) -->
+      <!-- ៣. ប្លុកគ្រប់គ្រងស្តុកជ័រ & ពណ៌ (Filament Inventory) -->
       <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-xs">
+        <!-- ក្បាល Header ចុចបើក/បិទ Accordion -->
         <div onclick="toggleFilamentPanel()" class="p-3.5 flex justify-between items-center cursor-pointer hover:bg-slate-50 transition-colors select-none">
           <div>
-            <h4 class="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+            <h4 id="lblFilamentTitle" class="text-xs font-bold text-slate-800 flex items-center gap-1.5">
               🧵 គ្រប់គ្រងស្តុកជ័រ & ពណ៌ (Filament Inventory)
             </h4>
             <p id="lblFilamentSummary" class="text-[10px] text-slate-500 font-mono mt-0.5">
@@ -293,10 +294,25 @@
           </div>
         </div>
 
+        <!-- ផ្ទៃខាងក្នុង Dropdown -->
         <div id="filamentPanelBody" class="hidden px-3.5 pb-3.5 pt-1 border-t border-slate-100 space-y-3">
-          <!-- ទម្រង់បន្ថែមជ័រ/ពណ៌ថ្មី -->
-          <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-200 space-y-2">
-            <span class="text-[11px] font-bold text-slate-700 block">➕ បន្ថែមពណ៌ជ័រថ្មីចូល Google Sheet៖</span>
+          
+          <!-- Form បន្ថែមពណ៌ថ្មី (ប្រើ Icon Save 💾 ស្រាលស្រទន់ គ្មានដុំខ្មៅធំ) -->
+          <div class="bg-slate-50 p-3 rounded-2xl border border-slate-200 space-y-2.5">
+            <div class="flex items-center justify-between">
+              <span id="lblFilamentAddTitle" class="text-[11px] font-bold text-slate-700">➕ បន្ថែមពណ៌ជ័រថ្មីចូល Google Sheet៖</span>
+              
+              <!-- ប៊ូតុង Icon Save 💾 គ្មាន Background ដូច Delivery Fee -->
+              <button 
+                type="button" 
+                onclick="submitNewFilament(this)" 
+                id="btnAddFilament" 
+                title="រក្សាទុកពណ៌ថ្មីចូល Google Sheet"
+                class="text-slate-600 hover:text-blue-600 active:scale-75 text-xl p-1 transition-all flex items-center justify-center rounded-lg hover:bg-slate-200/60"
+              >
+                💾
+              </button>
+            </div>
             
             <div class="grid grid-cols-3 gap-1.5">
               <input id="newFilColor" type="text" placeholder="ឈ្មោះពណ៌ (ឧ. Fire Red)..." class="col-span-2 p-2 border border-slate-300 rounded-xl text-xs bg-white outline-none focus:ring-2 focus:ring-blue-500">
@@ -313,10 +329,6 @@
               <input id="newFilBrand" type="text" placeholder="ម៉ាកជ័រ (eSUN)..." class="p-2 border border-slate-300 rounded-xl text-xs bg-white outline-none">
               <input id="newFilPrice" type="number" step="0.5" placeholder="តម្លៃ $..." class="p-2 border border-slate-300 rounded-xl text-xs bg-white outline-none">
             </div>
-
-            <button type="button" onclick="submitNewFilament()" id="btnAddFilament" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-2 rounded-xl text-xs shadow-xs active:scale-95 transition-all flex items-center justify-center gap-1.5">
-              <span>💾</span><span>រក្សាទុកពណ៌ថ្មីចូល Sheet</span>
-            </button>
           </div>
 
           <!-- បញ្ជីជ័រពណ៌ -->
@@ -1057,6 +1069,16 @@
       if (el = document.getElementById('btnColorUndo2')) el.innerText = t.btnUndoColor || "⌫ លុប";
       if (el = document.getElementById('btnApplyCombo')) el.innerText = t.btnAddComboBtn || "➕ បញ្ចូលឈុតនេះ";
       if (typeof updateColorDropdownOptions === 'function') updateColorDropdownOptions();
+
+      // បកប្រែប្លុក Filament Inventory
+      if (el = document.getElementById('lblFilamentTitle')) el.innerText = t.filamentTitle || "🧵 គ្រប់គ្រងស្តុកជ័រ & ពណ៌ (Filament Inventory)";
+      if (el = document.getElementById('lblFilamentAddTitle')) el.innerText = t.filamentAddTitle || "➕ បន្ថែមពណ៌ជ័រថ្មីចូល Google Sheet៖";
+      if (el = document.getElementById('newFilColor')) el.placeholder = t.filamentColorPlh || "ឈ្មោះពណ៌ (ឧ. Fire Red)...";
+      if (el = document.getElementById('newFilBrand')) el.placeholder = t.filamentBrandPlh || "ម៉ាកជ័រ (eSUN)...";
+      if (el = document.getElementById('newFilPrice')) el.placeholder = t.filamentPricePlh || "តម្លៃ $...";
+      
+      // ធ្វើបច្ចុប្បន្នភាពបញ្ជី និងអក្សរសង្ខេប
+      if (typeof renderFilamentAdminList === 'function') renderFilamentAdminList();
     }
 
     function openSellerChat() {
@@ -3822,14 +3844,24 @@
         });
     }
 
-    // ៣. បង្ហាញបញ្ជីជ័រពណ៌ក្នុង Panel (មានប៊ូតុងដូរស្តុក និងលុប)
+    // ៣. បង្ហាញបញ្ជីជ័រពណ៌ក្នុង Panel (មានប៊ូតុងដូរស្តុកបកប្រែ ៣ ភាសា និងប៊ូតុងលុប)
     function renderFilamentAdminList() {
       var container = document.getElementById('filamentAdminList');
+      var summary = document.getElementById('lblFilamentSummary');
+      var t = (typeof i18n !== 'undefined' && i18n[currentLang]) ? i18n[currentLang] : (i18n ? i18n['km'] : {});
+      
+      // ធ្វើបច្ចុប្បន្នភាពអក្សរសង្ខេបស្តុកខាងលើឱ្យបកប្រែតាមភាសា
+      if (summary && typeof allFilamentsData !== 'undefined') {
+        var inUse = allFilamentsData.filter(function(f){ return f.status !== 'Empty'; }).length;
+        var summaryPattern = t.filamentSummaryInUse || "មាន {count} ពណ៌កំពុងប្រើ (សរុប {total} ដុំ)";
+        summary.innerText = summaryPattern.replace('{count}', inUse).replace('{total}', allFilamentsData.length);
+      }
+
       if (!container) return;
       container.innerHTML = '';
 
-      if (allFilamentsData.length === 0) {
-        container.innerHTML = '<p class="text-xs text-slate-400 py-3 text-center">មិនទាន់មានទិន្នន័យជ័រក្នុង Sheet ឡើយ</p>';
+      if (!allFilamentsData || allFilamentsData.length === 0) {
+        container.innerHTML = '<p class="text-xs text-slate-400 py-3 text-center">' + (t.filamentEmptySheet || "មិនទាន់មានទិន្នន័យជ័រក្នុង Sheet ឡើយ") + '</p>';
         return;
       }
 
@@ -3841,6 +3873,7 @@
           var left = document.createElement('div');
           left.className = "flex items-center gap-2.5";
 
+          // រង្វង់ពណ៌ (Color Dot)
           var dot = document.createElement('span');
           dot.className = "w-4 h-4 rounded-full border border-black/15 flex-shrink-0 shadow-2xs";
           var bg = (typeof getSimpleColorHex === 'function') ? getSimpleColorHex(f.color.toLowerCase()) : '#94a3b8';
@@ -3849,6 +3882,7 @@
 
           var info = document.createElement('div');
           var isInStock = (f.status !== 'Empty');
+          // រក្សាឈ្មោះពណ៌ និងប្រភេទជ័រជាភាសាអង់គ្លេសសុទ្ធ
           info.innerHTML = '<span class="font-bold text-sm text-slate-800 ' + (!isInStock ? 'line-through text-slate-400' : '') + '">' + f.color + '</span> ' +
                            '<span class="text-[10px] bg-white border border-slate-200 text-slate-500 px-1.5 py-0.5 rounded-md font-mono">' + f.type + '</span> ' +
                            '<span class="text-[10px] text-slate-400 font-medium">(' + f.brand + ')</span>';
@@ -3859,28 +3893,48 @@
           var right = document.createElement('div');
           right.className = "flex items-center gap-1.5";
 
+          // ប៊ូតុងប្តូរស្តុក (បកប្រែតាមភាសាដែលកំពុងប្រើ)
           var toggleBtn = document.createElement('button');
           toggleBtn.type = "button";
           toggleBtn.className = "px-2.5 py-1 rounded-lg text-[10px] font-bold border transition-all active:scale-95 " + 
             (isInStock ? "bg-emerald-50 text-emerald-700 border-emerald-200" : "bg-rose-50 text-rose-700 border-rose-200");
-          toggleBtn.innerText = isInStock ? "✓ មានស្តុក" : "✕ អស់ស្តុក";
+          
+          // បង្ហាញអក្សរទៅតាមភាសាដែលបានកំណត់ក្នុង i18n
+          toggleBtn.innerText = isInStock 
+            ? (t.filamentInStockBtn || "✓ មានស្តុក") 
+            : (t.filamentOutOfStockBtn || "✕ អស់ស្តុក");
           
           toggleBtn.onclick = function() {
             var nextStatus = isInStock ? "Empty" : "In Use";
             toggleBtn.disabled = true;
             toggleBtn.innerText = "⏳...";
             callBackendPost({ action: "toggleFilamentStatus", pin: adminPin, row: f.row, newStatus: nextStatus })
-              .then(function() { loadFilamentInventory(); });
+              .then(function() { 
+                loadFilamentInventory(); 
+              })
+              .catch(function(err) {
+                toggleBtn.disabled = false;
+                alert("កំហុសប្តូរស្តុក៖ " + err.message);
+              });
           };
 
+          // ប៊ូតុងលុប
           var delBtn = document.createElement('button');
           delBtn.type = "button";
           delBtn.className = "text-slate-400 hover:text-rose-600 p-1 text-xs font-bold transition-colors";
           delBtn.innerText = "🗑️";
           delBtn.onclick = function() {
-            if (confirm("តើអ្នកពិតជាចង់លុបពណ៌ " + f.color + " ចេញពី Google Sheet មែនទេ?")) {
+            var confirmMsg = (currentLang === 'zh') ? ("确定要从 Google Sheet 中删除颜色 " + f.color + " 吗？") :
+                             (currentLang === 'en') ? ("Are you sure you want to delete color " + f.color + " from Google Sheet?") :
+                             ("តើអ្នកពិតជាចង់លុបពណ៌ " + f.color + " ចេញពី Google Sheet មែនទេ?");
+            if (confirm(confirmMsg)) {
               callBackendPost({ action: "deleteFilament", pin: adminPin, row: f.row })
-                .then(function() { loadFilamentInventory(); });
+                .then(function() { 
+                  loadFilamentInventory(); 
+                })
+                .catch(function(err) {
+                  alert("កំហុសលុប៖ " + err.message);
+                });
             }
           };
 
@@ -3977,7 +4031,7 @@
  }
 
     // ៤. អនុគមន៍បន្ថែមជ័រពណ៌ថ្មីចូល Google Sheet
-    function submitNewFilament() {
+    function submitNewFilament(btn) {
       var colorInput = document.getElementById('newFilColor');
       var color = colorInput ? colorInput.value.trim() : "";
       var type = document.getElementById('newFilType') ? document.getElementById('newFilType').value : "PLA+";
@@ -3990,10 +4044,9 @@
         return;
       }
 
-      var btn = document.getElementById('btnAddFilament');
       if (btn) {
         btn.disabled = true;
-        btn.innerText = "⏳ កំពុងរក្សាទុកចូល Google Sheet...";
+        btn.style.opacity = "0.4";
       }
 
       callBackendPost({
@@ -4004,7 +4057,7 @@
       .then(function(res) {
         if (btn) {
           btn.disabled = false;
-          btn.innerText = "💾 រក្សាទុកពណ៌ថ្មីចូល Sheet";
+          btn.style.opacity = "1";
         }
         if (colorInput) colorInput.value = '';
         loadFilamentInventory();
@@ -4013,12 +4066,12 @@
       .catch(function(err) {
         if (btn) {
           btn.disabled = false;
-          btn.innerText = "💾 រក្សាទុកពណ៌ថ្មីចូល Sheet";
+          btn.style.opacity = "1";
         }
         alert("កំហុស៖ " + err.message);
       });
     }
-
+    
     function updateColorDropdownOptions() {
       var sSingle = document.getElementById('singleColorSelect');
       var sC1 = document.getElementById('comboC1');
