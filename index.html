@@ -3722,7 +3722,6 @@
         alert("✓ បាន Reset រួចរាល់!");
       }
     }
-
   
     // អនុគមន៍ បើក ឬបិទផ្ទាំងកំណត់ថ្លៃដឹក
     function toggleShippingPanel() {
@@ -4184,14 +4183,11 @@
     // អនុគមន៍ទាញយកតែ Category ណាដែលមានពិតប្រាកដក្នុងទំនិញ Google Sheet ប៉ុណ្ណោះ
     function getAllAvailableCategories() {
       var categories = [];
-      
-      // ១. ស្វែងរកទំនិញជាក់ស្តែងពី Google Sheet (ទាំង Admin និង Customer)
       var prods = (typeof adminProducts !== 'undefined' && adminProducts.length > 0) ? adminProducts : (customerProducts || []);
       
       for (var i = 0; i < prods.length; i++) {
         var cat = (prods[i].category || '').trim();
         if (cat) {
-          // ពិនិត្យកុំឱ្យស្ទួន (Case-insensitive)
           var exists = categories.some(function(c) { 
             return c.toLowerCase() === cat.toLowerCase(); 
           });
@@ -4201,12 +4197,11 @@
         }
       }
 
-      // ២. ប្រសិនបើ Sheet ទើបបើកដំបូង ឬគ្មានទំនិញ ប្រើ Category លំនាំដើម
       if (categories.length === 0) {
         categories = ['Pet', 'Fidget', 'Desk', 'Custom'];
       }
 
-      return categories;
+      return categories; // បន្ទាត់ return នេះត្រូវស្ថិតក្នុង function getAllAvailableCategories()
     }
 
       // ទាញពី Category Order ដែលបាន Save
