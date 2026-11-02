@@ -239,6 +239,65 @@
           <span id="shippingToggleIcon" class="text-xs text-slate-400 font-bold transition-transform duration-200">▼</span>
         </div>
 
+        <!-- ប្លុកគ្រប់គ្រងស្តុកជ័រ & ពណ៌ (Accordion Dropdown ដូច Delivery Fee) -->
+      <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-xs">
+        <!-- ក្បាល Header ចុចបើក/បិទ Dropdown -->
+        <div onclick="toggleFilamentPanel()" class="p-3.5 flex justify-between items-center cursor-pointer hover:bg-slate-50 transition-colors select-none">
+          <div>
+            <h4 class="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+              🧵 គ្រប់គ្រងស្តុកជ័រ & ពណ៌ (Filament Inventory)
+            </h4>
+            <p id="lblFilamentSummary" class="text-[10px] text-slate-500 font-mono mt-0.5">
+              កំពុងផ្ទុកទិន្នន័យស្តុកជ័រ...
+            </p>
+          </div>
+          <!-- សញ្ញាព្រួញ ▼ បង្វិល 180 ដឺក្រេពេលបើក -->
+          <span id="filamentToggleIcon" class="text-xs text-slate-400 font-bold transition-transform duration-200">▼</span>
+        </div>
+
+        <!-- ផ្ទៃខាងក្នុង Dropdown (លាក់ទុក hidden ជាមុន) -->
+        <div id="filamentPanelBody" class="hidden px-3.5 pb-3.5 pt-1 border-t border-slate-100 space-y-3">
+          
+          <!-- ទម្រង់បន្ថែមជ័រ/ពណ៌ថ្មីរហ័ស -->
+          <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-200 space-y-2">
+            <span class="text-[11px] font-bold text-slate-700 block">➕ បន្ថែមពណ៌ជ័រថ្មីចូល Google Sheet៖</span>
+            
+            <div class="grid grid-cols-3 gap-1.5">
+              <input id="newFilColor" type="text" placeholder="ឈ្មោះពណ៌ (ឧ. Fire Red, Silk Gold)..." class="col-span-2 p-2 border border-slate-300 rounded-xl text-xs bg-white outline-none focus:ring-2 focus:ring-blue-500">
+              <select id="newFilType" class="p-2 border border-slate-300 rounded-xl text-xs bg-white outline-none font-semibold text-slate-700">
+                <option value="PLA+">PLA+</option>
+                <option value="PLA">PLA</option>
+                <option value="PETG">PETG</option>
+                <option value="TPU">TPU</option>
+                <option value="ABS">ABS</option>
+              </select>
+            </div>
+
+            <div class="grid grid-cols-2 gap-1.5">
+              <input id="newFilBrand" type="text" placeholder="ម៉ាកជ័រ (ឧ. eSUN, Creality)..." class="p-2 border border-slate-300 rounded-xl text-xs bg-white outline-none">
+              <input id="newFilPrice" type="number" step="0.5" placeholder="តម្លៃទិញ $ (ឧ. 18.00)..." class="p-2 border border-slate-300 rounded-xl text-xs bg-white outline-none">
+            </div>
+
+            <button type="button" onclick="submitNewFilament()" id="btnAddFilament" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-2 rounded-xl text-xs shadow-xs active:scale-95 transition-all">
+              💾 រក្សាទុកពណ៌ថ្មីចូល Sheet
+            </button>
+          </div>
+
+          <!-- បញ្ជីជ័រពណ៌ទាំងអស់ដែលមានក្នុង Google Sheet -->
+          <div class="space-y-1.5">
+            <div class="flex justify-between items-center text-[10px] text-slate-400 pb-0.5">
+              <span>បញ្ជីជ័រពណ៌បច្ចុប្បន្ន</span>
+              <span>ចុចប៊ូតុងដើម្បីដូរស្តុក</span>
+            </div>
+            
+            <div id="filamentAdminList" class="space-y-1.5 max-h-64 overflow-y-auto pr-1">
+              <p class="text-xs text-slate-400 py-3 text-center">កំពុងទាញទិន្នន័យ...</p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+        
         <div id="shippingPanelBody" class="hidden px-3.5 pb-3.5 pt-1 border-t border-slate-100 space-y-3">
           <div>
             <label id="lblSettingShipPP" class="block text-[11px] font-semibold text-slate-600 mb-1">ថ្លៃដឹកជញ្ជូន ភ្នំពេញ ($)</label>
@@ -788,6 +847,7 @@
       applyLanguageUI();
       loadAppSettings();
       loadCustomerData();
+      loadFilamentInventory();
       updateCartBadge();
     };
 
@@ -3541,7 +3601,204 @@
         input.value = arr.join(', ');
       }
     }
-    
+
+    var allFilamentsData = [];
+
+    // ១. អនុគមន៍ បើក/បិទ Dropdown Accordion (ដូចគ្នានឹង toggleShippingPanel)
+    function toggleFilamentPanel() {
+      var body = document.getElementById('filamentPanelBody');
+      var icon = document.getElementById('filamentToggleIcon');
+      if (!body) return;
+      var isHidden = body.classList.contains('hidden');
+      if (isHidden) {
+        body.classList.remove('hidden');
+        if (icon) icon.style.transform = 'rotate(180deg)';
+        loadFilamentInventory(); // ទាញទិន្នន័យភ្លាមៗពេលចុចបើក Dropdown
+      } else {
+        body.classList.add('hidden');
+        if (icon) icon.style.transform = 'rotate(0deg)';
+      }
+    }
+
+    // ២. ទាញទិន្នន័យពី Sheet 'Filament Inventory'
+    function loadFilamentInventory() {
+      var summary = document.getElementById('lblFilamentSummary');
+      callBackendPost({ action: "getFilamentInventory", pin: adminPin })
+        .then(function(res) {
+          if (res && res.success) {
+            allFilamentsData = res.filaments || [];
+            renderFilamentAdminList();
+            updateColorDropdownOptions(); // ធ្វើបច្ចុប្បន្នភាព Dropdown ពណ៌ពេល Add/Edit ទំនិញ
+
+            if (summary) {
+              var inUse = allFilamentsData.filter(function(f){ return f.status !== 'Empty'; }).length;
+              summary.innerText = "មាន " + inUse + " ពណ៌កំពុងប្រើ (សរុប " + allFilamentsData.length + " ដុំ)";
+            }
+          }
+        })
+        .catch(function(err) {
+          console.warn("មិនអាចទាញស្តុក Filament:", err);
+          if (summary) summary.innerText = "មិនអាចទាញទិន្នន័យបានទេ";
+        });
+    }
+
+    // ៣. បង្ហាញបញ្ជីជ័រពណ៌ក្នុង Panel (មានប៊ូតុងប្តូរស្តុក និងលុប)
+    function renderFilamentAdminList() {
+      var container = document.getElementById('filamentAdminList');
+      if (!container) return;
+      container.innerHTML = '';
+
+      if (allFilamentsData.length === 0) {
+        container.innerHTML = '<p class="text-xs text-slate-400 py-3 text-center">មិនទាន់មានទិន្នន័យជ័រក្នុង Sheet ឡើយ</p>';
+        return;
+      }
+
+      for (var i = 0; i < allFilamentsData.length; i++) {
+        (function(f) {
+          var item = document.createElement('div');
+          item.className = "flex items-center justify-between p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs";
+
+          var left = document.createElement('div');
+          left.className = "flex items-center gap-2";
+
+          // រង្វង់ពណ៌
+          var dot = document.createElement('span');
+          dot.className = "w-3.5 h-3.5 rounded-full border border-black/10 flex-shrink-0";
+          var bg = (typeof getSimpleColorHex === 'function') ? getSimpleColorHex(f.color.toLowerCase()) : '#94a3b8';
+          if (bg.indexOf('gradient') !== -1) dot.style.background = bg;
+          else dot.style.backgroundColor = bg;
+
+          var info = document.createElement('div');
+          var isInStock = (f.status !== 'Empty');
+          info.innerHTML = '<span class="font-bold text-slate-800 ' + (!isInStock ? 'line-through text-slate-400' : '') + '">' + f.color + '</span> ' +
+                           '<span class="text-[10px] text-slate-400">(' + (f.brand || 'Cv3D') + ' - ' + f.type + ')</span>';
+
+          left.appendChild(dot);
+          left.appendChild(info);
+
+          var right = document.createElement('div');
+          right.className = "flex items-center gap-1.5";
+
+          // ប៊ូតុងចុចដូរស្តុក (មានស្តុក <-> អស់ស្តុក)
+          var toggleBtn = document.createElement('button');
+          toggleBtn.type = "button";
+          toggleBtn.className = "px-2.5 py-1 rounded-lg text-[10px] font-bold border transition-all active:scale-95 " + 
+            (isInStock ? "bg-emerald-50 text-emerald-700 border-emerald-200" : "bg-rose-50 text-rose-700 border-rose-200");
+          toggleBtn.innerText = isInStock ? "✓ មានស្តុក" : "✕ អស់ស្តុក";
+          
+          toggleBtn.onclick = function() {
+            var nextStatus = isInStock ? "Empty" : "In Use";
+            toggleBtn.disabled = true;
+            toggleBtn.innerText = "⏳...";
+            callBackendPost({ action: "toggleFilamentStatus", pin: adminPin, row: f.row, newStatus: nextStatus })
+              .then(function() { loadFilamentInventory(); });
+          };
+
+          // ប៊ូតុងលុបជ័រចេញពី Sheet
+          var delBtn = document.createElement('button');
+          delBtn.type = "button";
+          delBtn.className = "text-slate-400 hover:text-rose-600 p-1 text-xs font-bold transition-colors";
+          delBtn.innerText = "🗑️";
+          delBtn.title = "លុបចេញពី Sheet";
+          delBtn.onclick = function() {
+            if (confirm("តើអ្នកពិតជាចង់លុបពណ៌ " + f.color + " ចេញពី Google Sheet មែនទេ?")) {
+              callBackendPost({ action: "deleteFilament", pin: adminPin, row: f.row })
+                .then(function() { loadFilamentInventory(); });
+            }
+          };
+
+          right.appendChild(toggleBtn);
+          right.appendChild(delBtn);
+
+          item.appendChild(left);
+          item.appendChild(right);
+          container.appendChild(item);
+        })(allFilamentsData[i]);
+      }
+    }
+
+    // ៤. អនុគមន៍បន្ថែមជ័រពណ៌ថ្មីចូល Google Sheet
+    function submitNewFilament() {
+      var colorInput = document.getElementById('newFilColor');
+      var color = colorInput ? colorInput.value.trim() : "";
+      var type = document.getElementById('newFilType') ? document.getElementById('newFilType').value : "PLA+";
+      var brand = document.getElementById('newFilBrand') ? document.getElementById('newFilBrand').value.trim() : "Cv3D";
+      var price = document.getElementById('newFilPrice') ? document.getElementById('newFilPrice').value : 0;
+
+      if (!color) {
+        alert("សូមបញ្ចូលឈ្មោះពណ៌ជ័រ!");
+        if (colorInput) colorInput.focus();
+        return;
+      }
+
+      var btn = document.getElementById('btnAddFilament');
+      if (btn) {
+        btn.disabled = true;
+        btn.innerText = "⏳ កំពុងរក្សាទុកចូល Google Sheet...";
+      }
+
+      callBackendPost({
+        action: "addFilament",
+        pin: adminPin,
+        filament: { color: color, type: type, brand: brand || "Cv3D", price: price || 0, status: "In Use" }
+      })
+      .then(function(res) {
+        if (btn) {
+          btn.disabled = false;
+          btn.innerText = "💾 រក្សាទុកពណ៌ថ្មីចូល Sheet";
+        }
+        if (colorInput) colorInput.value = '';
+        loadFilamentInventory();
+        alert("✓ បានបន្ថែមពណ៌ " + color + " ចូល Google Sheet ជោគជ័យ!");
+      })
+      .catch(function(err) {
+        if (btn) {
+          btn.disabled = false;
+          btn.innerText = "💾 រក្សាទុកពណ៌ថ្មីចូល Sheet";
+        }
+        alert("កំហុស៖ " + err.message);
+      });
+    }
+
+    // ៥. អនុគមន៍បញ្ចូលពណ៌ដែល «មានស្តុក» ទៅក្នុង Dropdown នៃផ្ទាំង Add/Edit ទំនិញ
+    function updateColorDropdownOptions() {
+      var select = document.getElementById('colorDropdownSelect');
+      if (!select) return;
+
+      var currentVal = select.value;
+      select.innerHTML = '<option value="">➕ ចុចទីនេះដើម្បីរើសពណ៌បន្ថែម...</option>';
+
+      var optGroupSingle = document.createElement('optgroup');
+      optGroupSingle.label = "🎨 ពណ៌ទោល (ពី Filament Inventory)";
+
+      var availableColors = [];
+      for (var i = 0; i < allFilamentsData.length; i++) {
+        var f = allFilamentsData[i];
+        // បង្ហាញតែពណ៌ណាដែលមិនទាន់ Empty
+        if (f.status !== 'Empty' && f.color && availableColors.indexOf(f.color) === -1) {
+          availableColors.push(f.color);
+          var opt = document.createElement('option');
+          opt.value = f.color;
+          opt.innerText = "● " + f.color + " (" + f.type + ")";
+          optGroupSingle.appendChild(opt);
+        }
+      }
+      select.appendChild(optGroupSingle);
+
+      // ឈុត ២ ពណ៌ពេញនិយម
+      var optGroupDual = document.createElement('optgroup');
+      optGroupDual.label = "✨ ឈុត ២ ពណ៌ពេញនិយម (Dual Colors)";
+      var duals = ["Black + Gold", "White + Grey", "Grey + White", "Black + Red"];
+      for (var d = 0; d < duals.length; d++) {
+        var optD = document.createElement('option');
+        optD.value = duals[d];
+        optD.innerText = "◐ " + duals[d];
+        optGroupDual.appendChild(optD);
+      }
+      select.appendChild(optGroupDual);
+
+      select.value = currentVal;
+    }
     
   </script>
 </body>
