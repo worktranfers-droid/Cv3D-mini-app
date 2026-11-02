@@ -3699,6 +3699,45 @@
       }
     }
 
+    // អនុគមន៍រុញលំដាប់ Category ឡើងលើ (▲) ឬចុះក្រោម (▼)
+    function moveCategoryPosition(index, delta) {
+      // ១. ទាញបញ្ជី Category បច្ចុប្បន្នចេញពី UI ឬ getAllAvailableCategories
+      var categories = getAllAvailableCategories();
+      
+      var savedOrder = JSON.parse(localStorage.getItem('app_category_order') || '[]');
+      if (savedOrder && savedOrder.length > 0) {
+        var lowerSavedOrder = savedOrder.map(function(s) { return String(s).toLowerCase().trim(); });
+        categories.sort(function(a, b) {
+          var idxA = lowerSavedOrder.indexOf(a.toLowerCase());
+          var idxB = lowerSavedOrder.indexOf(b.toLowerCase());
+          if (idxA === -1 && idxB === -1) return 0;
+          if (idxA === -1) return 1;
+          if (idxB === -1) return -1;
+          return idxA - idxB;
+        });
+      }
+
+      var targetIndex = index + delta;
+      if (targetIndex < 0 || targetIndex >= categories.length) return;
+
+      // ២. ផ្លាស់ប្តូរទីតាំង (Swap) រវាងធាតុទាំងពីរ
+      var temp = categories[index];
+      categories[index] = categories[targetIndex];
+      categories[targetIndex] = temp;
+
+      // ៣. រក្សាទុកលំដាប់ថ្មីចូលក្នុង LocalStorage
+      localStorage.setItem('app_category_order', JSON.stringify(categories));
+
+      // ៤. ធ្វើបច្ចុប្បន្នភាព UI លើផ្ទាំង Setting និងទំព័រដើមភ្លាមៗ
+      renderAdminCategoryOrderManager();
+      if (typeof renderDynamicCategories === 'function') {
+        renderDynamicCategories();
+      }
+      if (typeof updateCategoryDropdownUI === 'function') {
+        updateCategoryDropdownUI();
+      }
+    }
+
     // អនុគមន៍ Reset Category Order ឱ្យដើរតាម Google Sheet ឡើងវិញ
     // ១. អនុគមន៍ Reset Category Order
     function resetCategoryOrder() {
