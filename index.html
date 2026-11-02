@@ -3464,7 +3464,6 @@
         var el;
         if (el = document.getElementById('editProductId')) el.value = p.id;
         if (el = document.getElementById('addTitle')) el.value = p.title || '';
-        if (el = document.getElementById('addCategory')) el.value = p.category || '';
         if (el = document.getElementById('addPrice')) el.value = p.price || '';
         if (el = document.getElementById('addDesc')) el.value = p.desc || '';
         if (el = document.getElementById('addImage')) el.value = p.image || '';
@@ -3506,13 +3505,14 @@
         }
         if (typeof setColorMode === 'function') setColorMode('single');
         if (typeof updateColorDropdownOptions === 'function') updateColorDropdownOptions();
+
+        // ✅ ហៅទាញយកប្រភេទពិតប្រាកដរបស់ផលិតផលមកដាក់ក្នុង Dropdown
+        updateCategoryDropdownUI(p.category || 'Pet');
+
       } catch (err) {
         console.error("កំហុសពេលបើកផ្ទាំងកែប្រែ:", err);
         alert("មិនអាចបើកផ្ទាំងកែប្រែបានទេ៖ " + err.message);
       }
-
-      updateCategoryDropdownUI('Pet');
-
     }
     
     function closeAddModal() {
