@@ -229,13 +229,23 @@
           </div>
         </div>
 
-        <div id="catOrderPanelBody" class="hidden px-3.5 pb-3.5 pt-1 border-t border-slate-100 space-y-2">
-          <div class="flex justify-between items-center text-[10px] text-slate-400 pb-1">
-            <span id="lblCatOrderHint">ចុចព្រួញដើម្បីរុញលំដាប់</span>
+        <div id="catOrderPanelBody" class="hidden px-3.5 pb-3.5 pt-1 border-t border-slate-100 space-y-2.5">
+          
+          <!-- ប្រអប់បន្ថែម Category ថ្មីផ្ទាល់ -->
+          <div class="flex items-center gap-1.5 pt-1">
+            <input id="newCategoryInput" type="text" placeholder="ឈ្មោះ Category ថ្មី (ឧ. Kitchen, Tool)..." class="flex-1 p-2 border border-slate-300 rounded-xl text-xs bg-slate-50 outline-none focus:ring-2 focus:ring-blue-500">
+            <button type="button" onclick="addNewCategoryFromAdmin()" class="px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold active:scale-95 shadow-2xs flex-shrink-0">
+              ➕ បន្ថែម
+            </button>
           </div>
+
+          <div class="flex justify-between items-center text-[10px] text-slate-400 pb-0.5">
+            <span id="lblCatOrderHint">ចុចព្រួញដើម្បីរុញលំដាប់ Category</span>
+          </div>
+
+          <!-- បញ្ជី Category សម្រាប់រុញឡើងចុះ -->
           <div id="adminCategoryOrderList" class="space-y-1.5"></div>
         </div>
-      </div>
 
       <!-- ២. ប្លុកកំណត់តម្លៃសេវាដឹកជញ្ជូន (Icon 💾 គ្មាន Background លើជួរ Header) -->
       <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-xs">
@@ -714,9 +724,16 @@
         </div>
         <div class="grid grid-cols-4 gap-2">
           <div>
-            <label id="lblAddCategory" class="block text-xs font-semibold text-slate-600 mb-1">ប្រភេទ</label>
-            <input id="addCategory" list="categoryDataList" placeholder="រើស ឬវាយថ្មី..." class="w-full border border-slate-300 p-2 rounded-xl text-xs outline-none bg-white focus:ring-2 focus:ring-blue-500">
-            <datalist id="categoryDataList"></datalist>
+            <label id="lblAddCategory" class="block text-xs font-semibold text-slate-600 mb-1">ប្រភេទ (Category)</label>
+            <div class="flex gap-1">
+              <select id="addCategorySelect" onchange="handleCategorySelect(this)" class="w-full border border-slate-300 p-2 rounded-xl text-xs outline-none bg-white focus:ring-2 focus:ring-blue-500 font-medium">
+                <!-- ជម្រើស Category នឹងត្រូវបញ្ចូលដោយស្វ័យប្រវត្តិតាម JS -->
+              </select>
+            </div>
+            <!-- ប្រអប់លាក់ សម្រាប់វាយឈ្មោះ Category ថ្មីពេលរើសយក '+ ផ្សេងទៀត (វាយថ្មី)' -->
+            <input id="addCategoryCustom" type="text" placeholder="វាយឈ្មោះ Category ថ្មី..." class="hidden w-full mt-1.5 border border-blue-300 p-2 rounded-xl text-xs outline-none bg-blue-50/40 focus:ring-2 focus:ring-blue-500">
+            <!-- Input លាក់សម្រាប់ផ្ទុកតម្លៃជាក់ស្តែងផ្ញើទៅ Google Sheet -->
+            <input id="addCategory" type="hidden" value="">
           </div>
           <div>
             <label id="lblAddPrice" class="block text-xs font-semibold text-slate-600 mb-1">តម្លៃ ($)</label>
@@ -3412,6 +3429,8 @@
         alert("មិនអាចបើកផ្ទាំងបន្ថែមបានទេ៖ " + err.message);
       }
 
+      updateCategoryDropdownUI('Pet');
+
     }
 
     // --- អនុគមន៍បើកផ្ទាំងកែប្រែទំនិញ (Edit Product) ---
@@ -3480,6 +3499,8 @@
         console.error("កំហុសពេលបើកផ្ទាំងកែប្រែ:", err);
         alert("មិនអាចបើកផ្ទាំងកែប្រែបានទេ៖ " + err.message);
       }
+
+      updateCategoryDropdownUI('Pet');
 
     }
     
@@ -4155,6 +4176,120 @@
           sC3.appendChild(o3);
         }
       }
+    }
+
+    // ១. អនុគមន៍ទាញយកបញ្ជី Category ទាំងអស់ (Unique Categories ពី Products + LocalStorage)
+    function getAllAvailableCategories() {
+      var categories = ['Pet', 'Fidget', 'Desk', 'Custom']; // ប្រភេទគោល
+      
+      // ទាញបន្ថែមពីទំនិញទាំងអស់ដែលបានទាញពី Google Sheet
+      var prods = (typeof adminProducts !== 'undefined' && adminProducts.length > 0) ? adminProducts : customerProducts;
+      for (var i = 0; i < prods.length; i++) {
+        var cat = (prods[i].category || '').trim();
+        if (cat) {
+          var exists = categories.some(function(c) { return c.toLowerCase() === cat.toLowerCase(); });
+          if (!exists) categories.push(cat);
+        }
+      }
+
+      // ទាញពី Category Order ដែលបានរក្សាទុក
+      var savedOrder = JSON.parse(localStorage.getItem('app_category_order') || '[]');
+      for (var s = 0; s < savedOrder.length; s++) {
+        var sCat = savedOrder[s].trim();
+        if (sCat && sCat.toLowerCase() !== 'all') {
+          var existsSaved = categories.some(function(c) { return c.toLowerCase() === sCat.toLowerCase(); });
+          if (!existsSaved) categories.push(sCat);
+        }
+      }
+      return categories;
+    }
+
+    // ២. បញ្ចូលបញ្ជី Category ទៅក្នុង Dropdown នៃ Modal បន្ថែម/កែប្រែទំនិញ
+    function updateCategoryDropdownUI(selectedVal) {
+      var sel = document.getElementById('addCategorySelect');
+      var hiddenInput = document.getElementById('addCategory');
+      var customInput = document.getElementById('addCategoryCustom');
+      if (!sel) return;
+
+      var cats = getAllAvailableCategories();
+      sel.innerHTML = '';
+
+      var isMatched = false;
+      for (var i = 0; i < cats.length; i++) {
+        var opt = document.createElement('option');
+        opt.value = cats[i];
+        opt.innerText = cats[i];
+        if (selectedVal && cats[i].toLowerCase() === selectedVal.toLowerCase()) {
+          opt.selected = true;
+          isMatched = true;
+        }
+        sel.appendChild(opt);
+      }
+
+      // ជម្រើសសម្រាប់វាយប្រភេទថ្មីដោយដៃ
+      var customOpt = document.createElement('option');
+      customOpt.value = "__custom__";
+      customOpt.innerText = "➕ បញ្ចូលប្រភេទថ្មីផ្សេងទៀត...";
+      sel.appendChild(customOpt);
+
+      if (selectedVal && !isMatched) {
+        customOpt.selected = true;
+        if (customInput) {
+          customInput.classList.remove('hidden');
+          customInput.value = selectedVal;
+        }
+        if (hiddenInput) hiddenInput.value = selectedVal;
+      } else {
+        if (customInput) customInput.classList.add('hidden');
+        if (hiddenInput) hiddenInput.value = sel.value;
+      }
+    }
+
+    // ពេលរើស Dropdown Category
+    function handleCategorySelect(selectEl) {
+      var customInput = document.getElementById('addCategoryCustom');
+      var hiddenInput = document.getElementById('addCategory');
+      if (selectEl.value === '__custom__') {
+        if (customInput) {
+          customInput.classList.remove('hidden');
+          customInput.focus();
+          customInput.oninput = function() {
+            if (hiddenInput) hiddenInput.value = this.value.trim();
+          };
+        }
+      } else {
+        if (customInput) {
+          customInput.classList.add('hidden');
+          customInput.value = '';
+        }
+        if (hiddenInput) hiddenInput.value = selectEl.value;
+      }
+    }
+
+    // ៣. អនុគមន៍បន្ថែម Category ថ្មីពីផ្ទាំង Admin Category Order
+    function addNewCategoryFromAdmin() {
+      var input = document.getElementById('newCategoryInput');
+      if (!input) return;
+      var newCat = input.value.trim();
+      if (!newCat) {
+        alert("សូមបញ្ចូលឈ្មោះ Category ថ្មី!");
+        input.focus();
+        return;
+      }
+
+      var savedOrder = JSON.parse(localStorage.getItem('app_category_order') || '[]');
+      var exists = savedOrder.some(function(c) { return c.toLowerCase() === newCat.toLowerCase(); });
+      
+      if (!exists) {
+        savedOrder.push(newCat);
+        localStorage.setItem('app_category_order', JSON.stringify(savedOrder));
+      }
+
+      input.value = '';
+      renderAdminCategoryOrderManager();
+      renderDynamicCategories();
+      updateCategoryDropdownUI();
+      alert("✓ បានបន្ថែម Category '" + newCat + "' ចូលក្នុង Dropdown រួចរាល់!");
     }
     
   </script>
