@@ -3295,6 +3295,8 @@
           modal.classList.remove('hidden');
           modal.className = "fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4";
         }
+        if (typeof setColorMode === 'function') setColorMode('single');
+        if (typeof updateColorDropdownOptions === 'function') updateColorDropdownOptions();
       } catch (err) {
         console.error("កំហុសពេលបើកផ្ទាំងបន្ថែមទំនិញ:", err);
         alert("មិនអាចបើកផ្ទាំងបន្ថែមបានទេ៖ " + err.message);
@@ -3362,6 +3364,8 @@
           modal.classList.remove('hidden');
           modal.className = "fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4";
         }
+        if (typeof setColorMode === 'function') setColorMode('single');
+        if (typeof updateColorDropdownOptions === 'function') updateColorDropdownOptions();
       } catch (err) {
         console.error("កំហុសពេលបើកផ្ទាំងកែប្រែ:", err);
         alert("មិនអាចបើកផ្ទាំងកែប្រែបានទេ៖ " + err.message);
@@ -3833,47 +3837,56 @@
 
     // អនុគមន៍បញ្ចូលបញ្ជីពណ៌ពី Filament Inventory ទៅក្នុង Dropdown ទាំងអស់
  function updateColorDropdownOptions() {
-   var sSingle = document.getElementById('singleColorSelect');
-   var sC1 = document.getElementById('comboC1');
-   var sC2 = document.getElementById('comboC2');
-   var sC3 = document.getElementById('comboC3');
+      var sSingle = document.getElementById('singleColorSelect');
+      var sC1 = document.getElementById('comboC1');
+      var sC2 = document.getElementById('comboC2');
+      var sC3 = document.getElementById('comboC3');
 
-   if (!sSingle || !allFilamentsData) return;
+      if (!sSingle) return;
 
-   var inStockColors = [];
-   for (var i = 0; i < allFilamentsData.length; i++) {
-     var f = allFilamentsData[i];
-     if (f.status !== 'Empty' && f.color && inStockColors.indexOf(f.color) === -1) {
-       inStockColors.push(f.color);
-     }
-   }
+      var inStockColors = [];
 
-   // Populate Dropdown ពណ៌ទោល
-   sSingle.innerHTML = '<option value="">➕ ចុចរើសពណ៌ទោលបន្ថែម...</option>';
-   for (var a = 0; a < inStockColors.length; a++) {
-     var opt = document.createElement('option');
-     opt.value = inStockColors[a];
-     opt.innerText = "● " + inStockColors[a];
-     sSingle.appendChild(opt);
-   }
+      // ១. ប្រសិនបើមានទិន្នន័យពី Filament Inventory យកពណ៌ដែលមានស្តុក
+      if (typeof allFilamentsData !== 'undefined' && allFilamentsData && allFilamentsData.length > 0) {
+        for (var i = 0; i < allFilamentsData.length; i++) {
+          var f = allFilamentsData[i];
+          if (f.status !== 'Empty' && f.color && inStockColors.indexOf(f.color) === -1) {
+            inStockColors.push(f.color);
+          }
+        }
+      }
 
-   // Populate Dropdowns សម្រាប់ផ្គុំ ២-៣ ពណ៌
-   if (sC1 && sC2 && sC3) {
-     sC1.innerHTML = '<option value="">ពណ៌ទី ១...</option>';
-     sC2.innerHTML = '<option value="">ពណ៌ទី ២...</option>';
-     sC3.innerHTML = '<option value="">(គ្មានពណ៌ទី ៣)</option>';
+      // ២. បើទិន្នន័យ Sheet មិនទាន់មកដល់ ប្រើពណ៌ស្តង់ដារបណ្តោះអាសន្ន
+      if (inStockColors.length === 0) {
+        inStockColors = ["Black", "White", "Grey", "Silver", "Red", "Blue", "Silk Gold", "Silk Rainbow", "Purple"];
+      }
 
-     for (var b = 0; b < inStockColors.length; b++) {
-       var cName = inStockColors[b];
-       var o1 = document.createElement('option'); o1.value = cName; o1.innerText = cName;
-       var o2 = document.createElement('option'); o2.value = cName; o2.innerText = cName;
-       var o3 = document.createElement('option'); o3.value = cName; o3.innerText = cName;
-       sC1.appendChild(o1);
-       sC2.appendChild(o2);
-       sC3.appendChild(o3);
-     }
-   }
- }
+      // បញ្ចូលទៅក្នុង Dropdown ពណ៌ទោល
+      sSingle.innerHTML = '<option value="">➕ ចុចរើសពណ៌ទោលបន្ថែម...</option>';
+      for (var a = 0; a < inStockColors.length; a++) {
+        var opt = document.createElement('option');
+        opt.value = inStockColors[a];
+        opt.innerText = "● " + inStockColors[a];
+        sSingle.appendChild(opt);
+      }
+
+      // បញ្ចូលទៅក្នុង Dropdowns ពណ៌ផ្គុំ (២-៣ ពណ៌)
+      if (sC1 && sC2 && sC3) {
+        sC1.innerHTML = '<option value="">ពណ៌ទី ១...</option>';
+        sC2.innerHTML = '<option value="">ពណ៌ទី ២...</option>';
+        sC3.innerHTML = '<option value="">(គ្មានពណ៌ទី ៣)</option>';
+
+        for (var b = 0; b < inStockColors.length; b++) {
+          var cName = inStockColors[b];
+          var o1 = document.createElement('option'); o1.value = cName; o1.innerText = cName;
+          var o2 = document.createElement('option'); o2.value = cName; o2.innerText = cName;
+          var o3 = document.createElement('option'); o3.value = cName; o3.innerText = cName;
+          sC1.appendChild(o1);
+          sC2.appendChild(o2);
+          sC3.appendChild(o3);
+        }
+      }
+    }
     
   </script>
 </body>
