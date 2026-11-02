@@ -360,21 +360,43 @@
 
         <!-- ផ្ទៃបញ្ចូល Link និងរូបភាព (បង្ហាញតែពេល Checkbox បើក) -->
         <div id="bannerInputsBox" class="hidden space-y-2.5 pt-1 border-t border-indigo-100/80">
-          <div>
-            <label id="lblBannerUpload" class="block text-[11px] font-semibold text-indigo-900 mb-1">📁 រើសរូបភាពផ្ទាល់ (Upload ពីម៉ាស៊ីន)៖</label>
-            <input type="file" id="bannerFileInput" accept="image/*" onchange="handleDirectImageUpload(event, 'setBannerImages', 'bannerUploadStatus')" class="w-full text-xs text-slate-500 file:mr-2 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-indigo-600 file:text-white hover:file:bg-indigo-700 cursor-pointer bg-white p-1 rounded-xl border border-indigo-200">
-            <span id="bannerUploadStatus" class="text-[10px] text-blue-600 font-bold hidden mt-1"></span>
+          
+          <!-- ជួរ Choose File + ប៊ូតុង 🔗 Link (ដូចផ្ទាំងបន្ថែមទំនិញ) -->
+          <div class="flex items-center gap-1.5">
+            <input 
+              type="file" 
+              id="bannerFileInput" 
+              accept="image/*" 
+              onchange="handleDirectImageUpload(event, 'setBannerImages', 'bannerUploadStatus')" 
+              class="flex-1 text-xs text-slate-500 file:mr-2 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-indigo-600 file:text-white hover:file:bg-indigo-700 cursor-pointer bg-white p-1 rounded-xl border border-indigo-200"
+            >
+            <button 
+              type="button" 
+              onclick="toggleBannerLinkInput()" 
+              title="បញ្ចូល Link រូបភាពដោយដៃ" 
+              class="px-2.5 py-2 bg-white hover:bg-indigo-50 text-indigo-700 rounded-xl border border-indigo-200 font-bold text-xs flex items-center gap-1 active:scale-95 transition-all flex-shrink-0 shadow-2xs"
+            >
+              <span>🔗 Link</span>
+            </button>
           </div>
 
+          <span id="bannerUploadStatus" class="text-[10px] text-blue-600 font-bold hidden"></span>
+
+          <!-- កន្លែងបង្ហាញរូបភាព Thumbnail តូចៗ -->
           <div id="bannerThumbnailsContainer" class="flex flex-wrap gap-2.5 py-1 items-center"></div>
 
-          <div>
-            <label id="lblBannerLinks" class="block text-[11px] font-semibold text-indigo-900 mb-1">🔗 Link រូបភាព Banner (បំបែកដោយក្បៀស ,)៖</label>
-            <textarea id="setBannerImages" rows="2" oninput="renderBannerThumbnailsUI()" placeholder="https://lh3.googleusercontent.com/..., https://..." class="w-full border border-indigo-300 p-2 rounded-xl text-xs outline-none bg-white font-mono"></textarea>
+          <!-- ប្រអប់ Paste Link (លាក់ទុកជាមុន style="display: none;") -->
+          <div id="bannerLinkWrapper" style="display: none;" class="space-y-1 pt-1">
+            <textarea 
+              id="setBannerImages" 
+              rows="2" 
+              oninput="renderBannerThumbnailsUI()" 
+              placeholder="https://lh3.googleusercontent.com/..., https://..." 
+              class="w-full border border-indigo-300 p-2 rounded-xl text-xs outline-none bg-white font-mono focus:ring-2 focus:ring-indigo-400"
+            ></textarea>
             <p id="lblBannerHint" class="text-[10px] text-indigo-600">* ទំហំរូបដែលស្អាតបំផុតគឺសមាមាត្រ 16:7 ឬ 2:1 (ឧ. 800x350px)</p>
           </div>
         </div>
-      </div>
 
     </div>
   </section>
@@ -3685,6 +3707,23 @@
         wrapper.classList.add('hidden');
       }
     } // <--- បិទ toggleProdLinkInput ត្រឹមត្រូវនៅត្រង់នេះ!
+
+    // អនុគមន៍ បើក ឬបិទ ប្រអប់ Paste Link Banner
+    function toggleBannerLinkInput() {
+      var wrapper = document.getElementById('bannerLinkWrapper');
+      var textarea = document.getElementById('setBannerImages');
+      if (!wrapper) return;
+
+      var isHidden = (wrapper.style.display === 'none' || wrapper.classList.contains('hidden'));
+      if (isHidden) {
+        wrapper.style.display = 'block';
+        wrapper.classList.remove('hidden');
+        if (textarea) textarea.focus();
+      } else {
+        wrapper.style.display = 'none';
+        wrapper.classList.add('hidden');
+      }
+    }
 
       // អនុគមន៍ Refresh ទាញយកទិន្នន័យថ្មីពី Google Sheets + រំកិលឡើងលើកំពូល
     function refreshHomeData() {
