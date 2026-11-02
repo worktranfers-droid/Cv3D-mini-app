@@ -4181,6 +4181,7 @@
     }
 
     // អនុគមន៍ទាញយកតែ Category ណាដែលមានពិតប្រាកដក្នុងទំនិញ Google Sheet ប៉ុណ្ណោះ
+    // អនុគមន៍ទាញយកតែ Category ណាដែលមានពិតប្រាកដក្នុងទំនិញ Google Sheet ប៉ុណ្ណោះ
     function getAllAvailableCategories() {
       var categories = [];
       var prods = (typeof adminProducts !== 'undefined' && adminProducts.length > 0) ? adminProducts : (customerProducts || []);
@@ -4201,18 +4202,6 @@
         categories = ['Pet', 'Fidget', 'Desk', 'Custom'];
       }
 
-      return categories;
-    }
-
-      // ទាញពី Category Order ដែលបាន Save
-      var savedOrder = JSON.parse(localStorage.getItem('app_category_order') || '[]');
-      for (var s = 0; s < savedOrder.length; s++) {
-        var sCat = savedOrder[s].trim();
-        if (sCat && sCat.toLowerCase() !== 'all') {
-          var existsSaved = categories.some(function(c) { return c.toLowerCase() === sCat.toLowerCase(); });
-          if (!existsSaved) categories.push(sCat);
-        }
-      }
       return categories;
     }
 
