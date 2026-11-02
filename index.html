@@ -3732,6 +3732,125 @@
     
     var activeColorMode = 'single';
 
+    // ==========================================
+    // គ្រប់គ្រង FILAMENT INVENTORY (ដែលបានបាត់)
+    // ==========================================
+    var allFilamentsData = [];
+
+    // ១. អនុគមន៍ បើក/បិទ Dropdown Accordion
+    function toggleFilamentPanel() {
+      var body = document.getElementById('filamentPanelBody');
+      var icon = document.getElementById('filamentToggleIcon');
+      if (!body) return;
+
+      var isCurrentlyHidden = body.classList.contains('hidden') || body.style.display === 'none';
+
+      if (isCurrentlyHidden) {
+        body.classList.remove('hidden');
+        body.style.display = 'block';
+        if (icon) icon.style.transform = 'rotate(180deg)';
+        loadFilamentInventory();
+      } else {
+        body.classList.add('hidden');
+        body.style.display = 'none';
+        if (icon) icon.style.transform = 'rotate(0deg)';
+      }
+    }
+
+    // ២. ទាញទិន្នន័យពី Google Sheet
+    function loadFilamentInventory() {
+      var summary = document.getElementById('lblFilamentSummary');
+      callBackendPost({ action: "getFilamentInventory", pin: adminPin })
+        .then(function(res) {
+          if (res && res.success) {
+            allFilamentsData = res.filaments || [];
+            renderFilamentAdminList();
+            if (typeof updateColorDropdownOptions === 'function') updateColorDropdownOptions();
+
+            if (summary) {
+              var inUse = allFilamentsData.filter(function(f){ return f.status !== 'Empty'; }).length;
+              summary.innerText = "មាន " + inUse + " ពណ៌កំពុងប្រើ (សរុប " + allFilamentsData.length + " ដុំ)";
+            }
+          }
+        })
+        .catch(function(err) {
+          console.warn("មិនអាចទាញស្តុក Filament:", err);
+          if (summary) summary.innerText = "មិនអាចទាញទិន្នន័យបានទេ";
+        });
+    }
+
+    // ៣. បង្ហាញបញ្ជីជ័រពណ៌ក្នុង Panel (មានប៊ូតុងដូរស្តុក និងលុប)
+    function renderFilamentAdminList() {
+      var container = document.getElementById('filamentAdminList');
+      if (!container) return;
+      container.innerHTML = '';
+
+      if (allFilamentsData.length === 0) {
+        container.innerHTML = '<p class="text-xs text-slate-400 py-3 text-center">មិនទាន់មានទិន្នន័យជ័រក្នុង Sheet ឡើយ</p>';
+        return;
+      }
+
+      for (var i = 0; i < allFilamentsData.length; i++) {
+        (function(f) {
+          var item = document.createElement('div');
+          item.className = "flex items-center justify-between p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs";
+
+          var left = document.createElement('div');
+          left.className = "flex items-center gap-2.5";
+
+          var dot = document.createElement('span');
+          dot.className = "w-4 h-4 rounded-full border border-black/15 flex-shrink-0 shadow-2xs";
+          var bg = (typeof getSimpleColorHex === 'function') ? getSimpleColorHex(f.color.toLowerCase()) : '#94a3b8';
+          if (bg.indexOf('gradient') !== -1) dot.style.background = bg;
+          else dot.style.backgroundColor = bg;
+
+          var info = document.createElement('div');
+          var isInStock = (f.status !== 'Empty');
+          info.innerHTML = '<span class="font-bold text-sm text-slate-800 ' + (!isInStock ? 'line-through text-slate-400' : '') + '">' + f.color + '</span> ' +
+                           '<span class="text-[10px] bg-white border border-slate-200 text-slate-500 px-1.5 py-0.5 rounded-md font-mono">' + f.type + '</span> ' +
+                           '<span class="text-[10px] text-slate-400 font-medium">(' + f.brand + ')</span>';
+
+          left.appendChild(dot);
+          left.appendChild(info);
+
+          var right = document.createElement('div');
+          right.className = "flex items-center gap-1.5";
+
+          var toggleBtn = document.createElement('button');
+          toggleBtn.type = "button";
+          toggleBtn.className = "px-2.5 py-1 rounded-lg text-[10px] font-bold border transition-all active:scale-95 " + 
+            (isInStock ? "bg-emerald-50 text-emerald-700 border-emerald-200" : "bg-rose-50 text-rose-700 border-rose-200");
+          toggleBtn.innerText = isInStock ? "✓ មានស្តុក" : "✕ អស់ស្តុក";
+          
+          toggleBtn.onclick = function() {
+            var nextStatus = isInStock ? "Empty" : "In Use";
+            toggleBtn.disabled = true;
+            toggleBtn.innerText = "⏳...";
+            callBackendPost({ action: "toggleFilamentStatus", pin: adminPin, row: f.row, newStatus: nextStatus })
+              .then(function() { loadFilamentInventory(); });
+          };
+
+          var delBtn = document.createElement('button');
+          delBtn.type = "button";
+          delBtn.className = "text-slate-400 hover:text-rose-600 p-1 text-xs font-bold transition-colors";
+          delBtn.innerText = "🗑️";
+          delBtn.onclick = function() {
+            if (confirm("តើអ្នកពិតជាចង់លុបពណ៌ " + f.color + " ចេញពី Google Sheet មែនទេ?")) {
+              callBackendPost({ action: "deleteFilament", pin: adminPin, row: f.row })
+                .then(function() { loadFilamentInventory(); });
+            }
+          };
+
+          right.appendChild(toggleBtn);
+          right.appendChild(delBtn);
+
+          item.appendChild(left);
+          item.appendChild(right);
+          container.appendChild(item);
+        })(allFilamentsData[i]);
+      }
+    }
+
  // ប្តូរ Mode រវាង "១ ពណ៌" និង "២-៣ ពណ៌"
  function setColorMode(mode) {
    activeColorMode = mode;
