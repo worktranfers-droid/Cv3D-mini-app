@@ -4227,7 +4227,7 @@
       }
     }
 
-    // អនុគមន៍បន្ថែម Category ថ្មីពីផ្ទាំង Setting និងរក្សាទុកចូល Google Sheet
+    // អនុគមន៍បន្ថែម Category ថ្មីពី App ទៅ Google Sheet Catalog Products ផ្ទាល់
     function addNewCategoryFromAdmin() {
       var input = document.getElementById('newCategoryInput');
       if (!input) return;
@@ -4238,30 +4238,47 @@
         return;
       }
 
-      // ១. រក្សាទុកក្នុង Local Storage
+      var btn = event ? event.target : null;
+      if (btn) {
+        btn.disabled = true;
+        btn.innerText = "⏳...";
+      }
+
+      // ១. រក្សាទុកក្នុង Local Storage ជាមុន ដើម្បីបង្ហាញភ្លាមៗលើ App
       var savedOrder = JSON.parse(localStorage.getItem('app_category_order') || '[]');
       var exists = savedOrder.some(function(c) { return c.toLowerCase() === newCat.toLowerCase(); });
-      
       if (!exists) {
         savedOrder.push(newCat);
         localStorage.setItem('app_category_order', JSON.stringify(savedOrder));
       }
 
-      // ២. បញ្ជូនទៅ Update ក្នុង Google Sheet ភ្លាមៗ
-      callBackendPost({ action: "addCategorySetting", pin: adminPin, category: newCat })
-        .then(function(res) {
-          console.log("Category synced to Sheet:", res);
-        })
-        .catch(function(err) {
-          console.warn("Failed to sync category to Sheet:", err);
-        });
+      // ២. បញ្ជូនទៅ Update Dropdown នៃ Column C ក្នុង Google Sheet
+      callBackendPost({ 
+        action: "addCategorySetting", 
+        pin: adminPin, 
+        category: newCat 
+      })
+      .then(function(res) {
+        if (btn) {
+          btn.disabled = false;
+          btn.innerText = "➕ បន្ថែម";
+        }
+        input.value = '';
 
-      // ៣. Update UI គ្រប់កន្លែង (ផ្ទាំង Setting, ទំព័រ Home, និង Dropdown)
-      input.value = '';
-      renderAdminCategoryOrderManager();
-      renderDynamicCategories();
-      updateCategoryDropdownUI(newCat);
-      alert("✓ បានបន្ថែម Category '" + newCat + "' និងរក្សាទុកចូល Google Sheet ជោគជ័យ!");
+        // ធ្វើបច្ចុប្បន្នភាព UI លើ App គ្រប់កន្លែង (ផ្ទាំង Setting, Dropdown បន្ថែមទំនិញ, និងទំព័រ Home)
+        if (typeof renderAdminCategoryOrderManager === 'function') renderAdminCategoryOrderManager();
+        if (typeof renderDynamicCategories === 'function') renderDynamicCategories();
+        if (typeof updateCategoryDropdownUI === 'function') updateCategoryDropdownUI(newCat);
+
+        alert("✓ បានបន្ថែម Category '" + newCat + "' ចូល Google Sheet (Catalog Products) រួចរាល់!");
+      })
+      .catch(function(err) {
+        if (btn) {
+          btn.disabled = false;
+          btn.innerText = "➕ បន្ថែម";
+        }
+        alert("កំហុសក្នុងការតភ្ជាប់៖ " + err.message);
+      });
     }
     
   </script>
