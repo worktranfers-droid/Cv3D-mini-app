@@ -1079,6 +1079,8 @@
       
       // ធ្វើបច្ចុប្បន្នភាពបញ្ជី និងអក្សរសង្ខេប
       if (typeof renderFilamentAdminList === 'function') renderFilamentAdminList();
+
+      if (typeof updateFilamentSummaryUI === 'function') updateFilamentSummaryUI();
     }
 
     function openSellerChat() {
@@ -3862,7 +3864,7 @@
             renderFilamentAdminList();
             if (typeof updateColorDropdownOptions === 'function') updateColorDropdownOptions();
 
-            if (summary) {
+            updateFilamentSummaryUI();
               var inUse = allFilamentsData.filter(function(f){ return f.status !== 'Empty'; }).length;
               summary.innerText = "មាន " + inUse + " ពណ៌កំពុងប្រើ (សរុប " + allFilamentsData.length + " ដុំ)";
             }
@@ -3976,6 +3978,18 @@
           container.appendChild(item);
         })(allFilamentsData[i]);
       }
+    }
+
+    // អនុគមន៍ធ្វើបច្ចុប្បន្នភាពអក្សរសង្ខេបស្តុក Filament តាមភាសាដែលកំពុងប្រើ
+    function updateFilamentSummaryUI() {
+      var summary = document.getElementById('lblFilamentSummary');
+      if (!summary || typeof allFilamentsData === 'undefined' || allFilamentsData.length === 0) return;
+
+      var t = (typeof i18n !== 'undefined' && i18n[currentLang]) ? i18n[currentLang] : (i18n ? i18n['km'] : {});
+      var inUse = allFilamentsData.filter(function(f) { return f.status !== 'Empty'; }).length;
+      var pattern = t.filamentSummaryInUse || "មាន {count} ពណ៌កំពុងប្រើ (សរុប {total} ដុំ)";
+
+      summary.innerText = pattern.replace('{count}', inUse).replace('{total}', allFilamentsData.length);
     }
 
  // ប្តូរ Mode រវាង "១ ពណ៌" និង "២-៣ ពណ៌"
