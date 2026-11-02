@@ -231,7 +231,7 @@
 
         <div id="catOrderPanelBody" class="hidden px-3.5 pb-3.5 pt-1 border-t border-slate-100 space-y-2.5">
           
-          <!-- ប្រអប់បន្ថែម Category ថ្មីផ្ទាល់ -->
+          <!-- ប្រអប់បន្ថែម Category ថ្មី -->
           <div class="flex items-center gap-1.5 pt-1">
             <input id="newCategoryInput" type="text" placeholder="ឈ្មោះ Category ថ្មី (ឧ. Kitchen, Tool)..." class="flex-1 p-2 border border-slate-300 rounded-xl text-xs bg-slate-50 outline-none focus:ring-2 focus:ring-blue-500">
             <button type="button" onclick="addNewCategoryFromAdmin()" class="px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold active:scale-95 shadow-2xs flex-shrink-0">
@@ -239,8 +239,18 @@
             </button>
           </div>
 
+          <!-- ជួរអក្សរណែនាំ អមដោយប៊ូតុង Reset -->
           <div class="flex justify-between items-center text-[10px] text-slate-400 pb-0.5">
-            <span id="lblCatOrderHint">ចុចព្រួញដើម្បីរុញលំដាប់ Category</span>
+            <span id="lblCatOrderHint">ចុចព្រួញដើម្បីរុញលំដាប់</span>
+            <!-- ប៊ូតុង Reset សម្អាត Category លើស -->
+            <button 
+              type="button" 
+              onclick="resetCategoryOrder()" 
+              class="px-2 py-0.5 bg-slate-100 hover:bg-rose-50 text-slate-500 hover:text-rose-600 border border-slate-200 hover:border-rose-200 rounded-lg text-[10px] font-semibold active:scale-95 transition-all flex items-center gap-1"
+              title="កំណត់ឡើងវិញតាមទិន្នន័យ Google Sheet"
+            >
+              🔄 Reset
+            </button>
           </div>
 
           <!-- បញ្ជី Category សម្រាប់រុញឡើងចុះ -->
@@ -3689,6 +3699,31 @@
       }
     }
 
+    // អនុគមន៍ Reset Category Order ឱ្យដើរតាម Google Sheet ឡើងវិញ
+    function resetCategoryOrder() {
+      var confirmMsg = (currentLang === 'zh') ? "确定要重置分类并清除多余的名称吗？" :
+                       (currentLang === 'en') ? "Reset category order and remove extra test categories?" :
+                       "តើអ្នកពិតជាចង់ Reset និងលុប Category ដែលលើសចោលទាំងអស់មែនទេ?";
+
+      if (confirm(confirmMsg)) {
+        // ១. លុបទិន្នន័យចាស់ៗដែលជាប់ក្នុង Local Storage
+        localStorage.removeItem('app_category_order');
+
+        // ២. ធ្វើបច្ចុប្បន្នភាព UI គ្រប់កន្លែងឡើងវិញភ្លាមៗ
+        if (typeof renderAdminCategoryOrderManager === 'function') {
+          renderAdminCategoryOrderManager();
+        }
+        if (typeof renderDynamicCategories === 'function') {
+          renderDynamicCategories();
+        }
+        if (typeof updateCategoryDropdownUI === 'function') {
+          updateCategoryDropdownUI();
+        }
+
+        alert("✓ បាន Reset រួចរាល់! ប្រភេទទាំងអស់ត្រូវបានតម្រឹមតាម Google Sheet វិញ។");
+      }
+    }
+
     // ២. អនុគមន៍រុញប្តូរទីតាំង Category
     function moveCategoryPosition(currentIndex, delta) {
       var categories = [];
@@ -4179,19 +4214,33 @@
       }
     }
 
-    // ទាញយក Category ទាំងអស់ (ពី Google Sheet + LocalStorage)
+    // អនុគមន៍ទាញយកតែ Category ណាដែលមានពិតប្រាកដក្នុងទំនិញ Google Sheet ប៉ុណ្ណោះ
     function getAllAvailableCategories() {
-      var categories = ['Pet', 'Fidget', 'Desk', 'Custom']; // ប្រភេទដើម
+      var categories = [];
       
-      // ទាញពីទំនិញដែលមានក្នុង Google Sheet
-      var prods = (typeof adminProducts !== 'undefined' && adminProducts.length > 0) ? adminProducts : customerProducts;
+      // ១. ស្វែងរកទំនិញជាក់ស្តែងពី Google Sheet (ទាំង Admin និង Customer)
+      var prods = (typeof adminProducts !== 'undefined' && adminProducts.length > 0) ? adminProducts : (customerProducts || []);
+      
       for (var i = 0; i < prods.length; i++) {
         var cat = (prods[i].category || '').trim();
         if (cat) {
-          var exists = categories.some(function(c) { return c.toLowerCase() === cat.toLowerCase(); });
-          if (!exists) categories.push(cat);
+          // ពិនិត្យកុំឱ្យស្ទួន (Case-insensitive)
+          var exists = categories.some(function(c) { 
+            return c.toLowerCase() === cat.toLowerCase(); 
+          });
+          if (!exists) {
+            categories.push(cat);
+          }
         }
       }
+
+      // ២. ប្រសិនបើ Sheet ទើបបើកដំបូង ឬគ្មានទំនិញ ប្រើ Category លំនាំដើម
+      if (categories.length === 0) {
+        categories = ['Pet', 'Fidget', 'Desk', 'Custom'];
+      }
+
+      return categories;
+    }
 
       // ទាញពី Category Order ដែលបាន Save
       var savedOrder = JSON.parse(localStorage.getItem('app_category_order') || '[]');
