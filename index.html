@@ -2417,6 +2417,7 @@
 
     function renderMyOrdersList(orders) {
       var container = document.getElementById('myOrdersContainer');
+      var t = (typeof i18n !== 'undefined' && i18n[currentLang]) ? i18n[currentLang] : (i18n ? i18n['km'] : {});
       container.innerHTML = '';
 
       for (var i = 0; i < orders.length; i++) {
@@ -2424,37 +2425,58 @@
         var card = document.createElement('div');
         card.className = "bg-slate-50 border border-slate-200 rounded-2xl p-3.5 space-y-2 text-xs shadow-sm";
 
+        // ១. កាលបរិច្ឆេទខ្លី
         var topRow = document.createElement('div');
         topRow.className = "flex justify-between items-center border-b border-slate-200/60 pb-1.5";
         topRow.innerHTML = '<span class="font-bold font-mono text-slate-700">' + ord.orderId + '</span>' +
-                           '<span class="text-[10px] text-slate-400">' + (ord.date || '') + '</span>';
+                           '<span class="text-[10px] text-slate-400 font-mono">' + (ord.date || '') + '</span>';
         card.appendChild(topRow);
 
-        var badgeRow = document.createElement('div');
+        // ២. បកប្រែស្ថានភាព Status តាមភាសាបច្ចុប្បន្ន (ខ្មែរ / English / 中文)
+        var st = ord.status || "";
+        var statusText = st;
         var badgeClass = "p-1.5 rounded-xl text-center font-bold text-xs shadow-sm ";
-        if (ord.status.indexOf("Pending") !== -1) {
+
+        if (st.indexOf("Pending") !== -1 || st.indexOf("រង់ចាំពិនិត្យ") !== -1 || st.indexOf("待处理") !== -1) {
           badgeClass += "bg-amber-100 text-amber-800 border border-amber-200";
-        } else if (ord.status.indexOf("Printing") !== -1) {
+          statusText = (currentLang === 'zh') ? "🟡 待处理 (Pending)" :
+                       (currentLang === 'en') ? "🟡 Pending" : "🟡 រង់ចាំពិនិត្យ (Pending)";
+        } else if (st.indexOf("Printing") !== -1 || st.indexOf("កំពុងព្រីន") !== -1 || st.indexOf("打印中") !== -1) {
           badgeClass += "bg-blue-100 text-blue-800 border border-blue-200 animate-pulse";
-        } else if (ord.status.indexOf("Shipping") !== -1 || ord.status.indexOf("Ready") !== -1) {
+          statusText = (currentLang === 'zh') ? "🔵 打印中 (Printing)" :
+                       (currentLang === 'en') ? "🔵 Printing" : "🔵 កំពុងព្រីន (Printing)";
+        } else if (st.indexOf("Shipping") !== -1 || st.indexOf("កំពុងដឹក") !== -1 || st.indexOf("配送中") !== -1) {
           badgeClass += "bg-purple-100 text-purple-800 border border-purple-200";
-        } else if (ord.status.indexOf("Completed") !== -1) {
+          statusText = (currentLang === 'zh') ? "🟣 配送中 (Shipping)" :
+                       (currentLang === 'en') ? "🟣 Shipping" : "🟣 កំពុងដឹកជញ្ជូន (Shipping)";
+        } else if (st.indexOf("Completed") !== -1 || st.indexOf("បានបញ្ចប់") !== -1 || st.indexOf("已完成") !== -1) {
           badgeClass += "bg-emerald-100 text-emerald-800 border border-emerald-200";
+          statusText = (currentLang === 'zh') ? "🟢 已完成 (Completed)" :
+                       (currentLang === 'en') ? "🟢 Completed" : "🟢 បានបញ្ចប់ (Completed)";
         } else {
           badgeClass += "bg-rose-100 text-rose-800 border border-rose-200";
+          statusText = (currentLang === 'zh') ? "🔴 已取消 (Canceled)" :
+                       (currentLang === 'en') ? "🔴 Canceled" : "🔴 បានបោះបង់ (Canceled)";
         }
-        badgeRow.innerHTML = '<div class="' + badgeClass + '">' + ord.status + '</div>';
+
+        var badgeRow = document.createElement('div');
+        badgeRow.innerHTML = '<div class="' + badgeClass + '">' + statusText + '</div>';
         card.appendChild(badgeRow);
 
+        // ៣. បញ្ជីទំនិញ
         var itemRow = document.createElement('div');
         itemRow.className = "text-slate-600 whitespace-pre-line text-[11px] bg-white p-2 rounded-xl border border-slate-100";
         itemRow.innerText = ord.items;
         card.appendChild(itemRow);
 
+        // ៤. បកប្រែពាក្យ តម្លៃសរុប (Total / 总计)
+        var totalLabel = (currentLang === 'zh') ? "总金额：" :
+                         (currentLang === 'en') ? "Total:" : (t.cartTotal || "តម្លៃសរុប៖");
+
         var bottomRow = document.createElement('div');
         bottomRow.className = "flex justify-between items-center pt-1 font-bold";
-        bottomRow.innerHTML = '<span class="text-slate-500 text-[11px]">តម្លៃសរុប៖</span>' +
-                              '<span class="text-blue-600 font-extrabold text-xs">$' + ord.totalPrice.toFixed(2) + '</span>';
+        bottomRow.innerHTML = '<span class="text-slate-500 text-[11px]">' + totalLabel + '</span>' +
+                              '<span class="text-blue-600 font-extrabold text-xs">$' + Number(ord.totalPrice).toFixed(2) + '</span>';
         card.appendChild(bottomRow);
 
         container.appendChild(card);
