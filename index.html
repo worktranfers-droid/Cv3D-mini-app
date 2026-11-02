@@ -239,18 +239,9 @@
             </button>
           </div>
 
-          <!-- ជួរអក្សរណែនាំ អមដោយប៊ូតុង Reset -->
-          <div class="flex justify-between items-center text-[10px] text-slate-400 pb-0.5">
+          <!-- ជួរអក្សរណែនាំធម្មតា (ដកប៊ូតុង Reset ចេញវិញ) -->
+          <div class="text-[10px] text-slate-400 pb-0.5">
             <span id="lblCatOrderHint">ចុចព្រួញដើម្បីរុញលំដាប់</span>
-            <!-- ប៊ូតុង Reset សម្អាត Category លើស -->
-            <button 
-              type="button" 
-              onclick="resetCategoryOrder()" 
-              class="px-2 py-0.5 bg-slate-100 hover:bg-rose-50 text-slate-500 hover:text-rose-600 border border-slate-200 hover:border-rose-200 rounded-lg text-[10px] font-semibold active:scale-95 transition-all flex items-center gap-1"
-              title="កំណត់ឡើងវិញតាមទិន្នន័យ Google Sheet"
-            >
-              🔄 Reset
-            </button>
           </div>
 
           <!-- បញ្ជី Category សម្រាប់រុញឡើងចុះ -->
@@ -3735,30 +3726,6 @@
       }
       if (typeof updateCategoryDropdownUI === 'function') {
         updateCategoryDropdownUI();
-      }
-    }
-
-    // អនុគមន៍ Reset Category Order ឱ្យដើរតាម Google Sheet ឡើងវិញ
-    // ១. អនុគមន៍ Reset Category Order
-    function resetCategoryOrder() {
-      var confirmMsg = (currentLang === 'zh') ? "确定要重置分类并清除多余的名称吗？" :
-                       (currentLang === 'en') ? "Reset category order and remove extra test categories?" :
-                       "តើអ្នកពិតជាចង់ Reset និងលុប Category ដែលលើសចោលទាំងអស់មែនទេ?";
-
-      if (confirm(confirmMsg)) {
-        localStorage.removeItem('app_category_order');
-
-        if (typeof renderAdminCategoryOrderManager === 'function') {
-          renderAdminCategoryOrderManager();
-        }
-        if (typeof renderDynamicCategories === 'function') {
-          renderDynamicCategories();
-        }
-        if (typeof updateCategoryDropdownUI === 'function') {
-          updateCategoryDropdownUI();
-        }
-
-        alert("✓ បាន Reset រួចរាល់!");
       }
     }
   
