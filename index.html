@@ -4702,7 +4702,7 @@
       alert(t.alertSocialSaved || "✓ ការកំណត់បណ្តាញសង្គមត្រូវបានរក្សាទុកជោគជ័យ!");
     }
 
-    // ៥. អនុគមន៍ Render Icon លើ Footer
+    // ៥. អនុគមន៍ Render Logo Icons លើ Footer
     function renderFooterSocialLinks() {
       var container = document.getElementById('footerSocialContainer');
       if (!container) return;
@@ -4710,52 +4710,52 @@
 
       var links = [];
 
-      // Phone
+      // ១. Phone Icon (SVG)
       if (appSocialSettings.phone_enabled && appSocialSettings.phone_val) {
         links.push({
-          icon: "📞",
+          svg: '<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M6.62 10.79a15.053 15.053 0 006.59 6.59l2.2-2.2a1 1 0 011.02-.24c1.12.37 2.33.57 3.57.57a1 1 0 011 1V20a1 1 0 01-1 1A17 17 0 013 4a1 1 0 011-1h3.5a1 1 0 011 1c0 1.25.2 2.45.57 3.57a1 1 0 01-.25 1.02l-2.2 2.2z"/></svg>',
           href: "tel:" + appSocialSettings.phone_val.replace(/\s+/g, ''),
           target: "_self",
-          bgHover: "hover:bg-emerald-50 hover:text-emerald-600 hover:border-emerald-200",
+          colorClass: "text-emerald-600 bg-emerald-50 border-emerald-200 hover:bg-emerald-100",
           title: "Call Us: " + appSocialSettings.phone_val
         });
       }
 
-      // Telegram
+      // ២. Telegram Icon (SVG Brand)
       if (appSocialSettings.tg_enabled && appSocialSettings.tg_val) {
         var rawTg = appSocialSettings.tg_val.replace('@', '').trim();
         var tgUrl = rawTg.startsWith('http') ? rawTg : ("https://t.me/" + rawTg);
         links.push({
-          icon: "✈️",
+          svg: '<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 00-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.74-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .38z"/></svg>',
           href: tgUrl,
           target: "_blank",
-          bgHover: "hover:bg-blue-50 hover:text-blue-500 hover:border-blue-200",
+          colorClass: "text-[#229ED9] bg-sky-50 border-sky-200 hover:bg-sky-100",
           title: "Telegram"
         });
       }
 
-      // TikTok
+      // ៣. TikTok Icon (SVG Brand)
       if (appSocialSettings.tiktok_enabled && appSocialSettings.tiktok_val) {
         var rawTt = appSocialSettings.tiktok_val.trim();
         var ttUrl = rawTt.startsWith('http') ? rawTt : ("https://www.tiktok.com/@" + rawTt.replace('@', ''));
         links.push({
-          icon: "🎵",
+          svg: '<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-5.2 1.74 2.89 2.89 0 012.31-4.64c.29 0 .58.04.86.12V9.42a6.34 6.34 0 00-.86-.06 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.34-6.34V8.58a8.28 8.28 0 004.87 1.57V6.69z"/></svg>',
           href: ttUrl,
           target: "_blank",
-          bgHover: "hover:bg-rose-50 hover:text-rose-500 hover:border-rose-200",
+          colorClass: "text-slate-900 bg-slate-100 border-slate-300 hover:bg-slate-200",
           title: "TikTok"
         });
       }
 
-      // Facebook
+      // ៤. Facebook Icon (SVG Brand)
       if (appSocialSettings.fb_enabled && appSocialSettings.fb_val) {
         var rawFb = appSocialSettings.fb_val.trim();
         var fbUrl = rawFb.startsWith('http') ? rawFb : ("https://www.facebook.com/" + rawFb);
         links.push({
-          icon: "📘",
+          svg: '<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>',
           href: fbUrl,
           target: "_blank",
-          bgHover: "hover:bg-blue-50 hover:text-blue-600 hover:border-blue-200",
+          colorClass: "text-[#1877F2] bg-blue-50 border-blue-200 hover:bg-blue-100",
           title: "Facebook"
         });
       }
@@ -4765,8 +4765,8 @@
         a.href = links[i].href;
         a.target = links[i].target;
         a.title = links[i].title;
-        a.className = "w-8 h-8 rounded-xl bg-white border border-slate-200 text-slate-600 flex items-center justify-center text-sm shadow-2xs transition-all active:scale-90 " + links[i].bgHover;
-        a.innerText = links[i].icon;
+        a.className = "w-9 h-9 rounded-xl border flex items-center justify-center shadow-xs transition-all active:scale-90 " + links[i].colorClass;
+        a.innerHTML = links[i].svg;
         container.appendChild(a);
       }
     }
