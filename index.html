@@ -3297,6 +3297,7 @@
       callBackendPost({ action: "getSettings" })
         .then(function(res) {
           if (res) {
+            // ១. ថ្លៃដឹកជញ្ជូន & Banner
             appSettings = {
               ship_phnom_penh: parseFloat(res.ship_phnom_penh) || 1.50,
               ship_province: parseFloat(res.ship_province) || 2.00,
@@ -3304,17 +3305,44 @@
               banner_enabled: (String(res.banner_enabled).toLowerCase() === 'yes' || res.banner_enabled === true),
               banner_images: String(res.banner_images || '').trim()
             };
+
+            // ២. កម្រិតច្បាស់នៃរូបភាពពី Google Sheet
+            if (res.image_quality_preset) {
+              applyImageQualityPreset(res.image_quality_preset);
+              if (document.getElementById('setImageQualityPreset')) {
+                document.getElementById('setImageQualityPreset').value = res.image_quality_preset;
+              }
+            }
+
+            // ៣. បណ្ដាញសង្គមទាំង ៤ ពី Google Sheet
+            if (res.social_phone_val !== undefined || res.social_tg_val !== undefined) {
+              appSocialSettings = {
+                phone_enabled: (String(res.social_phone_enabled).toLowerCase() === 'yes' || res.social_phone_enabled === true),
+                phone_val: String(res.social_phone_val || '').trim(),
+                tg_enabled: (String(res.social_tg_enabled).toLowerCase() === 'yes' || res.social_tg_enabled === true),
+                tg_val: String(res.social_tg_val || '').trim(),
+                tiktok_enabled: (String(res.social_tiktok_enabled).toLowerCase() === 'yes' || res.social_tiktok_enabled === true),
+                tiktok_val: String(res.social_tiktok_val || '').trim(),
+                fb_enabled: (String(res.social_fb_enabled).toLowerCase() === 'yes' || res.social_fb_enabled === true),
+                fb_val: String(res.social_fb_val || '').trim()
+              };
+            }
+
             updateDeliveryDropdownUI();
-            updateShippingSummaryText(); // <--- បន្ថែមត្រង់នេះ
+            updateShippingSummaryText();
+            updateImageQualitySummaryText();
+            updateSocialSummaryUI();
             renderPromoBanner();
+            renderFooterSocialLinks(); // បង្ហាញ Icon ភ្លាមៗក្រោយទាញទិន្នន័យពី Sheet បាន
             if (typeof renderCartItems === "function") renderCartItems();
           }
         })
         .catch(function(err) {
           console.warn("ប្រើតម្លៃកំណត់លំនាំដើម:", err);
           updateDeliveryDropdownUI();
-          updateShippingSummaryText(); // <--- បន្ថែមត្រង់នេះ
+          updateShippingSummaryText();
           renderPromoBanner();
+          renderFooterSocialLinks();
         });
     }
 
@@ -3464,16 +3492,36 @@
         applyImageQualityPreset(selectEl.value);
       }
       localStorage.setItem('app_image_quality_settings', JSON.stringify(uploadImgSettings));
+      updateImageQualitySummaryText();
 
       if (btn) {
         btn.disabled = true;
-        btn.innerText = "✓";
-        setTimeout(function() { 
-          btn.disabled = false;
-          btn.innerText = "💾"; 
-        }, 1200);
+        btn.style.opacity = "0.4";
       }
-      alert("✓ ការកំណត់កម្រិតរូបភាពត្រូវបានរក្សាទុកជោគជ័យ!");
+
+      // រក្សាទុកចូល Tab Settings ក្នុង Google Sheet
+      callBackendPost({
+        action: "updateSettings",
+        pin: adminPin,
+        settings: {
+          image_quality_preset: uploadImgSettings.preset || "hd"
+        }
+      })
+      .then(function(res) {
+        if (btn) {
+          btn.disabled = false;
+          btn.style.opacity = "1";
+        }
+        var t = (typeof i18n !== 'undefined' && i18n[currentLang]) ? i18n[currentLang] : (i18n ? i18n['km'] : {});
+        alert(t.alertImgQualitySaved || "✓ ការកំណត់កម្រិតរូបភាពត្រូវបានរក្សាទុកជោគជ័យ!");
+      })
+      .catch(function(err) {
+        if (btn) {
+          btn.disabled = false;
+          btn.style.opacity = "1";
+        }
+        alert("កំហុស៖ " + err.message);
+      });
     }
 
     // ៤. អនុគមន៍បង្រួមរូបភាព (មាន Auto Center-Crop 1:1 សម្រាប់រូបផលិតផល)
@@ -4134,19 +4182,11 @@
       var icon = document.getElementById('adminRefreshIcon');
       if (icon) icon.classList.add('animate-spin');
 
-      // ១. ទាញទិន្នន័យទំនិញ និងថ្លៃដើម Admin
       if (typeof loadAdminData === 'function') loadAdminData();
-
-      // ២. ទាញទិន្នន័យការកុម្ម៉ង់ (Orders)
       if (typeof loadAdminOrders === 'function') loadAdminOrders();
-
-      // ៣. ទាញទិន្នន័យស្តុកជ័រពណ៌ (Filament Inventory)
       if (typeof loadFilamentInventory === 'function') loadFilamentInventory();
+      if (typeof loadAppSettings === 'function') loadAppSettings(); // ✅ ទាញ Settings ថ្មីពី Sheet
 
-      // ៤. ទាញការកំណត់ទូទៅ (Settings)
-      if (typeof loadAppSettings === 'function') loadAppSettings();
-
-      // បញ្ឈប់ចលនាវិលក្រោយ ១.៥ វិនាទី
       setTimeout(function() {
         if (icon) icon.classList.remove('animate-spin');
       }, 1500);
@@ -4694,14 +4734,41 @@
 
       if (btn) {
         btn.disabled = true;
-        btn.innerText = "✓";
-        setTimeout(function() { btn.disabled = false; btn.innerText = "💾"; }, 1200);
+        btn.style.opacity = "0.4";
       }
 
-      var t = (typeof i18n !== 'undefined' && i18n[currentLang]) ? i18n[currentLang] : (i18n ? i18n['km'] : {});
-      alert(t.alertSocialSaved || "✓ ការកំណត់បណ្តាញសង្គមត្រូវបានរក្សាទុកជោគជ័យ!");
+      // រក្សាទុកចូល Tab Settings ក្នុង Google Sheet ផ្ទាល់
+      callBackendPost({
+        action: "updateSettings",
+        pin: adminPin,
+        settings: {
+          social_phone_enabled: appSocialSettings.phone_enabled ? "yes" : "no",
+          social_phone_val: appSocialSettings.phone_val,
+          social_tg_enabled: appSocialSettings.tg_enabled ? "yes" : "no",
+          social_tg_val: appSocialSettings.tg_val,
+          social_tiktok_enabled: appSocialSettings.tiktok_enabled ? "yes" : "no",
+          social_tiktok_val: appSocialSettings.tiktok_val,
+          social_fb_enabled: appSocialSettings.fb_enabled ? "yes" : "no",
+          social_fb_val: appSocialSettings.fb_val
+        }
+      })
+      .then(function(res) {
+        if (btn) {
+          btn.disabled = false;
+          btn.style.opacity = "1";
+        }
+        var t = (typeof i18n !== 'undefined' && i18n[currentLang]) ? i18n[currentLang] : (i18n ? i18n['km'] : {});
+        alert(t.alertSocialSaved || "✓ ការកំណត់បណ្តាញសង្គមត្រូវបានរក្សាទុកជោគជ័យ!");
+      })
+      .catch(function(err) {
+        if (btn) {
+          btn.disabled = false;
+          btn.style.opacity = "1";
+        }
+        alert("កំហុស៖ " + err.message);
+      });
     }
-
+    
     // ៥. អនុគមន៍ Render Logo Icons លើ Footer (គាំទ្រទូរសព្ទដៃ & Telegram WebApp ១០០%)
     function renderFooterSocialLinks() {
       var container = document.getElementById('footerSocialContainer');
