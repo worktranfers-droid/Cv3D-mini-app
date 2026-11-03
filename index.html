@@ -126,11 +126,15 @@
 
     <!-- Footer / Admin Entry -->
     <div class="text-center py-10 text-slate-400">
+      <!-- កន្លែងបង្ហាញ Icon បណ្តាញសង្គមតាមការកំណត់ -->
+      <div id="footerSocialContainer" class="flex items-center justify-center gap-2.5 pb-3"></div>
+
       <button type="button" onclick="handleRoleClick()" class="text-xs text-slate-400 hover:text-slate-600 transition-colors py-1 px-3 rounded-lg hover:bg-slate-100">
         🔒 Admin Portal
       </button>
       <p class="text-[10px] text-slate-300 mt-1">© 2026 3D Print Studio. All rights reserved.</p>
     </div>
+
   </section>
 
   <!-- ==================== ADMIN VIEW ==================== -->
@@ -393,7 +397,6 @@
       </div>
       
       <!-- ៥. ប្លុក Slide Banner (Accordion + Icon Button 💾) -->
-      <!-- ប្លុក Slide Banner (Icon 💾 គ្មាន background ខៀវ ស្ថិតនៅជួរ Title) -->
       <div class="bg-indigo-50/70 p-3 rounded-2xl border border-indigo-200 space-y-2.5">
         
         <!-- ជួរ Title + Checkbox + ប៊ូតុង Icon 💾 (គ្មាន Background) -->
@@ -459,6 +462,71 @@
           </div>
         </div>
       </div>
+
+      <!-- ៦. ប្លុកកំណត់បណ្តាញសង្គម & ទំនាក់ទំនង (Social Links Accordion) -->
+      <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-xs">
+        <div onclick="toggleSocialPanel()" class="p-3.5 flex justify-between items-center cursor-pointer hover:bg-slate-50 transition-colors select-none">
+          <div class="flex-1 pr-2">
+            <h4 id="lblSocialSettingsTitle" class="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+              🌐 បណ្តាញសង្គម & ទំនាក់ទំនង (Footer Links)
+            </h4>
+            <p id="lblSocialSummary" class="text-[10px] text-slate-500 font-mono mt-0.5">
+              កំពុងបង្ហាញទំនាក់ទំនង...
+            </p>
+          </div>
+          <button 
+            type="button" 
+            onclick="event.stopPropagation(); saveSocialSettings(this);" 
+            title="រក្សាទុកបណ្តាញសង្គម" 
+            class="text-slate-600 hover:text-blue-600 active:scale-75 text-xl p-1 transition-all flex items-center justify-center rounded-lg hover:bg-slate-100"
+          >
+            💾
+          </button>
+        </div>
+
+        <div id="socialPanelBody" class="hidden px-3.5 pb-3.5 pt-1 border-t border-slate-100 space-y-3">
+          <p id="lblSocialSettingsDesc" class="text-[10px] text-slate-400">
+            កំណត់បង្ហាញ ឬលាក់តំណភ្ជាប់ទំនាក់ទំនងនៅផ្នែកខាងក្រោមហាង (Footer)
+          </p>
+
+          <!-- ១. Phone -->
+          <div class="space-y-1 bg-slate-50/70 p-2.5 rounded-xl border border-slate-200">
+            <label class="flex items-center gap-2 cursor-pointer select-none">
+              <input id="setSocialPhoneEnabled" type="checkbox" onchange="updateSocialSummaryUI()" class="w-4 h-4 text-blue-600 rounded">
+              <span id="lblSocialPhone" class="text-xs font-bold text-slate-700">📞 លេខទូរសព្ទហាង (Phone Call)</span>
+            </label>
+            <input id="setSocialPhoneVal" type="tel" placeholder="012 345 678" class="w-full bg-white border border-slate-200 p-2 rounded-xl text-xs outline-none focus:ring-2 focus:ring-blue-500 font-medium">
+          </div>
+
+          <!-- ២. Telegram -->
+          <div class="space-y-1 bg-slate-50/70 p-2.5 rounded-xl border border-slate-200">
+            <label class="flex items-center gap-2 cursor-pointer select-none">
+              <input id="setSocialTgEnabled" type="checkbox" onchange="updateSocialSummaryUI()" class="w-4 h-4 text-blue-600 rounded">
+              <span id="lblSocialTg" class="text-xs font-bold text-slate-700">✈️ Telegram Username / Link</span>
+            </label>
+            <input id="setSocialTgVal" type="text" placeholder="Vireak699 ឬ https://t.me/Vireak699" class="w-full bg-white border border-slate-200 p-2 rounded-xl text-xs outline-none focus:ring-2 focus:ring-blue-500 font-medium">
+          </div>
+
+          <!-- ៣. TikTok -->
+          <div class="space-y-1 bg-slate-50/70 p-2.5 rounded-xl border border-slate-200">
+            <label class="flex items-center gap-2 cursor-pointer select-none">
+              <input id="setSocialTiktokEnabled" type="checkbox" onchange="updateSocialSummaryUI()" class="w-4 h-4 text-blue-600 rounded">
+              <span id="lblSocialTiktok" class="text-xs font-bold text-slate-700">🎵 TikTok Link</span>
+            </label>
+            <input id="setSocialTiktokVal" type="text" placeholder="https://www.tiktok.com/@..." class="w-full bg-white border border-slate-200 p-2 rounded-xl text-xs outline-none focus:ring-2 focus:ring-blue-500 font-medium">
+          </div>
+
+          <!-- ៤. Facebook -->
+          <div class="space-y-1 bg-slate-50/70 p-2.5 rounded-xl border border-slate-200">
+            <label class="flex items-center gap-2 cursor-pointer select-none">
+              <input id="setSocialFbEnabled" type="checkbox" onchange="updateSocialSummaryUI()" class="w-4 h-4 text-blue-600 rounded">
+              <span id="lblSocialFb" class="text-xs font-bold text-slate-700">📘 Facebook Page / Profile Link</span>
+            </label>
+            <input id="setSocialFbVal" type="text" placeholder="https://www.facebook.com/..." class="w-full bg-white border border-slate-200 p-2 rounded-xl text-xs outline-none focus:ring-2 focus:ring-blue-500 font-medium">
+          </div>
+        </div>
+      </div>
+      
     </div>
   </section>
   
@@ -984,6 +1052,11 @@
       loadCustomerData();
       loadFilamentInventory();
       updateCartBadge();
+
+      // ✅ ហៅបង្ហាញ Icon បណ្តាញសង្គម និងទំនាក់ទំនងនៅ Footer ពេលបើក App ដំបូង
+      if (typeof renderFooterSocialLinks === 'function') {
+        renderFooterSocialLinks();
+      }
     };
 
     function callBackendPost(payload) {
@@ -1154,6 +1227,14 @@
       if (el = document.getElementById('optQualityHd')) el.innerText = t.optQualityHd;
       if (el = document.getElementById('optQualityUltra')) el.innerText = t.optQualityUltra;
       updateImageQualitySummaryText();
+
+      if (el = document.getElementById('lblSocialSettingsTitle')) el.innerText = t.lblSocialSettingsTitle;
+      if (el = document.getElementById('lblSocialSettingsDesc')) el.innerText = t.lblSocialSettingsDesc;
+      if (el = document.getElementById('lblSocialPhone')) el.innerText = t.lblSocialPhone;
+      if (el = document.getElementById('lblSocialTg')) el.innerText = t.lblSocialTg;
+      if (el = document.getElementById('lblSocialTiktok')) el.innerText = t.lblSocialTiktok;
+      if (el = document.getElementById('lblSocialFb')) el.innerText = t.lblSocialFb;
+      updateSocialSummaryUI();
     }
 
     function openSellerChat() {
@@ -2670,8 +2751,13 @@
       
       applyLanguageUI();
       loadCustomerData();
-    }
 
+      // ✅ បង្ហាញ Icon បណ្តាញសង្គមឡើងវិញពេលត្រឡប់មក Customer View
+      if (typeof renderFooterSocialLinks === 'function') {
+        renderFooterSocialLinks();
+      }
+    }
+    
     // --- 6.10 ADMIN CATALOG MANAGEMENT ---
     function loadAdminData() {
       var loader = document.getElementById('adminLoader');
@@ -3004,6 +3090,20 @@
 
         // ៤. បង្ហាញបញ្ជីរៀបលំដាប់ Category
         if (typeof renderAdminCategoryOrderManager === "function") renderAdminCategoryOrderManager();
+
+        if (document.getElementById('setSocialPhoneEnabled')) document.getElementById('setSocialPhoneEnabled').checked = appSocialSettings.phone_enabled;
+        if (document.getElementById('setSocialPhoneVal')) document.getElementById('setSocialPhoneVal').value = appSocialSettings.phone_val || '';
+
+        if (document.getElementById('setSocialTgEnabled')) document.getElementById('setSocialTgEnabled').checked = appSocialSettings.tg_enabled;
+        if (document.getElementById('setSocialTgVal')) document.getElementById('setSocialTgVal').value = appSocialSettings.tg_val || '';
+
+        if (document.getElementById('setSocialTiktokEnabled')) document.getElementById('setSocialTiktokEnabled').checked = appSocialSettings.tiktok_enabled;
+        if (document.getElementById('setSocialTiktokVal')) document.getElementById('setSocialTiktokVal').value = appSocialSettings.tiktok_val || '';
+
+        if (document.getElementById('setSocialFbEnabled')) document.getElementById('setSocialFbEnabled').checked = appSocialSettings.fb_enabled;
+        if (document.getElementById('setSocialFbVal')) document.getElementById('setSocialFbVal').value = appSocialSettings.fb_val || '';
+
+        updateSocialSummaryUI();
       }
     } 
 
@@ -4525,6 +4625,150 @@
 
       var t = (typeof i18n !== 'undefined' && i18n[currentLang]) ? i18n[currentLang] : (i18n ? i18n['km'] : {});
       alert(t.alertImgQualitySaved || "✓ បានរក្សាទុកការកំណត់ជោគជ័យ!");
+    }
+
+    // =========================================================
+    // គ្រប់គ្រង FOOTER SOCIAL & CONTACT LINKS
+    // =========================================================
+
+    // ១. អថេរផ្ទុកការកំណត់បណ្តាញសង្គម (ទាញពី LocalStorage)
+    var appSocialSettings = JSON.parse(localStorage.getItem('app_social_settings') || JSON.stringify({
+      phone_enabled: true,
+      phone_val: "012345678",
+      tg_enabled: true,
+      tg_val: "Vireak699",
+      tiktok_enabled: false,
+      tiktok_val: "",
+      fb_enabled: false,
+      fb_val: ""
+    }));
+
+    // ២. អនុគមន៍ បើក/បិទ Dropdown Accordion
+    function toggleSocialPanel() {
+      var body = document.getElementById('socialPanelBody');
+      if (!body) return;
+      body.classList.toggle('hidden');
+    }
+
+    // ៣. អនុគមន៍បង្ហាញចំនួនទំនាក់ទំនងដែលកំពុងបើក (៣ ភាសា)
+    function updateSocialSummaryUI() {
+      var summaryEl = document.getElementById('lblSocialSummary');
+      if (!summaryEl) return;
+
+      var chkPhone = document.getElementById('setSocialPhoneEnabled');
+      var chkTg = document.getElementById('setSocialTgEnabled');
+      var chkTiktok = document.getElementById('setSocialTiktokEnabled');
+      var chkFb = document.getElementById('setSocialFbEnabled');
+
+      var activeCount = 0;
+      if (chkPhone ? chkPhone.checked : appSocialSettings.phone_enabled) activeCount++;
+      if (chkTg ? chkTg.checked : appSocialSettings.tg_enabled) activeCount++;
+      if (chkTiktok ? chkTiktok.checked : appSocialSettings.tiktok_enabled) activeCount++;
+      if (chkFb ? chkFb.checked : appSocialSettings.fb_enabled) activeCount++;
+
+      var t = (typeof i18n !== 'undefined' && i18n[currentLang]) ? i18n[currentLang] : (i18n ? i18n['km'] : {});
+      if (activeCount > 0) {
+        summaryEl.innerText = (t.socialSummaryActive || "កំពុងបង្ហាញ {count} ទំនាក់ទំនង").replace('{count}', activeCount);
+      } else {
+        summaryEl.innerText = t.socialSummaryNone || "មិនទាន់បើកបង្ហាញទំនាក់ទំនងឡើយ";
+      }
+    }
+
+    // ៤. អនុគមន៍រក្សាទុកការកំណត់ពេលចុច Icon 💾
+    function saveSocialSettings(btn) {
+      appSocialSettings.phone_enabled = document.getElementById('setSocialPhoneEnabled') ? document.getElementById('setSocialPhoneEnabled').checked : false;
+      appSocialSettings.phone_val = document.getElementById('setSocialPhoneVal') ? document.getElementById('setSocialPhoneVal').value.trim() : "";
+
+      appSocialSettings.tg_enabled = document.getElementById('setSocialTgEnabled') ? document.getElementById('setSocialTgEnabled').checked : false;
+      appSocialSettings.tg_val = document.getElementById('setSocialTgVal') ? document.getElementById('setSocialTgVal').value.trim() : "";
+
+      appSocialSettings.tiktok_enabled = document.getElementById('setSocialTiktokEnabled') ? document.getElementById('setSocialTiktokEnabled').checked : false;
+      appSocialSettings.tiktok_val = document.getElementById('setSocialTiktokVal') ? document.getElementById('setSocialTiktokVal').value.trim() : "";
+
+      appSocialSettings.fb_enabled = document.getElementById('setSocialFbEnabled') ? document.getElementById('setSocialFbEnabled').checked : false;
+      appSocialSettings.fb_val = document.getElementById('setSocialFbVal') ? document.getElementById('setSocialFbVal').value.trim() : "";
+
+      localStorage.setItem('app_social_settings', JSON.stringify(appSocialSettings));
+      updateSocialSummaryUI();
+      renderFooterSocialLinks();
+
+      if (btn) {
+        btn.disabled = true;
+        btn.innerText = "✓";
+        setTimeout(function() { btn.disabled = false; btn.innerText = "💾"; }, 1200);
+      }
+
+      var t = (typeof i18n !== 'undefined' && i18n[currentLang]) ? i18n[currentLang] : (i18n ? i18n['km'] : {});
+      alert(t.alertSocialSaved || "✓ ការកំណត់បណ្តាញសង្គមត្រូវបានរក្សាទុកជោគជ័យ!");
+    }
+
+    // ៥. អនុគមន៍ Render Icon លើ Footer
+    function renderFooterSocialLinks() {
+      var container = document.getElementById('footerSocialContainer');
+      if (!container) return;
+      container.innerHTML = '';
+
+      var links = [];
+
+      // Phone
+      if (appSocialSettings.phone_enabled && appSocialSettings.phone_val) {
+        links.push({
+          icon: "📞",
+          href: "tel:" + appSocialSettings.phone_val.replace(/\s+/g, ''),
+          target: "_self",
+          bgHover: "hover:bg-emerald-50 hover:text-emerald-600 hover:border-emerald-200",
+          title: "Call Us: " + appSocialSettings.phone_val
+        });
+      }
+
+      // Telegram
+      if (appSocialSettings.tg_enabled && appSocialSettings.tg_val) {
+        var rawTg = appSocialSettings.tg_val.replace('@', '').trim();
+        var tgUrl = rawTg.startsWith('http') ? rawTg : ("https://t.me/" + rawTg);
+        links.push({
+          icon: "✈️",
+          href: tgUrl,
+          target: "_blank",
+          bgHover: "hover:bg-blue-50 hover:text-blue-500 hover:border-blue-200",
+          title: "Telegram"
+        });
+      }
+
+      // TikTok
+      if (appSocialSettings.tiktok_enabled && appSocialSettings.tiktok_val) {
+        var rawTt = appSocialSettings.tiktok_val.trim();
+        var ttUrl = rawTt.startsWith('http') ? rawTt : ("https://www.tiktok.com/@" + rawTt.replace('@', ''));
+        links.push({
+          icon: "🎵",
+          href: ttUrl,
+          target: "_blank",
+          bgHover: "hover:bg-rose-50 hover:text-rose-500 hover:border-rose-200",
+          title: "TikTok"
+        });
+      }
+
+      // Facebook
+      if (appSocialSettings.fb_enabled && appSocialSettings.fb_val) {
+        var rawFb = appSocialSettings.fb_val.trim();
+        var fbUrl = rawFb.startsWith('http') ? rawFb : ("https://www.facebook.com/" + rawFb);
+        links.push({
+          icon: "📘",
+          href: fbUrl,
+          target: "_blank",
+          bgHover: "hover:bg-blue-50 hover:text-blue-600 hover:border-blue-200",
+          title: "Facebook"
+        });
+      }
+
+      for (var i = 0; i < links.length; i++) {
+        var a = document.createElement('a');
+        a.href = links[i].href;
+        a.target = links[i].target;
+        a.title = links[i].title;
+        a.className = "w-8 h-8 rounded-xl bg-white border border-slate-200 text-slate-600 flex items-center justify-center text-sm shadow-2xs transition-all active:scale-90 " + links[i].bgHover;
+        a.innerText = links[i].icon;
+        container.appendChild(a);
+      }
     }
     
   </script>
