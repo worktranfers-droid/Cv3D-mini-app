@@ -135,7 +135,16 @@
         filamentInStockBtn: "✓ មានស្តុក",
         filamentOutOfStockBtn: "✕ អស់ស្តុក",
         filamentSummaryInUse: "មាន {count} ពណ៌កំពុងប្រើ (សរុប {total} ដុំ)",
-        filamentLoading: "កំពុងផ្ទុកទិន្នន័យស្តុកជ័រ..."
+        filamentLoading: "កំពុងផ្ទុកទិន្នន័យស្តុកជ័រ...",
+        lblImgQualityTitle: "🖼️ កម្រិតច្បាស់រូបភាព Upload (Image Quality)",
+        lblImgQualityHint: "កំណត់ទំហំ និងភាពម៉ត់នៃរូបភាពពេល Upload ចូល Google Drive (រូបផលិតផលកាត់ 1:1 ស្វ័យប្រវត្តិ)",
+        optQualityStandard: "⚡ ល្បឿនលឿន / ស្តង់ដារ (1000x1000px - 75% | ~150KB)",
+        optQualityHd: "🔍 ច្បាស់ល្អពេល Zoom / ណែនាំ (1200x1200px - 80% | ~280KB)",
+        optQualityUltra: "✨ ច្បាស់ខ្លាំងម៉ត់ល្អ (1500x1500px - 85% | ~500KB)",
+        alertImgQualitySaved: "✓ ការកំណត់កម្រិតរូបភាពត្រូវបានរក្សាទុកជោគជ័យ!",
+        summaryQualityStandard: "⚡ ល្បឿនលឿន / ស្តង់ដារ (1000px - 75%)",
+        summaryQualityHd: "🔍 ច្បាស់ល្អពេល Zoom / ណែនាំ (1200px - 80%)",
+        summaryQualityUltra: "✨ ច្បាស់ខ្លាំងម៉ត់ល្អ (1500px - 85%)",
       },
       en: {
         flag: "🇬🇧",
@@ -273,7 +282,16 @@
         filamentInStockBtn: "✓ In Stock",
         filamentOutOfStockBtn: "✕ Out of Stock",
         filamentSummaryInUse: "{count} in use ({total} rolls total)",
-        filamentLoading: "Loading filament inventory..."
+        filamentLoading: "Loading filament inventory...",
+        lblImgQualityTitle: "🖼️ Upload Image Quality",
+        lblImgQualityHint: "Set size and compression when uploading to Drive (Products auto-cropped to 1:1)",
+        optQualityStandard: "⚡ Standard / Fast (1000x1000px - 75% | ~150KB)",
+        optQualityHd: "🔍 HD Zoom / Recommended (1200x1200px - 80% | ~280KB)",
+        optQualityUltra: "✨ Ultra HD (1500x1500px - 85% | ~500KB)",
+        alertImgQualitySaved: "✓ Image quality settings saved successfully!",
+        summaryQualityStandard: "⚡ Standard / Fast (1000px - 75%)",
+        summaryQualityHd: "🔍 HD Zoom / Recommended (1200px - 80%)",
+        summaryQualityUltra: "✨ Ultra HD (1500px - 85%)",
       },
       zh: {
         flag: "🇨🇳",
@@ -411,7 +429,16 @@
         filamentInStockBtn: "✓ 有货",
         filamentOutOfStockBtn: "✕ 缺货",
         filamentSummaryInUse: "{count} 种使用中 (共 {total} 卷)",
-        filamentLoading: "正在加载耗材库存..."
+        filamentLoading: "正在加载耗材库存...",
+        lblImgQualityTitle: "🖼️ 上传图片画质设置 (Image Quality)",
+        lblImgQualityHint: "设置上传至 Google Drive 时的图片尺寸及压缩比（商品图自动裁剪 1:1 方形）",
+        optQualityStandard: "⚡ 标准 / 快速 (1000x1000px - 75% | ~150KB)",
+        optQualityHd: "🔍 高清 / 推荐放大 (1200x1200px - 80% | ~280KB)",
+        optQualityUltra: "✨ 超高清 / 精细 (1500x1500px - 85% | ~500KB)",
+        alertImgQualitySaved: "✓ 图片质量设置已保存！",
+        summaryQualityStandard: "⚡ 标准 / 快速 (1000px - 75%)",
+        summaryQualityHd: "🔍 高清 / 推荐放大 (1200px - 80%)",
+        summaryQualityUltra: "✨ 超高清 / 精细 (1500px - 85%)",
       }
     };
 
