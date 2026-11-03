@@ -352,32 +352,42 @@
         </div>
       </div>
 
-      <!-- ៤. ប្លុកកំណត់គុណភាពរូបភាព Upload (Image Quality Settings) -->
-      <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-xs p-3.5 space-y-2">
-        <div class="flex justify-between items-center">
-          <div>
-            <h4 class="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+      <!-- ៤. ប្លុកកំណត់កម្រិតច្បាស់រូបភាព Upload (Accordion Dropdown + 3 ភាសា) -->
+      <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-xs">
+        <!-- ក្បាល Header ចុចបើក/បិទ Dropdown Accordion -->
+        <div onclick="toggleImgQualityPanel()" class="p-3.5 flex justify-between items-center cursor-pointer hover:bg-slate-50 transition-colors select-none">
+          <div class="flex-1 pr-2">
+            <h4 id="lblImgQualityTitle" class="text-xs font-bold text-slate-800 flex items-center gap-1.5">
               🖼️ កម្រិតច្បាស់រូបភាព Upload (Image Quality)
             </h4>
-            <p class="text-[10px] text-slate-400 mt-0.5">
-              កំណត់ទំហំ និងភាពម៉ត់នៃរូបភាពពេល Upload ចូល Google Drive
+            <p id="lblImgQualitySummary" class="text-[10px] text-slate-500 font-mono mt-0.5">
+              🔍 ច្បាស់ល្អពេល Zoom (1200px - 80%)
             </p>
           </div>
-          <button 
-            type="button" 
-            onclick="saveImageQualitySettings(this)" 
-            title="រក្សាទុកការកំណត់រូបភាព"
-            class="text-slate-600 hover:text-blue-600 active:scale-75 text-xl p-1 transition-all flex items-center justify-center rounded-lg hover:bg-slate-100"
-          >
-            💾
-          </button>
+
+          <!-- ប៊ូតុង Icon 💾 រក្សាទុកការកំណត់ -->
+          <div class="flex items-center gap-2">
+            <button 
+              type="button" 
+              onclick="event.stopPropagation(); saveImageQualitySettings(this);" 
+              title="រក្សាទុកកម្រិតច្បាស់" 
+              class="text-slate-600 hover:text-blue-600 active:scale-75 text-xl p-1 transition-all flex items-center justify-center rounded-lg hover:bg-slate-100"
+            >
+              💾
+            </button>
+          </div>
         </div>
 
-        <div class="pt-1">
-          <select id="setImageQualityPreset" onchange="applyImageQualityPreset(this.value)" class="w-full bg-slate-50 border border-slate-200 p-2 rounded-xl text-xs outline-none focus:ring-2 focus:ring-blue-500 font-semibold text-slate-700 cursor-pointer">
-            <option value="standard">⚡ ល្បឿនលឿន / ស្តង់ដារ (1000px - 75% | ~150KB)</option>
-            <option value="hd" selected>🔍 ច្បាស់ល្អពេល Zoom / ណែនាំ (1200px - 80% | ~250KB)</option>
-            <option value="ultra">✨ ច្បាស់ខ្លាំងបំផុត (1500px - 85% | ~500KB)</option>
+        <!-- ផ្ទៃខាងក្នុង Accordion (លាក់ទុកជាមុន ចុចលើ Header ទើបបង្ហាញចុះមក) -->
+        <div id="imgQualityPanelBody" class="hidden px-3.5 pb-3.5 pt-1 border-t border-slate-100 space-y-2.5">
+          <p id="lblImgQualityHint" class="text-[10px] text-slate-400">
+            កំណត់ទំហំ និងភាពម៉ត់នៃរូបភាពពេល Upload ចូល Google Drive (រូបផលិតផលកាត់ 1:1 ស្វ័យប្រវត្តិ)
+          </p>
+
+          <select id="setImageQualityPreset" onchange="applyImageQualityPreset(this.value); updateImageQualitySummaryText();" class="w-full bg-slate-50 border border-slate-200 p-2 rounded-xl text-xs outline-none focus:ring-2 focus:ring-blue-500 font-semibold text-slate-700 cursor-pointer shadow-2xs">
+            <option value="standard" id="optQualityStandard">⚡ ល្បឿនលឿន / ស្តង់ដារ (1000px - 75% | ~150KB)</option>
+            <option value="hd" id="optQualityHd" selected>🔍 ច្បាស់ល្អពេល Zoom / ណែនាំ (1200px - 80% | ~280KB)</option>
+            <option value="ultra" id="optQualityUltra">✨ ច្បាស់ខ្លាំងម៉ត់ល្អ (1500px - 85% | ~500KB)</option>
           </select>
         </div>
       </div>
@@ -1136,6 +1146,14 @@
       if (typeof renderFilamentAdminList === 'function') renderFilamentAdminList();
 
       if (typeof updateFilamentSummaryUI === 'function') updateFilamentSummaryUI();
+
+      // --- បកប្រែផ្នែក Image Quality (ទាញចេញពី i18n.js ផ្ទាល់) ---
+      if (el = document.getElementById('lblImgQualityTitle')) el.innerText = t.lblImgQualityTitle;
+      if (el = document.getElementById('lblImgQualityHint')) el.innerText = t.lblImgQualityHint;
+      if (el = document.getElementById('optQualityStandard')) el.innerText = t.optQualityStandard;
+      if (el = document.getElementById('optQualityHd')) el.innerText = t.optQualityHd;
+      if (el = document.getElementById('optQualityUltra')) el.innerText = t.optQualityUltra;
+      updateImageQualitySummaryText();
     }
 
     function openSellerChat() {
@@ -4442,6 +4460,71 @@
         }
         alert("កំហុសក្នុងការតភ្ជាប់៖ " + err.message);
       });
+    }
+
+    // ១. អថេរផ្ទុកការកំណត់រូបភាព (យកពី LocalStorage ឬកំណត់លំនាំដើម hd / 1200px)
+    var uploadImgSettings = JSON.parse(localStorage.getItem('app_image_quality_settings') || '{"maxWidth": 1200, "maxHeight": 1200, "quality": 0.8, "preset": "hd"}');
+
+    // ២. អនុគមន៍ បើក/បិទ Dropdown Accordion
+    function toggleImgQualityPanel() {
+      var body = document.getElementById('imgQualityPanelBody');
+      if (!body) return;
+      var isHidden = body.classList.contains('hidden');
+      if (isHidden) {
+        body.classList.remove('hidden');
+      } else {
+        body.classList.add('hidden');
+      }
+    }
+
+    // ៣. អនុគមន៍ពេលប្តូរ Preset
+    function applyImageQualityPreset(preset) {
+      if (preset === 'standard') {
+        uploadImgSettings = { maxWidth: 1000, maxHeight: 1000, quality: 0.75, preset: 'standard' };
+      } else if (preset === 'ultra') {
+        uploadImgSettings = { maxWidth: 1500, maxHeight: 1500, quality: 0.85, preset: 'ultra' };
+      } else {
+        uploadImgSettings = { maxWidth: 1200, maxHeight: 1200, quality: 0.80, preset: 'hd' };
+      }
+    }
+
+    // អនុគមន៍ធ្វើបច្ចុប្បន្នភាពអក្សរសង្ខេបលើ Header
+    function updateImageQualitySummaryText() {
+      var summaryEl = document.getElementById('lblImgQualitySummary');
+      if (!summaryEl) return;
+
+      var t = (typeof i18n !== 'undefined' && i18n[currentLang]) ? i18n[currentLang] : (i18n ? i18n['km'] : {});
+      var preset = uploadImgSettings.preset || 'hd';
+
+      if (preset === 'standard') {
+        summaryEl.innerText = t.summaryQualityStandard || "⚡ 1000px - 75%";
+      } else if (preset === 'ultra') {
+        summaryEl.innerText = t.summaryQualityUltra || "✨ 1500px - 85%";
+      } else {
+        summaryEl.innerText = t.summaryQualityHd || "🔍 1200px - 80%";
+      }
+    }
+
+    // អនុគមន៍រក្សាទុកការកំណត់ពេលចុច Icon 💾
+    function saveImageQualitySettings(btn) {
+      var selectEl = document.getElementById('setImageQualityPreset');
+      if (selectEl) {
+        applyImageQualityPreset(selectEl.value);
+      }
+      localStorage.setItem('app_image_quality_settings', JSON.stringify(uploadImgSettings));
+      updateImageQualitySummaryText();
+
+      if (btn) {
+        btn.disabled = true;
+        btn.innerText = "✓";
+        setTimeout(function() { 
+          btn.disabled = false;
+          btn.innerText = "💾"; 
+        }, 1200);
+      }
+
+      var t = (typeof i18n !== 'undefined' && i18n[currentLang]) ? i18n[currentLang] : (i18n ? i18n['km'] : {});
+      alert(t.alertImgQualitySaved || "✓ បានរក្សាទុកការកំណត់ជោគជ័យ!");
     }
     
   </script>
