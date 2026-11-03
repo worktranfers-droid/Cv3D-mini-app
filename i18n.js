@@ -145,6 +145,15 @@
         summaryQualityStandard: "⚡ ល្បឿនលឿន / ស្តង់ដារ (1000px - 75%)",
         summaryQualityHd: "🔍 ច្បាស់ល្អពេល Zoom / ណែនាំ (1200px - 80%)",
         summaryQualityUltra: "✨ ច្បាស់ខ្លាំងម៉ត់ល្អ (1500px - 85%)",
+        lblSocialSettingsTitle: "🌐 បណ្តាញសង្គម & ទំនាក់ទំនង (Footer Links)",
+        lblSocialSettingsDesc: "កំណត់បង្ហាញ ឬលាក់តំណភ្ជាប់ទំនាក់ទំនងនៅផ្នែកខាងក្រោមហាង (Footer)",
+        lblSocialPhone: "📞 លេខទូរសព្ទហាង (Phone Call)",
+        lblSocialTg: "✈️ Telegram Username / Link",
+        lblSocialTiktok: "🎵 TikTok Username / Link",
+        lblSocialFb: "📘 Facebook Page / Profile Link",
+        socialSummaryActive: "កំពុងបង្ហាញ {count} ទំនាក់ទំនង",
+        socialSummaryNone: "មិនទាន់បើកបង្ហាញទំនាក់ទំនងឡើយ",
+        alertSocialSaved: "✓ ការកំណត់បណ្តាញសង្គមត្រូវបានរក្សាទុកជោគជ័យ!"
       },
       en: {
         flag: "🇬🇧",
@@ -292,6 +301,15 @@
         summaryQualityStandard: "⚡ Standard / Fast (1000px - 75%)",
         summaryQualityHd: "🔍 HD Zoom / Recommended (1200px - 80%)",
         summaryQualityUltra: "✨ Ultra HD (1500px - 85%)",
+        lblSocialSettingsTitle: "🌐 Social Media & Contact (Footer Links)",
+        lblSocialSettingsDesc: "Show or hide store contact links in the shop footer",
+        lblSocialPhone: "📞 Store Phone (Phone Call)",
+        lblSocialTg: "✈️ Telegram Username / Link",
+        lblSocialTiktok: "🎵 TikTok Username / Link",
+        lblSocialFb: "📘 Facebook Page / Profile Link",
+        socialSummaryActive: "Showing {count} social link(s)",
+        socialSummaryNone: "No contact links enabled",
+        alertSocialSaved: "✓ Social media settings saved successfully!"
       },
       zh: {
         flag: "🇨🇳",
@@ -439,6 +457,15 @@
         summaryQualityStandard: "⚡ 标准 / 快速 (1000px - 75%)",
         summaryQualityHd: "🔍 高清 / 推荐放大 (1200px - 80%)",
         summaryQualityUltra: "✨ 超高清 / 精细 (1500px - 85%)",
+        lblSocialSettingsTitle: "🌐 社交媒体与联系方式 (底部链接)",
+        lblSocialSettingsDesc: "设置商城底部显示的联系与社交链接",
+        lblSocialPhone: "📞 商店电话 (直接拨打)",
+        lblSocialTg: "✈️ Telegram 用户名 / 链接",
+        lblSocialTiktok: "🎵 抖音 / TikTok 链接",
+        lblSocialFb: "📘 Facebook 页面 / 主页链接",
+        socialSummaryActive: "正在显示 {count} 个联系方式",
+        socialSummaryNone: "尚未开启任何联系方式",
+        alertSocialSaved: "✓ 社交媒体设置已保存！"
       }
     };
 
