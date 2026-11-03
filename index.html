@@ -4631,16 +4631,16 @@
     // គ្រប់គ្រង FOOTER SOCIAL & CONTACT LINKS
     // =========================================================
 
-    // ១. អថេរផ្ទុកការកំណត់បណ្តាញសង្គម (ទាញពី LocalStorage)
-    var appSocialSettings = JSON.parse(localStorage.getItem('app_social_settings') || JSON.stringify({
+    // ប្តូរ Key ទៅជា v2 ដើម្បីកម្ទេច Cache ចាស់ចោល និងបើកទាំង ៤ ដោយស្វ័យប្រវត្តិ
+    var appSocialSettings = JSON.parse(localStorage.getItem('app_social_settings_v2') || JSON.stringify({
       phone_enabled: true,
       phone_val: "012345678",
       tg_enabled: true,
       tg_val: "Vireak699",
       tiktok_enabled: true,
-      tiktok_val: "",
+      tiktok_val: "https://www.tiktok.com/@vireak699",
       fb_enabled: true,
-      fb_val: ""
+      fb_val: "https://www.facebook.com"
     }));
 
     // ២. អនុគមន៍ បើក/បិទ Dropdown Accordion
@@ -4688,7 +4688,7 @@
       appSocialSettings.fb_enabled = document.getElementById('setSocialFbEnabled') ? document.getElementById('setSocialFbEnabled').checked : false;
       appSocialSettings.fb_val = document.getElementById('setSocialFbVal') ? document.getElementById('setSocialFbVal').value.trim() : "";
 
-      localStorage.setItem('app_social_settings', JSON.stringify(appSocialSettings));
+      localStorage.setItem('app_social_settings_v2', JSON.stringify(appSocialSettings));
       updateSocialSummaryUI();
       renderFooterSocialLinks();
 
