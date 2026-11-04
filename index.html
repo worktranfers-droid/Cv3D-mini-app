@@ -3180,6 +3180,7 @@
       return "";
     }
 
+    // ធ្វើឱ្យ Orders Card ក្លាយជា Dropdown Accordion (ស្រឡះភ្នែកពេល Order ច្រើន)
     function renderAdminOrdersList(orders) {
       var container = document.getElementById('adminOrdersList');
       if (!container) return;
@@ -3191,11 +3192,11 @@
       }
 
       for (var i = 0; i < orders.length; i++) {
-        (function(ord) {
+        (function(ord, index) {
           var card = document.createElement('div');
-          card.className = "bg-white p-3.5 rounded-2xl border border-slate-200 shadow-sm space-y-2.5 text-xs";
+          card.className = "bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden transition-all duration-200";
 
-          // បំប្លែងកាលបរិច្ឆេទវែង ឱ្យចេញជាទម្រង់ខ្លី (ឧ. 11-01-2026 18:17)
+          // បំប្លែងកាលបរិច្ឆេទខ្លី
           var shortDate = ord.date || "";
           try {
             var d = new Date(ord.date);
@@ -3209,32 +3210,58 @@
             }
           } catch(e) {}
 
-          var top = document.createElement('div');
-          top.className = "flex justify-between items-center border-b border-slate-100 pb-2";
-          top.innerHTML = '<span class="font-bold font-mono text-blue-600 text-xs select-all">' + ord.orderId + '</span>' +
-                          '<span class="text-[10px] text-slate-400 font-mono">' + shortDate + '</span>';
-          card.appendChild(top);
+          var hasDiscount = (ord.items && (ord.items.indexOf('%') !== -1 || ord.items.indexOf('[-') !== -1));
+          var priceHtml = hasDiscount 
+            ? '<span class="font-black text-rose-600 text-xs">$' + ord.totalPrice.toFixed(2) + ' <span class="text-[9px] bg-rose-50 text-rose-600 border border-rose-200 px-1 py-0.2 rounded font-bold">បញ្ចុះតម្លៃ</span></span>'
+            : '<span class="font-black text-blue-600 text-xs">$' + ord.totalPrice.toFixed(2) + '</span>';
 
+          // --- ១. ក្បាល Card (Summary Header អាចចុចដើម្បីបើក/បិទ Dropdown) ---
+          var header = document.createElement('div');
+          header.className = "p-3 cursor-pointer hover:bg-slate-50/80 transition-colors select-none flex items-center justify-between gap-2 border-b border-transparent";
+          header.innerHTML = 
+            '<div class="flex-1 min-w-0 pr-1">' +
+              '<div class="flex items-center gap-2 mb-1">' +
+                '<span class="font-bold font-mono text-blue-600 text-xs">' + ord.orderId + '</span>' +
+                '<span class="text-[10px] text-slate-400 font-mono">' + shortDate + '</span>' +
+              '</div>' +
+              '<div class="flex items-center gap-1.5 text-xs text-slate-700 truncate">' +
+                '<span class="font-semibold text-slate-800">' + (ord.customerName || "ភ្ញៀវ") + '</span>' +
+                '<span class="text-slate-300">|</span>' +
+                '<span class="text-[11px] text-slate-500 truncate">' + (ord.location || "គ្មានទីតាំង") + '</span>' +
+              '</div>' +
+            '</div>' +
+            '<div class="flex items-center gap-2 flex-shrink-0">' +
+              priceHtml +
+              '<span id="arrow-' + index + '" class="w-6 h-6 rounded-lg bg-slate-100 flex items-center justify-center text-slate-500 font-bold text-xs transition-transform duration-200">▼</span>' +
+            '</div>';
+
+          // --- ២. ផ្ទៃខាងក្នុង Dropdown (លម្អិត៖ ព័ត៌មានភ្ញៀវ, ទំនិញ, និងប្តូរ Status) ---
+          var detailsBody = document.createElement('div');
+          detailsBody.id = "order-details-" + index;
+          detailsBody.className = "hidden px-3.5 pb-3.5 pt-1 space-y-2.5 border-t border-slate-100 bg-slate-50/30";
+
+          // ព័ត៌មានភ្ញៀវ
           var custInfo = document.createElement('div');
-          custInfo.className = "text-[11px] space-y-1 text-slate-600 bg-slate-50/70 p-2.5 rounded-xl border border-slate-100";
+          custInfo.className = "text-[11px] space-y-1 text-slate-600 bg-white p-2.5 rounded-xl border border-slate-100 shadow-2xs mt-1";
           var tgDisplay = ord.tgUsername ? ('<a href="https://t.me/' + ord.tgUsername.replace('@','') + '" target="_blank" class="text-blue-500 font-semibold underline">' + ord.tgUsername + '</a>') : '<span class="text-slate-400">គ្មាន</span>';
-          var phoneCall = ord.phone ? ('<a href="tel:' + ord.phone + '" class="text-blue-600 font-bold underline">' + ord.phone + ' 📞</a>') : 'N/A';
+          var cleanPhone = String(ord.phone || '').replace(/[^0-9+]/g, '');
+          var phoneCall = ord.phone ? ('<a href="tel:' + cleanPhone + '" target="_blank" class="text-blue-600 font-bold underline">' + ord.phone + ' 📞</a>') : 'N/A';
 
           custInfo.innerHTML = '<div>👤 <b>ភ្ញៀវ៖</b> ' + ord.customerName + ' | TG: ' + tgDisplay + '</div>' +
                                '<div>📞 <b>ទូរសព្ទ៖</b> ' + phoneCall + '</div>' +
                                '<div>📍 <b>ទីតាំង៖</b> ' + ord.location + '</div>';
-          card.appendChild(custInfo);
+          detailsBody.appendChild(custInfo);
 
+          // បញ្ជីទំនិញ
           var itemsBox = document.createElement('div');
-          itemsBox.className = "space-y-1.5 bg-slate-50/40 p-2 rounded-xl border border-slate-100";
-
+          itemsBox.className = "space-y-1.5";
           var lines = (ord.items || "").split("\n");
           for (var l = 0; l < lines.length; l++) {
             var lineText = lines[l].trim();
             if (!lineText) continue;
 
             var itemRow = document.createElement('div');
-            itemRow.className = "flex items-center gap-2.5 bg-white p-2 rounded-lg border border-slate-200/70 shadow-2xs";
+            itemRow.className = "flex items-center gap-2.5 bg-white p-2 rounded-xl border border-slate-200/70 shadow-2xs";
 
             var thumbUrl = findProductThumb(lineText) || "https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&w=600&q=80";
 
@@ -3253,30 +3280,12 @@
             itemRow.appendChild(itemDetails);
             itemsBox.appendChild(itemRow);
           }
-          card.appendChild(itemsBox);
+          detailsBody.appendChild(itemsBox);
 
-          // ពិនិត្យមើលថាតើទំនិញក្នុង Order នេះមាន Discount ដែរឬទេ (មានសញ្ញា % ឬ [-XX%])
-          var hasDiscount = (ord.items && (ord.items.indexOf('%') !== -1 || ord.items.indexOf('[-') !== -1));
-
+          // ជួរខាងក្រោម៖ ប្តូរ Status
           var bottom = document.createElement('div');
-          bottom.className = "flex justify-between items-center pt-1";
-          
-          if (hasDiscount) {
-            // បើមានបញ្ចុះតម្លៃ៖ តម្លៃលោតពណ៌ក្រហមដិត និងមានស្លាកបញ្ជាក់
-            bottom.innerHTML = '<div class="leading-none">' +
-                                 '<div class="flex items-center gap-1.5 mb-1">' +
-                                   '<span class="text-[10px] text-slate-400">តម្លៃសរុប</span>' +
-                                   '<span class="text-[9px] bg-rose-50 text-rose-600 border border-rose-200 px-1.5 py-0.2 rounded font-bold">បញ្ចុះតម្លៃ</span>' +
-                                 '</div>' +
-                                 '<span class="font-black text-sm text-rose-600">$' + ord.totalPrice.toFixed(2) + '</span>' +
-                               '</div>';
-          } else {
-            // តម្លៃធម្មតាគ្មាន Discount៖ ពណ៌ខៀវស្តង់ដារ
-            bottom.innerHTML = '<div class="leading-none">' +
-                                 '<span class="text-[10px] text-slate-400 block mb-1">តម្លៃសរុប</span>' +
-                                 '<span class="font-black text-sm text-blue-600">$' + ord.totalPrice.toFixed(2) + '</span>' +
-                               '</div>';
-          }
+          bottom.className = "flex justify-between items-center pt-1 border-t border-slate-100";
+          bottom.innerHTML = '<span class="text-[11px] font-semibold text-slate-500">ស្ថានភាពការកុម្ម៉ង់៖</span>';
 
           var select = document.createElement('select');
           select.className = "text-xs border border-slate-300 rounded-xl px-2.5 py-1.5 bg-white font-bold outline-none shadow-xs text-slate-700 cursor-pointer focus:ring-2 focus:ring-blue-500";
@@ -3299,7 +3308,8 @@
             select.appendChild(opt);
           }
 
-          select.onchange = function() {
+          select.onchange = function(e) {
+            e.stopPropagation();
             var chosen = this.value;
             select.disabled = true;
 
@@ -3316,9 +3326,27 @@
           };
 
           bottom.appendChild(select);
-          card.appendChild(bottom);
+          detailsBody.appendChild(bottom);
+
+          // មុខងារចុចលើ Header ដើម្បីបើក ឬបិទ Dropdown Accordion
+          header.onclick = function() {
+            var isHidden = detailsBody.classList.contains('hidden');
+            var arrow = document.getElementById('arrow-' + index);
+            if (isHidden) {
+              detailsBody.classList.remove('hidden');
+              if (arrow) arrow.style.transform = 'rotate(180deg)';
+              header.classList.add('bg-slate-50/50');
+            } else {
+              detailsBody.classList.add('hidden');
+              if (arrow) arrow.style.transform = 'rotate(0deg)';
+              header.classList.remove('bg-slate-50/50');
+            }
+          };
+
+          card.appendChild(header);
+          card.appendChild(detailsBody);
           container.appendChild(card);
-        })(orders[i]);
+        })(orders[i], i);
       }
     }
 
