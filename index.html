@@ -3180,7 +3180,7 @@
       return "";
     }
 
-    // ធ្វើឱ្យ Orders Card ក្លាយជា Dropdown Accordion (ស្រឡះភ្នែកពេល Order ច្រើន)
+    // ធ្វើឱ្យ Orders Card ក្លាយជា Dropdown Accordion ដោយមាន Status Badge ខាងក្រៅ
     function renderAdminOrdersList(orders) {
       var container = document.getElementById('adminOrdersList');
       if (!container) return;
@@ -3215,7 +3215,29 @@
             ? '<span class="font-black text-rose-600 text-xs">$' + ord.totalPrice.toFixed(2) + ' <span class="text-[9px] bg-rose-50 text-rose-600 border border-rose-200 px-1 py-0.2 rounded font-bold">បញ្ចុះតម្លៃ</span></span>'
             : '<span class="font-black text-blue-600 text-xs">$' + ord.totalPrice.toFixed(2) + '</span>';
 
-          // --- ១. ក្បាល Card (Summary Header អាចចុចដើម្បីបើក/បិទ Dropdown) ---
+          // --- បង្កើត Badge ស្ថានភាព (ជំនួសត្រីកោណ ▼) ---
+          var st = String(ord.status || "");
+          var badgeClass = "text-[10px] font-bold px-2 py-0.5 rounded-full border flex items-center gap-1 shadow-2xs ";
+          var statusText = "🟡 រង់ចាំពិនិត្យ";
+
+          if (st.indexOf("Printing") !== -1 || st.indexOf("ព្រីន") !== -1) {
+            badgeClass += "bg-blue-50 text-blue-700 border-blue-200";
+            statusText = "🔵 កំពុងព្រីន";
+          } else if (st.indexOf("Shipping") !== -1 || st.indexOf("ដឹក") !== -1) {
+            badgeClass += "bg-purple-50 text-purple-700 border-purple-200";
+            statusText = "🟣 កំពុងដឹក";
+          } else if (st.indexOf("Completed") !== -1 || st.indexOf("បញ្ចប់") !== -1) {
+            badgeClass += "bg-emerald-50 text-emerald-700 border-emerald-200";
+            statusText = "🟢 បានបញ្ចប់";
+          } else if (st.indexOf("Canceled") !== -1 || st.indexOf("បោះបង់") !== -1) {
+            badgeClass += "bg-rose-50 text-rose-700 border-rose-200";
+            statusText = "🔴 បានបោះបង់";
+          } else {
+            badgeClass += "bg-amber-50 text-amber-700 border-amber-200";
+            statusText = "🟡 រង់ចាំពិនិត្យ";
+          }
+
+          // --- ១. ក្បាល Card (Header): បង្ហាញតម្លៃ និង Status Badge ជំនួសត្រីកោណ ▼ ---
           var header = document.createElement('div');
           header.className = "p-3 cursor-pointer hover:bg-slate-50/80 transition-colors select-none flex items-center justify-between gap-2 border-b border-transparent";
           header.innerHTML = 
@@ -3230,12 +3252,12 @@
                 '<span class="text-[11px] text-slate-500 truncate">' + (ord.location || "គ្មានទីតាំង") + '</span>' +
               '</div>' +
             '</div>' +
-            '<div class="flex items-center gap-2 flex-shrink-0">' +
+            '<div class="flex flex-col items-end gap-1 flex-shrink-0">' +
               priceHtml +
-              '<span id="arrow-' + index + '" class="w-6 h-6 rounded-lg bg-slate-100 flex items-center justify-center text-slate-500 font-bold text-xs transition-transform duration-200">▼</span>' +
+              '<span id="badge-status-' + index + '" class="' + badgeClass + '">' + statusText + '</span>' +
             '</div>';
 
-          // --- ២. ផ្ទៃខាងក្នុង Dropdown (លម្អិត៖ ព័ត៌មានភ្ញៀវ, ទំនិញ, និងប្តូរ Status) ---
+          // --- ២. ផ្ទៃខាងក្នុង Dropdown (ព័ត៌មានលម្អិត) ---
           var detailsBody = document.createElement('div');
           detailsBody.id = "order-details-" + index;
           detailsBody.className = "hidden px-3.5 pb-3.5 pt-1 space-y-2.5 border-t border-slate-100 bg-slate-50/30";
@@ -3252,7 +3274,7 @@
                                '<div>📍 <b>ទីតាំង៖</b> ' + ord.location + '</div>';
           detailsBody.appendChild(custInfo);
 
-          // បញ្ជីទំនិញ
+          // បញ្ជីមុខទំនិញ
           var itemsBox = document.createElement('div');
           itemsBox.className = "space-y-1.5";
           var lines = (ord.items || "").split("\n");
@@ -3282,10 +3304,10 @@
           }
           detailsBody.appendChild(itemsBox);
 
-          // ជួរខាងក្រោម៖ ប្តូរ Status
+          // ជួរខាងក្រោម៖ ប្រអប់ Select ប្តូរ Status
           var bottom = document.createElement('div');
           bottom.className = "flex justify-between items-center pt-1 border-t border-slate-100";
-          bottom.innerHTML = '<span class="text-[11px] font-semibold text-slate-500">ស្ថានភាពការកុម្ម៉ង់៖</span>';
+          bottom.innerHTML = '<span class="text-[11px] font-semibold text-slate-500">កែប្រែស្ថានភាព៖</span>';
 
           var select = document.createElement('select');
           select.className = "text-xs border border-slate-300 rounded-xl px-2.5 py-1.5 bg-white font-bold outline-none shadow-xs text-slate-700 cursor-pointer focus:ring-2 focus:ring-blue-500";
@@ -3317,7 +3339,7 @@
               .then(function() {
                 select.disabled = false;
                 ord.status = chosen;
-                applyOrderFilter();
+                applyOrderFilter(); // Update តារាង និង Badge ខាងក្រៅស្វ័យប្រវត្តិ
               })
               .catch(function(err) {
                 select.disabled = false;
@@ -3328,18 +3350,15 @@
           bottom.appendChild(select);
           detailsBody.appendChild(bottom);
 
-          // មុខងារចុចលើ Header ដើម្បីបើក ឬបិទ Dropdown Accordion
+          // មុខងារចុចលើ Card Header ដើម្បី Expand / Collapse
           header.onclick = function() {
             var isHidden = detailsBody.classList.contains('hidden');
-            var arrow = document.getElementById('arrow-' + index);
             if (isHidden) {
               detailsBody.classList.remove('hidden');
-              if (arrow) arrow.style.transform = 'rotate(180deg)';
-              header.classList.add('bg-slate-50/50');
+              header.classList.add('bg-slate-50/60');
             } else {
               detailsBody.classList.add('hidden');
-              if (arrow) arrow.style.transform = 'rotate(0deg)';
-              header.classList.remove('bg-slate-50/50');
+              header.classList.remove('bg-slate-50/60');
             }
           };
 
