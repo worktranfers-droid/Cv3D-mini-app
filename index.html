@@ -4828,7 +4828,7 @@
       }
     }
 
-    // ៥. អនុគមន៍ Render Logo Icons លើ Footer (ចុច Call ផ្ទាល់ ១០០% គ្មាន Pop-up ជាន់គ្នា)
+    // ៥. អនុគមន៍ Render Logo Icons លើ Footer (ចុច Call ដំណើរការ ១០០% លើទាំង Android & iPhone)
     function renderFooterSocialLinks() {
       var container = document.getElementById('footerSocialContainer');
       if (!container) return;
@@ -4836,7 +4836,7 @@
 
       var links = [];
 
-      // ១. Phone Icon (ប្រើ Link tel: ផ្ទាល់ ដំណើរការទាំង iOS & Android គ្មាន Pop-up ជាន់)
+      // ១. Phone Icon (ប្រើ target="_blank" ដើម្បីកុំឱ្យ Telegram WebApp Block)
       if (appSocialSettings.phone_enabled && appSocialSettings.phone_val) {
         var cleanPhone = String(appSocialSettings.phone_val).replace(/[^0-9+]/g, '');
         links.push({
@@ -4848,7 +4848,7 @@
         });
       }
 
-      // ២. Telegram Icon (ពង្រីកមក w-[19px] h-[19px] ឱ្យស្មើនឹង Icon ផ្សេងៗ)
+      // ២. Telegram Icon (ទំហំ w-[19px] h-[19px] ធំស្មើគេស្អាត)
       if (appSocialSettings.tg_enabled && appSocialSettings.tg_val) {
         var rawTg = String(appSocialSettings.tg_val).replace('@', '').trim();
         var tgUrl = rawTg.startsWith('http') ? rawTg : ("https://t.me/" + rawTg);
@@ -4887,22 +4887,19 @@
         });
       }
 
-      // បង្កើតជា Tag <a> ពិតប្រាកដ
+      // បង្កើតជា Tag <a> ពិតប្រាកដ (ទាំងអស់ប្រើ target="_blank")
       for (var i = 0; i < links.length; i++) {
         (function(item) {
           var a = document.createElement('a');
           a.href = item.href;
           a.title = item.title;
+          a.target = "_blank";
+          a.rel = "noopener noreferrer";
           a.className = "w-9 h-9 rounded-xl border flex items-center justify-center shadow-2xs transition-all active:scale-90 cursor-pointer " + item.colorClass;
           a.innerHTML = item.svg;
 
-          if (item.isPhone) {
-            // លើ iPhone និង Android៖ បើកទូរស័ព្ទផ្ទាល់ មិនកាត់តាម JavaScript ឡើយ
-            a.target = "_self";
-          } else {
+          if (!item.isPhone) {
             // បើក Link បណ្តាញសង្គមតាម Telegram WebApp
-            a.target = "_blank";
-            a.rel = "noopener noreferrer";
             a.onclick = function(e) {
               if (window.Telegram && window.Telegram.WebApp && typeof window.Telegram.WebApp.openLink === 'function') {
                 e.preventDefault();
