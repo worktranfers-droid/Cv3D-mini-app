@@ -919,7 +919,7 @@
           </div>
         </div>
 
-        <!-- ប្លុកបញ្ចូល Link វីដេអូ TikTok / Shorts (មានប៊ូតុង ✕ ចុចលុបភ្លាមៗ) -->
+        <!-- ប្លុកបញ្ចូល Link វីដេអូ TikTok / Shorts (កែសម្រួលត្រឹមត្រូវ មិនលោត ✕ ផ្ដេសផ្ដាស) -->
         <div>
           <label id="lblAddVideo" class="block text-xs font-semibold text-slate-600 mb-1">
             🎬 Link វីដេអូបង្ហាញ (TikTok / Shorts - ស្រេចចិត្ត)
@@ -932,13 +932,14 @@
               placeholder="https://www.tiktok.com/@.../video/... ឬទុកទំនេរបើគ្មាន" 
               class="w-full border border-slate-300 p-2 pr-8 rounded-xl text-xs outline-none focus:ring-2 focus:ring-blue-500 bg-white font-mono text-slate-700"
             >
-            <!-- ប៊ូតុង ✕ សម្រាប់ចុចលុប Link ភ្លាមៗ -->
+            <!-- ប្រើ style="display: none;" ធានាថាមិនជល់ជាមួយ flex ឡើយ -->
             <button 
               id="clearVideoUrlBtn" 
               type="button" 
               onclick="clearProductVideoUrl()" 
               title="លុប Link វីដេអូនេះចោល" 
-              class="hidden absolute right-2.5 w-5 h-5 bg-slate-200 hover:bg-rose-500 hover:text-white text-slate-600 font-bold rounded-full text-[10px] flex items-center justify-center transition-colors"
+              style="display: none;"
+              class="absolute right-2.5 w-5 h-5 bg-slate-200 hover:bg-rose-500 hover:text-white text-slate-600 font-bold rounded-full text-[10px] items-center justify-center transition-colors cursor-pointer"
             >✕</button>
           </div>
           <p class="text-[10px] text-slate-400 mt-0.5">* បើដាក់ Link វានឹងបង្ហាញប៊ូតុង "▶ វីដេអូ" លើរូបភាពដោយស្វ័យប្រវត្តិ</p>
@@ -3972,7 +3973,12 @@
         alert("មិនអាចបើកផ្ទាំងកែប្រែបានទេ៖ " + err.message);
       }
 
-      if (el = document.getElementById('addVideoUrl')) el.value = '';
+      // ទាញ Link វីដេអូចាស់មកបង្ហាញ
+        var vidInput = document.getElementById('addVideoUrl');
+        if (vidInput) {
+          vidInput.value = p.videoUrl || p.video_url || '';
+          checkVideoClearBtnVisibility();
+        }
     }
     
     function closeAddModal() {
@@ -4994,19 +5000,19 @@
       }
     }
 
-    // បង្ហាញ ឬលាក់ប៊ូតុង ✕ អាស្រ័យលើថាមានអក្សរក្នុងប្រអប់ឬអត់
     function checkVideoClearBtnVisibility() {
       var input = document.getElementById('addVideoUrl');
       var btn = document.getElementById('clearVideoUrlBtn');
       if (!input || !btn) return;
-      if (input.value.trim().length > 0) {
-        btn.classList.remove('hidden');
+      
+      // បើមានអក្សរក្នុងប្រអប់ទើបបង្ហាញ (flex) បើទទេត្រូវលាក់ (none)
+      if (input.value && input.value.trim().length > 0) {
+        btn.style.display = 'flex';
       } else {
-        btn.classList.add('hidden');
+        btn.style.display = 'none';
       }
     }
 
-    // ចុចលុប Link វីដេអូចោលភ្លាមៗ
     function clearProductVideoUrl() {
       var input = document.getElementById('addVideoUrl');
       if (input) {
