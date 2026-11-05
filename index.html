@@ -2611,7 +2611,9 @@
         cart = [];
         updateCartBadge();
         closeCartModal();
-        showSuccessPopup(orderId);
+        
+        // ✅ ហៅអនុគមន៍ថ្មីត្រង់នេះ៖
+        showOrderSuccessModal(orderId);
       })
       .catch(function(err) {
         if (submitBtn) {
@@ -2622,24 +2624,42 @@
       });
     }
 
-    function showSuccessPopup(orderId) {
-      var idEl = document.getElementById('succOrderId');
-      if (idEl) idEl.innerText = orderId;
-      var modal = document.getElementById('orderSuccessModal');
-      if (modal) modal.className = "fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4";
-    }
+    // =========================================================
+    // គ្រប់គ្រងផ្ទាំងជោគជ័យ ORDER SUCCESS MODAL (លំដាប់លំដោយត្រឹមត្រូវ)
+    // =========================================================
 
-    function finishAndCloseApp() {
+    // ១. អនុគមន៍បើកបង្ហាញ Modal (ដក hidden ចេញ)
+    function showOrderSuccessModal(orderId) {
+      // ដាក់លេខកូដ Order ពិតប្រាកដដែលទើបកុម្ម៉ង់
+      var idEl = document.getElementById('successOrderId');
+      if (idEl) idEl.innerText = orderId || '';
+
       var modal = document.getElementById('orderSuccessModal');
-      if (modal) modal.className = "fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden flex items-center justify-center p-4";
-      if (window.Telegram && window.Telegram.WebApp && typeof window.Telegram.WebApp.close === "function") {
-        window.Telegram.WebApp.close();
+      if (modal) {
+        modal.classList.remove('hidden');
+        document.body.style.overflow = 'hidden'; // ការពារកុំឱ្យ scroll ទំព័រក្រោយ
       }
     }
 
-    function continueShopping() {
+    // ២. អនុគមន៍បិទ Modal ពេលចុច "🛍️ ទិញទំនិញបន្ត" (បន្ថែម hidden វិញ)
+    function closeSuccessModal() {
       var modal = document.getElementById('orderSuccessModal');
-      if (modal) modal.className = "fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden flex items-center justify-center p-4";
+      if (modal) {
+        modal.classList.add('hidden');
+        document.body.style.overflow = '';
+      }
+    }
+
+    // ៣. អនុគមន៍បិទ Mini App ពេលចុច "🚪 រួចរាល់ (បិទ App)"
+    function closeTelegramMiniApp() {
+      closeSuccessModal();
+      try {
+        if (window.Telegram && window.Telegram.WebApp && typeof window.Telegram.WebApp.close === 'function') {
+          window.Telegram.WebApp.close();
+        }
+      } catch (e) {
+        console.warn("Telegram close failed", e);
+      }
     }
 
     // --- 6.8 MY ORDERS MODAL ---
