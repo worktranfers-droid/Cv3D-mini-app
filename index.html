@@ -2710,6 +2710,23 @@
         var card = document.createElement('div');
         card.className = "bg-slate-50 border border-slate-200 rounded-2xl p-3.5 space-y-2 text-xs shadow-sm";
 
+        // ========================================================
+        // 🕒 បំប្លែងកាលបរិច្ឆេទឱ្យចេញជាទម្រង់ស្អាតដូចគ្នាទាំងអស់
+        // ========================================================
+        var displayDate = ord.date || "";
+        try {
+          var d = new Date(ord.date);
+          if (!isNaN(d.getTime())) {
+            var day = ("0" + d.getDate()).slice(-2);
+            var mon = ("0" + (d.getMonth() + 1)).slice(-2);
+            var yr = d.getFullYear();
+            var hr = ("0" + d.getHours()).slice(-2);
+            var min = ("0" + d.getMinutes()).slice(-2);
+            displayDate = day + "-" + mon + "-" + yr + " " + hr + ":" + min;
+          }
+        } catch(e) {}
+        // ========================================================
+
         // ១. កាលបរិច្ឆេទខ្លី
         var topRow = document.createElement('div');
         topRow.className = "flex justify-between items-center border-b border-slate-200/60 pb-1.5";
