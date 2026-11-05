@@ -775,33 +775,47 @@
   </div>
 
   <!-- Modal 4: Order Success Popup -->
-  <div id="orderSuccessModal" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden flex items-center justify-center p-4">
-    <div class="bg-white w-full max-w-sm rounded-3xl p-6 shadow-2xl text-center space-y-4">
-      <div class="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center text-3xl mx-auto shadow-inner animate-bounce">✓</div>
-      <div>
-        <h3 class="text-base font-bold text-slate-800">ការកុម្ម៉ង់ទទួលបានជោគជ័យ!</h3>
-        <p class="text-xs text-slate-500 mt-1 leading-relaxed">យើងខ្ញុំបានទទួលព័ត៌មានរួចរាល់ហើយ និងកំពុងរៀបចំជូនលោកអ្នក។</p>
-      </div>
-      <div class="bg-slate-50 border border-slate-200 rounded-2xl p-3 text-left space-y-1.5">
-        <div class="flex justify-between items-center text-xs">
-          <span class="text-slate-400">លេខកូដកុម្ម៉ង់៖</span>
-          <span id="succOrderId" class="font-bold text-slate-800 font-mono select-all"></span>
+  <!-- ចំណងជើង និងសារ -->
+      <h3 id="lblSuccessTitle" class="text-base font-bold text-slate-800 text-center mb-1">
+        ការកុម្ម៉ង់ទទួលបានជោគជ័យ!
+      </h3>
+      <p id="lblSuccessDesc" class="text-xs text-slate-500 text-center mb-5 leading-relaxed">
+        យើងខ្ញុំបានទទួលព័ត៌មានរួចរាល់ហើយ និងកំពុងរៀបចំជូនលោកអ្នក។
+      </p>
+
+      <!-- ប្រអប់ព័ត៌មាន Order ID និង Status -->
+      <div class="bg-slate-50 border border-slate-200/80 rounded-2xl p-3.5 space-y-2 mb-5 text-xs">
+        <div class="flex justify-between items-center">
+          <span id="lblSuccessOrderCode" class="text-slate-500 font-medium">លេខកូដកុម្ម៉ង់៖</span>
+          <span id="successOrderId" class="font-bold font-mono text-slate-800 text-xs select-all">ORD-1793886218</span>
         </div>
-        <div class="flex justify-between items-center text-xs">
-          <span class="text-slate-400">ស្ថានភាព៖</span>
-          <span class="font-bold text-amber-600 bg-amber-50 px-2 py-0.5 rounded-lg border border-amber-200">🟡 រង់ចាំពិនិត្យ</span>
+        <div class="flex justify-between items-center">
+          <span id="lblSuccessStatus" class="text-slate-500 font-medium">ស្ថានភាព៖</span>
+          <span id="successStatusBadge" class="bg-amber-50 text-amber-700 border border-amber-200 px-2 py-0.5 rounded-full font-bold text-[11px]">
+            🟡 រង់ចាំពិនិត្យ
+          </span>
         </div>
       </div>
-      <div class="space-y-2 pt-1">
-        <button type="button" onclick="finishAndCloseApp()" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-3 rounded-2xl text-xs shadow-md active:scale-95 transition-all flex items-center justify-center gap-1.5">
-          <span>🚪</span><span>រួចរាល់ (បិទ App)</span>
+
+      <!-- ប៊ូតុងទាំងពីរ -->
+      <div class="space-y-2">
+        <button 
+          id="btnSuccessCloseApp" 
+          type="button" 
+          onclick="closeTelegramMiniApp()" 
+          class="w-full bg-slate-900 hover:bg-black text-white font-bold py-3 rounded-2xl text-xs active:scale-95 transition-all shadow-sm"
+        >
+          🚪 រួចរាល់ (បិទ App)
         </button>
-        <button type="button" onclick="continueShopping()" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-3 rounded-2xl text-xs border border-slate-200 active:scale-95 transition-all flex items-center justify-center gap-1.5">
-          <span>🛍️</span><span>ទិញទំនិញបន្ត</span>
+        <button 
+          id="btnSuccessContinue" 
+          type="button" 
+          onclick="closeSuccessModal()" 
+          class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-3 rounded-2xl text-xs active:scale-95 transition-all"
+        >
+          🛍️ ទិញទំនិញបន្ត
         </button>
       </div>
-    </div>
-  </div>
 
   <!-- Modal 5: My Orders History -->
   <div id="myOrdersModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden items-end sm:items-center justify-center p-0 sm:p-4">
@@ -1273,6 +1287,15 @@
       if (el = document.getElementById('lblSocialTiktok')) el.innerText = t.lblSocialTiktok;
       if (el = document.getElementById('lblSocialFb')) el.innerText = t.lblSocialFb;
       updateSocialSummaryUI();
+
+      // --- បកប្រែផ្ទាំង Order Success Modal ---
+      if (el = document.getElementById('lblSuccessTitle')) el.innerText = t.successTitle;
+      if (el = document.getElementById('lblSuccessDesc')) el.innerText = t.successDesc;
+      if (el = document.getElementById('lblSuccessOrderCode')) el.innerText = t.successOrderCode;
+      if (el = document.getElementById('lblSuccessStatus')) el.innerText = t.successStatus;
+      if (el = document.getElementById('successStatusBadge')) el.innerText = t.successStatusPending;
+      if (el = document.getElementById('btnSuccessCloseApp')) el.innerText = t.successCloseApp;
+      if (el = document.getElementById('btnSuccessContinue')) el.innerText = t.successContinue;
     }
 
     function openSellerChat() {
