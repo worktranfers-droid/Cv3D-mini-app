@@ -3908,6 +3908,7 @@
         if (el = document.getElementById('addSizes')) el.value = Array.isArray(p.sizes) ? p.sizes.join(', ') : (p.sizes || '');
         if (el = document.getElementById('addBadge')) el.value = p.badge || '';
 
+        // ✅ បង្ហាញ Link វីដេអូចាស់ក្នុងប្រអប់ដើម្បីកែ ឬលុប
         if (el = document.getElementById('addVideoUrl')) {
           el.value = p.videoUrl || '';
         }
@@ -3981,7 +3982,7 @@
         title: document.getElementById('addTitle').value.trim(),
         category: (document.getElementById('addCategory').value || 'other').trim(),
         price: parseFloat(document.getElementById('addPrice').value) || 0,
-        discount: disc, // <--- ដាក់ discount ត្រង់នេះដើម្បីផ្ញើទៅ Google Sheet
+        discount: disc,
         desc: document.getElementById('addDesc').value.trim(),
         image: document.getElementById('addImage').value.trim(),
         colors: document.getElementById('addColors').value.trim(),
@@ -3990,7 +3991,7 @@
         isCustom: isCust,
         customMode: cMode,
         customFee: cFee,
-        videoUrl: document.getElementById('addVideoUrl') ? document.getElementById('addVideoUrl').value.trim() : "" 
+        videoUrl: document.getElementById('addVideoUrl') ? document.getElementById('addVideoUrl').value.trim() : "" // ✅ បញ្ជូនទៅ Google Sheet
       };
 
       if (!p.title || p.price <= 0) {
