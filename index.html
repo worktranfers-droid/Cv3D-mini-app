@@ -3908,6 +3908,10 @@
         if (el = document.getElementById('addSizes')) el.value = Array.isArray(p.sizes) ? p.sizes.join(', ') : (p.sizes || '');
         if (el = document.getElementById('addBadge')) el.value = p.badge || '';
 
+        if (el = document.getElementById('addVideoUrl')) {
+          el.value = p.videoUrl || '';
+        }
+
         // បញ្ចូលភាគរយ Discount
         var rawDisc = p.discount ? String(p.discount).replace('%', '') : '';
         if (el = document.getElementById('addDiscount')) el.value = rawDisc;
@@ -3945,6 +3949,17 @@
 
         // ✅ ហៅទាញយកប្រភេទពិតប្រាកដរបស់ផលិតផលមកដាក់ក្នុង Dropdown
         updateCategoryDropdownUI(p.category || 'Pet');
+
+        var linkWrap = document.getElementById('prodLinkWrapper');
+        if (linkWrap) {
+          // ប្រសិនបើមាន Link រូបភាពស្រាប់ ឱ្យបង្ហាញប្រអប់ Link ភ្លាមៗដើម្បីងាយស្រួលលុប ឬកែ
+          if (p.image && p.image.trim().length > 0) {
+            linkWrap.style.display = 'block';
+            linkWrap.classList.remove('hidden');
+          } else {
+            linkWrap.style.display = 'none';
+          }
+        }
 
       } catch (err) {
         console.error("កំហុសពេលបើកផ្ទាំងកែប្រែ:", err);
