@@ -2698,37 +2698,51 @@
       if (loader) loader.className = "hidden";
     }
 
-    // អនុគមន៍កែសម្រួលកាលបរិច្ឆេទឱ្យចេញទម្រង់ DD-MM-YYYY HH:mm (គ្មានវិនាទី)
+    // បង្ហាញកាលបរិច្ឆេទជាទម្រង់៖ 03 Nov 2026 09:40 ឬ 25 Oct 2026 10:17
     function formatOrderDate(rawDate) {
       if (!rawDate) return "";
       var str = String(rawDate).trim();
 
-      // ១. ប្រសិនបើជាទម្រង់ 25-10-2026 10:17:15 -> កាត់យកត្រឹម 25-10-2026 10:17 (ដកវិនាទីចេញ)
+      var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+      // ១. ប្រសិនបើជាទម្រង់ DD-MM-YYYY (ឧ. 25-10-2026 10:17)
       var dmyMatch = str.match(/^(\d{1,2})-(\d{1,2})-(\d{4})\s+(\d{1,2}):(\d{1,2})/);
       if (dmyMatch) {
         var day = ("0" + dmyMatch[1]).slice(-2);
-        var mon = ("0" + dmyMatch[2]).slice(-2);
+        var mIdx = parseInt(dmyMatch[2], 10) - 1;
+        var monthName = (mIdx >= 0 && mIdx < 12) ? months[mIdx] : dmyMatch[2];
         var yr = dmyMatch[3];
         var hr = ("0" + dmyMatch[4]).slice(-2);
         var min = ("0" + dmyMatch[5]).slice(-2);
-        return day + "-" + mon + "-" + yr + " " + hr + ":" + min;
+        return day + " " + monthName + " " + yr + " " + hr + ":" + min;
       }
 
-      // ២. ប្រសិនបើជាទម្រង់ ISO ដូចជា 2026-03-11T02:40:04.000Z
+      // ២. ប្រសិនបើជាទម្រង់ Date ISO ពី Google Sheet (ឧ. 2026-03-11T... ឬ 2026-11-03...)
       try {
         var d = new Date(str);
         if (!isNaN(d.getTime())) {
           var day = ("0" + d.getDate()).slice(-2);
-          var mon = ("0" + (d.getMonth() + 1)).slice(-2);
+          var monthName = months[d.getMonth()];
           var yr = d.getFullYear();
           var hr = ("0" + d.getHours()).slice(-2);
           var min = ("0" + d.getMinutes()).slice(-2);
-          return day + "-" + mon + "-" + yr + " " + hr + ":" + min;
+          return day + " " + monthName + " " + yr + " " + hr + ":" + min;
         }
       } catch(e) {}
 
-      // ៣. ករណីទម្រង់ផ្សេងៗទៀត ដកវិនាទីចុងក្រោយចេញ
-      return str.replace(/:\d{2}(\.\d+)?Z?$/, '');
+      // ៣. ប្រសិនបើមានទម្រង់ YYYY-MM-DD
+      var ymdMatch = str.match(/^(\d{4})-(\d{1,2})-(\d{1,2})\s+(\d{1,2}):(\d{1,2})/);
+      if (ymdMatch) {
+        var yr = ymdMatch[1];
+        var mIdx = parseInt(ymdMatch[2], 10) - 1;
+        var monthName = (mIdx >= 0 && mIdx < 12) ? months[mIdx] : ymdMatch[2];
+        var day = ("0" + ymdMatch[3]).slice(-2);
+        var hr = ("0" + ymdMatch[4]).slice(-2);
+        var min = ("0" + ymdMatch[5]).slice(-2);
+        return day + " " + monthName + " " + yr + " " + hr + ":" + min;
+      }
+
+      return str;
     }
 
     function renderMyOrdersList() {
