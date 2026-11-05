@@ -919,17 +919,28 @@
           </div>
         </div>
 
-        <!-- បន្ថែមប្រអប់បញ្ចូល Link វីដេអូ TikTok / YouTube Shorts -->
+        <!-- ប្លុកបញ្ចូល Link វីដេអូ TikTok / Shorts (មានប៊ូតុង ✕ ចុចលុបភ្លាមៗ) -->
         <div>
           <label id="lblAddVideo" class="block text-xs font-semibold text-slate-600 mb-1">
             🎬 Link វីដេអូបង្ហាញ (TikTok / Shorts - ស្រេចចិត្ត)
           </label>
-          <input 
-            id="addVideoUrl" 
-            type="url" 
-            placeholder="https://www.tiktok.com/@.../video/... ឬទុកទំនេរបើគ្មាន" 
-            class="w-full border border-slate-300 p-2 rounded-xl text-xs outline-none focus:ring-2 focus:ring-blue-500 bg-white font-mono text-slate-700"
-          >
+          <div class="relative flex items-center">
+            <input 
+              id="addVideoUrl" 
+              type="url" 
+              oninput="checkVideoClearBtnVisibility()"
+              placeholder="https://www.tiktok.com/@.../video/... ឬទុកទំនេរបើគ្មាន" 
+              class="w-full border border-slate-300 p-2 pr-8 rounded-xl text-xs outline-none focus:ring-2 focus:ring-blue-500 bg-white font-mono text-slate-700"
+            >
+            <!-- ប៊ូតុង ✕ សម្រាប់ចុចលុប Link ភ្លាមៗ -->
+            <button 
+              id="clearVideoUrlBtn" 
+              type="button" 
+              onclick="clearProductVideoUrl()" 
+              title="លុប Link វីដេអូនេះចោល" 
+              class="hidden absolute right-2.5 w-5 h-5 bg-slate-200 hover:bg-rose-500 hover:text-white text-slate-600 font-bold rounded-full text-[10px] flex items-center justify-center transition-colors"
+            >✕</button>
+          </div>
           <p class="text-[10px] text-slate-400 mt-0.5">* បើដាក់ Link វានឹងបង្ហាញប៊ូតុង "▶ វីដេអូ" លើរូបភាពដោយស្វ័យប្រវត្តិ</p>
         </div>
 
@@ -3877,8 +3888,11 @@
 
       updateCategoryDropdownUI('Pet');
 
-      if (el = document.getElementById('addVideoUrl')) el.value = '';
-
+      var vidInput = document.getElementById('addVideoUrl');
+        if (vidInput) {
+          vidInput.value = '';
+          checkVideoClearBtnVisibility();
+        }
     }
 
     // --- អនុគមន៍បើកផ្ទាំងកែប្រែទំនិញ (Edit Product) ---
@@ -3908,9 +3922,11 @@
         if (el = document.getElementById('addSizes')) el.value = Array.isArray(p.sizes) ? p.sizes.join(', ') : (p.sizes || '');
         if (el = document.getElementById('addBadge')) el.value = p.badge || '';
 
-        // ✅ បង្ហាញ Link វីដេអូចាស់ក្នុងប្រអប់ដើម្បីកែ ឬលុប
-        if (el = document.getElementById('addVideoUrl')) {
-          el.value = p.videoUrl || '';
+        // ទាញ Link វីដេអូចាស់មកបង្ហាញក្នុងប្រអប់
+        var vidInput = document.getElementById('addVideoUrl');
+        if (vidInput) {
+          vidInput.value = p.videoUrl || '';
+          checkVideoClearBtnVisibility(); // បើមាន Link វានឹងបង្ហាញប៊ូតុង ✕ ភ្លាម
         }
 
         // បញ្ចូលភាគរយ Discount
@@ -4976,6 +4992,28 @@
         a.innerHTML = links[i].svg;
         container.appendChild(a);
       }
+    }
+
+    // បង្ហាញ ឬលាក់ប៊ូតុង ✕ អាស្រ័យលើថាមានអក្សរក្នុងប្រអប់ឬអត់
+    function checkVideoClearBtnVisibility() {
+      var input = document.getElementById('addVideoUrl');
+      var btn = document.getElementById('clearVideoUrlBtn');
+      if (!input || !btn) return;
+      if (input.value.trim().length > 0) {
+        btn.classList.remove('hidden');
+      } else {
+        btn.classList.add('hidden');
+      }
+    }
+
+    // ចុចលុប Link វីដេអូចោលភ្លាមៗ
+    function clearProductVideoUrl() {
+      var input = document.getElementById('addVideoUrl');
+      if (input) {
+        input.value = '';
+        input.focus();
+      }
+      checkVideoClearBtnVisibility();
     }
     
   </script>
