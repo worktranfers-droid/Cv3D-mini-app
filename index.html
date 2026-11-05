@@ -3877,6 +3877,8 @@
 
       updateCategoryDropdownUI('Pet');
 
+      if (el = document.getElementById('addVideoUrl')) el.value = '';
+
     }
 
     // --- អនុគមន៍បើកផ្ទាំងកែប្រែទំនិញ (Edit Product) ---
@@ -3948,6 +3950,8 @@
         console.error("កំហុសពេលបើកផ្ទាំងកែប្រែ:", err);
         alert("មិនអាចបើកផ្ទាំងកែប្រែបានទេ៖ " + err.message);
       }
+
+      if (el = document.getElementById('addVideoUrl')) el.value = '';
     }
     
     function closeAddModal() {
@@ -3982,6 +3986,7 @@
         isCustom: isCust,
         customMode: cMode,
         customFee: cFee
+        videoUrl: document.getElementById('addVideoUrl') ? document.getElementById('addVideoUrl').value.trim() : "" 
       };
 
       if (!p.title || p.price <= 0) {
@@ -4014,6 +4019,7 @@
                 adminProducts[i].isCustom = isCust;
                 adminProducts[i].customMode = cMode;
                 adminProducts[i].customFee = cFee;
+                adminProducts[i].videoUrl = p.videoUrl;
                 break;
               }
             }
