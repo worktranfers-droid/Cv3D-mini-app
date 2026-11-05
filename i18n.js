@@ -153,7 +153,14 @@
         lblSocialFb: "📘 Facebook Page / Profile Link",
         socialSummaryActive: "កំពុងបង្ហាញ {count} ទំនាក់ទំនង",
         socialSummaryNone: "មិនទាន់បើកបង្ហាញទំនាក់ទំនងឡើយ",
-        alertSocialSaved: "✓ ការកំណត់បណ្តាញសង្គមត្រូវបានរក្សាទុកជោគជ័យ!"
+        alertSocialSaved: "✓ ការកំណត់បណ្តាញសង្គមត្រូវបានរក្សាទុកជោគជ័យ!",
+        successTitle: "ការកុម្ម៉ង់ទទួលបានជោគជ័យ!",
+        successDesc: "យើងខ្ញុំបានទទួលព័ត៌មានរួចរាល់ហើយ និងកំពុងរៀបចំជូនលោកអ្នក។",
+        successOrderCode: "លេខកូដកុម្ម៉ង់៖",
+        successStatus: "ស្ថានភាព៖",
+        successStatusPending: "🟡 រង់ចាំពិនិត្យ",
+        successCloseApp: "🚪 រួចរាល់ (បិទ App)",
+        successContinue: "🛍️ ទិញទំនិញបន្ត"
       },
       en: {
         flag: "🇬🇧",
@@ -309,7 +316,14 @@
         lblSocialFb: "📘 Facebook Page / Profile Link",
         socialSummaryActive: "Showing {count} social link(s)",
         socialSummaryNone: "No contact links enabled",
-        alertSocialSaved: "✓ Social media settings saved successfully!"
+        alertSocialSaved: "✓ Social media settings saved successfully!",
+        successTitle: "Order Placed Successfully!",
+        successDesc: "We have received your order details and are preparing it for you.",
+        successOrderCode: "Order ID:",
+        successStatus: "Status:",
+        successStatusPending: "🟡 Pending",
+        successCloseApp: "🚪 Done (Close App)",
+        successContinue: "🛍️ Continue Shopping"
       },
       zh: {
         flag: "🇨🇳",
@@ -465,7 +479,14 @@
         lblSocialFb: "📘 Facebook 页面 / 主页链接",
         socialSummaryActive: "正在显示 {count} 个联系方式",
         socialSummaryNone: "尚未开启任何联系方式",
-        alertSocialSaved: "✓ 社交媒体设置已保存！"
+        alertSocialSaved: "✓ 社交媒体设置已保存！",
+        successTitle: "下单成功！",
+        successDesc: "我们已收到您的订单信息，正在为您准备。",
+        successOrderCode: "订单编号：",
+        successStatus: "状态：",
+        successStatusPending: "🟡 待审核",
+        successCloseApp: "🚪 完成 (关闭小程序)",
+        successContinue: "🛍️ 继续购物"
       }
     };
 
