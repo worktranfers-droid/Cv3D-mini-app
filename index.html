@@ -2698,6 +2698,39 @@
       if (loader) loader.className = "hidden";
     }
 
+    // អនុគមន៍កែសម្រួលកាលបរិច្ឆេទឱ្យចេញទម្រង់ DD-MM-YYYY HH:mm (គ្មានវិនាទី)
+    function formatOrderDate(rawDate) {
+      if (!rawDate) return "";
+      var str = String(rawDate).trim();
+
+      // ១. ប្រសិនបើជាទម្រង់ 25-10-2026 10:17:15 -> កាត់យកត្រឹម 25-10-2026 10:17 (ដកវិនាទីចេញ)
+      var dmyMatch = str.match(/^(\d{1,2})-(\d{1,2})-(\d{4})\s+(\d{1,2}):(\d{1,2})/);
+      if (dmyMatch) {
+        var day = ("0" + dmyMatch[1]).slice(-2);
+        var mon = ("0" + dmyMatch[2]).slice(-2);
+        var yr = dmyMatch[3];
+        var hr = ("0" + dmyMatch[4]).slice(-2);
+        var min = ("0" + dmyMatch[5]).slice(-2);
+        return day + "-" + mon + "-" + yr + " " + hr + ":" + min;
+      }
+
+      // ២. ប្រសិនបើជាទម្រង់ ISO ដូចជា 2026-03-11T02:40:04.000Z
+      try {
+        var d = new Date(str);
+        if (!isNaN(d.getTime())) {
+          var day = ("0" + d.getDate()).slice(-2);
+          var mon = ("0" + (d.getMonth() + 1)).slice(-2);
+          var yr = d.getFullYear();
+          var hr = ("0" + d.getHours()).slice(-2);
+          var min = ("0" + d.getMinutes()).slice(-2);
+          return day + "-" + mon + "-" + yr + " " + hr + ":" + min;
+        }
+      } catch(e) {}
+
+      // ៣. ករណីទម្រង់ផ្សេងៗទៀត ដកវិនាទីចុងក្រោយចេញ
+      return str.replace(/:\d{2}(\.\d+)?Z?$/, '');
+    }
+
     function renderMyOrdersList() {
       var container = document.getElementById('myOrdersContainer');
       if (!container || !myCustomerOrders) return;
@@ -2710,28 +2743,13 @@
         var card = document.createElement('div');
         card.className = "bg-slate-50 border border-slate-200 rounded-2xl p-3.5 space-y-2 text-xs shadow-sm";
 
-        // ========================================================
-        // 🕒 បំប្លែងកាលបរិច្ឆេទឱ្យចេញជាទម្រង់ស្អាតដូចគ្នាទាំងអស់
-        // ========================================================
-        var displayDate = ord.date || "";
-        try {
-          var d = new Date(ord.date);
-          if (!isNaN(d.getTime())) {
-            var day = ("0" + d.getDate()).slice(-2);
-            var mon = ("0" + (d.getMonth() + 1)).slice(-2);
-            var yr = d.getFullYear();
-            var hr = ("0" + d.getHours()).slice(-2);
-            var min = ("0" + d.getMinutes()).slice(-2);
-            displayDate = day + "-" + mon + "-" + yr + " " + hr + ":" + min;
-          }
-        } catch(e) {}
-        // ========================================================
+        // ១. កាលបរិច្ឆេទខ្លី (គ្មានវិនាទី)
+        var shortDate = formatOrderDate(ord.date);
 
-        // ១. កាលបរិច្ឆេទខ្លី
         var topRow = document.createElement('div');
         topRow.className = "flex justify-between items-center border-b border-slate-200/60 pb-1.5";
         topRow.innerHTML = '<span class="font-bold font-mono text-slate-700">' + ord.orderId + '</span>' +
-                           '<span class="text-[10px] text-slate-400 font-mono">' + (ord.date || '') + '</span>';
+                           '<span class="text-[10px] text-slate-400 font-mono">' + shortDate + '</span>';
         card.appendChild(topRow);
 
         // ២. ស្វែងរកស្ថានភាព និងបកប្រែតាមភាសាបច្ចុប្បន្ន (KM / EN / ZH)
@@ -3278,19 +3296,8 @@
           var card = document.createElement('div');
           card.className = "bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden transition-all duration-200";
 
-          // បំប្លែងកាលបរិច្ឆេទខ្លី
-          var shortDate = ord.date || "";
-          try {
-            var d = new Date(ord.date);
-            if (!isNaN(d.getTime())) {
-              var day = ("0" + d.getDate()).slice(-2);
-              var mon = ("0" + (d.getMonth() + 1)).slice(-2);
-              var yr = d.getFullYear();
-              var hr = ("0" + d.getHours()).slice(-2);
-              var min = ("0" + d.getMinutes()).slice(-2);
-              shortDate = day + "-" + mon + "-" + yr + " " + hr + ":" + min;
-            }
-          } catch(e) {}
+          // បំប្លែងកាលបរិច្ឆេទខ្លី (ដកវិនាទីចេញ)
+          var shortDate = formatOrderDate(ord.date);
 
           var hasDiscount = (ord.items && (ord.items.indexOf('%') !== -1 || ord.items.indexOf('[-') !== -1));
           var priceHtml = hasDiscount 
