@@ -566,10 +566,19 @@
       <div class="w-full aspect-square rounded-2xl overflow-hidden bg-slate-100 mb-4 relative select-none">
         <div id="modalSliderContainer" class="w-full h-full flex overflow-x-auto snap-x snap-mandatory scroll-smooth no-scrollbar" onscroll="handleSliderScroll()"></div>
         <div id="sliderDots" class="absolute bottom-2.5 left-1/2 -translate-x-1/2 flex items-center gap-1.5 bg-black/40 backdrop-blur-md px-2.5 py-1 rounded-full z-10"></div>
-        <span id="modalZoomNotice" class="absolute top-2.5 left-2.5 bg-black/60 backdrop-blur-md text-white text-[10px] font-bold px-2 py-0.5 rounded-full pointer-events-none z-10">
-          🔍 ចុចលើរូបដើម្បី Zoom
-        </span>
+        <!-- ប៊ូតុងវីដេអូ TikTok លើរូបភាព (បង្ហាញតែពេលផលិតផលមាន videoUrl) -->
+        <button 
+          id="modalVideoBtn" 
+          type="button" 
+          onclick="openProductVideo(event)" 
+          class="hidden absolute top-2.5 right-2.5 bg-black/75 hover:bg-black text-white text-[10px] font-bold px-2.5 py-1 rounded-full backdrop-blur-md shadow-md z-20 flex items-center gap-1.5 active:scale-95 transition-all border border-white/20"
+        >
+          <span class="text-rose-500">▶</span>
+          <span id="lblModalVideoText">វីដេអូ</span>
+        </button>
       </div>
+
+      
 
       <!-- ផ្នែកព័ត៌មានក្បាលទំនិញ (រៀបចំថ្មីបែប Premium Left-aligned ស្អាត និងត្រឹមត្រូវ) -->
       <div class="space-y-1.5 mb-3">
@@ -910,6 +919,20 @@
           </div>
         </div>
 
+        <!-- បន្ថែមប្រអប់បញ្ចូល Link វីដេអូ TikTok / YouTube Shorts -->
+        <div>
+          <label id="lblAddVideo" class="block text-xs font-semibold text-slate-600 mb-1">
+            🎬 Link វីដេអូបង្ហាញ (TikTok / Shorts - ស្រេចចិត្ត)
+          </label>
+          <input 
+            id="addVideoUrl" 
+            type="url" 
+            placeholder="https://www.tiktok.com/@.../video/... ឬទុកទំនេរបើគ្មាន" 
+            class="w-full border border-slate-300 p-2 rounded-xl text-xs outline-none focus:ring-2 focus:ring-blue-500 bg-white font-mono text-slate-700"
+          >
+          <p class="text-[10px] text-slate-400 mt-0.5">* បើដាក់ Link វានឹងបង្ហាញប៊ូតុង "▶ វីដេអូ" លើរូបភាពដោយស្វ័យប្រវត្តិ</p>
+        </div>
+
         <!-- ផ្នែកជម្រើសពណ៌បែបឆ្លាតវៃ -->
         <div class="space-y-2">
           <div class="flex justify-between items-center">
@@ -1111,7 +1134,9 @@
       // --- Customer UI ---
       if (el = document.getElementById('custSearchInput')) el.placeholder = t.searchPlaceholder;
       if (el = document.getElementById('custLoaderText')) el.innerText = t.loaderText;
-      if (el = document.getElementById('modalZoomNotice')) el.innerText = t.zoomNotice;
+      if (el = document.getElementById('lblModalVideoText')) {
+      el.innerText = (currentLang === 'zh') ? "视频" : (currentLang === 'en') ? "Video" : "វីដេអូ";
+    }
       if (el = document.getElementById('lblSelectColor')) el.innerText = t.lblColor;
       if (el = document.getElementById('lblSelectSize')) el.innerText = t.lblSize;
       if (el = document.getElementById('lblSelectQty')) el.innerText = t.lblQty;
@@ -1718,6 +1743,20 @@
       currentSliderImages = (p.images && p.images.length > 0) ? p.images : [p.image];
       renderProductSlider(currentSliderImages);
 
+      // ========================================================
+      // 🎬 បន្ថែមត្រង់នេះ៖ បង្ហាញ ឬលាក់ប៊ូតុងវីដេអូ TikTok លើរូបភាព
+      // ========================================================
+      var vidBtn = document.getElementById('modalVideoBtn');
+      if (vidBtn) {
+        if (p.videoUrl && String(p.videoUrl).trim().length > 0) {
+          vidBtn.classList.remove('hidden');
+          vidBtn.dataset.videoUrl = String(p.videoUrl).trim();
+        } else {
+          vidBtn.classList.add('hidden');
+          vidBtn.dataset.videoUrl = '';
+        }
+      }
+
       var el;
       if (el = document.getElementById('modalTitle')) el.innerText = p.title;
       if (el = document.getElementById('modalCategory')) el.innerText = p.category.toUpperCase();
@@ -1895,6 +1934,20 @@
         var qEl = document.getElementById('qtyVal');
         if (qEl) qEl.innerText = quantity;
         updateModalLivePrice();
+      }
+    }
+
+    function openProductVideo(e) {
+      if (e) e.stopPropagation();
+      var vidBtn = document.getElementById('modalVideoBtn');
+      var url = vidBtn ? vidBtn.dataset.videoUrl : '';
+      if (!url) return;
+
+      // បើកតាម Telegram WebApp SDK ដោយសុវត្ថិភាព
+      if (window.Telegram && window.Telegram.WebApp && typeof window.Telegram.WebApp.openLink === 'function') {
+        window.Telegram.WebApp.openLink(url);
+      } else {
+        window.open(url, '_blank');
       }
     }
 
