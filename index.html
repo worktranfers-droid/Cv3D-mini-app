@@ -667,7 +667,7 @@
       <div id="productBottomBar" class="p-3.5 border-t border-slate-100 bg-white flex-shrink-0 space-y-2 shadow-[0_-4px_12px_rgba(0,0,0,0.04)]">
         
         <!-- ជួរ Quantity នៅខាងឆ្វេង និងតម្លៃរៀបជាន់នៅខាងស្តាំ (លុបអក្សរតម្លៃសរុបចោល) -->
-        <div class="flex justify-between items-center px-1 pt-1.5 pb-0.5">
+        <div class="flex justify-between items-end px-1 min-h-[42px]">
           <div class="flex items-center bg-slate-100 p-0.5 rounded-xl border border-slate-200/80 shadow-2xs">
             <button 
               type="button" 
@@ -2133,18 +2133,24 @@
       var totalOrigPrice = (origUnitPrice + totalFee + sizeFee) * (quantity || 1);
 
       // ២. បង្ហាញតម្លៃបែប Outfit Font ទំនើប៖ ជួរលើ $18.00 (គូសឆ្កូត), ជួរក្រោម [-50%] នៅខាងឆ្វេង និង $9.00 នៅខាងស្តាំ
+      // ២. បង្ហាញតម្លៃបែប Outfit Font ទំនើប (តម្រង់បាតស្មើគ្នា)
       if (priceEl) {
         if (disc > 0) {
+          // ករណីមាន Discount (២ ជួរ)
           priceEl.innerHTML = 
-            '<div class="flex flex-col items-end leading-none">' +
+            '<div class="flex flex-col items-end justify-end leading-none">' +
               '<span class="text-xs text-slate-400 line-through font-outfit font-semibold mb-1">$' + totalOrigPrice.toFixed(2) + '</span>' +
               '<div class="flex items-center gap-1.5">' +
                 '<span class="bg-rose-50 text-rose-600 border border-rose-200/90 text-[10px] font-black px-1.5 py-0.5 rounded-lg tracking-wide font-outfit">-' + Math.round(disc) + '%</span>' +
-                '<span class="text-2xl font-black text-rose-600 font-outfit tracking-tight">$' + totalProductPrice.toFixed(2) + '</span>' +
+                '<span class="text-2xl font-black text-rose-600 font-outfit tracking-tight leading-none">$' + totalProductPrice.toFixed(2) + '</span>' +
               '</div>' +
             '</div>';
         } else {
-          priceEl.innerHTML = '<span class="text-2xl font-black text-blue-600 font-outfit tracking-tight">$' + totalProductPrice.toFixed(2) + '</span>';
+          // ករណីគ្មាន Discount (១ ជួរ)
+          priceEl.innerHTML = 
+            '<div class="flex flex-col items-end justify-end leading-none">' +
+              '<span class="text-2xl font-black text-blue-600 font-outfit tracking-tight leading-none">$' + totalProductPrice.toFixed(2) + '</span>' +
+            '</div>';
         }
       }
     }
