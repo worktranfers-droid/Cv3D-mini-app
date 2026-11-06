@@ -639,15 +639,19 @@
           </div>
         </div>
 
-        <!-- ផ្នែកជ្រើសរើសចំនួន (Quantity) -->
-        <div class="flex items-center justify-between py-1 bg-slate-50 p-2.5 rounded-2xl border border-slate-200/70">
-          <label id="lblSelectQty" class="text-xs font-bold text-slate-700">ចំនួន (Quantity):</label>
-          
-          <div class="flex items-center bg-white p-1 rounded-xl border border-slate-200 shadow-2xs">
+      </div>
+
+      <!-- របារ Action Bar ផ្នែកខាងក្រោម (មាន Quantity + Total Price ជាប់ស្អិតជាមួយគ្នា) -->
+      <div id="productBottomBar" class="p-3.5 border-t border-slate-100 bg-white flex-shrink-0 space-y-2.5 shadow-[0_-4px_12px_rgba(0,0,0,0.04)]">
+        
+        <!-- ជួរទី ១៖ ប៊ូតុង Quantity (-) 1 (+) នៅខាងឆ្វេង និងតម្លៃសរុបនៅខាងស្តាំ -->
+        <div class="flex justify-between items-center px-0.5">
+          <!-- ប៊ូតុង Quantity រចនាស្រាលស្រទន់ -->
+          <div class="flex items-center bg-slate-100 p-0.5 rounded-xl border border-slate-200/80 shadow-2xs">
             <button 
               type="button" 
               onclick="changeQty(-1)" 
-              class="w-7 h-7 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-lg flex items-center justify-center text-sm active:scale-90 transition-all cursor-pointer"
+              class="w-7 h-7 bg-white hover:bg-slate-50 text-slate-700 font-bold rounded-lg flex items-center justify-center text-sm active:scale-90 transition-all cursor-pointer shadow-2xs"
             >-</button>
             
             <span id="qtyVal" class="text-xs font-black text-slate-900 w-8 text-center select-none">1</span>
@@ -655,25 +659,19 @@
             <button 
               type="button" 
               onclick="changeQty(1)" 
-              class="w-7 h-7 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-lg flex items-center justify-center text-sm active:scale-90 transition-all cursor-pointer"
+              class="w-7 h-7 bg-white hover:bg-slate-50 text-slate-700 font-bold rounded-lg flex items-center justify-center text-sm active:scale-90 transition-all cursor-pointer shadow-2xs"
             >+</button>
+          </div>
+
+          <!-- តម្លៃសរុប Live Price -->
+          <div class="text-right">
+            <span class="text-[10px] text-slate-400 block font-medium leading-none mb-0.5">តម្លៃសរុប (Total)</span>
+            <div id="modalPrice"></div>
           </div>
         </div>
 
-      </div>
-
-      <!-- ៣. របារ Action Bar ផ្នែកខាងក្រោម (ជាប់នៅបាតក្រោមរហូត ដូច Shopping Cart ដែរ) -->
-      <div id="productBottomBar" class="p-3.5 border-t border-slate-100 bg-white flex-shrink-0 space-y-2 shadow-[0_-4px_12px_rgba(0,0,0,0.04)]">
-        
-        <!-- ជួរតម្លៃសរុប Live Price តាមចំនួន & Custom Fee -->
-        <div class="flex justify-between items-center px-1">
-          <span class="text-xs text-slate-500 font-bold">តម្លៃសរុប (Total):</span>
-          <div id="modalPrice" class="text-right"></div>
-        </div>
-
-        <!-- ជួរប៊ូតុងទាំង ៣៖ ឆាតសួរនាំ, ដាក់ចូលកន្រ្តក, ទិញឥឡូវនេះ -->
+        <!-- ជួរទី ២៖ ប៊ូតុង Action ទាំង ៣ -->
         <div class="flex items-center gap-2">
-          <!-- ប៊ូតុងឆាតសួរនាំ -->
           <button 
             type="button" 
             onclick="askAboutCurrentProduct()" 
@@ -683,7 +681,6 @@
             💬
           </button>
 
-          <!-- ប៊ូតុងដាក់ចូលកន្រ្តក (បិទ Modal នៅកន្លែងដដែល + Toast + រំញ័រ) -->
           <button 
             type="button" 
             onclick="addToCart()" 
@@ -693,7 +690,6 @@
             <span id="btnAddToCartText">ដាក់ចូលកន្រ្តក</span>
           </button>
 
-          <!-- ប៊ូតុងទិញឥឡូវនេះ (បើកចូលកន្ត្រកភ្លាមៗ) -->
           <button 
             type="button" 
             onclick="buyNowDirectly()" 
