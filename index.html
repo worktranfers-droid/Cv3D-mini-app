@@ -21,7 +21,7 @@
   <header class="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-slate-100 px-4 py-2.5 shadow-sm flex items-center justify-between">
     <div class="flex items-center gap-2.5">
       <!-- Logo ហាង -->
-      <!-- Logo ហាង (ចុចញាប់ៗ ៤ ដងដើម្បីចូល Admin) -->
+      <!-- Logo ហាង (ចុចញាប់ៗ ៥ ដងដើម្បីចូល Admin) -->
       <div 
         onclick="handleSecretAdminClick()" 
         title="Cv3D Studio"
@@ -1114,7 +1114,8 @@
     var selectedSize = "";
     var quantity = 1;
 
-    var cart = [];
+    // ✅ ទាញយកកន្ត្រកចាស់ពី localStorage (ការពារកុំឱ្យបាត់ទំនិញពេលច្រឡំបិទ App)
+    var cart = JSON.parse(localStorage.getItem('cv3d_customer_cart') || '[]');
     var MY_TELEGRAM_USERNAME = "Vireak699";
 
     var currentSliderImages = [];
@@ -2289,6 +2290,58 @@
     }
 
     // --- 6.7 SHOPPING CART ---
+    // --- អនុគមន៍រក្សាទុកកន្ត្រកចូលទូរសព្ទ (localStorage) ---
+    function saveCartToStorage() {
+      try {
+        localStorage.setItem('cv3d_customer_cart', JSON.stringify(cart));
+      } catch (e) {
+        console.warn("Storage save failed:", e);
+      }
+    }
+
+    // --- អនុគមន៍ផ្ទៀងផ្ទាត់ និងធ្វើបច្ចុប្បន្នភាពតម្លៃក្នុងកន្ត្រកឱ្យស្មើនឹងតម្លៃបច្ចុប្បន្ន ---
+    function syncCartPricesWithCatalog() {
+      if (!cart || cart.length === 0 || !customerProducts || customerProducts.length === 0) return;
+      var hasPriceChanged = false;
+      for (var i = 0; i < cart.length; i++) {
+        var cartItem = cart[i];
+        var liveProduct = null;
+        for (var j = 0; j < customerProducts.length; j++) {
+          if (String(customerProducts[j].id) === String(cartItem.id)) {
+            liveProduct = customerProducts[j];
+            break;
+          }
+        }
+        if (liveProduct) {
+          var disc = parseFloat(String(liveProduct.discount || '0').replace('%', '')) || 0;
+          if (disc > 0 && disc < 1) disc = disc * 100;
+          var origPrice = Number(liveProduct.price) || 0;
+          var currentBasePrice = (disc > 0 && disc < 100) ? (origPrice * (1 - disc / 100)) : origPrice;
+
+          var currentFinalPrice = currentBasePrice;
+          if (liveProduct.isCustom && cartItem.customText) {
+            var mode = liveProduct.customMode || "flat";
+            if (mode === 'per_char') {
+              if (cartItem.customText.length > 5) {
+                var rate = Number(liveProduct.customFee) || 0.50;
+                currentFinalPrice += (cartItem.customText.length - 5) * rate;
+              }
+            } else {
+              currentFinalPrice += (Number(liveProduct.customFee) || 0);
+            }
+          }
+
+          if (Math.abs(cartItem.price - currentFinalPrice) > 0.001) {
+            cartItem.price = currentFinalPrice;
+            hasPriceChanged = true;
+          }
+        }
+      }
+      if (hasPriceChanged) {
+        saveCartToStorage();
+      }
+    }
+
     // --- Toast Alert បង្ហាញជូនដំណឹងថាបានចូលកន្ត្រកយ៉ាងរលូន ---
     function showCartToast(message) {
       var toast = document.getElementById('cartToastNotification');
@@ -2367,7 +2420,8 @@
         });
       }
 
-      // ក. ធ្វើបច្ចុប្បន្នភាពលេខក្រហមលើកន្ត្រក 🛒
+      // ក. រក្សាទុកចូល Storage និង Update Badge
+      saveCartToStorage();
       updateCartBadge();
 
       // ខ. បិទផ្ទាំងទំនិញភ្លាមៗ ដោយមិនរុញអេក្រង់ទៅលើ (នៅកន្លែងដដែល)
@@ -2406,6 +2460,7 @@
     }
 
     function openCartModal() {
+      syncCartPricesWithCatalog();
       renderCartItems();
       var modal = document.getElementById('cartModal');
       if (modal) modal.className = "fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4";
@@ -2610,12 +2665,14 @@
       if (cart[index].qty <= 0) {
         cart.splice(index, 1);
       }
+      saveCartToStorage();
       updateCartBadge();
       renderCartItems();
     }
 
     function removeCartItem(index) {
       cart.splice(index, 1);
+      saveCartToStorage();
       updateCartBadge();
       renderCartItems();
     }
@@ -2625,10 +2682,12 @@
 
       var phoneEl = document.getElementById('cartPhoneInput');
       var locEl = document.getElementById('cartLocInput');
+      var noteEl = document.getElementById('cartNoteInput');
       var zoneSelect = document.getElementById('cartDeliveryZone');
 
       var phone = phoneEl ? phoneEl.value.trim() : '';
       var location = locEl ? locEl.value.trim() : '';
+      var noteText = noteEl ? noteEl.value.trim() : '';
       var t = i18n[currentLang];
 
       if (!phone || !location) {
@@ -2676,7 +2735,7 @@
           tgUsername: tgUsername,
           tgUserId: tgUserId,
           phone: phone,
-          location: "[" + zoneLabel + "] " + location
+          location: "[" + zoneLabel + "] " + location + (noteText ? (" (ចំណាំ: " + noteText + ")") : "")
         }
       })
       .then(function(res) {
@@ -2687,6 +2746,7 @@
 
         var orderId = (res && res.orderId) ? res.orderId : ("ORD-" + Math.floor(Date.now() / 1000));
         cart = [];
+        saveCartToStorage();
         updateCartBadge();
         closeCartModal();
         
@@ -2830,12 +2890,26 @@
       if (loader) loader.className = "hidden";
     }
 
-    // បង្ហាញកាលបរិច្ឆេទជាទម្រង់៖ 03 Nov 2026 09:40 ឬ 25 Oct 2026 10:17
-    function formatOrderDate(rawDate) {
+    // បង្ហាញកាលបរិច្ឆេទជាទម្រង់៖ 03 Nov 2026 09:40 ឬ 25 Oct 2026 10:17 (ឆ្លាតវៃ មិនច្រឡំខែ)
+    function formatOrderDate(rawDate, orderId) {
+      var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+      // វិធីសាស្ត្រពិសេស៖ ប្រសិនបើមាន orderId (ឧ. ORD-1793673604) ទាញម៉ោងពិតពី Timestamp ផ្ទាល់
+      if (orderId && String(orderId).indexOf("ORD-") !== -1) {
+        var ts = parseInt(String(orderId).replace("ORD-", "").trim(), 10);
+        if (!isNaN(ts) && ts > 1000000000) {
+          var d = new Date(ts * 1000);
+          var day = ("0" + d.getDate()).slice(-2);
+          var monthName = months[d.getMonth()];
+          var yr = d.getFullYear();
+          var hr = ("0" + d.getHours()).slice(-2);
+          var min = ("0" + d.getMinutes()).slice(-2);
+          return day + " " + monthName + " " + yr + " " + hr + ":" + min;
+        }
+      }
+
       if (!rawDate) return "";
       var str = String(rawDate).trim();
-
-      var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
       // ១. ប្រសិនបើជាទម្រង់ DD-MM-YYYY (ឧ. 25-10-2026 10:17)
       var dmyMatch = str.match(/^(\d{1,2})-(\d{1,2})-(\d{4})\s+(\d{1,2}):(\d{1,2})/);
@@ -2849,7 +2923,7 @@
         return day + " " + monthName + " " + yr + " " + hr + ":" + min;
       }
 
-      // ២. ប្រសិនបើជាទម្រង់ Date ISO ពី Google Sheet (ឧ. 2026-03-11T... ឬ 2026-11-03...)
+      // ២. ប្រសិនបើជាទម្រង់ Date ISO ពី Google Sheet
       try {
         var d = new Date(str);
         if (!isNaN(d.getTime())) {
@@ -2861,18 +2935,6 @@
           return day + " " + monthName + " " + yr + " " + hr + ":" + min;
         }
       } catch(e) {}
-
-      // ៣. ប្រសិនបើមានទម្រង់ YYYY-MM-DD
-      var ymdMatch = str.match(/^(\d{4})-(\d{1,2})-(\d{1,2})\s+(\d{1,2}):(\d{1,2})/);
-      if (ymdMatch) {
-        var yr = ymdMatch[1];
-        var mIdx = parseInt(ymdMatch[2], 10) - 1;
-        var monthName = (mIdx >= 0 && mIdx < 12) ? months[mIdx] : ymdMatch[2];
-        var day = ("0" + ymdMatch[3]).slice(-2);
-        var hr = ("0" + ymdMatch[4]).slice(-2);
-        var min = ("0" + ymdMatch[5]).slice(-2);
-        return day + " " + monthName + " " + yr + " " + hr + ":" + min;
-      }
 
       return str;
     }
@@ -2890,7 +2952,7 @@
         card.className = "bg-slate-50 border border-slate-200 rounded-2xl p-3.5 space-y-2 text-xs shadow-sm";
 
         // ១. កាលបរិច្ឆេទខ្លី (គ្មានវិនាទី)
-        var shortDate = formatOrderDate(ord.date);
+        var shortDate = formatOrderDate(ord.date, ord.orderId);
 
         var topRow = document.createElement('div');
         topRow.className = "flex justify-between items-center border-b border-slate-200/60 pb-1.5";
@@ -2962,8 +3024,8 @@
         secretClickCount = 0;
       }, 1500);
 
-      // នៅពេលចុចគ្រប់ ៤ ដង វានឹងលោតផ្ទាំងទាមទារ Admin PIN
-      if (secretClickCount >= 4) {
+      // នៅពេលចុចគ្រប់ ៥ ដង វានឹងលោតផ្ទាំងទាមទារ Admin PIN
+      if (secretClickCount >= 5) {
         secretClickCount = 0;
         
         // ផ្តល់សញ្ញារំញ័រតិចៗលើទូរសព្ទដៃ (បើសិនជាបើកលើ Telegram)
@@ -3443,7 +3505,7 @@
           card.className = "bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden transition-all duration-200";
 
           // បំប្លែងកាលបរិច្ឆេទខ្លី (ដកវិនាទីចេញ)
-          var shortDate = formatOrderDate(ord.date);
+          var shortDate = formatOrderDate(ord.date, ord.orderId);
 
           var hasDiscount = (ord.items && (ord.items.indexOf('%') !== -1 || ord.items.indexOf('[-') !== -1));
           var priceHtml = hasDiscount 
