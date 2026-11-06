@@ -558,132 +558,106 @@
   <!-- 5. MODALS (PRODUCT DETAIL, ZOOM, CART, ORDERS, ADD/EDIT)  -->
   <!-- ========================================================= -->
 
-  <!-- Modal 1: Product Detail -->
+  <!-- Modal 1: Product Detail (ប៊ូតុង ✕ អណ្តែតនៅមួយកន្លែងជាប់រហូត) -->
   <div id="productModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
-    <div class="bg-white w-full max-w-md rounded-t-3xl sm:rounded-3xl max-h-[90vh] overflow-y-auto p-5 shadow-2xl relative">
-      <button type="button" onclick="closeModal()" class="absolute top-4 right-4 bg-slate-100 hover:bg-slate-200 w-8 h-8 rounded-full flex items-center justify-center text-slate-500 font-bold z-20">✕</button>
-
-      <div class="w-full aspect-square rounded-2xl overflow-hidden bg-slate-100 mb-4 relative select-none">
-        <div id="modalSliderContainer" class="w-full h-full flex overflow-x-auto snap-x snap-mandatory scroll-smooth no-scrollbar" onscroll="handleSliderScroll()"></div>
-        <div id="sliderDots" class="absolute bottom-2.5 left-1/2 -translate-x-1/2 flex items-center gap-1.5 bg-black/40 backdrop-blur-md px-2.5 py-1 rounded-full z-10"></div>
-        <!-- ប៊ូតុងវីដេអូ TikTok លើរូបភាព (រើមកជ្រុងខាងលើឆ្វេង top-2.5 left-2.5 មិនជាន់សញ្ញា ✕) -->
-        <button 
-          id="modalVideoBtn" 
-          type="button" 
-          onclick="openProductVideo(event)" 
-          class="hidden absolute top-2.5 left-2.5 bg-black/75 hover:bg-black text-white text-[10px] font-bold px-2.5 py-1 rounded-full backdrop-blur-md shadow-md z-20 flex items-center gap-1.5 active:scale-95 transition-all border border-white/20"
-        >
-          <span class="text-rose-500">▶</span>
-          <span id="lblModalVideoText">វីដេអូ</span>
-        </button>
-      </div>
-
+    <!-- Card ខាងក្រៅ៖ មិន Scroll ទេ ទុកសម្រាប់ដាក់ប៊ូតុង ✕ ឱ្យនៅនឹងមួយកន្លែង -->
+    <div class="bg-white w-full max-w-md rounded-t-3xl sm:rounded-3xl max-h-[90vh] shadow-2xl relative flex flex-col overflow-hidden">
       
+      <!-- ប៊ូតុង ✕ អណ្តែតនៅមួយកន្លែងជានិច្ច (Floating Close Button) មិនរត់បាត់ពេល Scroll -->
+      <button 
+        type="button" 
+        onclick="closeModal()" 
+        title="បិទ"
+        class="absolute top-3.5 right-3.5 bg-white/90 hover:bg-white text-slate-700 w-8 h-8 rounded-full flex items-center justify-center font-bold z-30 shadow-md backdrop-blur-md border border-slate-200/80 active:scale-90 transition-all cursor-pointer"
+      >
+        ✕
+      </button>
 
-      <!-- ផ្នែកព័ត៌មានក្បាលទំនិញ (រៀបចំថ្មីបែប Premium Left-aligned ស្អាត និងត្រឹមត្រូវ) -->
-      <div class="space-y-1.5 mb-3">
-        <!-- ១. ស្លាក Category -->
-        <div>
-          <span id="modalCategory" class="text-[10px] font-bold text-slate-500 uppercase tracking-wider bg-slate-100 px-2 py-0.5 rounded-md inline-block"></span>
-        </div>
+      <!-- ផ្ទៃខាងក្នុងសម្រាប់ Scroll មើលរូបភាព និងព័ត៌មាន -->
+      <div class="overflow-y-auto p-5 no-scrollbar">
 
-        <!-- ២. ឈ្មោះទំនិញពេញលេញ ១ ជួរ -->
-        <h2 id="modalTitle" class="text-base font-bold text-slate-900 leading-snug"></h2>
-
-        <!-- ៣. ជួរតម្លៃ (តម្រង់មកខាងឆ្វេងទាំងអស់ ជាប់គ្នាស្អាត) -->
-        <div id="modalPrice" class="pt-0.5"></div>
-      </div>
-      
-      <p id="modalDesc" class="text-xs text-slate-500 mb-4 leading-relaxed"></p>
-      <hr class="border-slate-100 my-3">
-
-      <div class="mb-4">
-        <label id="lblSelectColor" class="block text-xs font-bold text-slate-700 mb-2">ជ្រើសរើសពណ៌ (Color):</label>
-        <div id="colorContainer" class="flex flex-wrap gap-2"></div>
-      </div>
-
-      <div class="mb-4">
-        <label id="lblSelectSize" class="block text-xs font-bold text-slate-700 mb-2">ជ្រើសរើសទំហំ (Size):</label>
-        <div id="sizeContainer" class="flex gap-2"></div>
-      </div>
-
-      <!-- ផ្នែកសម្រាប់ទំនិញ Custom -->
-      <div id="custCustomSection" class="hidden mb-4 bg-blue-50/70 p-3 rounded-2xl border border-blue-200 space-y-2">
-        <div class="flex justify-between items-center">
-          <label id="lblCustCustomTitle" class="text-xs font-bold text-blue-900">✍️ បញ្ចូលឈ្មោះ/អក្សរដែលចង់ឆ្លាក់៖ *</label>
-          <span id="custCustomFeeBadge" class="text-[10px] font-bold bg-blue-200 text-blue-800 px-2 py-0.5 rounded-full"></span>
-        </div>
-        
-        <input 
-          id="custCustomNameInput" 
-          type="text" 
-          oninput="updateModalLivePrice()" 
-          placeholder="ឧ. Milo, Lucky, ឬឈ្មោះរបស់អ្នក..." 
-          class="w-full px-3 py-2 bg-white border border-blue-300 rounded-xl text-xs outline-none focus:ring-2 focus:ring-blue-500 shadow-xs"
-        >
-        
-        <div class="flex justify-between items-center text-[11px] pt-0.5">
-          <span id="charCountNotice" class="text-slate-500 font-medium"></span>
-          <span id="charCountDisplay" class="font-mono font-bold text-blue-600 bg-white px-2 py-0.5 rounded-md border border-blue-100">0 តួអក្សរ</span>
-        </div>
-      </div>
-
-      <!-- Quantity Selector -->
-      <!-- ផ្នែកជ្រើសរើសចំនួន (Quantity - រចនាថ្មី ស្រឡះ និងងាយចុច) -->
-      <div class="flex items-center justify-between mb-4 py-1">
-        <label id="lblSelectQty" class="text-xs font-bold text-slate-700">ចំនួន (Quantity):</label>
-        
-        <div class="flex items-center bg-slate-100 p-1 rounded-xl border border-slate-200/80 shadow-2xs">
-          <!-- ប៊ូតុងដក (-) -->
-          <button 
-            type="button" 
-            onclick="changeQty(-1)" 
-            class="w-7 h-7 bg-white hover:bg-slate-50 text-slate-700 font-bold rounded-lg shadow-xs flex items-center justify-center text-sm active:scale-90 transition-all"
-          >-</button>
+        <div class="w-full aspect-square rounded-2xl overflow-hidden bg-slate-100 mb-4 relative select-none">
+          <div id="modalSliderContainer" class="w-full h-full flex overflow-x-auto snap-x snap-mandatory scroll-smooth no-scrollbar" onscroll="handleSliderScroll()"></div>
+          <div id="sliderDots" class="absolute bottom-2.5 left-1/2 -translate-x-1/2 flex items-center gap-1.5 bg-black/40 backdrop-blur-md px-2.5 py-1 rounded-full z-10"></div>
           
-          <!-- ចំនួនលេខកណ្តាល -->
-          <span id="qtyVal" class="text-xs font-black text-slate-900 w-8 text-center select-none">1</span>
-          
-          <!-- ប៊ូតុងបូក (+) -->
+          <!-- ប៊ូតុងវីដេអូ TikTok លើរូបភាព -->
           <button 
+            id="modalVideoBtn" 
             type="button" 
-            onclick="changeQty(1)" 
-            class="w-7 h-7 bg-white hover:bg-slate-50 text-slate-700 font-bold rounded-lg shadow-xs flex items-center justify-center text-sm active:scale-90 transition-all"
-          >+</button>
+            onclick="openProductVideo(event)" 
+            class="hidden absolute top-2.5 left-2.5 bg-black/75 hover:bg-black text-white text-[10px] font-bold px-2.5 py-1 rounded-full backdrop-blur-md shadow-md z-20 flex items-center gap-1.5 active:scale-95 transition-all border border-white/20"
+          >
+            <span class="text-rose-500">▶</span>
+            <span id="lblModalVideoText">វីដេអូ</span>
+          </button>
         </div>
-      </div>
 
-      <!-- របារ Action Buttons រួមបញ្ចូលគ្នា ១ ជួរ (Modern E-Commerce Action Bar) -->
-      <div class="flex items-center gap-2 pt-1">
-        <!-- ១. ប៊ូតុងឆាតសួរនាំ (Icon សុទ្ធ គ្មានស៊ុម ស្រឡះភ្នែក) -->
-        <button 
-          type="button" 
-          onclick="askAboutCurrentProduct()" 
-          title="ឆាតសួរនាំពីទំនិញនេះ" 
-          class="w-12 h-12 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-2xl flex items-center justify-center flex-shrink-0 active:scale-90 transition-all text-xl"
-        >
-          💬
-        </button>
+        <!-- ផ្នែកព័ត៌មានក្បាលទំនិញ -->
+        <div class="space-y-1.5 mb-3">
+          <div>
+            <span id="modalCategory" class="text-[10px] font-bold text-slate-500 uppercase tracking-wider bg-slate-100 px-2 py-0.5 rounded-md inline-block"></span>
+          </div>
+          <h2 id="modalTitle" class="text-base font-bold text-slate-900 leading-snug"></h2>
+          <div id="modalPrice" class="pt-0.5"></div>
+        </div>
+        
+        <p id="modalDesc" class="text-xs text-slate-500 mb-4 leading-relaxed"></p>
+        <hr class="border-slate-100 my-3">
 
-        <!-- ២. ប៊ូតុងដាក់ចូលកន្រ្តក -->
-        <button 
-          type="button" 
-          onclick="addToCart()" 
-          class="flex-1 h-12 bg-blue-50 hover:bg-blue-100 text-blue-600 font-bold rounded-2xl border border-blue-200 flex items-center justify-center gap-1.5 active:scale-95 transition-all text-xs shadow-2xs"
-        >
-          <span class="text-sm">🛒</span>
-          <span id="btnAddToCartText">ដាក់ចូលកន្រ្តក</span>
-        </button>
+        <div class="mb-4">
+          <label id="lblSelectColor" class="block text-xs font-bold text-slate-700 mb-2">ជ្រើសរើសពណ៌ (Color):</label>
+          <div id="colorContainer" class="flex flex-wrap gap-2"></div>
+        </div>
 
-        <!-- ៣. ប៊ូតុងទិញឥឡូវនេះ (ប៊ូតុងលេចធ្លោរជាងគេ) -->
-        <button 
-          type="button" 
-          onclick="buyNowDirectly()" 
-          class="flex-1 h-12 bg-blue-600 hover:bg-blue-700 active:scale-95 text-white font-bold rounded-2xl shadow-lg shadow-blue-500/25 flex items-center justify-center gap-1.5 transition-all text-xs"
-        >
-          <span class="text-sm">⚡</span>
-          <span id="btnBuyNowText">ទិញឥឡូវនេះ</span>
-        </button>
+        <div class="mb-4">
+          <label id="lblSelectSize" class="block text-xs font-bold text-slate-700 mb-2">ជ្រើសរើសទំហំ (Size):</label>
+          <div id="sizeContainer" class="flex gap-2"></div>
+        </div>
+
+        <!-- ផ្នែកសម្រាប់ទំនិញ Custom -->
+        <div id="custCustomSection" class="hidden mb-4 bg-blue-50/70 p-3 rounded-2xl border border-blue-200 space-y-2">
+          <div class="flex justify-between items-center">
+            <label id="lblCustCustomTitle" class="text-xs font-bold text-blue-900">✍️ បញ្ចូលឈ្មោះ/អក្សរដែលចង់ឆ្លាក់៖ *</label>
+            <span id="custCustomFeeBadge" class="text-[10px] font-bold bg-blue-200 text-blue-800 px-2 py-0.5 rounded-full"></span>
+          </div>
+          <input 
+            id="custCustomNameInput" 
+            type="text" 
+            oninput="updateModalLivePrice()" 
+            placeholder="ឧ. Milo, Lucky, ឬឈ្មោះរបស់អ្នក..." 
+            class="w-full px-3 py-2 bg-white border border-blue-300 rounded-xl text-xs outline-none focus:ring-2 focus:ring-blue-500 shadow-xs"
+          >
+          <div class="flex justify-between items-center text-[11px] pt-0.5">
+            <span id="charCountNotice" class="text-slate-500 font-medium"></span>
+            <span id="charCountDisplay" class="font-mono font-bold text-blue-600 bg-white px-2 py-0.5 rounded-md border border-blue-100">0 តួអក្សរ</span>
+          </div>
+        </div>
+
+        <!-- ផ្នែកជ្រើសរើសចំនួន -->
+        <div class="flex items-center justify-between mb-4 py-1">
+          <label id="lblSelectQty" class="text-xs font-bold text-slate-700">ចំនួន (Quantity):</label>
+          <div class="flex items-center bg-slate-100 p-1 rounded-xl border border-slate-200/80 shadow-2xs">
+            <button type="button" onclick="changeQty(-1)" class="w-7 h-7 bg-white hover:bg-slate-50 text-slate-700 font-bold rounded-lg shadow-xs flex items-center justify-center text-sm active:scale-90 transition-all">-</button>
+            <span id="qtyVal" class="text-xs font-black text-slate-900 w-8 text-center select-none">1</span>
+            <button type="button" onclick="changeQty(1)" class="w-7 h-7 bg-white hover:bg-slate-50 text-slate-700 font-bold rounded-lg shadow-xs flex items-center justify-center text-sm active:scale-90 transition-all">+</button>
+          </div>
+        </div>
+
+        <!-- របារ Action Buttons -->
+        <div class="flex items-center gap-2 pt-1">
+          <button type="button" onclick="askAboutCurrentProduct()" title="ឆាតសួរនាំពីទំនិញនេះ" class="w-12 h-12 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-2xl flex items-center justify-center flex-shrink-0 active:scale-90 transition-all text-xl">
+            💬
+          </button>
+          <button type="button" onclick="addToCart()" class="flex-1 h-12 bg-blue-50 hover:bg-blue-100 text-blue-600 font-bold rounded-2xl border border-blue-200 flex items-center justify-center gap-1.5 active:scale-95 transition-all text-xs shadow-2xs">
+            <span class="text-sm">🛒</span>
+            <span id="btnAddToCartText">ដាក់ចូលកន្រ្តក</span>
+          </button>
+          <button type="button" onclick="buyNowDirectly()" class="flex-1 h-12 bg-blue-600 hover:bg-blue-700 active:scale-95 text-white font-bold rounded-2xl shadow-lg shadow-blue-500/25 flex items-center justify-center gap-1.5 transition-all text-xs">
+            <span class="text-sm">⚡</span>
+            <span id="btnBuyNowText">ទិញឥឡូវនេះ</span>
+          </button>
+        </div>
+
       </div>
     </div>
   </div>
@@ -2250,11 +2224,30 @@
     }
 
     // --- 6.7 SHOPPING CART ---
+    // --- Toast Alert បង្ហាញជូនដំណឹងថាបានចូលកន្ត្រកយ៉ាងរលូន ---
+    function showCartToast(message) {
+      var toast = document.getElementById('cartToastNotification');
+      if (!toast) {
+        toast = document.createElement('div');
+        toast.id = 'cartToastNotification';
+        toast.className = 'fixed top-16 left-1/2 -translate-x-1/2 z-[70] bg-slate-900/95 text-white text-xs font-bold px-4 py-2.5 rounded-full shadow-2xl flex items-center gap-2 backdrop-blur-md transition-all duration-300 pointer-events-none opacity-0 translate-y-[-10px]';
+        document.body.appendChild(toast);
+      }
+      toast.innerHTML = '<span>🛒</span> ' + (message || '✓ បានដាក់ចូលកន្ត្រកជោគជ័យ!');
+      toast.classList.remove('opacity-0', 'translate-y-[-10px]');
+      toast.classList.add('opacity-100', 'translate-y-0');
+
+      setTimeout(function() {
+        toast.classList.remove('opacity-100', 'translate-y-0');
+        toast.classList.add('opacity-0', 'translate-y-[-10px]');
+      }, 1800);
+    }
+
+    // --- ១. ចុចដាក់ចូលកន្ត្រក (គ្មាន Popup កន្ត្រក នៅកន្លែងដដែល) ---
     function addToCart() {
       if (!selectedProduct) return;
 
       var customText = "";
-      // ប្រើតម្លៃលក់ជាក់ស្តែងក្រោយ Discount
       var finalUnitPrice = selectedProduct.baseUnitPrice || selectedProduct.price;
 
       if (selectedProduct.isCustom) {
@@ -2278,13 +2271,10 @@
       }
 
       var itemTitleDisplay = selectedProduct.title;
-
-      // បញ្ជាក់ភាគរយបញ្ចុះតម្លៃកុំឱ្យយល់ច្រឡំ
       var disc = selectedProduct.discountPercent || 0;
       if (disc > 0 && disc < 100) {
         itemTitleDisplay += " [-" + Math.round(disc) + "%]";
       }
-
       if (customText) {
         itemTitleDisplay += " (ឆ្លាក់ឈ្មោះ: " + customText + ")";
       }
@@ -2296,8 +2286,6 @@
           break;
         }
       }
-
-      // ... កូដផ្នែកខាងលើនៃ addToCart ទុកដដែល ...
 
       if (existingIndex > -1) {
         cart[existingIndex].qty += quantity;
@@ -2314,26 +2302,28 @@
         });
       }
 
-      // ១. ធ្វើបច្ចុប្បន្នភាពចំនួន Badge លើ Icon កន្ត្រកខាងក្រោម
+      // ក. ធ្វើបច្ចុប្បន្នភាពលេខក្រហមលើកន្ត្រក 🛒
       updateCartBadge();
 
-      // ២. បិទផ្ទាំងទំនិញបច្ចុប្បន្ន (Product Modal)
+      // ខ. បិទផ្ទាំងទំនិញភ្លាមៗ ដោយមិនរុញអេក្រង់ទៅលើ (នៅកន្លែងដដែល)
       closeModal();
 
-      // ៣. រំញ័រទូរសព្ទតិចៗបញ្ជាក់ថាបានដាក់ចូលកន្ត្រកជោគជ័យ
+      // គ. ផ្តល់សញ្ញារំញ័រទូរសព្ទតិចៗ (Telegram Haptic)
       try {
         if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.HapticFeedback) {
           window.Telegram.WebApp.HapticFeedback.notificationOccurred('success');
         }
       } catch(e) {}
 
-      // ❌ បានលុបបន្ទាត់ openCartModal(); ចេញហើយ ដើម្បីកុំឱ្យលោតផ្ទាំង Popup កន្ត្រក!
+      // ឃ. បង្ហាញ Toast ជូនដំណឹងស្រាលមួយ
+      var t = (typeof i18n !== 'undefined' && i18n[currentLang]) ? i18n[currentLang] : {};
+      showCartToast(t.addedToCartNotice || "✓ បានដាក់ចូលកន្ត្រកជោគជ័យ!");
     }
       
-    // ចំពោះប៊ូតុង "⚡ ទិញឥឡូវនេះ" នៅតែបើកកន្ត្រកភ្លាមៗដើម្បីឱ្យភ្ញៀវឆាប់បាន Checkout
+    // --- ២. ចុច "⚡ ទិញឥឡូវនេះ" ទើបបើកផ្ទាំងកន្ត្រក Checkout តែម្តង ---
     function buyNowDirectly() {
       addToCart();
-      openCartModal(); // បើកកន្ត្រកតែពេលចុច Buy Now ប៉ុណ្ណោះ
+      openCartModal(); // បើកកន្ត្រកភ្លាមៗ
     }
 
     function updateCartBadge() {
