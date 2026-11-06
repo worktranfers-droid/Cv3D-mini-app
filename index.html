@@ -1811,6 +1811,17 @@
       return '#e2e8f0';
     }
 
+    // អនុគមន៍ទាញយកតម្លៃបន្ថែមពីឈ្មោះទំហំ (ឧ. "Giant (60cm) (+$5)" -> 5)
+    function parseSizeExtraFee(sizeStr) {
+      if (!sizeStr) return 0;
+      var match = String(sizeStr).match(/\(\s*\+\s*\$?\s*([\d\.]+)\s*\)/);
+      if (match && match[1]) {
+        var fee = parseFloat(match[1]);
+        return isNaN(fee) ? 0 : fee;
+      }
+      return 0;
+    }
+
     // --- 6.6 PRODUCT DETAIL MODAL & ZOOM ---
     function openModal(p) {
       selectedProduct = p;
@@ -1919,7 +1930,7 @@
         }
       }
 
-      // ផ្នែកជ្រើសរើសទំហំ (Size)
+      // ផ្នែកជ្រើសរើសទំហំ (Size) - គាំទ្រការបូកតម្លៃបន្ថែម (+ $X)
       var sizeBox = document.getElementById('sizeContainer');
       if (sizeBox) {
         sizeBox.innerHTML = '';
@@ -1928,14 +1939,21 @@
             var btn = document.createElement('button');
             btn.type = "button";
             btn.innerText = sz;
-            btn.className = "text-xs px-3 py-1.5 rounded-xl border font-medium " + (idx === 0 ? "border-blue-600 bg-blue-50 text-blue-600 font-bold" : "border-slate-200 text-slate-600");
+            
+            var isSelected = (idx === 0);
+            btn.className = "text-xs px-3 py-1.5 rounded-xl border font-medium transition-colors " + 
+              (isSelected ? "border-blue-600 bg-blue-50 text-blue-600 font-bold" : "border-slate-200 text-slate-600 hover:bg-slate-50");
+
             btn.onclick = function() {
               selectedSize = sz;
               var sChildren = sizeBox.children;
               for (var k = 0; k < sChildren.length; k++) {
-                sChildren[k].className = "text-xs px-3 py-1.5 rounded-xl border border-slate-200 text-slate-600 font-medium";
+                sChildren[k].className = "text-xs px-3 py-1.5 rounded-xl border border-slate-200 text-slate-600 font-medium hover:bg-slate-50 transition-colors";
               }
-              btn.className = "text-xs px-3 py-1.5 rounded-xl border border-blue-600 bg-blue-50 text-blue-600 font-bold";
+              btn.className = "text-xs px-3 py-1.5 rounded-xl border border-blue-600 bg-blue-50 text-blue-600 font-bold transition-colors";
+              
+              // ✅ ហៅគណនាតម្លៃសរុប Live Price ឡើងវិញភ្លាមៗពេលប្តូរទំហំ
+              updateModalLivePrice();
             };
             sizeBox.appendChild(btn);
           })(p.sizes[s], s);
@@ -2112,9 +2130,12 @@
 
       if (countEl) countEl.innerText = charLength + t.customCharUnit;
 
-      var finalUnitPrice = baseSalePrice + totalFee;
+      // ✅ ទាញយកតម្លៃបន្ថែមពីទំហំដែលបានរើស (ឧ. Giant (+$5) -> 5)
+      var sizeFee = parseSizeExtraFee(selectedSize);
+
+      var finalUnitPrice = baseSalePrice + totalFee + sizeFee;
       var totalProductPrice = finalUnitPrice * (quantity || 1);
-      var totalOrigPrice = (origUnitPrice + totalFee) * (quantity || 1);
+      var totalOrigPrice = (origUnitPrice + totalFee + sizeFee) * (quantity || 1);
       var totalSaved = totalOrigPrice - totalProductPrice;
 
       if (priceEl) {
@@ -2319,6 +2340,7 @@
           var currentBasePrice = (disc > 0 && disc < 100) ? (origPrice * (1 - disc / 100)) : origPrice;
 
           var currentFinalPrice = currentBasePrice;
+          currentFinalPrice += parseSizeExtraFee(cartItem.size);
           if (liveProduct.isCustom && cartItem.customText) {
             var mode = liveProduct.customMode || "flat";
             if (mode === 'per_char') {
@@ -2367,6 +2389,7 @@
 
       var customText = "";
       var finalUnitPrice = selectedProduct.baseUnitPrice || selectedProduct.price;
+      finalUnitPrice += parseSizeExtraFee(selectedSize);
 
       if (selectedProduct.isCustom) {
         var nameInput = document.getElementById('custCustomNameInput');
