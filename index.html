@@ -7,10 +7,10 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <script src="./i18n.js"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@400;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@300;400;600;700&family=Outfit:wght@500;600;700;800;900&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
     body { font-family: 'Kantumruy Pro', 'Inter', sans-serif; }
-    .font-price { font-family: 'Plus Jakarta Sans', sans-serif; }
+    .font-outfit { font-family: 'Outfit', sans-serif; }
     ::-webkit-scrollbar { display: none; }
   </style>
 </head>
@@ -640,38 +640,53 @@
           </div>
         </div>
 
+        <!-- ផ្នែកជ្រើសរើសចំនួន (Quantity) -->
+        <div class="flex items-center justify-between py-1 bg-slate-50 p-2.5 rounded-2xl border border-slate-200/70">
+          <label id="lblSelectQty" class="text-xs font-bold text-slate-700">ចំនួន (Quantity):</label>
+          
+          <div class="flex items-center bg-white p-1 rounded-xl border border-slate-200 shadow-2xs">
+            <button 
+              type="button" 
+              onclick="changeQty(-1)" 
+              class="w-7 h-7 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-lg flex items-center justify-center text-sm active:scale-90 transition-all cursor-pointer"
+            >-</button>
+            
+            <span id="qtyVal" class="text-xs font-black text-slate-900 w-8 text-center select-none">1</span>
+            
+            <button 
+              type="button" 
+              onclick="changeQty(1)" 
+              class="w-7 h-7 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-lg flex items-center justify-center text-sm active:scale-90 transition-all cursor-pointer"
+            >+</button>
+          </div>
+        </div>
+
       </div>
 
-      <!-- របារ Action Bar ផ្នែកខាងក្រោម (លុបអក្សរតម្លៃសរុបចោល ស្រឡះស្អាត) -->
-      <div id="productBottomBar" class="p-3.5 border-t border-slate-100 bg-white flex-shrink-0 space-y-2.5 shadow-[0_-4px_12px_rgba(0,0,0,0.04)]">
+      <!-- ៣. របារ Action Bar ផ្នែកខាងក្រោម (ជាប់នៅបាតក្រោមរហូត ដូច Shopping Cart ដែរ) -->
+      <div id="productBottomBar" class="p-3.5 border-t border-slate-100 bg-white flex-shrink-0 space-y-2 shadow-[0_-4px_12px_rgba(0,0,0,0.04)]">
         
-        <!-- ជួរ Quantity នៅខាងឆ្វេង និងតម្លៃរៀបតាមជាន់នៅខាងស្តាំ -->
+        <!-- ជួរ Quantity នៅខាងឆ្វេង និងតម្លៃរៀបជាន់នៅខាងស្តាំ (លុបអក្សរតម្លៃសរុបចោល) -->
         <div class="flex justify-between items-center px-1">
-          
-          <!-- ប្រអប់ Quantity (-) 1 (+) -->
           <div class="flex items-center bg-slate-100 p-0.5 rounded-xl border border-slate-200/80 shadow-2xs">
             <button 
               type="button" 
               onclick="changeQty(-1)" 
               class="w-7 h-7 bg-white hover:bg-slate-50 text-slate-700 font-bold rounded-lg flex items-center justify-center text-sm active:scale-90 transition-all cursor-pointer shadow-2xs"
             >-</button>
-            
-            <span id="qtyVal" class="text-xs font-black text-slate-900 w-8 text-center select-none font-mono">1</span>
-            
+            <span id="qtyVal" class="text-xs font-black text-slate-900 w-8 text-center select-none font-outfit">1</span>
             <button 
               type="button" 
               onclick="changeQty(1)" 
               class="w-7 h-7 bg-white hover:bg-slate-50 text-slate-700 font-bold rounded-lg flex items-center justify-center text-sm active:scale-90 transition-all cursor-pointer shadow-2xs"
             >+</button>
           </div>
-
-          <!-- កន្លែងបង្ហាញតម្លៃ (modalPrice) -->
           <div id="modalPrice" class="text-right flex flex-col items-end justify-center"></div>
-
         </div>
 
-        <!-- ជួរប៊ូតុងទាំង ៣ (ឆាត, ដាក់ចូលកន្រ្តក, ទិញឥឡូវនេះ) -->
+        <!-- ជួរប៊ូតុងទាំង ៣៖ ឆាតសួរនាំ, ដាក់ចូលកន្រ្តក, ទិញឥឡូវនេះ -->
         <div class="flex items-center gap-2">
+          <!-- ប៊ូតុងឆាតសួរនាំ -->
           <button 
             type="button" 
             onclick="askAboutCurrentProduct()" 
@@ -681,6 +696,7 @@
             💬
           </button>
 
+          <!-- ប៊ូតុងដាក់ចូលកន្រ្តក (បិទ Modal នៅកន្លែងដដែល + Toast + រំញ័រ) -->
           <button 
             type="button" 
             onclick="addToCart()" 
@@ -690,6 +706,7 @@
             <span id="btnAddToCartText">ដាក់ចូលកន្រ្តក</span>
           </button>
 
+          <!-- ប៊ូតុងទិញឥឡូវនេះ (បើកចូលកន្ត្រកភ្លាមៗ) -->
           <button 
             type="button" 
             onclick="buyNowDirectly()" 
@@ -1807,17 +1824,6 @@
       return '#e2e8f0';
     }
 
-    // អនុគមន៍ទាញយកតម្លៃបន្ថែមពីឈ្មោះទំហំ (ឧ. "Giant (60cm) (+$5)" -> 5)
-    function parseSizeExtraFee(sizeStr) {
-      if (!sizeStr) return 0;
-      var match = String(sizeStr).match(/\(\s*\+\s*\$?\s*([\d\.]+)\s*\)/);
-      if (match && match[1]) {
-        var fee = parseFloat(match[1]);
-        return isNaN(fee) ? 0 : fee;
-      }
-      return 0;
-    }
-    
     // --- 6.6 PRODUCT DETAIL MODAL & ZOOM ---
     function openModal(p) {
       selectedProduct = p;
@@ -1926,7 +1932,7 @@
         }
       }
 
-      // ផ្នែកជ្រើសរើសទំហំ (Size) - គាំទ្រការបូកតម្លៃបន្ថែម (+ $X)
+      // ផ្នែកជ្រើសរើសទំហំ (Size)
       var sizeBox = document.getElementById('sizeContainer');
       if (sizeBox) {
         sizeBox.innerHTML = '';
@@ -1935,21 +1941,14 @@
             var btn = document.createElement('button');
             btn.type = "button";
             btn.innerText = sz;
-            
-            var isSelected = (idx === 0);
-            btn.className = "text-xs px-3 py-1.5 rounded-xl border font-medium transition-colors " + 
-              (isSelected ? "border-blue-600 bg-blue-50 text-blue-600 font-bold" : "border-slate-200 text-slate-600 hover:bg-slate-50");
-
+            btn.className = "text-xs px-3 py-1.5 rounded-xl border font-medium " + (idx === 0 ? "border-blue-600 bg-blue-50 text-blue-600 font-bold" : "border-slate-200 text-slate-600");
             btn.onclick = function() {
               selectedSize = sz;
               var sChildren = sizeBox.children;
               for (var k = 0; k < sChildren.length; k++) {
-                sChildren[k].className = "text-xs px-3 py-1.5 rounded-xl border border-slate-200 text-slate-600 font-medium hover:bg-slate-50 transition-colors";
+                sChildren[k].className = "text-xs px-3 py-1.5 rounded-xl border border-slate-200 text-slate-600 font-medium";
               }
-              btn.className = "text-xs px-3 py-1.5 rounded-xl border border-blue-600 bg-blue-50 text-blue-600 font-bold transition-colors";
-              
-              // ✅ ហៅគណនាតម្លៃសរុប Live Price ឡើងវិញភ្លាមៗពេលប្តូរទំហំ
-              updateModalLivePrice();
+              btn.className = "text-xs px-3 py-1.5 rounded-xl border border-blue-600 bg-blue-50 text-blue-600 font-bold";
             };
             sizeBox.appendChild(btn);
           })(p.sizes[s], s);
@@ -2133,20 +2132,19 @@
       var totalProductPrice = finalUnitPrice * (quantity || 1);
       var totalOrigPrice = (origUnitPrice + totalFee + sizeFee) * (quantity || 1);
 
-      // ២. បង្ហាញតម្លៃរៀបជាន់៖ $18.00 នៅខាងលើ, [-50%] នៅខាងឆ្វេង $9.00 នៅខាងស្តាំ
+      // ២. បង្ហាញតម្លៃបែប Outfit Font ទំនើប៖ ជួរលើ $18.00 (គូសឆ្កូត), ជួរក្រោម [-50%] នៅខាងឆ្វេង និង $9.00 នៅខាងស្តាំ
       if (priceEl) {
         if (disc > 0) {
           priceEl.innerHTML = 
-            '<div class="flex flex-col items-end leading-tight">' +
-              '<span class="text-[11px] text-slate-400 line-through font-medium mb-0.5">$' + totalOrigPrice.toFixed(2) + '</span>' +
+            '<div class="flex flex-col items-end leading-none">' +
+              '<span class="text-xs text-slate-400 line-through font-outfit font-semibold mb-1">$' + totalOrigPrice.toFixed(2) + '</span>' +
               '<div class="flex items-center gap-1.5">' +
-                '<span class="bg-rose-50 text-rose-600 border border-rose-200 text-[10px] font-black px-1.5 py-0.2 rounded-md">-' + Math.round(disc) + '%</span>' +
-                '<span class="text-xl font-black text-rose-600 font-mono tracking-tight">$' + totalProductPrice.toFixed(2) + '</span>' +
+                '<span class="bg-rose-50 text-rose-600 border border-rose-200/90 text-[10px] font-black px-1.5 py-0.5 rounded-lg tracking-wide font-outfit">-' + Math.round(disc) + '%</span>' +
+                '<span class="text-2xl font-black text-rose-600 font-outfit tracking-tight">$' + totalProductPrice.toFixed(2) + '</span>' +
               '</div>' +
             '</div>';
         } else {
-          // ករណីគ្មាន Discount៖ បង្ហាញតម្លៃពិតធម្មតា
-          priceEl.innerHTML = '<span class="text-xl font-black text-blue-600 font-mono tracking-tight">$' + totalProductPrice.toFixed(2) + '</span>';
+          priceEl.innerHTML = '<span class="text-2xl font-black text-blue-600 font-outfit tracking-tight">$' + totalProductPrice.toFixed(2) + '</span>';
         }
       }
     }
@@ -2331,7 +2329,6 @@
           var currentBasePrice = (disc > 0 && disc < 100) ? (origPrice * (1 - disc / 100)) : origPrice;
 
           var currentFinalPrice = currentBasePrice;
-          currentFinalPrice += parseSizeExtraFee(cartItem.size);
           if (liveProduct.isCustom && cartItem.customText) {
             var mode = liveProduct.customMode || "flat";
             if (mode === 'per_char') {
@@ -2380,7 +2377,6 @@
 
       var customText = "";
       var finalUnitPrice = selectedProduct.baseUnitPrice || selectedProduct.price;
-      finalUnitPrice += parseSizeExtraFee(selectedSize);
 
       if (selectedProduct.isCustom) {
         var nameInput = document.getElementById('custCustomNameInput');
