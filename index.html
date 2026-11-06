@@ -2297,6 +2297,8 @@
         }
       }
 
+      // ... កូដផ្នែកខាងលើនៃ addToCart ទុកដដែល ...
+
       if (existingIndex > -1) {
         cart[existingIndex].qty += quantity;
       } else {
@@ -2312,13 +2314,26 @@
         });
       }
 
+      // ១. ធ្វើបច្ចុប្បន្នភាពចំនួន Badge លើ Icon កន្ត្រកខាងក្រោម
       updateCartBadge();
+
+      // ២. បិទផ្ទាំងទំនិញបច្ចុប្បន្ន (Product Modal)
       closeModal();
-      openCartModal();
+
+      // ៣. រំញ័រទូរសព្ទតិចៗបញ្ជាក់ថាបានដាក់ចូលកន្ត្រកជោគជ័យ
+      try {
+        if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.HapticFeedback) {
+          window.Telegram.WebApp.HapticFeedback.notificationOccurred('success');
+        }
+      } catch(e) {}
+
+      // ❌ បានលុបបន្ទាត់ openCartModal(); ចេញហើយ ដើម្បីកុំឱ្យលោតផ្ទាំង Popup កន្ត្រក!
     }
       
+    // ចំពោះប៊ូតុង "⚡ ទិញឥឡូវនេះ" នៅតែបើកកន្ត្រកភ្លាមៗដើម្បីឱ្យភ្ញៀវឆាប់បាន Checkout
     function buyNowDirectly() {
       addToCart();
+      openCartModal(); // បើកកន្ត្រកតែពេលចុច Buy Now ប៉ុណ្ណោះ
     }
 
     function updateCartBadge() {
