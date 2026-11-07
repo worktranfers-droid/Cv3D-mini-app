@@ -1591,6 +1591,22 @@
           if (loader) loader.className = "hidden";
           renderDynamicCategories();
           applyCustomerFilter();
+          var urlParams = new URLSearchParams(window.location.search);
+          var targetProdId = urlParams.get('p');
+
+          // ប្រសិនបើបើកតាម Telegram Bot (startapp)
+          if (!targetProdId && window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initDataUnsafe) {
+            targetProdId = window.Telegram.WebApp.initDataUnsafe.start_param;
+          }
+
+          if (targetProdId && customerProducts.length > 0) {
+            for (var k = 0; k < customerProducts.length; k++) {
+              if (String(customerProducts[k].id).toLowerCase() === String(targetProdId).toLowerCase()) {
+                openModal(customerProducts[k]); // បើកផ្ទាំងទំនិញភ្លាមៗ
+                break;
+              }
+            }
+          }
         })
         .catch(function(err) {
           if (loader) {
@@ -4516,21 +4532,24 @@
       }
     }
 
-    // --- អនុគមន៍ចែករំលែកទំនិញ (Share Product ដោយគ្មាន Error) ---
+    // --- អនុគមន៍ចែករំលែកទំនិញ (Link ខ្លីស្អាត និងបើកទំនិញផ្ទាល់) ---
     function shareCurrentProduct() {
       if (!selectedProduct) return;
 
       var prodTitle = selectedProduct.title || "ទំនិញ 3D Print";
       var prodPrice = "$" + Number(selectedProduct.price || 0).toFixed(2);
-      var currentUrl = window.location.href.split('?')[0]; // Link នៃ App ផ្ទាល់
+      
+      // ✅ កាត់ផ្តាច់ទាំងសញ្ញា '?' និង '#' ចោល ដើម្បីកម្ទេច tgWebAppData វែងៗ
+      var baseUrl = window.location.origin + window.location.pathname;
+      
+      // ✅ បង្កើត Link ខ្លីស្អាតដែលមានភ្ជាប់ ID ទំនិញ (ឧ. .../?p=P-001)
+      var cleanShareUrl = baseUrl + "?p=" + encodeURIComponent(selectedProduct.id);
 
-      // សារដែលត្រូវផ្ញើចេញ
       var shareText = "✨ មើលទំនិញ 3D Print មួយនេះស្អាតណាស់៖\n" +
-                      "📦 " + prodTitle + "\n" +
-                      "💵 តម្លៃ: " + prodPrice + "\n" +
-                      "👉 កុម្ម៉ង់ទិញ ឬសាកសួរតាម Telegram: @Vireak699";
+                      "📦 " + prodTitle + " (" + prodPrice + ")";
 
-      var tgShareUrl = "https://t.me/share/url?url=" + encodeURIComponent(currentUrl) + "&text=" + encodeURIComponent(shareText);
+      // បង្កើតតំណភ្ជាប់ Share ទៅកាន់ Telegram
+      var tgShareUrl = "https://t.me/share/url?url=" + encodeURIComponent(cleanShareUrl) + "&text=" + encodeURIComponent(shareText);
 
       try {
         if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.HapticFeedback) {
@@ -4538,13 +4557,22 @@
         }
       } catch(e) {}
 
-      // បើកផ្ទាំង Telegram Forward
+      // បើកផ្ទាំង Telegram Share
       if (window.Telegram && window.Telegram.WebApp && typeof window.Telegram.WebApp.openTelegramLink === 'function') {
         window.Telegram.WebApp.openTelegramLink(tgShareUrl);
       } else if (navigator.share) {
-        navigator.share({ title: prodTitle, text: shareText, url: currentUrl }).catch(function(){});
+        navigator.share({
+          title: prodTitle,
+          text: shareText,
+          url: cleanShareUrl
+        }).catch(function(){});
       } else {
-        window.open(tgShareUrl, '_blank');
+        // បើបើកលើ Browser កុំព្យូទ័រ៖ ចម្លង Link ខ្លីនេះចូល Clipboard
+        navigator.clipboard.writeText(cleanShareUrl).then(function() {
+          showCartToast("✓ បានចម្លង Link ចែករំលែកជោគជ័យ!");
+        }).catch(function() {
+          window.open(tgShareUrl, '_blank');
+        });
       }
     }
 
