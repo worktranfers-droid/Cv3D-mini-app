@@ -565,7 +565,6 @@
       
       <!-- ១. កញ្ចុំប៊ូតុងជ្រុងលើស្តាំ៖ Share + បិទ ✕ (ប្រើ bg-white/90 ពណ៌សថ្លា 90% និង SVG ដូចគ្នា) -->
       <div class="absolute top-3.5 right-3.5 flex items-center gap-1.5 z-30">
-        
         <!-- ប៊ូតុង Share -->
         <button 
           type="button" 
@@ -589,7 +588,6 @@
             <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
           </svg>
         </button>
-
       </div>
 
       <!-- ២. ផ្ទៃកណ្តាលសម្រាប់ Scroll មើលរូបភាព និងព័ត៌មានផលិតផល -->
@@ -1591,22 +1589,9 @@
           if (loader) loader.className = "hidden";
           renderDynamicCategories();
           applyCustomerFilter();
-          var urlParams = new URLSearchParams(window.location.search);
-          var targetProdId = urlParams.get('p');
-
-          // ប្រសិនបើបើកតាម Telegram Bot (startapp)
-          if (!targetProdId && window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initDataUnsafe) {
-            targetProdId = window.Telegram.WebApp.initDataUnsafe.start_param;
-          }
-
-          if (targetProdId && customerProducts.length > 0) {
-            for (var k = 0; k < customerProducts.length; k++) {
-              if (String(customerProducts[k].id).toLowerCase() === String(targetProdId).toLowerCase()) {
-                openModal(customerProducts[k]); // បើកផ្ទាំងទំនិញភ្លាមៗ
-                break;
-              }
-            }
-          }
+          
+          // ✅ បើកបង្ហាញទំនិញស្វ័យប្រវត្តិតាមរយៈ Link Share (?p=P-001 ឬ Telegram startapp)
+          checkAndOpenSharedProduct();
         })
         .catch(function(err) {
           if (loader) {
@@ -1619,6 +1604,49 @@
     }
 
     // អនុគមន៍បង្ហាញ Category លើទំព័រដើម (Home) ដោយអានផ្ទាល់ពីទំនិញក្នុង Google Sheet
+    // --- អនុគមន៍ចាប់យក ID ពី Link Share ហើយបើក Modal ទំនិញភ្លាមៗ ---
+    function checkAndOpenSharedProduct() {
+      if (!customerProducts || customerProducts.length === 0) return;
+
+      var targetId = "";
+
+      // ១. រកមើលតាម Telegram Mini App start_param (ពេលបើកតាម Bot)
+      try {
+        if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initDataUnsafe) {
+          targetId = window.Telegram.WebApp.initDataUnsafe.start_param || "";
+        }
+      } catch(e) {}
+
+      // ២. រកមើលតាម URL Query Parameter (?p=P-001 ឬ ?prod=P-001)
+      if (!targetId) {
+        try {
+          var params = new URLSearchParams(window.location.search);
+          targetId = params.get('p') || params.get('prod') || "";
+        } catch(e) {}
+      }
+
+      // ៣. រកមើលតាម Hash (#p=P-001 ឬ #P-001)
+      if (!targetId && window.location.hash) {
+        var hashStr = window.location.hash;
+        var match = hashStr.match(/p=([^&]+)/i) || hashStr.match(/#(P-?\d+)/i);
+        if (match && match[1]) {
+          targetId = match[1];
+        }
+      }
+
+      // ប្រសិនបើឃើញ ID ទំនិញ ស្វែងរកក្នុងបញ្ជីទំនិញ រួចបើក Modal ភ្លាម
+      if (targetId) {
+        targetId = String(targetId).trim().toLowerCase();
+        for (var i = 0; i < customerProducts.length; i++) {
+          var p = customerProducts[i];
+          if (String(p.id).trim().toLowerCase() === targetId) {
+            openModal(p);
+            break;
+          }
+        }
+      }
+    }
+
     function renderDynamicCategories() {
       var container = document.getElementById('categoryContainer');
       var dataList = document.getElementById('categoryDataList');
@@ -2059,7 +2087,53 @@
       }
     }
 
-    function closeModal() {
+        // --- អនុគមន៍ចែករំលែកទំនិញ (Clean Short Link + Deep Link ត្រង់ទៅទំនិញ) ---
+    function shareCurrentProduct() {
+      if (!selectedProduct) return;
+
+      var prodTitle = selectedProduct.title || "ទំនិញ 3D Print";
+      var prodPrice = "$" + Number(selectedProduct.price || 0).toFixed(2);
+      var prodId = String(selectedProduct.id || "").trim();
+
+      // កាត់កន្ទុយវែងៗ (#tgWebAppData...) ចោលទាំងអស់ យកតែ Link GitHub Pages ស្អាត
+      var cleanOrigin = "https://worktranfers-droid.github.io/Cv3D-mini-app/";
+      try {
+        var base = (window.location.origin + window.location.pathname).split('#')[0].split('?')[0];
+        if (base && base.indexOf("github.io") !== -1) {
+          cleanOrigin = base;
+        }
+      } catch(e) {}
+      if (!cleanOrigin.endsWith('/')) cleanOrigin += '/';
+
+      // បង្កើត Link ខ្លីស្អាត: https://worktranfers-droid.github.io/Cv3D-mini-app/?p=P-001
+      var shareUrl = cleanOrigin + "?p=" + encodeURIComponent(prodId);
+
+      var shareText = "✨ មើលទំនិញ 3D Print មួយនេះស្អាតណាស់៖\n" +
+                      "📦 " + prodTitle + "\n" +
+                      "💵 តម្លៃ: " + prodPrice;
+
+      var tgShareUrl = "https://t.me/share/url?url=" + encodeURIComponent(shareUrl) + "&text=" + encodeURIComponent(shareText);
+
+      try {
+        if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.HapticFeedback) {
+          window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
+        }
+      } catch(e) {}
+
+      if (window.Telegram && window.Telegram.WebApp && typeof window.Telegram.WebApp.openTelegramLink === 'function') {
+        window.Telegram.WebApp.openTelegramLink(tgShareUrl);
+      } else if (navigator.share) {
+        navigator.share({ title: prodTitle, text: shareText, url: shareUrl }).catch(function(){});
+      } else {
+        navigator.clipboard.writeText(shareUrl).then(function() {
+          showCartToast("✓ បានចម្លង Link ទំនិញខ្លីស្អាតជោគជ័យ!");
+        }).catch(function() {
+          window.open(tgShareUrl, '_blank');
+        });
+      }
+    }
+
+function closeModal() {
       var modal = document.getElementById('productModal');
       if (modal) modal.className = "fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden flex items-end sm:items-center justify-center p-0 sm:p-4";
     }
@@ -4529,50 +4603,6 @@
         summaryEl.innerText = "PP: $" + pp.toFixed(2) + " | Prov: $" + prov.toFixed(2) + " | Free over: $" + free.toFixed(2);
       } else {
         summaryEl.innerText = "ភ្នំពេញ: $" + pp.toFixed(2) + " | ខេត្ត: $" + prov.toFixed(2) + " | ឥតគិតថ្លៃ: $" + free.toFixed(2);
-      }
-    }
-
-    // --- អនុគមន៍ចែករំលែកទំនិញ (Link ខ្លីស្អាត និងបើកទំនិញផ្ទាល់) ---
-    function shareCurrentProduct() {
-      if (!selectedProduct) return;
-
-      var prodTitle = selectedProduct.title || "ទំនិញ 3D Print";
-      var prodPrice = "$" + Number(selectedProduct.price || 0).toFixed(2);
-      
-      // ✅ កាត់ផ្តាច់ទាំងសញ្ញា '?' និង '#' ចោល ដើម្បីកម្ទេច tgWebAppData វែងៗ
-      var baseUrl = window.location.origin + window.location.pathname;
-      
-      // ✅ បង្កើត Link ខ្លីស្អាតដែលមានភ្ជាប់ ID ទំនិញ (ឧ. .../?p=P-001)
-      var cleanShareUrl = baseUrl + "?p=" + encodeURIComponent(selectedProduct.id);
-
-      var shareText = "✨ មើលទំនិញ 3D Print មួយនេះស្អាតណាស់៖\n" +
-                      "📦 " + prodTitle + " (" + prodPrice + ")";
-
-      // បង្កើតតំណភ្ជាប់ Share ទៅកាន់ Telegram
-      var tgShareUrl = "https://t.me/share/url?url=" + encodeURIComponent(cleanShareUrl) + "&text=" + encodeURIComponent(shareText);
-
-      try {
-        if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.HapticFeedback) {
-          window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
-        }
-      } catch(e) {}
-
-      // បើកផ្ទាំង Telegram Share
-      if (window.Telegram && window.Telegram.WebApp && typeof window.Telegram.WebApp.openTelegramLink === 'function') {
-        window.Telegram.WebApp.openTelegramLink(tgShareUrl);
-      } else if (navigator.share) {
-        navigator.share({
-          title: prodTitle,
-          text: shareText,
-          url: cleanShareUrl
-        }).catch(function(){});
-      } else {
-        // បើបើកលើ Browser កុំព្យូទ័រ៖ ចម្លង Link ខ្លីនេះចូល Clipboard
-        navigator.clipboard.writeText(cleanShareUrl).then(function() {
-          showCartToast("✓ បានចម្លង Link ចែករំលែកជោគជ័យ!");
-        }).catch(function() {
-          window.open(tgShareUrl, '_blank');
-        });
       }
     }
 
