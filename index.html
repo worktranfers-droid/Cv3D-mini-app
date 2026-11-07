@@ -2906,28 +2906,40 @@ function closeModal() {
       var grandTotal = subTotal + shippingFee;
 
       if (totalEl) {
+        // បកប្រែផ្លាកដឹកឥតគិតថ្លៃតាមភាសាបច្ចុប្បន្ន
+        var txtFreeBadge = (currentLang === 'zh') ? ('🎉 满 $' + appSettings.free_shipping_min.toFixed(2) + ' 包邮 (已免运费)') :
+                           (currentLang === 'en') ? ('🎉 Free Shipping (Orders over $' + appSettings.free_shipping_min.toFixed(2) + ')') :
+                           ('🎉 ដឹកឥតគិតថ្លៃ (ទិញលើស $' + appSettings.free_shipping_min.toFixed(2) + ')');
+
+        var txtItemsLabel = (currentLang === 'zh') ? '商品' : (currentLang === 'en' ? 'Items' : 'ទំនិញ');
+        var txtShipLabel = (currentLang === 'zh') ? '运费' : (currentLang === 'en' ? 'Shipping' : 'ដឹក');
+
         if (isFreeShipping) {
           totalEl.innerHTML = 
             '<div>' +
-              '<span class="text-[10px] bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-md font-bold inline-block mb-1">🎉 ដឹកឥតគិតថ្លៃ (ទិញលើស $' + appSettings.free_shipping_min + ')</span>' +
+              '<span class="text-[10px] bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-md font-bold inline-block mb-1">' + txtFreeBadge + '</span>' +
               '<div class="flex items-baseline justify-end gap-1.5">' +
-                '<span class="text-[11px] text-slate-400 font-normal">(ទំនិញ: $' + subTotal.toFixed(2) + ' + ដឹក: $0.00)</span>' +
+                '<span class="text-[11px] text-slate-400 font-normal">(' + txtItemsLabel + ': $' + subTotal.toFixed(2) + ' + ' + txtShipLabel + ': $0.00)</span>' +
                 '<span class="text-base font-black text-blue-600">$' + grandTotal.toFixed(2) + '</span>' +
               '</div>' +
             '</div>';
         } else {
           var needMore = (appSettings.free_shipping_min - subTotal).toFixed(2);
+          // បកប្រែសារណែនាំទិញបន្ថែមតាមភាសាបច្ចុប្បន្ន
+          var txtNeedMoreHint = (currentLang === 'zh') ? ('再买 $' + needMore + ' 即可享受包邮') :
+                                (currentLang === 'en') ? ('Add $' + needMore + ' more for free shipping') :
+                                ('ទិញថែម $' + needMore + ' ទៀតដើម្បីដឹកឥតគិតថ្លៃ');
+
           totalEl.innerHTML = 
             '<div>' +
-              '<span class="text-[10px] text-slate-400 block mb-1">ទិញថែម $' + needMore + ' ទៀតដើម្បីដឹកឥតគិតថ្លៃ</span>' +
+              '<span class="text-[10px] text-slate-400 block mb-1 font-medium">' + txtNeedMoreHint + '</span>' +
               '<div class="flex items-baseline justify-end gap-1.5">' +
-                '<span class="text-[11px] text-slate-400 font-normal">(ទំនិញ: $' + subTotal.toFixed(2) + ' + ដឹក: $' + shippingFee.toFixed(2) + ')</span>' +
+                '<span class="text-[11px] text-slate-400 font-normal">(' + txtItemsLabel + ': $' + subTotal.toFixed(2) + ' + ' + txtShipLabel + ': $' + shippingFee.toFixed(2) + ')</span>' +
                 '<span class="text-base font-black text-blue-600">$' + grandTotal.toFixed(2) + '</span>' +
               '</div>' +
             '</div>';
         }
       }
-    }
     
     function changeCartItemQty(index, delta) {
       if (!cart[index]) return;
