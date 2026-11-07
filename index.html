@@ -563,9 +563,10 @@
     <!-- Card Container: បែងចែកជា ៣ ផ្នែក (ប៊ូតុង ✕ លើ, ផ្ទៃកណ្តាល Scroll, របារប៊ូតុងបាតក្រោមជាប់ស្អិត) -->
     <div class="bg-white w-full max-w-md rounded-t-3xl sm:rounded-3xl max-h-[92vh] flex flex-col shadow-2xl relative overflow-hidden">
       
-      <!-- ១. កញ្ចុំប៊ូតុងជ្រុងលើស្តាំ៖ Share + បិទ ✕ (Floating Glass Buttons) -->
+      <!-- ១. កញ្ចុំប៊ូតុងជ្រុងលើស្តាំ៖ Share + បិទ ✕ (ប្រើ bg-white/90 ពណ៌សថ្លា 90% និង SVG ដូចគ្នា) -->
       <div class="absolute top-3.5 right-3.5 flex items-center gap-1.5 z-30">
-        <!-- ប៊ូតុង Share (Icon ព្រួញចែករំលែក) -->
+        
+        <!-- ប៊ូតុង Share -->
         <button 
           type="button" 
           onclick="shareCurrentProduct()" 
@@ -577,15 +578,18 @@
           </svg>
         </button>
 
-        <!-- ប៊ូតុង បិទ ✕ -->
+        <!-- ប៊ូតុង បិទ ✕ (ប្រើ SVG ដែរដើម្បីឱ្យកម្រាស់ដិតស្មើដៃជាមួយប៊ូតុង Share) -->
         <button 
           type="button" 
           onclick="closeModal()" 
           title="បិទ"
-          class="bg-white/90 hover:bg-white text-slate-700 w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs shadow-md backdrop-blur-md border border-slate-200/80 active:scale-90 transition-all cursor-pointer"
+          class="bg-white/90 hover:bg-white text-slate-700 w-8 h-8 rounded-full flex items-center justify-center shadow-md backdrop-blur-md border border-slate-200/80 active:scale-90 transition-all cursor-pointer"
         >
-          ✕
+          <svg class="w-4 h-4 text-slate-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
         </button>
+
       </div>
 
       <!-- ២. ផ្ទៃកណ្តាលសម្រាប់ Scroll មើលរូបភាព និងព័ត៌មានផលិតផល -->
@@ -4512,44 +4516,30 @@
       }
     }
 
-    // --- អនុគមន៍ចែករំលែកទំនិញ (Share Product via Telegram / Clipboard) ---
+    // --- អនុគមន៍ចែករំលែកទំនិញ (Share Product) ---
     function shareCurrentProduct() {
       if (!selectedProduct) return;
 
-      // ១. កំណត់ Bot Username និង Short Name នៃ Mini App របស់អ្នក
       var botUsername = "Cv3D_Store_Bot"; // កែប្រែទៅជា Username Bot ជាក់ស្តែង
-      var appShortName = "shop";          // កែប្រែទៅជា App Short Name ក្នុង BotFather (បើមាន)
+      var appShortName = "shop";          // Short Name នៃ Mini App
 
-      // ២. រៀបចំសារ និង Link ភ្ជាប់ផ្ទាល់ទៅកាន់ទំនិញ
       var prodTitle = selectedProduct.title || "ទំនិញ 3D Print";
       var prodPrice = "$" + Number(selectedProduct.price || 0).toFixed(2);
       var shareText = "✨ មើលទំនិញនេះនៅ Cv3D Studio:\n📦 " + prodTitle + " (" + prodPrice + ")";
-      
-      // តំណភ្ជាប់ Telegram Deep Link
       var shareUrl = "https://t.me/" + botUsername + "/" + appShortName + "?startapp=" + (selectedProduct.id || "");
-
-      // ៣. បើកផ្ទាំង Telegram Forward ឱ្យភ្ញៀវរើសផ្ញើទៅ Chat ភ្លាមៗ
       var tgShareUrl = "https://t.me/share/url?url=" + encodeURIComponent(shareUrl) + "&text=" + encodeURIComponent(shareText);
 
-      // រំញ័រទូរសព្ទតិចៗពេលចុច
       try {
         if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.HapticFeedback) {
           window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
         }
       } catch(e) {}
 
-      // ដំណើរការ Share តាម Telegram WebApp API
       if (window.Telegram && window.Telegram.WebApp && typeof window.Telegram.WebApp.openTelegramLink === 'function') {
         window.Telegram.WebApp.openTelegramLink(tgShareUrl);
       } else if (navigator.share) {
-        // សម្រាប់ Browser លើទូរសព្ទដៃ
-        navigator.share({
-          title: prodTitle,
-          text: shareText,
-          url: shareUrl
-        }).catch(function() {});
+        navigator.share({ title: prodTitle, text: shareText, url: shareUrl }).catch(function(){});
       } else {
-        // ករណីបើកលើកុំព្យូទ័រ៖ ចម្លង Link ចូល Clipboard ស្វ័យប្រវត្តិ
         navigator.clipboard.writeText(shareUrl).then(function() {
           showCartToast("✓ បានចម្លង Link ចែករំលែកជោគជ័យ!");
         }).catch(function() {
