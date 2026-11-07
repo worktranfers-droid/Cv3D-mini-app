@@ -463,6 +463,50 @@
         </div>
       </div>
 
+      <!-- ៧. ប្លុកកំណត់បង្ហាញចំនួនលក់ដាច់ (Sold Badge) -->
+      <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-xs">
+        <div class="p-3.5 flex justify-between items-center select-none">
+          <div class="flex-1 pr-2">
+            <h4 class="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+              🛍️ បង្ហាញផ្លាកចំនួនបានលក់ (Sold Badge)
+            </h4>
+            <p id="lblSoldBadgeSummary" class="text-[10px] text-slate-500 font-mono mt-0.5">
+              ស្ថានភាព៖ បើក (ចាប់ពី 5+ ឡើងទៅ)
+            </p>
+          </div>
+          <button 
+            type="button" 
+            onclick="saveSoldBadgeSettings(this)" 
+            title="រក្សាទុកការកំណត់" 
+            class="text-slate-600 hover:text-blue-600 active:scale-75 text-xl p-1 transition-all flex items-center justify-center rounded-lg hover:bg-slate-100"
+          >
+            💾
+          </button>
+        </div>
+
+        <div class="px-3.5 pb-3.5 pt-1 border-t border-slate-100 space-y-2.5">
+          <label class="flex items-center gap-2 cursor-pointer select-none">
+            <input 
+              id="setSoldBadgeEnabled" 
+              type="checkbox" 
+              class="w-4 h-4 text-blue-600 rounded cursor-pointer"
+            >
+            <span class="text-xs font-bold text-slate-700">អនុញ្ញាតឱ្យបង្ហាញផ្លាក "Sold X+" លើទំនិញ</span>
+          </label>
+
+          <div>
+            <label class="block text-[11px] font-semibold text-slate-600 mb-1">
+              លក់បានចាប់ពីប៉ុន្មានឡើងទៅ ទើបបង្ហាញផ្លាក (Threshold)៖
+            </label>
+            <select id="setSoldBadgeMin" class="w-full bg-slate-50 border border-slate-200 p-2 rounded-xl text-xs outline-none font-semibold text-slate-700 cursor-pointer shadow-2xs">
+              <option value="5">ចាប់ពី 5 ដុំឡើងទៅ (Sold 5+)</option>
+              <option value="10">ចាប់ពី 10 ដុំឡើងទៅ (Sold 10+)</option>
+              <option value="20">ចាប់ពី 20 ដុំឡើងទៅ (Sold 20+)</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      
       <!-- ៦. ប្លុកកំណត់បណ្តាញសង្គម & ទំនាក់ទំនង (Social Links Accordion) -->
       <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-xs">
         <div onclick="toggleSocialPanel()" class="p-3.5 flex justify-between items-center cursor-pointer hover:bg-slate-50 transition-colors select-none">
@@ -610,16 +654,12 @@
           </button>
         </div>
 
-        <!-- ផ្នែកព័ត៌មានក្បាលទំនិញ -->
-        <!-- ផ្នែកព័ត៌មានក្បាលទំនិញ (Category ខាងឆ្វេង និង Sold Badge ខាងស្តាំ) -->
+        <!-- ផ្នែកព័ត៌មានក្បាលទំនិញ (Category នៅខាងឆ្វេង និង Sold Badge នៅចុងខាងស្តាំ) -->
         <div class="space-y-1.5">
           <div class="flex items-center justify-between">
             <span id="modalCategory" class="text-[10px] font-bold text-slate-500 uppercase tracking-wider bg-slate-100 px-2 py-0.5 rounded-md inline-block"></span>
-            
-            <!-- កន្លែងបង្ហាញ Sold Badge ភាសាអង់គ្លេសនៅខាងស្តាំ -->
             <div id="modalSoldBadge"></div>
           </div>
-          
           <h2 id="modalTitle" class="text-base font-bold text-slate-900 leading-snug"></h2>
           <!-- តម្លៃទោលក្នុង ១ ឯកតា -->
           <div id="modalUnitPrice" class="text-xs text-slate-400 font-medium"></div>
@@ -1147,7 +1187,9 @@
       ship_province: 2.00,
       free_shipping_min: 20.00,
       banner_enabled: true,
-      banner_images: ""
+      banner_images: "",
+      sold_badge_enabled: (localStorage.getItem('app_sold_badge_enabled') !== 'no'),
+      sold_badge_min: parseInt(localStorage.getItem('app_sold_badge_min') || '5', 10)
     };
     var currentBannerImages = [];
     var activeBannerIndex = 0;
@@ -1652,6 +1694,59 @@
       }
     }
 
+    // --- អនុគមន៍គណនាចំនួនបានលក់ (Sold Count) ---
+    function getProductSoldCount(p) {
+      if (!p) return 0;
+      var pid = String(p.id || '').trim();
+      // ១. ពិនិត្យតម្លៃដែល Admin បានកែសម្រួលដោយដៃ
+      var manualSold = localStorage.getItem('cv3d_sold_' + pid);
+      if (manualSold !== null && !isNaN(manualSold)) {
+        return parseInt(manualSold, 10);
+      }
+      // ២. ពិនិត្យតម្លៃពី Google Sheet (បើមាន Column sold)
+      if (p.sold !== undefined && p.sold !== null && !isNaN(p.sold)) {
+        return parseInt(p.sold, 10);
+      }
+      // ៣. តម្លៃលំនាំដើមដើម្បីតេស្តងាយស្រួល (ឧ. P-001, P-004, P-005 មានចំនួនលើសពី 10)
+      var testDefaults = {
+        'P-001': 15,
+        'P-002': 10,
+        'P-003': 8,
+        'P-004': 12,
+        'P-005': 18
+      };
+      return testDefaults[pid] || 0;
+    }
+
+    function saveSoldBadgeSettings(btn) {
+      var isEnabled = document.getElementById('setSoldBadgeEnabled') ? document.getElementById('setSoldBadgeEnabled').checked : true;
+      var minVal = document.getElementById('setSoldBadgeMin') ? parseInt(document.getElementById('setSoldBadgeMin').value, 10) : 5;
+
+      appSettings.sold_badge_enabled = isEnabled;
+      appSettings.sold_badge_min = minVal;
+
+      localStorage.setItem('app_sold_badge_enabled', isEnabled ? 'yes' : 'no');
+      localStorage.setItem('app_sold_badge_min', String(minVal));
+
+      updateSoldBadgeSummaryUI();
+
+      if (btn) {
+        btn.disabled = true;
+        btn.innerText = "✓";
+        setTimeout(function() { btn.disabled = false; btn.innerText = "💾"; }, 1000);
+      }
+      alert("✓ ការកំណត់ផ្លាក Sold Badge ត្រូវបានរក្សាទុកជោគជ័យ!");
+    }
+
+    function updateSoldBadgeSummaryUI() {
+      var summaryEl = document.getElementById('lblSoldBadgeSummary');
+      if (summaryEl) {
+        var isEn = appSettings.sold_badge_enabled;
+        var minV = appSettings.sold_badge_min || 5;
+        summaryEl.innerText = isEn ? ("ស្ថានភាព៖ បើក (ចាប់ពី " + minV + "+ ឡើងទៅ)") : "ស្ថានភាព៖ បិទ";
+      }
+    }
+
     function renderDynamicCategories() {
       var container = document.getElementById('categoryContainer');
       var dataList = document.getElementById('categoryDataList');
@@ -1925,20 +2020,19 @@
       if (el = document.getElementById('modalDesc')) el.innerText = p.desc;
       if (el = document.getElementById('qtyVal')) el.innerText = quantity;
 
-      // បង្ហាញផ្លាក Sold Badge នៅជួរ Category ខាងស្តាំ (លុះត្រាតែលក់បាន >= 5 ឬ 10 តាមការកំណត់)
-      var soldEl = document.getElementById('modalSoldBadge');
-      if (soldEl) {
-        var count = (typeof getProductSoldCount === 'function') ? getProductSoldCount(p) : 0;
+      // ✅ បង្ហាញផ្លាក Sold Badge នៅចុងខាងស្តាំនៃ Category
+      var soldBadgeEl = document.getElementById('modalSoldBadge');
+      if (soldBadgeEl) {
+        var count = getProductSoldCount(p);
         var minThreshold = appSettings.sold_badge_min || 5;
-
         if (appSettings.sold_badge_enabled && count >= minThreshold) {
-          soldEl.innerHTML = 
-            '<span class="inline-flex items-center gap-1 bg-amber-50 text-amber-700 border border-amber-200/80 text-[10px] font-bold px-2 py-0.5 rounded-md shadow-2xs font-mono">' +
+          soldBadgeEl.innerHTML = 
+            '<span class="inline-flex items-center gap-1 bg-amber-50 text-amber-700 border border-amber-200/90 text-[10px] font-bold px-2 py-0.5 rounded-md shadow-2xs font-mono">' +
               '<span class="text-amber-500 text-[10px]">🔥</span>' +
               '<span>Sold ' + count + '+</span>' +
             '</span>';
         } else {
-          soldEl.innerHTML = '';
+          soldBadgeEl.innerHTML = '';
         }
       }
 
@@ -3593,6 +3687,13 @@ function closeModal() {
         if (document.getElementById('setSocialFbVal')) document.getElementById('setSocialFbVal').value = appSocialSettings.fb_val || '';
 
         updateSocialSummaryUI();
+        if (document.getElementById('setSoldBadgeEnabled')) {
+          document.getElementById('setSoldBadgeEnabled').checked = appSettings.sold_badge_enabled;
+        }
+        if (document.getElementById('setSoldBadgeMin')) {
+          document.getElementById('setSoldBadgeMin').value = String(appSettings.sold_badge_min || 5);
+        }
+        updateSoldBadgeSummaryUI();
       }
     } 
 
