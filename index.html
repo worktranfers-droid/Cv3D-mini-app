@@ -463,62 +463,6 @@
         </div>
       </div>
 
-      <!-- ៧. ប្លុកកំណត់បង្ហាញចំនួនលក់ដាច់ (Accordion Dropdown + 3 ភាសា) -->
-      <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-xs">
-        
-        <!-- ក្បាល Header ចុចបើក/បិទ Dropdown Accordion -->
-        <div onclick="toggleSoldBadgePanel()" class="p-3.5 flex justify-between items-center cursor-pointer hover:bg-slate-50 transition-colors select-none">
-          <div class="flex-1 pr-2">
-            <h4 id="lblSoldBadgeTitle" class="text-xs font-bold text-slate-800 flex items-center gap-1.5">
-              🛍️ បង្ហាញផ្លាកចំនួនបានលក់ (Sold Badge)
-            </h4>
-            <p id="lblSoldBadgeSummary" class="text-[10px] text-slate-500 font-mono mt-0.5">
-              ស្ថានភាព៖ បើក (ចាប់ពី 5+ ឡើងទៅ)
-            </p>
-          </div>
-
-          <!-- ប៊ូតុង Icon 💾 រក្សាទុកការកំណត់ -->
-          <button 
-            type="button" 
-            onclick="event.stopPropagation(); saveSoldBadgeSettings(this);" 
-            title="រក្សាទុក" 
-            class="text-slate-600 hover:text-blue-600 active:scale-75 text-xl p-1 transition-all flex items-center justify-center rounded-lg hover:bg-slate-100"
-          >
-            💾
-          </button>
-        </div>
-
-        <!-- ផ្ទៃខាងក្នុង Accordion (លាក់ទុកជាមុន hidden) -->
-        <div id="soldBadgePanelBody" class="hidden px-3.5 pb-3.5 pt-1 border-t border-slate-100 space-y-3">
-          
-          <!-- ប៊ូតុង Checkbox បើក/បិទ -->
-          <div class="bg-slate-50/70 p-2.5 rounded-xl border border-slate-200">
-            <label class="flex items-center gap-2 cursor-pointer select-none">
-              <input 
-                id="setSoldBadgeEnabled" 
-                type="checkbox" 
-                onchange="updateSoldBadgeSummaryUI()"
-                class="w-4 h-4 text-blue-600 rounded cursor-pointer"
-              >
-              <span id="lblSoldBadgeEnableText" class="text-xs font-bold text-slate-700">អនុញ្ញាតឱ្យបង្ហាញផ្លាក "Sold X+" លើទំនិញ</span>
-            </label>
-          </div>
-
-          <!-- កំណត់ចំនួនអប្បបរមា (Threshold) -->
-          <div>
-            <label id="lblSoldBadgeThreshold" class="block text-[11px] font-semibold text-slate-600 mb-1">
-              លក់បានចាប់ពីប៉ុន្មានឡើងទៅ ទើបបង្ហាញផ្លាក (Threshold)៖
-            </label>
-            <select id="setSoldBadgeMin" onchange="updateSoldBadgeSummaryUI()" class="w-full bg-slate-50 border border-slate-200 p-2 rounded-xl text-xs outline-none font-semibold text-slate-700 cursor-pointer shadow-2xs">
-              <option value="5" id="optSoldMin5">ចាប់ពី 5 ដុំឡើងទៅ (Sold 5+)</option>
-              <option value="10" id="optSoldMin10">ចាប់ពី 10 ដុំឡើងទៅ (Sold 10+)</option>
-              <option value="20" id="optSoldMin20">ចាប់ពី 20 ដុំឡើងទៅ (Sold 20+)</option>
-            </select>
-          </div>
-
-        </div>
-      </div>
-      
       <!-- ៦. ប្លុកកំណត់បណ្តាញសង្គម & ទំនាក់ទំនង (Social Links Accordion) -->
       <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-xs">
         <div onclick="toggleSocialPanel()" class="p-3.5 flex justify-between items-center cursor-pointer hover:bg-slate-50 transition-colors select-none">
@@ -977,8 +921,8 @@
           <input id="addTitle" type="text" placeholder="ឧ. Articulated Dragon" class="w-full border border-slate-300 p-2 rounded-xl text-xs outline-none focus:ring-2 focus:ring-blue-500">
         </div>
 
-        <!-- ទម្រង់ចាស់៖ ៤ ប្រអប់តម្រៀបក្នុង ១ ជួរទន្ទឹមគ្នា ស្រឡះស្អាត -->
-        <div class="grid grid-cols-4 gap-2">
+        <!-- ជួរលើ ៣ ប្រអប់៖ ប្រភេទ, តម្លៃ ($), Badge -->
+        <div class="grid grid-cols-3 gap-2">
           <!-- ១. ប្រភេទ (Dropdown) -->
           <div>
             <label id="lblAddCategory" class="block text-xs font-semibold text-slate-600 mb-1">ប្រភេទ</label>
@@ -993,13 +937,7 @@
             <input id="addPrice" type="number" step="0.5" placeholder="12.00" class="w-full border border-slate-300 p-2 rounded-xl text-xs outline-none focus:ring-2 focus:ring-blue-500">
           </div>
 
-          <!-- ៣. បញ្ចុះ (%) -->
-          <div>
-            <label id="lblAddDiscount" class="block text-xs font-semibold text-rose-600 mb-1">បញ្ចុះ (%)</label>
-            <input id="addDiscount" type="number" min="0" max="99" placeholder="20" class="w-full border border-rose-300 bg-rose-50/40 p-2 rounded-xl text-xs outline-none font-bold text-rose-600 focus:ring-2 focus:ring-rose-500">
-          </div>
-
-          <!-- ៤. Badge -->
+          <!-- ៣. Badge -->
           <div>
             <label id="lblAddBadge" class="block text-xs font-semibold text-slate-600 mb-1">Badge</label>
             <select id="addBadge" class="w-full border border-slate-300 p-2 rounded-xl text-xs outline-none bg-white focus:ring-2 focus:ring-blue-500 font-semibold text-slate-700">
@@ -1011,16 +949,25 @@
           </div>
         </div>
 
-        <!-- បន្ថែមប្រអប់ Sold Count ឱ្យ Admin វាយលេខបានតាមចិត្ត -->
-        <div>
-          <label id="lblAddSold" class="block text-xs font-semibold text-amber-700 mb-1">ចំនួនបានលក់ (Sold)</label>
-          <input 
-            id="addSold" 
-            type="number" 
-            min="0" 
-            placeholder="ឧ. 12" 
-            class="w-full border border-amber-300 bg-amber-50/40 p-2 rounded-xl text-xs outline-none font-bold text-amber-800 focus:ring-2 focus:ring-amber-500 font-mono"
-          >
+        <!-- ជួរក្រោម ២ ប្រអប់៖ បញ្ចុះតម្លៃ (%) និង ចំនួនបានលក់ (Sold Count) -->
+        <div class="grid grid-cols-2 gap-2">
+          <!-- ៤. បញ្ចុះ (%) -->
+          <div>
+            <label id="lblAddDiscount" class="block text-xs font-semibold text-rose-600 mb-1">បញ្ចុះ (%)</label>
+            <input id="addDiscount" type="number" min="0" max="99" placeholder="20" class="w-full border border-rose-300 bg-rose-50/40 p-2 rounded-xl text-xs outline-none font-bold text-rose-600 focus:ring-2 focus:ring-rose-500">
+          </div>
+
+          <!-- ៥. ចំនួនបានលក់ (Sold Count) -->
+          <div>
+            <label id="lblAddSold" class="block text-xs font-semibold text-amber-700 mb-1">ចំនួនបានលក់ (Sold)</label>
+            <input 
+              id="addSold" 
+              type="number" 
+              min="0" 
+              placeholder="ឧ. 10 (ទុកទំនេរបើមិនបង្ហាញ)" 
+              class="w-full border border-amber-300 bg-amber-50/40 p-2 rounded-xl text-xs outline-none font-bold text-amber-800 focus:ring-2 focus:ring-amber-500 font-mono"
+            >
+          </div>
         </div>
 
         <div>
@@ -1211,9 +1158,7 @@
       ship_province: 2.00,
       free_shipping_min: 20.00,
       banner_enabled: true,
-      banner_images: "",
-      sold_badge_enabled: (localStorage.getItem('app_sold_badge_enabled') !== 'no'),
-      sold_badge_min: parseInt(localStorage.getItem('app_sold_badge_min') || '5', 10)
+      banner_images: ""
     };
     var currentBannerImages = [];
     var activeBannerIndex = 0;
@@ -2068,12 +2013,11 @@
       if (el = document.getElementById('modalDesc')) el.innerText = p.desc;
       if (el = document.getElementById('qtyVal')) el.innerText = quantity;
 
-      // ✅ បង្ហាញផ្លាក Sold Badge នៅចុងខាងស្តាំនៃ Category
+      // ✅ បង្ហាញផ្លាក Sold Badge នៅចុងខាងស្តាំនៃ Category (បើ Admin វាយលេខចាប់ពី 5 ឡើងទៅ)
       var soldBadgeEl = document.getElementById('modalSoldBadge');
       if (soldBadgeEl) {
         var count = getProductSoldCount(p);
-        var minThreshold = appSettings.sold_badge_min || 5;
-        if (appSettings.sold_badge_enabled && count >= minThreshold) {
+        if (count >= 5) {
           soldBadgeEl.innerHTML = 
             '<span class="inline-flex items-center gap-1 bg-amber-50 text-amber-700 border border-amber-200/90 text-[10px] font-bold px-2 py-0.5 rounded-md shadow-2xs font-mono">' +
               '<span class="text-amber-500 text-[10px]">🔥</span>' +
@@ -3735,13 +3679,6 @@ function closeModal() {
         if (document.getElementById('setSocialFbVal')) document.getElementById('setSocialFbVal').value = appSocialSettings.fb_val || '';
 
         updateSocialSummaryUI();
-        if (document.getElementById('setSoldBadgeEnabled')) {
-          document.getElementById('setSoldBadgeEnabled').checked = appSettings.sold_badge_enabled;
-        }
-        if (document.getElementById('setSoldBadgeMin')) {
-          document.getElementById('setSoldBadgeMin').value = String(appSettings.sold_badge_min || 5);
-        }
-        updateSoldBadgeSummaryUI();
       }
     } 
 
@@ -5562,73 +5499,21 @@ p.sold = soldCountVal;
       checkVideoClearBtnVisibility();
     }
 
-    // --- ១. អនុគមន៍ បើក/បិទ Dropdown Accordion ---
-    function toggleSoldBadgePanel() {
-      var body = document.getElementById('soldBadgePanelBody');
-      if (body) body.classList.toggle('hidden');
-    }
-
-    // --- ២. អនុគមន៍ទាញយកចំនួន Sold របស់ទំនិញ (គាំទ្រការកំណត់ដោយ Admin) ---
+    // --- អនុគមន៍ទាញយកចំនួន Sold របស់ទំនិញ (អានពីការកំណត់របស់ Admin ផ្ទាល់) ---
     function getProductSoldCount(p) {
       if (!p) return 0;
       var pid = String(p.id || '').trim();
 
-      // ក. ពិនិត្យតម្លៃដែល Admin បានកែសម្រួលផ្ទាល់ក្នុង App
+      // ១. ពិនិត្យតម្លៃដែល Admin បានវាយកែសម្រួលផ្ទាល់ក្នុង App
       var localVal = localStorage.getItem('cv3d_sold_' + pid);
       if (localVal !== null && !isNaN(localVal)) {
         return parseInt(localVal, 10);
       }
-      // ខ. ពិនិត្យតម្លៃពី Google Sheet (បើមាន)
+      // ២. ពិនិត្យតម្លៃពី Google Sheet (បើមាន Column sold)
       if (p.sold !== undefined && p.sold !== null && !isNaN(p.sold)) {
         return parseInt(p.sold, 10);
       }
-      // គ. តម្លៃសាកល្បងលំនាំដើម
-      var testMap = { 'P-001': 15, 'P-002': 10, 'P-003': 6, 'P-004': 12, 'P-005': 18 };
-      return testMap[pid] || 0;
-    }
-
-    // --- ៣. អនុគមន៍បង្ហាញអក្សរសង្ខេបបកប្រែ ៣ ភាសា (km, en, zh) ---
-    function updateSoldBadgeSummaryUI() {
-      var summaryEl = document.getElementById('lblSoldBadgeSummary');
-      if (!summaryEl) return;
-
-      var chk = document.getElementById('setSoldBadgeEnabled');
-      var sel = document.getElementById('setSoldBadgeMin');
-      var isEn = chk ? chk.checked : appSettings.sold_badge_enabled;
-      var minV = sel ? sel.value : (appSettings.sold_badge_min || 5);
-
-      if (currentLang === 'zh') {
-        summaryEl.innerText = isEn ? ("状态：开启 (满 " + minV + "+ 显示)") : "状态：关闭";
-      } else if (currentLang === 'en') {
-        summaryEl.innerText = isEn ? ("Status: Enabled (from " + minV + "+)") : "Status: Disabled";
-      } else {
-        summaryEl.innerText = isEn ? ("ស្ថានភាព៖ បើក (ចាប់ពី " + minV + "+ ឡើងទៅ)") : "ស្ថានភាព៖ បិទ";
-      }
-    }
-
-    // --- ៤. អនុគមន៍រក្សាទុកការកំណត់ Settings ពេលចុច Icon 💾 ---
-    function saveSoldBadgeSettings(btn) {
-      var isEnabled = document.getElementById('setSoldBadgeEnabled') ? document.getElementById('setSoldBadgeEnabled').checked : true;
-      var minVal = document.getElementById('setSoldBadgeMin') ? parseInt(document.getElementById('setSoldBadgeMin').value, 10) : 5;
-
-      appSettings.sold_badge_enabled = isEnabled;
-      appSettings.sold_badge_min = minVal;
-
-      localStorage.setItem('app_sold_badge_enabled', isEnabled ? 'yes' : 'no');
-      localStorage.setItem('app_sold_badge_min', String(minVal));
-
-      updateSoldBadgeSummaryUI();
-
-      if (btn) {
-        btn.disabled = true;
-        btn.style.opacity = "0.4";
-        setTimeout(function() { btn.disabled = false; btn.style.opacity = "1"; }, 1000);
-      }
-
-      var alertText = (currentLang === 'zh') ? "✓ 已售徽章设置保存成功！" :
-                      (currentLang === 'en') ? "✓ Sold badge settings saved successfully!" :
-                      "✓ ការកំណត់ផ្លាក Sold Badge ត្រូវបានរក្សាទុកជោគជ័យ!";
-      alert(alertText);
+      return 0;
     }
     
   </script>
