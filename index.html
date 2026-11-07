@@ -4516,18 +4516,21 @@
       }
     }
 
-    // --- អនុគមន៍ចែករំលែកទំនិញ (Share Product) ---
+    // --- អនុគមន៍ចែករំលែកទំនិញ (Share Product ដោយគ្មាន Error) ---
     function shareCurrentProduct() {
       if (!selectedProduct) return;
 
-      var botUsername = "Cv3D_Store_Bot"; // កែប្រែទៅជា Username Bot ជាក់ស្តែង
-      var appShortName = "shop";          // Short Name នៃ Mini App
-
       var prodTitle = selectedProduct.title || "ទំនិញ 3D Print";
       var prodPrice = "$" + Number(selectedProduct.price || 0).toFixed(2);
-      var shareText = "✨ មើលទំនិញនេះនៅ Cv3D Studio:\n📦 " + prodTitle + " (" + prodPrice + ")";
-      var shareUrl = "https://t.me/" + botUsername + "/" + appShortName + "?startapp=" + (selectedProduct.id || "");
-      var tgShareUrl = "https://t.me/share/url?url=" + encodeURIComponent(shareUrl) + "&text=" + encodeURIComponent(shareText);
+      var currentUrl = window.location.href.split('?')[0]; // Link នៃ App ផ្ទាល់
+
+      // សារដែលត្រូវផ្ញើចេញ
+      var shareText = "✨ មើលទំនិញ 3D Print មួយនេះស្អាតណាស់៖\n" +
+                      "📦 " + prodTitle + "\n" +
+                      "💵 តម្លៃ: " + prodPrice + "\n" +
+                      "👉 កុម្ម៉ង់ទិញ ឬសាកសួរតាម Telegram: @Vireak699";
+
+      var tgShareUrl = "https://t.me/share/url?url=" + encodeURIComponent(currentUrl) + "&text=" + encodeURIComponent(shareText);
 
       try {
         if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.HapticFeedback) {
@@ -4535,16 +4538,13 @@
         }
       } catch(e) {}
 
+      // បើកផ្ទាំង Telegram Forward
       if (window.Telegram && window.Telegram.WebApp && typeof window.Telegram.WebApp.openTelegramLink === 'function') {
         window.Telegram.WebApp.openTelegramLink(tgShareUrl);
       } else if (navigator.share) {
-        navigator.share({ title: prodTitle, text: shareText, url: shareUrl }).catch(function(){});
+        navigator.share({ title: prodTitle, text: shareText, url: currentUrl }).catch(function(){});
       } else {
-        navigator.clipboard.writeText(shareUrl).then(function() {
-          showCartToast("✓ បានចម្លង Link ចែករំលែកជោគជ័យ!");
-        }).catch(function() {
-          window.open(tgShareUrl, '_blank');
-        });
+        window.open(tgShareUrl, '_blank');
       }
     }
 
