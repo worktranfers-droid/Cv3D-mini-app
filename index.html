@@ -611,10 +611,15 @@
         </div>
 
         <!-- ផ្នែកព័ត៌មានក្បាលទំនិញ -->
+        <!-- ផ្នែកព័ត៌មានក្បាលទំនិញ (Category ខាងឆ្វេង និង Sold Badge ខាងស្តាំ) -->
         <div class="space-y-1.5">
-          <div>
+          <div class="flex items-center justify-between">
             <span id="modalCategory" class="text-[10px] font-bold text-slate-500 uppercase tracking-wider bg-slate-100 px-2 py-0.5 rounded-md inline-block"></span>
+            
+            <!-- កន្លែងបង្ហាញ Sold Badge ភាសាអង់គ្លេសនៅខាងស្តាំ -->
+            <div id="modalSoldBadge"></div>
           </div>
+          
           <h2 id="modalTitle" class="text-base font-bold text-slate-900 leading-snug"></h2>
           <!-- តម្លៃទោលក្នុង ១ ឯកតា -->
           <div id="modalUnitPrice" class="text-xs text-slate-400 font-medium"></div>
@@ -1919,6 +1924,23 @@
       if (el = document.getElementById('modalCategory')) el.innerText = p.category.toUpperCase();
       if (el = document.getElementById('modalDesc')) el.innerText = p.desc;
       if (el = document.getElementById('qtyVal')) el.innerText = quantity;
+
+      // បង្ហាញផ្លាក Sold Badge នៅជួរ Category ខាងស្តាំ (លុះត្រាតែលក់បាន >= 5 ឬ 10 តាមការកំណត់)
+      var soldEl = document.getElementById('modalSoldBadge');
+      if (soldEl) {
+        var count = (typeof getProductSoldCount === 'function') ? getProductSoldCount(p) : 0;
+        var minThreshold = appSettings.sold_badge_min || 5;
+
+        if (appSettings.sold_badge_enabled && count >= minThreshold) {
+          soldEl.innerHTML = 
+            '<span class="inline-flex items-center gap-1 bg-amber-50 text-amber-700 border border-amber-200/80 text-[10px] font-bold px-2 py-0.5 rounded-md shadow-2xs font-mono">' +
+              '<span class="text-amber-500 text-[10px]">🔥</span>' +
+              '<span>Sold ' + count + '+</span>' +
+            '</span>';
+        } else {
+          soldEl.innerHTML = '';
+        }
+      }
 
       // ផ្នែក Render ប៊ូតុងពណ៌ (មិនលោត ឬរលាក់ទំហំប៊ូតុងពេលចុច)
       var colorBox = document.getElementById('colorContainer');
