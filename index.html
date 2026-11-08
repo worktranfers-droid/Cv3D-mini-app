@@ -912,11 +912,11 @@
     </div>
   </div>
 
-  <!-- Modal: Wishlist / Favorite Products -->
+  <!-- Modal: Wishlist / Favorite Products (ទម្រង់ពេញលេញ មិនរួញ) -->
   <div id="wishlistModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
-    <div class="bg-white w-full max-w-md rounded-t-3xl sm:rounded-3xl max-h-[88vh] flex flex-col shadow-2xl relative overflow-hidden">
+    <div class="bg-white w-full max-w-md rounded-t-3xl sm:rounded-3xl min-h-[280px] max-h-[88vh] flex flex-col shadow-2xl relative overflow-hidden">
       
-      <!-- ក្បាល Header នៃផ្ទាំង Wishlist -->
+      <!-- ១. ក្បាល Header -->
       <div class="p-4 border-b border-slate-100 flex justify-between items-center bg-white flex-shrink-0">
         <div class="flex items-center gap-2">
           <h3 id="lblWishlistTitle" class="text-base font-bold text-slate-800">
@@ -926,10 +926,16 @@
         <button type="button" onclick="closeWishlistModal()" class="bg-slate-100 hover:bg-slate-200 text-slate-500 w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs active:scale-90 transition-all cursor-pointer">✕</button>
       </div>
 
-      <!-- ករណីមិនទាន់មាន Like -->
-      <div id="wishlistEmptyState" class="text-center py-12 text-slate-400 text-xs hidden">
-        <span class="text-4xl block mb-2">🤍</span>
-        <p id="lblWishlistEmpty">អ្នកមិនទាន់បាន Like ទំនិញណាមួយនៅឡើយទេ</p>
+      <!-- ២. ផ្ទៃខាងក្នុង (មានទាំង Container និង Empty State) -->
+      <div class="overflow-y-auto p-4 space-y-3 no-scrollbar flex-1 flex flex-col justify-center">
+        <!-- កន្លែងរៀបចំទំនិញពេលមាន Like (ខានមិនបាន) -->
+        <div id="wishlistItemsContainer" class="space-y-2.5"></div>
+        
+        <!-- កន្លែងបង្ហាញពេលមិនទាន់មាន Like (ដក hidden ចេញជាមុន) -->
+        <div id="wishlistEmptyState" class="text-center py-8 text-slate-400 text-xs">
+          <span class="text-4xl block mb-2">🤍</span>
+          <p id="lblWishlistEmpty">អ្នកមិនទាន់បាន Like ទំនិញណាមួយនៅឡើយទេ</p>
+        </div>
       </div>
 
     </div>
@@ -5667,18 +5673,22 @@ function closeModal() {
     function renderWishlistItems() {
       var container = document.getElementById('wishlistItemsContainer');
       var emptyEl = document.getElementById('wishlistEmptyState');
-      if (!container) return;
-      container.innerHTML = '';
 
       var likedItems = customerProducts.filter(function(p) {
         return isProductLiked(p.id);
       });
 
+      // បើគ្មានទំនិញ Like ទេ បង្ហាញរូបបេះដូងស 🤍 និងអត្ថបទ
       if (likedItems.length === 0) {
-        if (emptyEl) emptyEl.classList.remove('hidden');
+        if (container) container.innerHTML = '';
+        if (emptyEl) emptyEl.style.display = 'block';
         return;
       }
-      if (emptyEl) emptyEl.classList.add('hidden');
+
+      // បើមានទំនិញ Like លាក់ផ្ទាំងទទេចេញ
+      if (emptyEl) emptyEl.style.display = 'none';
+      if (!container) return;
+      container.innerHTML = '';
 
       for (var i = 0; i < likedItems.length; i++) {
         (function(p) {
