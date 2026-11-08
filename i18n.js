@@ -373,7 +373,7 @@
         cartEmpty: "购物车空空如也",
         lblZone: "配送区域: *",
         optPhnomPenh: "金边市",
-        optProvince: "🚐 外省区域",
+        optProvince: "外省区域",
         lblPhone: "电话号码: *",
         lblLoc: "配送地址: *",
         phonePlaceholder: "例如: 012 345 678",
