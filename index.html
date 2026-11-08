@@ -5443,10 +5443,11 @@ function closeModal() {
       if (!p) return 0;
       var pid = String(p.id || '').trim();
 
-      // ១. ពិនិត្យតម្លៃពី Google Sheet (បើមាន Column sold)
+      // ១. ពិនិត្យតម្លៃពី Google Sheet Catalog Products (បើមាន Column sold)
       if (p.sold !== undefined && p.sold !== null && !isNaN(p.sold)) {
         return parseInt(p.sold, 10);
       }
+      
       // ២. រាប់ចំនួនជាក់ស្តែងពីការកុម្ម៉ង់ Orders
       var realTotal = 0;
       if (typeof allAdminOrders !== 'undefined' && allAdminOrders && allAdminOrders.length > 0) {
@@ -5466,11 +5467,9 @@ function closeModal() {
           }
         }
       }
-      if (realTotal > 0) return realTotal;
-
-      // ៣. តម្លៃគំរូសាកល្បងសម្រាប់ទំនិញ
-      var testMap = { 'P-001': 15, 'P-002': 10, 'P-003': 6, 'P-004': 12, 'P-005': 18 };
-      return testMap[pid] || 0;
+      
+      // បើ Orders ត្រូវបានលុបអស់ វានឹងប្រគល់តម្លៃ 0 ដោយស្វ័យប្រវត្តិ
+      return realTotal;
     }
 
     // --- ៣. អនុគមន៍បង្ហាញអក្សរសង្ខេបបកប្រែ ៣ ភាសា (km, en, zh) ---
