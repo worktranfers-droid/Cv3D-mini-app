@@ -525,7 +525,7 @@
         cartNeedMoreHint: "再买 ${need} 即可享受包邮",
         cartItemsLabel: "商品",
         cartShipLabel: "运费",
-        wishlistTitle: "❤️ 收藏商品 (Wishlist)",
+        wishlistTitle: "❤️ 收藏商品",
         wishlistEmpty: "您尚未收藏任何商品",
         btnWishlistTooltip: "已收藏商品"
 
