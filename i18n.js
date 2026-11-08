@@ -170,7 +170,10 @@
         cartFreeShipBadge: "🎉 ដឹកឥតគិតថ្លៃ (ទិញលើស ${min})",
         cartNeedMoreHint: "ទិញថែម ${need} ទៀតដើម្បីដឹកឥតគិតថ្លៃ",
         cartItemsLabel: "ទំនិញ",
-        cartShipLabel: "ដឹក"
+        cartShipLabel: "ដឹក",
+        wishlistTitle: "❤️ ទំនិញដែលអ្នកចូលចិត្ត",
+        wishlistEmpty: "អ្នកមិនទាន់បាន Like ទំនិញណាមួយនៅឡើយទេ",
+        btnWishlistTooltip: "ទំនិញដែលបាន Like"
 
       },
       en: {
@@ -344,7 +347,10 @@
         cartFreeShipBadge: "🎉 Free Shipping (Orders over ${min})",
         cartNeedMoreHint: "Add ${need} more for free shipping",
         cartItemsLabel: "Items",
-        cartShipLabel: "Shipping"
+        cartShipLabel: "Shipping",
+        wishlistTitle: "❤️ Favorite Products",
+        wishlistEmpty: "You haven't liked any products yet",
+        btnWishlistTooltip: "Liked Products"
 
       },
       zh: {
@@ -518,7 +524,10 @@
         cartFreeShipBadge: "🎉 满 ${min} 包邮 (已免运费)",
         cartNeedMoreHint: "再买 ${need} 即可享受包邮",
         cartItemsLabel: "商品",
-        cartShipLabel: "运费"
+        cartShipLabel: "运费",
+        wishlistTitle: "❤️ 收藏商品 (Wishlist)",
+        wishlistEmpty: "您尚未收藏任何商品",
+        btnWishlistTooltip: "已收藏商品"
 
       }
     };
