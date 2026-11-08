@@ -919,21 +919,17 @@
       <!-- ក្បាល Header នៃផ្ទាំង Wishlist -->
       <div class="p-4 border-b border-slate-100 flex justify-between items-center bg-white flex-shrink-0">
         <div class="flex items-center gap-2">
-          <span class="text-xl">❤️</span>
-          <h3 id="lblWishlistTitle" class="text-base font-bold text-slate-800">ទំនិញដែលអ្នកចូលចិត្ត (Wishlist)</h3>
+          <h3 id="lblWishlistTitle" class="text-base font-bold text-slate-800">
+            ❤️ ទំនិញដែលអ្នកចូលចិត្ត
+          </h3>
         </div>
         <button type="button" onclick="closeWishlistModal()" class="bg-slate-100 hover:bg-slate-200 text-slate-500 w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs active:scale-90 transition-all cursor-pointer">✕</button>
       </div>
 
-      <!-- បញ្ជីទំនិញដែលបាន Like -->
-      <div class="overflow-y-auto p-4 space-y-3 no-scrollbar flex-1">
-        <div id="wishlistItemsContainer" class="space-y-2.5"></div>
-        
-        <!-- ករណីមិនទាន់មាន Like -->
-        <div id="wishlistEmptyState" class="text-center py-12 text-slate-400 text-xs hidden">
-          <span class="text-4xl block mb-2">🤍</span>
-          <p id="lblWishlistEmpty">អ្នកមិនទាន់បាន Like ទំនិញណាមួយនៅឡើយទេ</p>
-        </div>
+      <!-- ករណីមិនទាន់មាន Like -->
+      <div id="wishlistEmptyState" class="text-center py-12 text-slate-400 text-xs hidden">
+        <span class="text-4xl block mb-2">🤍</span>
+        <p id="lblWishlistEmpty">អ្នកមិនទាន់បាន Like ទំនិញណាមួយនៅឡើយទេ</p>
       </div>
 
     </div>
@@ -1513,6 +1509,11 @@
       if (el = document.getElementById('lblSoldBadgeThreshold')) el.innerText = t.soldBadgeThreshold || "លក់ជាក់ស្តែងបានចាប់ពីប៉ុន្មានឡើងទៅ ទើបបង្ហាញផ្លាក (Threshold)៖";
       
       updateSoldBadgeSummaryUI();
+
+      // --- បកប្រែផ្ទាំង Wishlist Modal ---
+      if (el = document.getElementById('lblWishlistTitle')) el.innerText = t.wishlistTitle || "❤️ ទំនិញដែលអ្នកចូលចិត្ត";
+      if (el = document.getElementById('lblWishlistEmpty')) el.innerText = t.wishlistEmpty || "អ្នកមិនទាន់បាន Like ទំនិញណាមួយនៅឡើយទេ";
+      if (el = document.getElementById('headerWishlistBtn')) el.title = t.btnWishlistTooltip || "ទំនិញដែលបាន Like";
     }
 
     function openSellerChat() {
