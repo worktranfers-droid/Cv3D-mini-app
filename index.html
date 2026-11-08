@@ -1171,8 +1171,39 @@
     // --- 6.1 CONFIGURATION & STATE ---
     var API_URL = "https://script.google.com/macros/s/AKfycbxdsFeRnhFqZDwoPovJLhpJQxprKcoix3kU5WGp9aTtvfmnoreawVHrZsQh7NzrC1k6cA/exec"; 
 
-    // ២. កំណត់ភាសាខ្មែរ ('km') ជាភាសាគោលលំនាំដើម
-    var currentLang = localStorage.getItem('app_user_lang') || 'km';
+    // --- អនុគមន៍ចាប់យកភាសាដោយស្វ័យប្រវត្តិតាមទូរស័ព្ទ ឬ Telegram របស់ភ្ញៀវ ---
+    function detectDefaultLanguage() {
+      // ១. ប្រសិនបើភ្ញៀវធ្លាប់ចុចរើសភាសាដោយខ្លួនឯង យកតាមជម្រើសចាស់របស់គាត់
+      var savedLang = localStorage.getItem('app_user_lang');
+      if (savedLang) return savedLang;
+
+      var detected = 'km'; // ភាសាលំនាំដើម (Default) ប្រសិនបើមិនស្គាល់
+
+      // ២. ចាប់យកភាសាតាមគណនី Telegram របស់អតិថិជន
+      try {
+        if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initDataUnsafe && window.Telegram.WebApp.initDataUnsafe.user) {
+          var tgLang = window.Telegram.WebApp.initDataUnsafe.user.language_code || '';
+          if (tgLang) detected = tgLang.toLowerCase();
+        }
+      } catch (e) {}
+
+      // ៣. ប្រសិនបើមិនទាន់ឃើញ ពិនិត្យតាមភាសាដែលទូរស័ព្ទគាត់កំពុងប្រើ
+      if (detected === 'km' && typeof navigator !== 'undefined' && navigator.language) {
+        detected = navigator.language.toLowerCase();
+      }
+
+      // ៤. ផ្គូផ្គងទៅនឹងភាសាទាំង ៣ ក្នុង App (km, en, zh)
+      if (detected.indexOf('zh') !== -1) {
+        return 'zh'; // ភាសាចិន (zh, zh-CN, zh-TW, etc.)
+      } else if (detected.indexOf('en') !== -1) {
+        return 'en'; // ភាសាអង់គ្លេស
+      } else {
+        return 'km'; // ខ្មែរ (លំនាំដើម)
+      }
+    }
+
+    // កំណត់ភាសាបច្ចុប្បន្នដោយហៅអនុគមន៍ស្វ័យប្រវត្តិនេះ
+    var currentLang = detectDefaultLanguage();
     var currentRole = 'customer';
     var adminPin = localStorage.getItem('saved_admin_pin') || '';
     var customerProducts = [];
