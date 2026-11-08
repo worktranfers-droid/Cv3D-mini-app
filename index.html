@@ -1421,22 +1421,9 @@
       if (el = document.getElementById('btnSuccessCloseApp')) el.innerText = t.successCloseApp;
       if (el = document.getElementById('btnSuccessContinue')) el.innerText = t.successContinue;
 
-      // បកប្រែប្លុក Sold Badge តាមភាសា (km / en / zh)
-      var tTitle = (currentLang === 'zh') ? "🛍️ 已售数量徽章 (Sold Badge)" :
-                   (currentLang === 'en') ? "🛍️ Sold Count Badge Settings" :
-                   "🛍️ បង្ហាញផ្លាកចំនួនបានលក់ (Sold Badge)";
-      
-      var tEnable = (currentLang === 'zh') ? "允许在商品上显示 \"Sold X+\" 徽章" :
-                    (currentLang === 'en') ? "Enable 'Sold X+' badge on products" :
-                    "អនុញ្ញាតឱ្យបង្ហាញផ្លាក \"Sold X+\" លើទំនិញ";
-
-      var tThresh = (currentLang === 'zh') ? "销量达到多少才显示徽章 (Threshold)：" :
-                    (currentLang === 'en') ? "Minimum sold count to show badge (Threshold):" :
-                    "លក់បានចាប់ពីប៉ុន្មានឡើងទៅ ទើបបង្ហាញផ្លាក (Threshold)៖";
-
-      if (document.getElementById('lblSoldBadgeTitle')) document.getElementById('lblSoldBadgeTitle').innerHTML = tTitle;
-      if (document.getElementById('lblSoldBadgeEnableText')) document.getElementById('lblSoldBadgeEnableText').innerText = tEnable;
-      if (document.getElementById('lblSoldBadgeThreshold')) document.getElementById('lblSoldBadgeThreshold').innerText = tThresh;
+      if (el = document.getElementById('lblSoldBadgeTitle')) el.innerHTML = t.soldBadgeTitle || "🛍️ បង្ហាញផ្លាកចំនួនបានលក់ (Sold Badge)";
+      if (el = document.getElementById('lblSoldBadgeEnableText')) el.innerText = t.soldBadgeEnableText || "បើកបង្ហាញផ្លាក \"Sold X+\" ពេលលក់ដល់ចំនួនកំណត់";
+      if (el = document.getElementById('lblSoldBadgeThreshold')) el.innerText = t.soldBadgeThreshold || "លក់ជាក់ស្តែងបានចាប់ពីប៉ុន្មានឡើងទៅ ទើបបង្ហាញផ្លាក (Threshold)៖";
       
       updateSoldBadgeSummaryUI();
     }
@@ -1722,59 +1709,6 @@
             break;
           }
         }
-      }
-    }
-
-    // --- អនុគមន៍គណនាចំនួនបានលក់ (Sold Count) ---
-    function getProductSoldCount(p) {
-      if (!p) return 0;
-      var pid = String(p.id || '').trim();
-      // ១. ពិនិត្យតម្លៃដែល Admin បានកែសម្រួលដោយដៃ
-      var manualSold = localStorage.getItem('cv3d_sold_' + pid);
-      if (manualSold !== null && !isNaN(manualSold)) {
-        return parseInt(manualSold, 10);
-      }
-      // ២. ពិនិត្យតម្លៃពី Google Sheet (បើមាន Column sold)
-      if (p.sold !== undefined && p.sold !== null && !isNaN(p.sold)) {
-        return parseInt(p.sold, 10);
-      }
-      // ៣. តម្លៃលំនាំដើមដើម្បីតេស្តងាយស្រួល (ឧ. P-001, P-004, P-005 មានចំនួនលើសពី 10)
-      var testDefaults = {
-        'P-001': 15,
-        'P-002': 10,
-        'P-003': 8,
-        'P-004': 12,
-        'P-005': 18
-      };
-      return testDefaults[pid] || 0;
-    }
-
-    function saveSoldBadgeSettings(btn) {
-      var isEnabled = document.getElementById('setSoldBadgeEnabled') ? document.getElementById('setSoldBadgeEnabled').checked : true;
-      var minVal = document.getElementById('setSoldBadgeMin') ? parseInt(document.getElementById('setSoldBadgeMin').value, 10) : 5;
-
-      appSettings.sold_badge_enabled = isEnabled;
-      appSettings.sold_badge_min = minVal;
-
-      localStorage.setItem('app_sold_badge_enabled', isEnabled ? 'yes' : 'no');
-      localStorage.setItem('app_sold_badge_min', String(minVal));
-
-      updateSoldBadgeSummaryUI();
-
-      if (btn) {
-        btn.disabled = true;
-        btn.innerText = "✓";
-        setTimeout(function() { btn.disabled = false; btn.innerText = "💾"; }, 1000);
-      }
-      alert("✓ ការកំណត់ផ្លាក Sold Badge ត្រូវបានរក្សាទុកជោគជ័យ!");
-    }
-
-    function updateSoldBadgeSummaryUI() {
-      var summaryEl = document.getElementById('lblSoldBadgeSummary');
-      if (summaryEl) {
-        var isEn = appSettings.sold_badge_enabled;
-        var minV = appSettings.sold_badge_min || 5;
-        summaryEl.innerText = isEn ? ("ស្ថានភាព៖ បើក (ចាប់ពី " + minV + "+ ឡើងទៅ)") : "ស្ថានភាព៖ បិទ";
       }
     }
 
@@ -4137,60 +4071,6 @@ function closeModal() {
     // =========================================================
     // គ្រប់គ្រងកម្រិតរូបភាព & AUTO CENTER-CROP 1:1
     // =========================================================
-
-    // ១. អថេរផ្ទុកការកំណត់រូបភាព (ទាញយកពី LocalStorage ឬយកលំនាំដើម 1200px / 0.8)
-    var uploadImgSettings = JSON.parse(localStorage.getItem('app_image_quality_settings') || '{"maxWidth": 1200, "maxHeight": 1200, "quality": 0.8, "preset": "hd"}');
-
-    // ២. អនុគមន៍ពេលប្តូរជម្រើស Dropdown ក្នុង Settings
-    function applyImageQualityPreset(preset) {
-      if (preset === 'standard') {
-        uploadImgSettings = { maxWidth: 1000, maxHeight: 1000, quality: 0.75, preset: 'standard' };
-      } else if (preset === 'ultra') {
-        uploadImgSettings = { maxWidth: 1500, maxHeight: 1500, quality: 0.85, preset: 'ultra' };
-      } else {
-        // 'hd' - កម្រិតណែនាំ
-        uploadImgSettings = { maxWidth: 1200, maxHeight: 1200, quality: 0.80, preset: 'hd' };
-      }
-    }
-
-    // ៣. អនុគមន៍រក្សាទុកការកំណត់រូបភាពពេលចុច Icon 💾
-    function saveImageQualitySettings(btn) {
-      var selectEl = document.getElementById('setImageQualityPreset');
-      if (selectEl) {
-        applyImageQualityPreset(selectEl.value);
-      }
-      localStorage.setItem('app_image_quality_settings', JSON.stringify(uploadImgSettings));
-      updateImageQualitySummaryText();
-
-      if (btn) {
-        btn.disabled = true;
-        btn.style.opacity = "0.4";
-      }
-
-      // រក្សាទុកចូល Tab Settings ក្នុង Google Sheet
-      callBackendPost({
-        action: "updateSettings",
-        pin: adminPin,
-        settings: {
-          image_quality_preset: uploadImgSettings.preset || "hd"
-        }
-      })
-      .then(function(res) {
-        if (btn) {
-          btn.disabled = false;
-          btn.style.opacity = "1";
-        }
-        var t = (typeof i18n !== 'undefined' && i18n[currentLang]) ? i18n[currentLang] : (i18n ? i18n['km'] : {});
-        alert(t.alertImgQualitySaved || "✓ ការកំណត់កម្រិតរូបភាពត្រូវបានរក្សាទុកជោគជ័យ!");
-      })
-      .catch(function(err) {
-        if (btn) {
-          btn.disabled = false;
-          btn.style.opacity = "1";
-        }
-        alert("កំហុស៖ " + err.message);
-      });
-    }
 
     // ៤. អនុគមន៍បង្រួមរូបភាព (មាន Auto Center-Crop 1:1 សម្រាប់រូបផលិតផល)
     function compressImageFile(file, maxWidth, maxHeight, quality, isSquareCrop, callback) {
