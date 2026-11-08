@@ -160,7 +160,18 @@
         successStatus: "ស្ថានភាព៖",
         successStatusPending: "🟡 រង់ចាំពិនិត្យ",
         successCloseApp: "🚪 រួចរាល់ (បិទ App)",
-        successContinue: "🛍️ ទិញទំនិញបន្ត"
+        successContinue: "🛍️ ទិញទំនិញបន្ត",
+        soldBadgeTitle: "🛍️ បង្ហាញផ្លាកចំនួនបានលក់ជាក់ស្តែង (Sold Badge)",
+        soldBadgeEnableText: "បើកបង្ហាញផ្លាក "Sold X+" ពេលលក់ដល់ចំនួនកំណត់",
+        soldBadgeThreshold: "លក់ជាក់ស្តែងបានចាប់ពីប៉ុន្មានឡើងទៅ ទើបបង្ហាញផ្លាក (Threshold)៖",
+        soldBadgeSummaryOn: "ស្ថានភាព៖ បើក (ចាប់ពី {min}+ ឡើងទៅ)",
+        soldBadgeSummaryOff: "ស្ថានភាព៖ បិទ",
+        soldBadgeAlertSaved: "✓ ការកំណត់ផ្លាក Sold Badge ត្រូវបានរក្សាទុកជោគជ័យ!",
+        cartFreeShipBadge: "🎉 ដឹកឥតគិតថ្លៃ (ទិញលើស ${min})",
+        cartNeedMoreHint: "ទិញថែម ${need} ទៀតដើម្បីដឹកឥតគិតថ្លៃ",
+        cartItemsLabel: "ទំនិញ",
+        cartShipLabel: "ដឹក"
+
       },
       en: {
         flag: "🇬🇧",
@@ -323,7 +334,18 @@
         successStatus: "Status:",
         successStatusPending: "🟡 Pending",
         successCloseApp: "🚪 Done (Close App)",
-        successContinue: "🛍️ Continue Shopping"
+        successContinue: "🛍️ Continue Shopping",
+        soldBadgeTitle: "🛍️ Sold Count Badge Settings",
+        soldBadgeEnableText: "Enable 'Sold X+' badge when reaching threshold",
+        soldBadgeThreshold: "Minimum sold count to show badge (Threshold):",
+        soldBadgeSummaryOn: "Status: Enabled (from {min}+)",
+        soldBadgeSummaryOff: "Status: Disabled",
+        soldBadgeAlertSaved: "✓ Sold badge settings saved successfully!",
+        cartFreeShipBadge: "🎉 Free Shipping (Orders over ${min})",
+        cartNeedMoreHint: "Add ${need} more for free shipping",
+        cartItemsLabel: "Items",
+        cartShipLabel: "Shipping"
+
       },
       zh: {
         flag: "🇨🇳",
@@ -486,7 +508,18 @@
         successStatus: "状态：",
         successStatusPending: "🟡 待审核",
         successCloseApp: "🚪 完成 (关闭小程序)",
-        successContinue: "🛍️ 继续购物"
+        successContinue: "🛍️ 继续购物",
+        soldBadgeTitle: "🛍️ 已售数量徽章设置 (Sold Badge)",
+        soldBadgeEnableText: "达到设定销量时显示 "Sold X+" 徽章",
+        soldBadgeThreshold: "实际销量达到多少才显示徽章 (Threshold)：",
+        soldBadgeSummaryOn: "状态：开启 (满 {min}+ 显示)",
+        soldBadgeSummaryOff: "状态：关闭",
+        soldBadgeAlertSaved: "✓ 销量徽章设置已保存！",
+        cartFreeShipBadge: "🎉 满 ${min} 包邮 (已免运费)",
+        cartNeedMoreHint: "再买 ${need} 即可享受包邮",
+        cartItemsLabel: "商品",
+        cartShipLabel: "运费"
+
       }
     };
 
