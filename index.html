@@ -1308,17 +1308,23 @@
       } catch (e) {
         console.warn("Telegram WebApp SDK not detected");
       }
-      applyLanguageUI();
-      loadAppSettings();
-      loadCustomerData();
-      loadFilamentInventory();
-      updateCartBadge();
 
-      // ✅ ហៅបង្ហាញ Icon បណ្តាញសង្គម និងទំនាក់ទំនងនៅ Footer ពេលបើក App ដំបូង
+      applyLanguageUI();
+
+      // ✅ ១. ទាញតែទិន្នន័យចាំបាច់សម្រាប់ Customer ប៉ុណ្ណោះ (Home Page)
+      loadAppSettings();      // សម្រាប់ Banner & ថ្លៃដឹកជញ្ជូន
+      loadCustomerData();     // សម្រាប់ទំនិញលើទំព័រដើម
+
+      // ❌ ដក loadFilamentInventory() ចេញ (កុំឱ្យទាញពេលបើក App)
+      // ❌ មិនទាញទិន្នន័យ Admin ឡើយ
+
+      updateCartBadge();
+      if (typeof updateHeaderWishlistBadgeUI === 'function') {
+        updateHeaderWishlistBadgeUI();
+      }
       if (typeof renderFooterSocialLinks === 'function') {
         renderFooterSocialLinks();
       }
-      updateHeaderWishlistBadgeUI()
     };
 
     function callBackendPost(payload) {
@@ -3389,7 +3395,10 @@ function closeModal() {
       if (el = document.getElementById('adminRefreshBtn')) el.classList.remove('hidden');
       
       switchAdminTab('products');
-      loadAdminData();
+
+      // 🚀 ចាប់ផ្តើមទាញទិន្នន័យ Admin ទាំងអស់នៅពេលនេះ!
+      loadAdminData();             // ទាញបញ្ជីទំនិញ Admin & ថ្លៃដើម
+      loadFilamentInventory();     // ទាញស្តុកជ័រពណ៌ Filament
     }
 
     function switchToCustomer() {
@@ -3702,48 +3711,58 @@ function closeModal() {
       var conS = document.getElementById('adminSettingsContainer');
       var addBtn = document.getElementById('adminAddProdBtn');
 
+      // ១. កំណត់ Style នៃ Tab ទាំងអស់ឱ្យទៅជាពណ៌ប្រផេះ (Inactive) ជាមុន
       [tabP, tabO, tabS].forEach(function(b) {
         if (b) b.className = "flex-1 py-2 rounded-xl text-xs font-bold text-slate-500 transition-all";
       });
+      // លាក់ផ្ទាំងកុងតឺន័រទាំងអស់
       [conP, conO, conS].forEach(function(c) {
         if (c) c.className = "hidden space-y-3";
       });
 
+      // ២. ដំណើរការតាម Tab នីមួយៗដែល Admin បានចុច
       if (tab === 'products') {
+        // --- ផ្ទាំងទី ១៖ 📦 ផលិតផល ---
         if (tabP) tabP.className = "flex-1 py-2 rounded-xl text-xs font-bold bg-white text-slate-800 shadow-xs transition-all";
         if (conP) conP.className = "space-y-3";
         if (addBtn) addBtn.className = "text-xs bg-blue-600 text-white font-bold px-3.5 py-2 rounded-xl shadow-sm hover:bg-blue-700 active:scale-95 transition-all flex items-center gap-1.5";
+        
       } else if (tab === 'orders') {
+        // --- ផ្ទាំងទី ២៖ 📋 ការកុម្ម៉ង់ ---
         if (tabO) tabO.className = "flex-1 py-2 rounded-xl text-xs font-bold bg-white text-slate-800 shadow-xs transition-all";
         if (conO) conO.className = "space-y-3";
         if (addBtn) addBtn.className = "hidden";
+
+        // 🚀 ទាញបញ្ជី Orders លុះត្រាតែ Admin ចុចបើកមើល Tab នេះ
         loadAdminOrders();
+
       } else if (tab === 'settings') {
+        // --- ផ្ទាំងទី ៣៖ ⚙️ ការកំណត់ ---
         if (tabS) tabS.className = "flex-1 py-2 rounded-xl text-xs font-bold bg-white text-slate-800 shadow-xs transition-all";
         if (conS) conS.className = "space-y-3";
         if (addBtn) addBtn.className = "hidden";
 
-        // ១. បញ្ចូលតម្លៃថ្លៃដឹកជញ្ជូន
+        // បញ្ចូលទិន្នន័យចាស់ចូលក្នុង Form កំណត់ថ្លៃដឹកជញ្ជូន
         if (document.getElementById('setShipPP')) document.getElementById('setShipPP').value = appSettings.ship_phnom_penh;
         if (document.getElementById('setShipProv')) document.getElementById('setShipProv').value = appSettings.ship_province;
         if (document.getElementById('setFreeShipMin')) document.getElementById('setFreeShipMin').value = appSettings.free_shipping_min;
 
-        // ២. បញ្ចូលទិន្នន័យ Checkbox និង Link រូបភាព Banner ទៅក្នុង Textarea ជាមុន
+        // បញ្ចូលទិន្នន័យ Banner
         if (document.getElementById('setBannerEnabled')) document.getElementById('setBannerEnabled').checked = appSettings.banner_enabled;
         if (document.getElementById('setBannerImages')) document.getElementById('setBannerImages').value = appSettings.banner_images || '';
 
-        // ៣. បើក/បិទប្រអប់ និងបង្ហាញកូនរូបភាពតូចៗ (Thumbnails) តាមក្រោយ
         if (typeof toggleBannerInputUI === "function") toggleBannerInputUI();
         if (typeof renderBannerThumbnailsUI === "function") renderBannerThumbnailsUI();
 
-        // បង្ហាញកម្រិតគុណភាពរូបភាពដែលបាន Save ក្នុង Settings
+        // បង្ហាញកម្រិតគុណភាពរូបភាព
         if (document.getElementById('setImageQualityPreset') && uploadImgSettings.preset) {
           document.getElementById('setImageQualityPreset').value = uploadImgSettings.preset;
         }
 
-        // ៤. បង្ហាញបញ្ជីរៀបលំដាប់ Category
+        // បង្ហាញបញ្ជី Category
         if (typeof renderAdminCategoryOrderManager === "function") renderAdminCategoryOrderManager();
 
+        // បញ្ចូលទិន្នន័យបណ្តាញសង្គម
         if (document.getElementById('setSocialPhoneEnabled')) document.getElementById('setSocialPhoneEnabled').checked = appSocialSettings.phone_enabled;
         if (document.getElementById('setSocialPhoneVal')) document.getElementById('setSocialPhoneVal').value = appSocialSettings.phone_val || '';
 
@@ -3757,6 +3776,8 @@ function closeModal() {
         if (document.getElementById('setSocialFbVal')) document.getElementById('setSocialFbVal').value = appSocialSettings.fb_val || '';
 
         updateSocialSummaryUI();
+
+        // បញ្ចូលទិន្នន័យ Sold Badge
         if (document.getElementById('setSoldBadgeEnabled')) {
           document.getElementById('setSoldBadgeEnabled').checked = appSettings.sold_badge_enabled;
         }
@@ -3765,7 +3786,7 @@ function closeModal() {
         }
         updateSoldBadgeSummaryUI();
       }
-    } 
+    }
 
     function loadAdminOrders() {
       var loader = document.getElementById('adminOrdersLoader');
