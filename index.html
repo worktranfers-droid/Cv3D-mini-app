@@ -6,7 +6,7 @@
   <title>Cv3D Print Studio</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <script src="./i18n.js?v=2.1"></script>
+  <script src="./i18n.js?v=2.2"></script>
   <link href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@300;400;600;700&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
     body { font-family: 'Kantumruy Pro', 'Inter', sans-serif; }
@@ -338,16 +338,26 @@
             <div class="flex items-center justify-between">
               <span id="lblFilamentAddTitle" class="text-[11px] font-bold text-slate-700">➕ បន្ថែមពណ៌ជ័រថ្មីចូល Google Sheet៖</span>
               
-              <!-- ប៊ូតុង Icon Save 💾 គ្មាន Background ដូច Delivery Fee -->
-              <button 
-                type="button" 
-                onclick="submitNewFilament(this)" 
-                id="btnAddFilament" 
-                title="រក្សាទុកពណ៌ថ្មីចូល Google Sheet"
-                class="text-slate-600 hover:text-blue-600 active:scale-75 text-xl p-1 transition-all flex items-center justify-center rounded-lg hover:bg-slate-200/60"
-              >
-                💾
-              </button>
+              <div class="flex items-center gap-1.5">
+                <button 
+                  type="button" 
+                  id="btnCancelEditFilament"
+                  onclick="cancelEditFilament()" 
+                  title="បោះបង់ការកែប្រែ" 
+                  class="hidden text-[11px] font-bold text-slate-500 hover:text-slate-700 bg-white border border-slate-300 px-2 py-1 rounded-lg active:scale-90 shadow-2xs"
+                >
+                  ✕
+                </button>
+                <button 
+                  type="button" 
+                  onclick="submitNewFilament(this)" 
+                  id="btnAddFilament" 
+                  title="រក្សាទុកពណ៌ចូល Google Sheet"
+                  class="text-slate-600 hover:text-blue-600 active:scale-75 text-xl p-1 transition-all flex items-center justify-center rounded-lg hover:bg-slate-200/60"
+                >
+                  💾
+                </button>
+              </div>
             </div>
             
             <div class="grid grid-cols-3 gap-1.5">
@@ -2005,38 +2015,53 @@
     // --- អនុគមន៍ជំនួយសម្រាប់ស្គាល់កូដពណ៌ (Hex Color Mapper) ---
     function getSimpleColorHex(name) {
       var n = String(name || '').toLowerCase().trim();
-      
-      // ពណ៌គោលទូទៅ (អង់គ្លេស និងខ្មែរ)
-      if (n.indexOf('black') !== -1 || n.indexOf('ខ្មៅ') !== -1) return '#0f172a';
-      if (n.indexOf('white') !== -1 || n.indexOf('ស') !== -1) return '#ffffff';
-      if (n.indexOf('gold') !== -1 || n.indexOf('មាស') !== -1) return '#eab308';
-      if (n.indexOf('silver') !== -1 || n.indexOf('ប្រាក់') !== -1) return '#cbd5e1';
-      if (n.indexOf('grey') !== -1 || n.indexOf('gray') !== -1 || n.indexOf('ប្រផេះ') !== -1) return '#94a3b8';
-      if (n.indexOf('red') !== -1 || n.indexOf('ក្រហម') !== -1) return '#ef4444';
-      if (n.indexOf('blue') !== -1 || n.indexOf('ខៀវ') !== -1) return '#3b82f6';
-      if (n.indexOf('green') !== -1 || n.indexOf('បៃតង') !== -1) return '#22c55e';
-      if (n.indexOf('yellow') !== -1 || n.indexOf('លឿង') !== -1) return '#facc15';
-      if (n.indexOf('pink') !== -1 || n.indexOf('ផ្កាឈូក') !== -1) return '#ec4899';
-      if (n.indexOf('purple') !== -1 || n.indexOf('ស្វាយ') !== -1) return '#a855f7';
-      if (n.indexOf('orange') !== -1 || n.indexOf('ទឹកក្រូច') !== -1) return '#f97316';
-      if (n.indexOf('brown') !== -1 || n.indexOf('ត្នោត') !== -1) return '#78350f';
+      if (!n) return '#e2e8f0';
 
-      // ពណ៌ Filament ពិសេស
-      if (n.indexOf('rainbow') !== -1 || n.indexOf('ឥន្ទធនូ') !== -1) {
+      // ១. ប្រសិនបើអ្នកប្រើប្រាស់វាយកូដ Hex ផ្ទាល់ (ឧ. #fcd5b5, #f5cba7, #ff0000)
+      var hexMatch = n.match(/#(?:[0-9a-f]{3}){1,2}\b/i);
+      if (hexMatch) return hexMatch[0];
+
+      // ២. ពណ៌សាច់ / ស្បែក (Skin / 肤色 / 肉色 / Beige / Nude)
+      if (n.indexOf('skin') !== -1 || n.indexOf('肤色') !== -1 || n.indexOf('肉色') !== -1 || n.indexOf('beige') !== -1 || n.indexOf('nude') !== -1 || n.indexOf('សាច់') !== -1 || n.indexOf('ស្បែក') !== -1) {
+        return '#f5cba7';
+      }
+
+      // ៣. ពណ៌ Filament ពិសេស (Gradient / Texture)
+      if (n.indexOf('rainbow') !== -1 || n.indexOf('彩虹') !== -1 || n.indexOf('ឥន្ទធនូ') !== -1) {
         return 'linear-gradient(135deg, #f43f5e, #eab308, #06b6d4, #8b5cf6)';
       }
-      if (n.indexOf('marble') !== -1 || n.indexOf('ម៉ាប') !== -1) {
+      if (n.indexOf('marble') !== -1 || n.indexOf('大理石') !== -1 || n.indexOf('ម៉ាប') !== -1) {
         return 'radial-gradient(circle, #f8fafc 20%, #94a3b8 80%)';
       }
-      if (n.indexOf('copper') !== -1 || n.indexOf('ទង់ដែង') !== -1) {
+      if (n.indexOf('copper') !== -1 || n.indexOf('bronze') !== -1 || n.indexOf('铜') !== -1 || n.indexOf('ទង់ដែង') !== -1) {
         return 'linear-gradient(135deg, #fb923c, #b45309)';
       }
 
-      // ប្រសិនបើរករូបរាងពណ៌មិនឃើញ ប្រើពណ៌ប្រផេះស្រាល
+      // ៤. ពណ៌គោលទូទៅ (ខ្មៅ, ស, ប្រផេះ, ប្រាក់, មាស)
+      if (n.indexOf('black') !== -1 || n.indexOf('黑') !== -1 || n.indexOf('ខ្មៅ') !== -1) return '#0f172a';
+      if (n.indexOf('white') !== -1 || n.indexOf('白') !== -1 || n.indexOf('ស') !== -1) return '#ffffff';
+      if (n.indexOf('gold') !== -1 || n.indexOf('金') !== -1 || n.indexOf('មាស') !== -1) return '#eab308';
+      if (n.indexOf('silver') !== -1 || n.indexOf('银') !== -1 || n.indexOf('ប្រាក់') !== -1) return '#cbd5e1';
+      if (n.indexOf('grey') !== -1 || n.indexOf('gray') !== -1 || n.indexOf('灰') !== -1 || n.indexOf('ប្រផេះ') !== -1) return '#94a3b8';
+
+      // ៥. ពណ៌ធម្មជាតិ និងពណ៌ចម្រុះ
+      if (n.indexOf('fire red') !== -1 || n.indexOf('crimson') !== -1 || n.indexOf('深红') !== -1 || n.indexOf('火红') !== -1) return '#dc2626';
+      if (n.indexOf('red') !== -1 || n.indexOf('红') !== -1 || n.indexOf('ក្រហម') !== -1) return '#ef4444';
+      if (n.indexOf('sky blue') !== -1 || n.indexOf('cyan') !== -1 || n.indexOf('天蓝') !== -1 || n.indexOf('青') !== -1 || n.indexOf('ផ្ទៃមេឃ') !== -1) return '#38bdf8';
+      if (n.indexOf('navy') !== -1 || n.indexOf('dark blue') !== -1 || n.indexOf('深蓝') !== -1 || n.indexOf('藏青') !== -1) return '#1e3a8a';
+      if (n.indexOf('blue') !== -1 || n.indexOf('蓝') !== -1 || n.indexOf('ខៀវ') !== -1) return '#3b82f6';
+      if (n.indexOf('army green') !== -1 || n.indexOf('olive') !== -1 || n.indexOf('军绿') !== -1 || n.indexOf('橄榄绿') !== -1) return '#4d7c0f';
+      if (n.indexOf('green') !== -1 || n.indexOf('绿') !== -1 || n.indexOf('បៃតង') !== -1) return '#22c55e';
+      if (n.indexOf('yellow') !== -1 || n.indexOf('黄') !== -1 || n.indexOf('លឿង') !== -1) return '#facc15';
+      if (n.indexOf('sakura') !== -1 || n.indexOf('樱花') !== -1) return '#fbcfe8';
+      if (n.indexOf('pink') !== -1 || n.indexOf('粉') !== -1 || n.indexOf('ផ្កាឈូក') !== -1) return '#ec4899';
+      if (n.indexOf('purple') !== -1 || n.indexOf('violet') !== -1 || n.indexOf('紫') !== -1 || n.indexOf('ស្វាយ') !== -1) return '#a855f7';
+      if (n.indexOf('orange') !== -1 || n.indexOf('橙') !== -1 || n.indexOf('橘') !== -1 || n.indexOf('ទឹកក្រូច') !== -1) return '#f97316';
+      if (n.indexOf('brown') !== -1 || n.indexOf('coffee') !== -1 || n.indexOf('棕') !== -1 || n.indexOf('咖啡') !== -1 || n.indexOf('ត្នោត') !== -1) return '#78350f';
+
       return '#e2e8f0';
     }
 
-    // អនុគមន៍ទាញយកតម្លៃបន្ថែមពីឈ្មោះទំហំ (ឧ. "Giant (60cm) (+$5)" -> 5)
     function parseSizeExtraFee(sizeStr) {
       if (!sizeStr) return 0;
       var match = String(sizeStr).match(/\(\s*\+\s*\$?\s*([\d\.]+)\s*\)/);
@@ -5008,7 +5033,18 @@ function closeModal() {
             }
           };
 
+          // ប៊ូតុងកែប្រែពណ៌ ✏️
+          var editBtn = document.createElement('button');
+          editBtn.type = "button";
+          editBtn.className = "text-slate-400 hover:text-blue-600 p-1 text-xs font-bold transition-colors active:scale-90";
+          editBtn.innerText = "✏️";
+          editBtn.title = (t.filamentEditBtn || "✏️ កែប្រែ");
+          editBtn.onclick = function() {
+            openEditFilament(f);
+          };
+
           right.appendChild(toggleBtn);
+          right.appendChild(editBtn);
           right.appendChild(delBtn);
 
           item.appendChild(left);
@@ -5018,16 +5054,62 @@ function closeModal() {
       }
     }
 
-    // ៥. អនុគមន៍បន្ថែមជ័រពណ៌ថ្មីចូល Google Sheet (ប៊ូតុង Icon 💾)
+    // ៥. គ្រប់គ្រងបន្ថែម និងកែប្រែជ័រពណ៌ (Add & Edit Filament)
+    var editingFilamentRow = null;
+
+    function openEditFilament(f) {
+      editingFilamentRow = f.row;
+      var t = (typeof i18n !== 'undefined' && i18n[currentLang]) ? i18n[currentLang] : {};
+
+      if (document.getElementById('newFilColor')) document.getElementById('newFilColor').value = f.color || '';
+      if (document.getElementById('newFilType')) document.getElementById('newFilType').value = f.type || 'PLA+';
+      if (document.getElementById('newFilBrand')) document.getElementById('newFilBrand').value = f.brand || '';
+      if (document.getElementById('newFilPrice')) document.getElementById('newFilPrice').value = f.price || 0;
+
+      var titleEl = document.getElementById('lblFilamentAddTitle');
+      if (titleEl) {
+        var pattern = t.filamentEditTitle || "✏️ កែប្រែព័ត៌មានពណ៌ជ័រ (ជួរទី {row})៖";
+        titleEl.innerText = pattern.replace('{row}', f.row);
+      }
+
+      var cancelBtn = document.getElementById('btnCancelEditFilament');
+      if (cancelBtn) {
+        cancelBtn.classList.remove('hidden');
+        cancelBtn.innerText = "✕ " + (t.filamentCancelEditBtn || "បោះបង់");
+      }
+
+      var colorIn = document.getElementById('newFilColor');
+      if (colorIn) {
+        colorIn.focus();
+        colorIn.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }
+
+    function cancelEditFilament() {
+      editingFilamentRow = null;
+      var t = (typeof i18n !== 'undefined' && i18n[currentLang]) ? i18n[currentLang] : {};
+
+      if (document.getElementById('newFilColor')) document.getElementById('newFilColor').value = '';
+      if (document.getElementById('newFilBrand')) document.getElementById('newFilBrand').value = '';
+      if (document.getElementById('newFilPrice')) document.getElementById('newFilPrice').value = '';
+
+      var titleEl = document.getElementById('lblFilamentAddTitle');
+      if (titleEl) titleEl.innerText = t.filamentAddTitle || "➕ បន្ថែមពណ៌ជ័រថ្មីចូល Google Sheet៖";
+
+      var cancelBtn = document.getElementById('btnCancelEditFilament');
+      if (cancelBtn) cancelBtn.classList.add('hidden');
+    }
+
     function submitNewFilament(btn) {
       var colorInput = document.getElementById('newFilColor');
       var color = colorInput ? colorInput.value.trim() : "";
       var type = document.getElementById('newFilType') ? document.getElementById('newFilType').value : "PLA+";
       var brand = document.getElementById('newFilBrand') ? document.getElementById('newFilBrand').value.trim() : "Cv3D";
       var price = document.getElementById('newFilPrice') ? document.getElementById('newFilPrice').value : 0;
+      var t = (typeof i18n !== 'undefined' && i18n[currentLang]) ? i18n[currentLang] : {};
 
       if (!color) {
-        alert("សូមបញ្ចូលឈ្មោះពណ៌ជ័រ!");
+        alert(t.filamentColorPrompt || "សូមបញ្ចូលឈ្មោះពណ៌ជ័រ ឬកូដពណ៌ (#)!");
         if (colorInput) colorInput.focus();
         return;
       }
@@ -5037,19 +5119,29 @@ function closeModal() {
         btn.style.opacity = "0.4";
       }
 
-      callBackendPost({
-        action: "addFilament",
+      var isEdit = !!editingFilamentRow;
+      var actionType = isEdit ? "updateFilament" : "addFilament";
+      var payload = {
+        action: actionType,
         pin: adminPin,
         filament: { color: color, type: type, brand: brand || "Cv3D", price: price || 0, status: "In Use" }
-      })
+      };
+      if (isEdit) {
+        payload.row = editingFilamentRow;
+      }
+
+      callBackendPost(payload)
       .then(function(res) {
         if (btn) {
           btn.disabled = false;
           btn.style.opacity = "1";
         }
-        if (colorInput) colorInput.value = '';
+        cancelEditFilament();
         loadFilamentInventory();
-        alert("✓ បានបន្ថែមពណ៌ " + color + " ចូល Google Sheet ជោគជ័យ!");
+        var alertMsg = isEdit 
+          ? (t.filamentEditSavedAlert || "✓ បានកែប្រែព័ត៌មានពណ៌ជោគជ័យ!") 
+          : ("✓ បានបន្ថែមពណ៌ " + color + " ចូល Google Sheet ជោគជ័យ!");
+        alert(alertMsg);
       })
       .catch(function(err) {
         if (btn) {
