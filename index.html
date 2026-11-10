@@ -4100,12 +4100,8 @@ function closeModal() {
       var textarea = document.getElementById('setBannerImages');
       if (!container) return;
 
-      // ១. អាន Link រូបភាពពី textarea ឬពី appSettings ផ្ទាល់
+      // អានផ្ទាល់ពី Textarea តែម្ដង មិនបាច់ Fallback រូបចាស់មកវិញពេលទទេឡើយ
       var rawVal = textarea ? textarea.value.trim() : '';
-      if (!rawVal && typeof appSettings !== 'undefined' && appSettings.banner_images) {
-        rawVal = appSettings.banner_images.trim();
-        if (textarea) textarea.value = rawVal;
-      }
 
       var urls = rawVal.split(',')
         .map(function(u) { return u.trim(); })
@@ -4162,7 +4158,14 @@ function closeModal() {
 
       if (confirm("⚠️ តើអ្នកពិតជាចង់លុបរូបភាពមួយនេះចេញពី Banner មែនទេ?")) {
         urls.splice(targetIndex, 1);
-        textarea.value = urls.join(', ');
+        var remainingUrls = urls.join(', ');
+        
+        textarea.value = remainingUrls;
+        // ✅ ធ្វើបច្ចុប្បន្នភាពទិន្នន័យក្នុង Memory ភ្លាមៗ ទោះបីលុបដល់រូបចុងក្រោយក៏បាត់ស្អាត
+        if (typeof appSettings !== 'undefined') {
+          appSettings.banner_images = remainingUrls;
+        }
+
         renderBannerThumbnailsUI();
       }
     }
