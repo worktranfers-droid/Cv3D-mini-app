@@ -3604,9 +3604,15 @@ function closeModal() {
           costInfo.className = "flex flex-wrap items-center gap-1.5 mt-1 text-[10px]";
 
           if (calc && calc.totalCost > 0) {
+            // ✅ យកតម្លៃលក់ជាក់ស្តែង (បើមាន Discount យកតាមតម្លៃ Discount) ដកនឹង ថ្លៃដើម Cost ពី Sheet
+            var realProfit = salePrice - calc.totalCost;
+            var profitColorClass = realProfit >= 0 
+              ? "text-emerald-700 bg-emerald-50 border-emerald-200" 
+              : "text-rose-700 bg-rose-50 border-rose-200";
+
             costInfo.innerHTML = 
               '<span class="text-slate-600 bg-slate-100 border border-slate-200 px-1.5 py-0.5 rounded-md font-medium">' + (t.adminCostPrice || 'ថ្លៃដើម: $') + calc.totalCost.toFixed(2) + '</span>' +
-              '<span class="text-emerald-700 bg-emerald-50 border border-emerald-200 px-1.5 py-0.5 rounded-md font-bold">' + (t.adminProfit || 'ចំណេញ: $') + calc.estimatedProfit.toFixed(2) + '</span>' +
+              '<span class="font-bold border px-1.5 py-0.5 rounded-md ' + profitColorClass + '">' + (t.adminProfit || 'ចំណេញ: $') + realProfit.toFixed(2) + '</span>' +
               '<span class="text-slate-400 text-[9px]">(' + calc.printTime + 'h | ' + calc.weight + 'g)</span>';
           } else {
             costInfo.innerHTML = '<span class="text-slate-300 text-[9px] italic">' + (t.adminNoSheetData || 'គ្មានទិន្នន័យ Sheet') + '</span>';
