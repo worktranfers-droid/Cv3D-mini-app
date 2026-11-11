@@ -145,10 +145,10 @@
       </div>
     </div>
 
-    <!-- Slide Banner ផ្សព្វផ្សាយ -->
+    <!-- Slide Banner ផ្សព្វផ្សាយ (Smooth Fade Animation) -->
     <div id="promoBannerSection" class="hidden px-4 pt-3">
       <div class="w-full aspect-[16/7] rounded-2xl overflow-hidden bg-slate-100 shadow-sm relative select-none">
-        <div id="bannerSliderContainer" class="w-full h-full flex overflow-x-auto snap-x snap-mandatory scroll-smooth no-scrollbar" onscroll="handleBannerScroll()"></div>
+        <div id="bannerSliderContainer" class="w-full h-full relative"></div>
         <div id="bannerSliderDots" class="absolute bottom-2 left-1/2 -translate-x-1/2 flex items-center gap-1.5 bg-black/40 backdrop-blur-md px-2 py-0.5 rounded-full z-10"></div>
       </div>
     </div>
@@ -1595,7 +1595,6 @@
       var bannerSection = document.getElementById('promoBannerSection');
       var container = document.getElementById('bannerSliderContainer');
       var dotsContainer = document.getElementById('bannerSliderDots');
-
       if (!bannerSection || !container || !dotsContainer) return;
 
       stopBannerAutoSlide();
@@ -1618,53 +1617,49 @@
 
       for (var i = 0; i < currentBannerImages.length; i++) {
         (function(imgUrl, idx) {
-          var slide = document.createElement('div');
-          slide.className = "w-full h-full flex-shrink-0 snap-center flex items-center justify-center cursor-pointer";
-
           var img = document.createElement('img');
           img.src = imgUrl;
-          img.className = "w-full h-full object-cover rounded-2xl";
+          img.id = 'banner-slide-' + idx;
+          img.className = "absolute inset-0 w-full h-full object-cover transition-opacity duration-700 ease-in-out " + (idx === 0 ? "opacity-100 z-10" : "opacity-0 z-0");
           img.onerror = function() { 
             this.src = "https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&w=800&q=80"; 
           };
+          container.appendChild(img);
 
-          slide.appendChild(img);
-          container.appendChild(slide);
-
-          // រង្វង់ស (Dots) អាចចុចបាន
           var dot = document.createElement('button');
           dot.type = "button";
           dot.className = "h-1.5 rounded-full transition-all cursor-pointer p-0 border-0 outline-none " + (idx === 0 ? "bg-white w-4" : "bg-white/40 w-1.5");
-          dot.title = "ទៅកាន់រូបភាពទី " + (idx + 1);
-          
           dot.onclick = function(e) {
             e.stopPropagation();
             goToBannerSlide(idx);
           };
-
           dotsContainer.appendChild(dot);
         })(currentBannerImages[i], i);
       }
 
       dotsContainer.className = currentBannerImages.length > 1
-        ? "absolute bottom-2 left-1/2 -translate-x-1/2 flex items-center gap-1.5 bg-black/40 backdrop-blur-md px-2.5 py-1 rounded-full z-10"
+        ? "absolute bottom-2 left-1/2 -translate-x-1/2 flex items-center gap-1.5 bg-black/40 backdrop-blur-md px-2.5 py-1 rounded-full z-20"
         : "hidden";
 
-      // ចាប់ផ្តើម Auto-Slide ប្រសិនបើរូបភាពមានចាប់ពី ២ ឡើងទៅ
       if (currentBannerImages.length > 1) {
         initBannerAutoSlide();
       }
     }
 
     function goToBannerSlide(index) {
-      var container = document.getElementById('bannerSliderContainer');
-      if (!container || !currentBannerImages || currentBannerImages.length === 0) return;
-
+      if (!currentBannerImages || currentBannerImages.length === 0) return;
       activeBannerIndex = index;
-      container.scrollTo({
-        left: container.offsetWidth * activeBannerIndex,
-        behavior: 'smooth'
-      });
+
+      for (var i = 0; i < currentBannerImages.length; i++) {
+        var slide = document.getElementById('banner-slide-' + i);
+        if (slide) {
+          if (i === activeBannerIndex) {
+            slide.className = "absolute inset-0 w-full h-full object-cover transition-opacity duration-700 ease-in-out opacity-100 z-10";
+          } else {
+            slide.className = "absolute inset-0 w-full h-full object-cover transition-opacity duration-700 ease-in-out opacity-0 z-0";
+          }
+        }
+      }
       updateBannerDotsUI();
       restartBannerAutoSlide();
     }
