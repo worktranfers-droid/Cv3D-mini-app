@@ -4118,12 +4118,14 @@ function closeModal() {
       if (box) box.className = isCheck ? "space-y-2.5 pt-1 block" : "hidden";
     }
 
+    // --- គ្រប់គ្រង THUMBNAILS BANNER (DRAG & DROP + ព្រួញរុញមុខក្រោយ) ---
+    var draggedBannerIndex = null;
+
     function renderBannerThumbnailsUI() {
       var container = document.getElementById('bannerThumbnailsContainer');
       var textarea = document.getElementById('setBannerImages');
       if (!container) return;
 
-      // អានផ្ទាល់ពី Textarea តែម្ដង មិនបាច់ Fallback រូបចាស់មកវិញពេលទទេឡើយ
       var rawVal = textarea ? textarea.value.trim() : '';
 
       var urls = rawVal.split(',')
@@ -4135,7 +4137,6 @@ function closeModal() {
 
       for (var i = 0; i < urls.length; i++) {
         (function(imgUrl, idx) {
-          // បម្លែង Link Google Drive ឱ្យស្គាល់ជារូបភាព Thumbnail ភ្លាមៗ
           var displaySrc = imgUrl;
           if (imgUrl.indexOf('drive.google.com') !== -1) {
             var match = imgUrl.match(/[-\w]{25,}/);
@@ -4145,22 +4146,93 @@ function closeModal() {
           }
 
           var wrapper = document.createElement('div');
-          wrapper.className = "relative w-20 h-12 rounded-xl overflow-visible shadow-xs flex-shrink-0";
+          wrapper.className = "relative w-24 h-14 rounded-xl overflow-visible shadow-xs flex-shrink-0 cursor-grab active:cursor-grabbing border-2 border-transparent transition-all";
+          wrapper.setAttribute('draggable', 'true');
+          wrapper.title = "ចុចអូសដើម្បីប្តូរលំដាប់រូបភាព";
 
+          // ១. ព្រឹត្តិការណ៍ Drag & Drop (Mouse)
+          wrapper.ondragstart = function(e) {
+            draggedBannerIndex = idx;
+            wrapper.style.opacity = '0.4';
+            wrapper.classList.add('border-indigo-500');
+            if (e.dataTransfer) e.dataTransfer.effectAllowed = 'move';
+          };
+          wrapper.ondragend = function() {
+            wrapper.style.opacity = '1';
+            wrapper.classList.remove('border-indigo-500');
+            draggedBannerIndex = null;
+          };
+          wrapper.ondragover = function(e) {
+            e.preventDefault();
+            wrapper.classList.add('scale-105');
+          };
+          wrapper.ondragleave = function() {
+            wrapper.classList.remove('scale-105');
+          };
+          wrapper.ondrop = function(e) {
+            e.preventDefault();
+            wrapper.classList.remove('scale-105');
+            if (draggedBannerIndex !== null && draggedBannerIndex !== idx) {
+              moveBannerImage(draggedBannerIndex, idx);
+            }
+          };
+
+          // ២. រូបភាព Banner
           var img = document.createElement('img');
           img.src = displaySrc;
-          img.className = "w-full h-full object-cover rounded-xl border border-indigo-200 bg-white";
+          img.className = "w-full h-full object-cover rounded-xl border border-indigo-200 bg-white pointer-events-none";
           img.onerror = function() { 
             this.src = "https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&w=200&q=80"; 
           };
 
-          // ប៊ូតុងលុបរូបភាពចេញ (✕)
+          // ៣. ប៊ូតុងលុបរូបភាព (✕)
           var delBtn = document.createElement('button');
           delBtn.type = "button";
-          delBtn.className = "absolute -top-1.5 -right-1.5 w-5 h-5 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-full text-[10px] flex items-center justify-center shadow-md active:scale-90 transition-all z-10 cursor-pointer";
+          delBtn.className = "absolute -top-1.5 -right-1.5 w-5 h-5 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-full text-[10px] flex items-center justify-center shadow-md active:scale-90 transition-all z-20 cursor-pointer";
           delBtn.innerText = "✕";
           delBtn.title = "លុបរូបភាពនេះ";
-          delBtn.onclick = function() { removeBannerImageByIndex(idx); };
+          delBtn.onclick = function(e) {
+            e.stopPropagation();
+            removeBannerImageByIndex(idx);
+          };
+
+          // ៤. របារព្រួញរុញមុខ-ក្រោយ (ងាយស្រួលចុចលើទូរស័ព្ទដៃ)
+          if (urls.length > 1) {
+            var controls = document.createElement('div');
+            controls.className = "absolute bottom-1 left-1 right-1 flex justify-between items-center z-10 px-0.5 pointer-events-auto";
+
+            // ព្រួញរុញទៅមុខ (‹)
+            var prevBtn = document.createElement('button');
+            prevBtn.type = "button";
+            prevBtn.className = "w-4 h-4 bg-black/60 hover:bg-black text-white text-[9px] font-bold rounded flex items-center justify-center shadow-xs " + (idx === 0 ? "opacity-30 cursor-not-allowed" : "active:scale-90 cursor-pointer");
+            prevBtn.innerText = "‹";
+            prevBtn.disabled = (idx === 0);
+            prevBtn.onclick = function(e) {
+              e.stopPropagation();
+              moveBannerImage(idx, idx - 1);
+            };
+
+            // ស្លាកលេខរៀង (1, 2, ...)
+            var numBadge = document.createElement('span');
+            numBadge.className = "text-[9px] font-mono font-bold bg-black/60 text-white px-1 rounded";
+            numBadge.innerText = (idx + 1);
+
+            // ព្រួញរុញទៅក្រោយ (›)
+            var nextBtn = document.createElement('button');
+            nextBtn.type = "button";
+            nextBtn.className = "w-4 h-4 bg-black/60 hover:bg-black text-white text-[9px] font-bold rounded flex items-center justify-center shadow-xs " + (idx === urls.length - 1 ? "opacity-30 cursor-not-allowed" : "active:scale-90 cursor-pointer");
+            nextBtn.innerText = "›";
+            nextBtn.disabled = (idx === urls.length - 1);
+            nextBtn.onclick = function(e) {
+              e.stopPropagation();
+              moveBannerImage(idx, idx + 1);
+            };
+
+            controls.appendChild(prevBtn);
+            controls.appendChild(numBadge);
+            controls.appendChild(nextBtn);
+            wrapper.appendChild(controls);
+          }
 
           wrapper.appendChild(img);
           wrapper.appendChild(delBtn);
@@ -4169,6 +4241,36 @@ function closeModal() {
       }
     }
 
+    // អនុគمន៍ប្តូរទីតាំងរូបភាព Banner (Swap & Save ចូល Textarea)
+    function moveBannerImage(fromIndex, toIndex) {
+      var textarea = document.getElementById('setBannerImages');
+      if (!textarea) return;
+
+      var urls = textarea.value.split(',')
+        .map(function(u) { return u.trim(); })
+        .filter(function(u) { return u.length > 0; });
+
+      if (fromIndex < 0 || fromIndex >= urls.length || toIndex < 0 || toIndex >= urls.length) return;
+
+      // ប្តូរទីតាំង
+      var movedItem = urls.splice(fromIndex, 1)[0];
+      urls.splice(toIndex, 0, movedItem);
+
+      var newUrlsStr = urls.join(', ');
+      textarea.value = newUrlsStr;
+
+      if (typeof appSettings !== 'undefined') {
+        appSettings.banner_images = newUrlsStr;
+      }
+
+      // ធ្វើបច្ចុប្បន្នភាពរូបភាពភ្លាមៗ
+      renderBannerThumbnailsUI();
+      if (typeof renderPromoBanner === 'function') {
+        renderPromoBanner();
+      }
+    }
+
+    // អនុគមន៍លុបរូបភាព Banner
     function removeBannerImageByIndex(targetIndex) {
       var textarea = document.getElementById('setBannerImages');
       if (!textarea) return;
@@ -4184,15 +4286,17 @@ function closeModal() {
         var remainingUrls = urls.join(', ');
         
         textarea.value = remainingUrls;
-        // ✅ ធ្វើបច្ចុប្បន្នភាពទិន្នន័យក្នុង Memory ភ្លាមៗ ទោះបីលុបដល់រូបចុងក្រោយក៏បាត់ស្អាត
         if (typeof appSettings !== 'undefined') {
           appSettings.banner_images = remainingUrls;
         }
 
         renderBannerThumbnailsUI();
+        if (typeof renderPromoBanner === 'function') {
+          renderPromoBanner();
+        }
       }
     }
-
+    
     // អនុគមន៍រក្សាទុកថ្លៃដឹកជញ្ជូនតាម Icon 💾 លើ Header
     function saveShippingSettings(btn) {
       var inputPP = document.getElementById('setShipPP') ? document.getElementById('setShipPP').value : "";
