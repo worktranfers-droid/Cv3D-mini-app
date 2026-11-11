@@ -471,14 +471,14 @@
         <!-- ផ្ទៃបញ្ចូល Link និងរូបភាព (បង្ហាញតែពេល Checkbox បើក) -->
         <div id="bannerInputsBox" class="hidden space-y-2.5 pt-1 border-t border-indigo-100/80">
           
-          <!-- ជួរ Choose File + ប៊ូតុង 🔗 Link (ដូចផ្ទាំងបន្ថែមទំនិញ) -->
+          <!-- ជួរ Choose File + ប៊ូតុង 🔗 Link + ប្រអប់កំណត់វិនាទី ⏱️ -->
           <div class="flex items-center gap-1.5">
             <input 
               type="file" 
               id="bannerFileInput" 
               accept="image/*" 
               onchange="handleDirectImageUpload(event, 'setBannerImages', 'bannerUploadStatus')" 
-              class="flex-1 text-xs text-slate-500 file:mr-2 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-indigo-600 file:text-white hover:file:bg-indigo-700 cursor-pointer bg-white p-1 rounded-xl border border-indigo-200"
+              class="flex-1 min-w-0 text-xs text-slate-500 file:mr-2 file:py-1.5 file:px-2.5 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-indigo-600 file:text-white hover:file:bg-indigo-700 cursor-pointer bg-white p-1 rounded-xl border border-indigo-200 truncate"
             >
             <button 
               type="button" 
@@ -488,6 +488,24 @@
             >
               <span>🔗 Link</span>
             </button>
+
+            <!-- ⏱️ ប្រអប់កំណត់វិនាទីផ្លាស់ប្តូរ Banner (ស្ថិតនៅខាងស្តាំ Link) -->
+            <div class="flex items-center bg-white rounded-xl border border-indigo-200 px-2 py-1.5 flex-shrink-0 shadow-2xs" title="កំណត់រយៈពេលផ្លាស់ប្តូររូបភាព">
+              <span class="text-xs mr-1">⏱️</span>
+              <select 
+                id="setBannerSpeed" 
+                onchange="handleBannerSpeedChange(this.value)"
+                class="bg-transparent text-xs font-bold text-indigo-900 outline-none cursor-pointer"
+              >
+                <option value="2">2s</option>
+                <option value="3">3s</option>
+                <option value="4" selected>4s</option>
+                <option value="5">5s</option>
+                <option value="6">6s</option>
+                <option value="8">8s</option>
+                <option value="10">10s</option>
+              </select>
+            </div>
           </div>
 
           <span id="bannerUploadStatus" class="text-[10px] text-blue-600 font-bold hidden"></span>
@@ -1315,6 +1333,7 @@
       free_shipping_min: 20.00,
       banner_enabled: true,
       banner_images: "",
+      banner_speed: parseInt(localStorage.getItem('app_banner_speed') || '4', 10), // វិនាទីផ្លាស់ប្តូរ
       sold_badge_enabled: (localStorage.getItem('app_sold_badge_enabled') !== 'no'),
       sold_badge_min: parseInt(localStorage.getItem('app_sold_badge_min') || '5', 10)
     };
@@ -1689,11 +1708,21 @@
 
     function initBannerAutoSlide() {
       stopBannerAutoSlide();
+      var speedSec = (appSettings.banner_speed && appSettings.banner_speed >= 2) ? appSettings.banner_speed : 4;
+      var intervalMs = speedSec * 1000; // បម្លែងទៅជា Milliseconds
+
       bannerAutoSlideTimer = setInterval(function() {
         if (!currentBannerImages || currentBannerImages.length <= 1) return;
         var nextIndex = (activeBannerIndex + 1) % currentBannerImages.length;
         goToBannerSlide(nextIndex);
-      }, 4000); // វិលប្តូររូបរៀងរាល់ ៤ វិនាទី
+      }, intervalMs);
+    }
+
+    function handleBannerSpeedChange(val) {
+      var speed = parseInt(val, 10) || 4;
+      appSettings.banner_speed = speed;
+      localStorage.setItem('app_banner_speed', String(speed));
+      initBannerAutoSlide(); // ផ្លាស់ប្តូរល្បឿន Slide ភ្លាមៗ
     }
 
     function stopBannerAutoSlide() {
@@ -1731,9 +1760,12 @@
     function saveBannerSettings(btn) {
       var isBannerOn = document.getElementById('setBannerEnabled') ? document.getElementById('setBannerEnabled').checked : false;
       var bannerImgs = document.getElementById('setBannerImages') ? document.getElementById('setBannerImages').value.trim() : '';
+      var bannerSpeed = document.getElementById('setBannerSpeed') ? parseInt(document.getElementById('setBannerSpeed').value, 10) : 4;
 
       appSettings.banner_enabled = isBannerOn;
       appSettings.banner_images = bannerImgs;
+      appSettings.banner_speed = bannerSpeed;
+      localStorage.setItem('app_banner_speed', String(bannerSpeed));
 
       if (btn) {
         btn.disabled = true;
@@ -4066,6 +4098,15 @@ function closeModal() {
               banner_enabled: (String(res.banner_enabled).toLowerCase() === 'yes' || res.banner_enabled === true),
               banner_images: String(res.banner_images || '').trim()
             };
+
+            // 👉 បន្ថែមត្រង់នេះ៖ ទាញយកចំនួនវិនាទីពី Sheet មកដាក់ក្នុង appSettings និងប្រអប់ Select
+            if (res.banner_speed) {
+              appSettings.banner_speed = parseInt(res.banner_speed, 10) || 4;
+              localStorage.setItem('app_banner_speed', String(appSettings.banner_speed));
+              if (document.getElementById('setBannerSpeed')) {
+                document.getElementById('setBannerSpeed').value = String(appSettings.banner_speed);
+              }
+            }
 
             // ២. កម្រិតច្បាស់នៃរូបភាពពី Google Sheet
             if (res.image_quality_preset) {
