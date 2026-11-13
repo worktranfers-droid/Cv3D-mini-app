@@ -2906,7 +2906,10 @@ function closeModal() {
       }
 
       var t = (typeof i18n !== 'undefined' && i18n[currentLang]) ? i18n[currentLang] : (i18n ? i18n['km'] : {});
+      var zoneSelect = document.getElementById('cartDeliveryZone');
+      var isProvince = (zoneSelect && zoneSelect.value === 'province');
       var noticeBox = document.getElementById('paymentPolicyNotice');
+
       if (noticeBox) {
         if (hasCustomItem) {
           noticeBox.className = "p-2.5 rounded-xl text-xs space-y-1 bg-amber-50 border border-amber-200 text-amber-900";
@@ -2917,14 +2920,23 @@ function closeModal() {
             '<p class="text-[11px] leading-relaxed text-amber-700">' +
               (t.policyCustomDesc || 'ដោយសារទំនិញនេះឆ្លាក់ឈ្មោះផ្ទាល់ខ្លួន ខាងហាងនឹងទាក់ទងទៅលោកអ្នកដើម្បីសុំកក់ប្រាក់ ៥០% មុនពេលចាប់ផ្តើមព្រីន។') +
             '</p>';
+        } else if (isProvince) {
+          noticeBox.className = "p-2.5 rounded-xl text-xs space-y-1 bg-blue-50 border border-blue-200 text-blue-900";
+          noticeBox.innerHTML = 
+            '<div class="font-bold flex items-center gap-1 text-blue-800">' +
+              '<span>💳 ' + (t.policyProvinceTitle || 'លក្ខខណ្ឌដឹកជញ្ជូនតាមបណ្តាខេត្ត៖') + '</span>' +
+            '</div>' +
+            '<p class="text-[11px] leading-relaxed text-blue-700">' +
+              (t.policyProvinceDesc || 'សម្រាប់ការផ្ញើទៅតាមបណ្តាខេត្ត តម្រូវឱ្យទូទាត់ប្រាក់មុន (ABA / KHQR) នៅពេលខាងហាងដាក់ទំនិញជូនក្រុមហ៊ុនដឹកជញ្ជូន រួចយើងនឹងផ្ញើវិក្កយបត្រជូនភ្លាមៗ។') +
+            '</p>';
         } else {
           noticeBox.className = "p-2.5 rounded-xl text-xs space-y-1 bg-emerald-50 border border-emerald-200 text-emerald-900";
           noticeBox.innerHTML = 
             '<div class="font-bold flex items-center gap-1 text-emerald-800">' +
-              '<span>🚚 ' + (t.policyNormalTitle || 'ការទូទាត់ប្រាក់៖') + '</span>' +
+              '<span>🚚 ' + (t.policyNormalTitle || 'មិនត្រូវការបង់ប្រាក់មុនឡើយ!') + '</span>' +
             '</div>' +
             '<p class="text-[11px] leading-relaxed text-emerald-700">' +
-              (t.policyNormalDesc || 'លោកអ្នកអាចទូទាត់ប្រាក់នៅពេលទទួលបានទំនិញ (Cash on Delivery) ឬផ្ទេរប្រាក់តាម ABA ពេលដឹកដល់។') +
+              (t.policyNormalDesc || 'លោកអ្នកអាចទូទាត់ប្រាក់នៅពេលអ្នកដឹកជញ្ជូនយកទំនិញទៅដល់ផ្ទាល់ (Cash on Delivery)។') +
             '</p>';
         }
       }
