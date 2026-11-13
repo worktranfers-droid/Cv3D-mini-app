@@ -179,7 +179,11 @@
         cartShipLabel: "ដឹក",
         wishlistTitle: "❤️ ទំនិញដែលអ្នកចូលចិត្ត",
         wishlistEmpty: "អ្នកមិនទាន់បាន Like ទំនិញណាមួយនៅឡើយទេ",
-        btnWishlistTooltip: "ទំនិញដែលបាន Like"
+        btnWishlistTooltip: "ទំនិញដែលបាន Like",
+        policyNormalTitle: "មិនត្រូវការបង់ប្រាក់មុនឡើយ!",
+        policyNormalDesc: "លោកអ្នកអាចទូទាត់ប្រាក់នៅពេលអ្នកដឹកជញ្ជូនយកទំនិញទៅដល់ផ្ទាល់ (Cash on Delivery)។",
+        policyProvinceTitle: "លក្ខខណ្ឌដឹកជញ្ជូនតាមបណ្តាខេត្ត៖",
+        policyProvinceDesc: "សម្រាប់ការផ្ញើទៅតាមបណ្តាខេត្ត តម្រូវឱ្យទូទាត់ប្រាក់មុន (ABA / KHQR) នៅពេលខាងហាងដាក់ទំនិញជូនក្រុមហ៊ុនដឹកជញ្ជូន រួចយើងនឹងផ្ញើវិក្កយបត្រជូនភ្លាមៗ។",
 
       },
       en: {
@@ -362,7 +366,11 @@
         cartShipLabel: "Shipping",
         wishlistTitle: "❤️ Favorite Products",
         wishlistEmpty: "You haven't liked any products yet",
-        btnWishlistTooltip: "Liked Products"
+        btnWishlistTooltip: "Liked Products",
+        policyNormalTitle: "No Prepayment Required!",
+        policyNormalDesc: "You can pay when the courier delivers the package to you (Cash on Delivery).",
+        policyProvinceTitle: "Province Delivery Policy:",
+        policyProvinceDesc: "For provincial orders, full payment via ABA / KHQR is required upon shipping handoff. We will send you the delivery receipt right away.",
 
       },
       zh: {
@@ -545,7 +553,11 @@
         cartShipLabel: "运费",
         wishlistTitle: "❤️ 收藏商品",
         wishlistEmpty: "您尚未收藏任何商品",
-        btnWishlistTooltip: "已收藏商品"
+        btnWishlistTooltip: "已收藏商品",
+        policyNormalTitle: "无需提前付款！",
+        policyNormalDesc: "您可以在快递送达时直接付款给派送员 (货到付款 COD)。",
+        policyProvinceTitle: "外省配送付款说明：",
+        policyProvinceDesc: "发往外省需在发货前通过 ABA / KHQR 付清全款，我们将在打包寄出后发送快递单据给您。",
 
       }
     };
