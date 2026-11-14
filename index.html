@@ -254,7 +254,7 @@
     </div>
 
     <!-- កុងតឺន័រទី ៣៖ ការកំណត់ (Settings Tab) -->
-    <div id="adminSettingsContainer" class="hidden space-y-3 pb-16">
+    <div id="adminSettingsContainer" class="hidden space-y-3">
       
       <!-- ១. ប្លុករៀបលំដាប់ Category (Accordion - Auto-Save ស្រាប់) -->
       <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-xs">
@@ -1601,6 +1601,12 @@
       if (el = document.getElementById('lblWishlistTitle')) el.innerText = t.wishlistTitle || "❤️ ទំនិញដែលអ្នកចូលចិត្ត";
       if (el = document.getElementById('lblWishlistEmpty')) el.innerText = t.wishlistEmpty || "អ្នកមិនទាន់បាន Like ទំនិញណាមួយនៅឡើយទេ";
       if (el = document.getElementById('headerWishlistBtn')) el.title = t.btnWishlistTooltip || "ទំនិញដែលបាន Like";
+
+      if (el = document.getElementById('lblBackupTitle')) el.innerText = t.lblBackupTitle || "☁️ បម្រុងទុកទិន្នន័យ (Cross-Account Backup)";
+      if (el = document.getElementById('lblBackupSummary')) el.innerText = t.lblBackupSummary || "គណនី៖ cheavireak168@gmail.com";
+      if (el = document.getElementById('lblBackupDesc')) el.innerText = t.lblBackupDesc || "ថតចម្លងទិន្នន័យ Google Sheet ទាំងមូលទៅទុកក្នុងគណនីទី ២ ដោយសុវត្ថិភាព (Auto-Backup ម៉ោង 2:00 AM រាល់ថ្ងៃ)៖";
+      if (el = document.getElementById('btnBackupNowText')) el.innerText = t.btnBackupNowText || "Backup ទិន្នន័យ";
+
     }
 
     function openSellerChat() {
