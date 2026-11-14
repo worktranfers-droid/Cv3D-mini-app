@@ -186,7 +186,7 @@
         lblBackupTitle: "☁️ បម្រុងទុកទិន្នន័យ (Cross-Account Backup)",
         lblBackupSummary: "គណនី៖ cheavireak168@gmail.com",
         lblBackupDesc: "ថតចម្លងទិន្នន័យ Google Sheet ទាំងមូលទៅទុកក្នុងគណនីទី ២ ដោយសុវត្ថិភាព (Auto-Backup ម៉ោង 2:00 AM រាល់ថ្ងៃ)៖",
-        btnBackupNowText: "☁️ Backup ទិន្នន័យឥឡូវនេះ",
+        btnBackupNowText: "☁️ Backup ទិន្នន័យ",
 
       },
       en: {
@@ -376,7 +376,7 @@
         lblBackupTitle: "☁️ Data Backup (Cross-Account)",
         lblBackupSummary: "Account: cheavireak168@gmail.com",
         lblBackupDesc: "Clone the entire Google Sheet to your secondary backup account safely (Auto-Backup runs daily at 2:00 AM):",
-        btnBackupNowText: "☁️ Backup Data Now",
+        btnBackupNowText: "☁️ Backup Data",
 
       },
       zh: {
@@ -566,7 +566,7 @@
         lblBackupTitle: "☁️ 数据备份 (跨账号安全备份)",
         lblBackupSummary: "备份账号：cheavireak168@gmail.com",
         lblBackupDesc: "将整个 Google 表格安全备份至备用账号（每天凌晨 2:00 自动备份）：",
-        btnBackupNowText: "☁️ 立即备份数据",
+        btnBackupNowText: "☁️ 数据备份",
 
       }
     };
