@@ -183,6 +183,10 @@
         policyProvinceTitle: "លក្ខខណ្ឌដឹកជញ្ជូនតាមបណ្តាខេត្ត៖",
         policyProvinceDesc: "សម្រាប់ការផ្ញើទៅតាមបណ្តាខេត្ត តម្រូវឱ្យទូទាត់ប្រាក់មុន (ABA / KHQR) នៅពេលខាងហាងដាក់ទំនិញជូនក្រុមហ៊ុនដឹកជញ្ជូន រួចយើងនឹងផ្ញើវិក្កយបត្រជូនភ្លាមៗ។",
         mergedCartNotice: "បានបញ្ចូលរួមគ្នាជាមួយទំនិញក្នុងកន្ត្រករបស់អ្នក!",
+        lblBackupTitle: "☁️ បម្រុងទុកទិន្នន័យ (Cross-Account Backup)",
+        lblBackupSummary: "គណនី៖ cheavireak168@gmail.com",
+        lblBackupDesc: "ថតចម្លងទិន្នន័យ Google Sheet ទាំងមូលទៅទុកក្នុងគណនីទី ២ ដោយសុវត្ថិភាព (Auto-Backup ម៉ោង 2:00 AM រាល់ថ្ងៃ)៖",
+        btnBackupNowText: "☁️ Backup ទិន្នន័យឥឡូវនេះ",
 
       },
       en: {
@@ -369,6 +373,10 @@
         policyProvinceTitle: "Province Delivery Policy:",
         policyProvinceDesc: "For provincial orders, full payment via ABA / KHQR is required upon shipping handoff. We will send you the delivery receipt right away.",
         mergedCartNotice: "Merged with existing items in your cart!",
+        lblBackupTitle: "☁️ Data Backup (Cross-Account)",
+        lblBackupSummary: "Account: cheavireak168@gmail.com",
+        lblBackupDesc: "Clone the entire Google Sheet to your secondary backup account safely (Auto-Backup runs daily at 2:00 AM):",
+        btnBackupNowText: "☁️ Backup Data Now",
 
       },
       zh: {
@@ -555,6 +563,10 @@
         policyProvinceTitle: "外省配送付款说明：",
         policyProvinceDesc: "发往外省需在发货前通过 ABA / KHQR 付清全款，我们将在打包寄出后发送快递单据给您。",
         mergedCartNotice: "已与购物车中的商品合并！",
+        lblBackupTitle: "☁️ 数据备份 (跨账号安全备份)",
+        lblBackupSummary: "备份账号：cheavireak168@gmail.com",
+        lblBackupDesc: "将整个 Google 表格安全备份至备用账号（每天凌晨 2:00 自动备份）：",
+        btnBackupNowText: "☁️ 立即备份数据",
 
       }
     };
