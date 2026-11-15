@@ -2309,23 +2309,7 @@
       var engraveChk = document.getElementById('wantEngraveCheckbox');
 if (engraveChk) engraveChk.checked = false;
 toggleWantEngraveUI();
-      var customSection = document.getElementById('custCustomSection');
-      var nameInput = document.getElementById('custCustomNameInput');
-      if (nameInput) nameInput.value = '';
-
-      if (p.isCustom) {
-        if (customSection) customSection.className = "mb-4 bg-blue-50/70 p-3 rounded-2xl border border-blue-200 space-y-2 block";
-      } else {
-        if (customSection) customSection.className = "hidden";
-      }
-
-      updateModalLivePrice();
-      updateModalLikeBtnUI();
-
-      var modal = document.getElementById('productModal');
-      if (modal) modal.className = "fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4";
-    }
-    
+      
     function renderProductSlider(images) {
       var container = document.getElementById('modalSliderContainer');
       var dotsContainer = document.getElementById('sliderDots');
