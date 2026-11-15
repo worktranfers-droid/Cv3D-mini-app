@@ -2,7 +2,6 @@
 var i18n = {
   km: {
     flag: "🇰🇭",
-    lblWantEngrave: "✍️ តើអ្នកចង់ឆ្លាក់ឈ្មោះដែរ ឬទេ?",
     statusOpen: "កំពុងទទួលការកុម្ម៉ង់",
     searchPlaceholder: "ស្វែងរកប្រដាប់ក្មេងលេង ជើងទម្រ Fidget...",
     catAll: "ទាំងអស់",
@@ -190,7 +189,6 @@ var i18n = {
   },
   en: {
     flag: "🇬🇧",
-    lblWantEngrave: "✍️ Do you want to engrave a name?",
     statusOpen: "Accepting Orders",
     searchPlaceholder: "Search fidget toys, desk stands...",
     catAll: "All",
@@ -379,7 +377,6 @@ var i18n = {
   },
   zh: {
     flag: "🇨🇳",
-    lblWantEngrave: "✍️ 是否需要定制刻字？",
     statusOpen: "营业中 (接受预订)",
     searchPlaceholder: "搜索减压玩具、桌面支架...",
     catAll: "全部",
