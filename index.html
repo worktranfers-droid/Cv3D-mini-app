@@ -2159,7 +2159,25 @@
     }
 
     // --- 6.6 PRODUCT DETAIL MODAL & ZOOM ---
-    function openModal(p) {
+    
+    function toggleWantEngraveUI() {
+      var chk = document.getElementById('wantEngraveCheckbox');
+      var box = document.getElementById('engraveInputBox');
+      var nameInput = document.getElementById('custCustomNameInput');
+
+      if (!chk || !box) return;
+
+      if (chk.checked) {
+        box.classList.remove('hidden');
+        if (nameInput) nameInput.focus();
+      } else {
+        box.classList.add('hidden');
+        if (nameInput) nameInput.value = '';
+      }
+      updateModalLivePrice();
+    }
+
+function openModal(p) {
       selectedProduct = p;
       var engraveChk = document.getElementById('wantEngraveCheckbox');
       if (engraveChk) engraveChk.checked = false;
