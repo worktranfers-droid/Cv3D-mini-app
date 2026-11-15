@@ -1522,6 +1522,8 @@
       if (el = document.getElementById('optCustomFlat')) el.innerText = t.optCustomFlat;
       if (el = document.getElementById('optCustomPerChar')) el.innerText = t.optCustomPerChar;
       if (el = document.getElementById('optBadgeNone')) el.innerText = t.badgeNone;
+      if (el = document.getElementById('lblWantEngrave')) el.innerText = t.lblWantEngrave || "✍️ តើអ្នកចង់ឆ្លាក់ឈ្មោះដែរ ឬទេ?";
+      if (el = document.getElementById('lblCustCustomTitle')) el.innerText = t.lblCustCustomTitle || "អក្សរ/ឈ្មោះដែលត្រូវឆ្លាក់៖ *";
 
       var editId = document.getElementById('editProductId') ? document.getElementById('editProductId').value : '';
       if (el = document.getElementById('modalFormTitle')) {
@@ -2552,22 +2554,23 @@ function closeModal() {
       var finalUnitPrice = baseSalePrice + totalFee + sizeFee;
       var totalProductPrice = finalUnitPrice * (quantity || 1);
       var totalOrigPrice = (origUnitPrice + totalFee + sizeFee) * (quantity || 1);
-      var totalSaved = totalOrigPrice - totalProductPrice;
 
       if (priceEl) {
         if (disc > 0) {
           priceEl.innerHTML = 
-            '<div class="flex items-center gap-2 flex-wrap">' +
-              '<span class="text-2xl font-black text-rose-600 leading-none">$' + totalProductPrice.toFixed(2) + '</span>' +
-              '<span class="text-xs text-slate-400 line-through font-medium">$' + totalOrigPrice.toFixed(2) + '</span>' +
-              '<span class="bg-rose-50 text-rose-600 border border-rose-200 text-[10px] font-extrabold px-2 py-0.5 rounded-md">-' + Math.round(disc) + '%</span>' +
+            '<div class="flex flex-col items-end">' +
+              '<div class="flex items-baseline gap-2">' +
+                '<span class="text-xs text-slate-400 line-through font-medium">$' + totalOrigPrice.toFixed(2) + '</span>' +
+                '<span class="bg-rose-50 text-rose-600 border border-rose-200 text-[10px] font-extrabold px-2 py-0.5 rounded-md">-' + Math.round(disc) + '%</span>' +
+              '</div>' +
+              '<span class="text-2xl font-black text-rose-600 leading-none mt-0.5">$' + totalProductPrice.toFixed(2) + '</span>' +
             '</div>';
         } else {
           if (quantity > 1) {
             priceEl.innerHTML = 
-              '<div class="flex items-baseline gap-1.5">' +
-                '<span class="text-2xl font-black text-blue-600 leading-none">$' + totalProductPrice.toFixed(2) + '</span>' +
+              '<div class="flex flex-col items-end">' +
                 '<span class="text-[11px] text-slate-400 font-normal">($' + finalUnitPrice.toFixed(2) + ' x ' + quantity + ')</span>' +
+                '<span class="text-2xl font-black text-blue-600 leading-none mt-0.5">$' + totalProductPrice.toFixed(2) + '</span>' +
               '</div>';
           } else {
             priceEl.innerHTML = '<span class="text-2xl font-black text-blue-600 leading-none">$' + totalProductPrice.toFixed(2) + '</span>';
