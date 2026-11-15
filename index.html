@@ -1601,12 +1601,6 @@
       if (el = document.getElementById('lblWishlistTitle')) el.innerText = t.wishlistTitle || "❤️ ទំនិញដែលអ្នកចូលចិត្ត";
       if (el = document.getElementById('lblWishlistEmpty')) el.innerText = t.wishlistEmpty || "អ្នកមិនទាន់បាន Like ទំនិញណាមួយនៅឡើយទេ";
       if (el = document.getElementById('headerWishlistBtn')) el.title = t.btnWishlistTooltip || "ទំនិញដែលបាន Like";
-
-      if (el = document.getElementById('lblBackupTitle')) el.innerText = t.lblBackupTitle || "☁️ បម្រុងទុកទិន្នន័យ (Cross-Account Backup)";
-      if (el = document.getElementById('lblBackupSummary')) el.innerText = t.lblBackupSummary || "គណនី៖ cheavireak168@gmail.com";
-      if (el = document.getElementById('lblBackupDesc')) el.innerText = t.lblBackupDesc || "ថតចម្លងទិន្នន័យ Google Sheet ទាំងមូលទៅទុកក្នុងគណនីទី ២ ដោយសុវត្ថិភាព (Auto-Backup ម៉ោង 2:00 AM រាល់ថ្ងៃ)៖";
-      if (el = document.getElementById('btnBackupNowText')) el.innerText = t.btnBackupNowText || "Backup ទិន្នន័យ";
-
     }
 
     function openSellerChat() {
@@ -2306,10 +2300,23 @@
       }
 
       // ផ្នែកទំនិញ Custom
-      var engraveChk = document.getElementById('wantEngraveCheckbox');
-if (engraveChk) engraveChk.checked = false;
-toggleWantEngraveUI();
-      
+      var customSection = document.getElementById('custCustomSection');
+      var nameInput = document.getElementById('custCustomNameInput');
+      if (nameInput) nameInput.value = '';
+
+      if (p.isCustom) {
+        if (customSection) customSection.className = "mb-4 bg-blue-50/70 p-3 rounded-2xl border border-blue-200 space-y-2 block";
+      } else {
+        if (customSection) customSection.className = "hidden";
+      }
+
+      updateModalLivePrice();
+      updateModalLikeBtnUI();
+
+      var modal = document.getElementById('productModal');
+      if (modal) modal.className = "fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4";
+    }
+    
     function renderProductSlider(images) {
       var container = document.getElementById('modalSliderContainer');
       var dotsContainer = document.getElementById('sliderDots');
@@ -2466,14 +2473,11 @@ function closeModal() {
       var priceEl = document.getElementById('modalPrice');
       var feeBadge = document.getElementById('custCustomFeeBadge');
 
-      if (titleEl) titleEl.innerText = t.lblCustCustomTitle;
+      if (titleEl) titleEl.innerText = t.lblCustomTitle;
 
       var totalFee = 0;
 
-      // ពិនិត្យមើលថាតើអតិថិជនបានធីកជ្រើសរើសឆ្លាក់ឈ្មោះដែរ ឬទេ?
-      var wantEngrave = document.getElementById('wantEngraveCheckbox') ? document.getElementById('wantEngraveCheckbox').checked : false;
-
-      if (selectedProduct.isCustom && wantEngrave) {
+      if (selectedProduct.isCustom) {
         var isPerChar = (selectedProduct.customMode === 'per_char') || 
                         ((selectedProduct.title || '').toLowerCase().indexOf('keychain') !== -1);
 
@@ -2508,21 +2512,17 @@ function closeModal() {
               : '<span class="text-slate-500">' + t.customNoticeFixedNote + '</span>';
           }
         }
-      } else {
-        // ប្រសិនបើមិនមែនជាទំនិញ Custom ឬអតិថិជនមិនបានធីកឆ្លាក់ឈ្មោះ ថ្លៃសេវាគឺ 0
-        totalFee = 0;
-        if (feeBadge) feeBadge.innerText = t.customFree || "ឥតគិតថ្លៃ";
-        if (noticeEl) noticeEl.innerHTML = '';
       }
 
       if (countEl) countEl.innerText = charLength + t.customCharUnit;
 
-      // ទាញយកតម្លៃបន្ថែមពីទំហំដែលបានរើស (ឧ. Giant (+$5) -> 5)
+      // ✅ ទាញយកតម្លៃបន្ថែមពីទំហំដែលបានរើស (ឧ. Giant (+$5) -> 5)
       var sizeFee = parseSizeExtraFee(selectedSize);
 
       var finalUnitPrice = baseSalePrice + totalFee + sizeFee;
       var totalProductPrice = finalUnitPrice * (quantity || 1);
       var totalOrigPrice = (origUnitPrice + totalFee + sizeFee) * (quantity || 1);
+      var totalSaved = totalOrigPrice - totalProductPrice;
 
       if (priceEl) {
         if (disc > 0) {
@@ -2795,9 +2795,7 @@ function closeModal() {
         } else {
           finalUnitPrice += (Number(selectedProduct.customFee) || 0);
         }
-    } else {
-      customText = ""; // គ្មានការឆ្លាក់ឈ្មោះ
-    }
+      }
 
       var itemTitleDisplay = selectedProduct.title;
       var disc = selectedProduct.discountPercent || 0;
@@ -6134,23 +6132,6 @@ function closeModal() {
         alert("Error: " + err.message);
       });
     }
-
-    function toggleWantEngraveUI() {
-  var chk = document.getElementById('wantEngraveCheckbox');
-  var box = document.getElementById('engraveInputBox');
-  var nameInput = document.getElementById('custCustomNameInput');
-
-  if (!chk || !box) return;
-
-  if (chk.checked) {
-    box.classList.remove('hidden');
-    if (nameInput) nameInput.focus();
-  } else {
-    box.classList.add('hidden');
-    if (nameInput) nameInput.value = ''; // សម្អាតអក្សរចាស់ចេញពេលមិនឆ្លាក់
-  }
-  updateModalLivePrice(); // គណនាតម្លៃសរុបឡើងវិញភ្លាមៗ
-}
     
   </script>
 </body>
