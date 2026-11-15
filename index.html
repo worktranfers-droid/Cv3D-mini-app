@@ -800,24 +800,37 @@
           <div id="sizeContainer" class="flex gap-2"></div>
         </div>
 
-        <!-- ផ្នែកសម្រាប់ទំនិញ Custom (ឆ្លាក់ឈ្មោះ) -->
-        <div id="custCustomSection" class="hidden bg-blue-50/70 p-3 rounded-2xl border border-blue-200 space-y-2">
-          <div class="flex justify-between items-center">
-            <label id="lblCustCustomTitle" class="text-xs font-bold text-blue-900">✍️ បញ្ចូលឈ្មោះ/អក្សរដែលចង់ឆ្លាក់៖ *</label>
-            <span id="custCustomFeeBadge" class="text-[10px] font-bold bg-blue-200 text-blue-800 px-2 py-0.5 rounded-full"></span>
-          </div>
-          
-          <input 
-            id="custCustomNameInput" 
-            type="text" 
-            oninput="updateModalLivePrice()" 
-            placeholder="ឧ. Milo, Lucky, ឬឈ្មោះរបស់អ្នក..." 
-            class="w-full px-3 py-2 bg-white border border-blue-300 rounded-xl text-xs outline-none focus:ring-2 focus:ring-blue-500 shadow-xs"
-          >
-          
-          <div class="flex justify-between items-center text-[11px] pt-0.5">
-            <span id="charCountNotice" class="text-slate-500 font-medium"></span>
-            <span id="charCountDisplay" class="font-mono font-bold text-blue-600 bg-white px-2 py-0.5 rounded-md border border-blue-100">0 តួអក្សរ</span>
+        <!-- ផ្នែកសម្រាប់ទំនិញ Custom (ឆ្លាក់ឈ្មោះ) ជាមួយជម្រើសបើក/បិទ -->
+        <div id="custCustomSection" class="hidden bg-blue-50/70 p-3 rounded-2xl border border-blue-200 space-y-2.5">
+          <label class="flex items-center gap-2 cursor-pointer select-none">
+            <input 
+              id="wantEngraveCheckbox" 
+              type="checkbox" 
+              onchange="toggleWantEngraveUI()" 
+              class="w-4 h-4 text-blue-600 rounded cursor-pointer"
+            >
+            <span id="lblWantEngrave" class="text-xs font-bold text-blue-900">✍️ តើអ្នកចង់ឆ្លាក់ឈ្មោះដែរ ឬទេ?</span>
+          </label>
+
+          <!-- ប្រអប់បញ្ចូលឈ្មោះ (លាក់ទុកបើមិនបានធីក) -->
+          <div id="engraveInputBox" class="hidden space-y-2 pt-1 border-t border-blue-200/60">
+            <div class="flex justify-between items-center pt-1">
+              <span class="text-[11px] font-bold text-blue-800">អក្សរ/ឈ្មោះដែលត្រូវឆ្លាក់៖ *</span>
+              <span id="custCustomFeeBadge" class="text-[10px] font-bold bg-blue-200 text-blue-800 px-2 py-0.5 rounded-full"></span>
+            </div>
+            
+            <input 
+              id="custCustomNameInput" 
+              type="text" 
+              oninput="updateModalLivePrice()" 
+              placeholder="ឧ. Milo, Lucky, ឬឈ្មោះរបស់អ្នក..." 
+              class="w-full px-3 py-2 bg-white border border-blue-300 rounded-xl text-xs outline-none focus:ring-2 focus:ring-blue-500 shadow-xs"
+            >
+            
+            <div class="flex justify-between items-center text-[11px] pt-0.5">
+              <span id="charCountNotice" class="text-slate-500 font-medium"></span>
+              <span id="charCountDisplay" class="font-mono font-bold text-blue-600 bg-white px-2 py-0.5 rounded-md border border-blue-100">0 តួអក្សរ</span>
+            </div>
           </div>
         </div>
 
@@ -2148,6 +2161,9 @@
     // --- 6.6 PRODUCT DETAIL MODAL & ZOOM ---
     function openModal(p) {
       selectedProduct = p;
+      var engraveChk = document.getElementById('wantEngraveCheckbox');
+      if (engraveChk) engraveChk.checked = false;
+      toggleWantEngraveUI();
       selectedColor = (p.colors && p.colors.length > 0) ? p.colors[0] : "Standard";
       selectedSize = (p.sizes && p.sizes.length > 0) ? p.sizes[0] : "Standard";
       quantity = 1;
@@ -2477,7 +2493,9 @@ function closeModal() {
 
       var totalFee = 0;
 
-      if (selectedProduct.isCustom) {
+      var wantEngrave = document.getElementById('wantEngraveCheckbox') ? document.getElementById('wantEngraveCheckbox').checked : false;
+
+      if (selectedProduct.isCustom && wantEngrave) {
         var isPerChar = (selectedProduct.customMode === 'per_char') || 
                         ((selectedProduct.title || '').toLowerCase().indexOf('keychain') !== -1);
 
