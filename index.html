@@ -2489,7 +2489,6 @@ function closeModal() {
       var t = i18n[currentLang] || i18n['km'];
       var origUnitPrice = Number(selectedProduct.price) || 0;
       var disc = selectedProduct.discountPercent || 0;
-      var baseSalePrice = selectedProduct.baseUnitPrice || origUnitPrice;
 
       var nameInput = document.getElementById('custCustomNameInput');
       var customText = nameInput ? nameInput.value.trim() : "";
@@ -2501,10 +2500,9 @@ function closeModal() {
       var priceEl = document.getElementById('modalPrice');
       var feeBadge = document.getElementById('custCustomFeeBadge');
 
-      if (titleEl) titleEl.innerText = t.lblCustomTitle;
+      if (titleEl) titleEl.innerText = t.lblCustCustomTitle;
 
-      var totalFee = 0;
-
+      var flatRate = 0;
       var wantEngrave = document.getElementById('wantEngraveCheckbox') ? document.getElementById('wantEngraveCheckbox').checked : false;
 
       if (selectedProduct.isCustom && wantEngrave) {
@@ -2521,16 +2519,15 @@ function closeModal() {
           }
 
           if (charLength <= baseLimit) {
-            totalFee = 0;
+            flatRate = 0;
             if (noticeEl) noticeEl.innerHTML = '<span class="text-emerald-600 font-medium">' + t.customNoticeFreeLimit + baseLimit + (currentLang === 'zh' ? ' 个字)' : ' chars)') + '</span>';
           } else {
             var extraChars = charLength - baseLimit;
-            totalFee = extraChars * rate;
-            if (noticeEl) noticeEl.innerHTML = '<span class="text-amber-600 font-bold">' + t.customNoticeExtraChars + extraChars + t.customNoticeChars + totalFee.toFixed(2) + ')</span>';
+            flatRate = extraChars * rate;
+            if (noticeEl) noticeEl.innerHTML = '<span class="text-amber-600 font-bold">' + t.customNoticeExtraChars + extraChars + t.customNoticeChars + flatRate.toFixed(2) + ')</span>';
           }
         } else {
-          var flatRate = Number(selectedProduct.customFee) || 0;
-          totalFee = (charLength > 0) ? flatRate : 0;
+          flatRate = Number(selectedProduct.customFee) || 0;
 
           if (feeBadge) {
             feeBadge.innerText = flatRate > 0 ? "+$" + flatRate.toFixed(2) + " " + t.customFeeEngraving : t.customFree;
@@ -2546,30 +2543,16 @@ function closeModal() {
 
       if (countEl) countEl.innerText = charLength + t.customCharUnit;
 
-      // ✅ ទាញយកតម្លៃបន្ថែមពីទំហំដែលបានរើស (ឧ. Giant (+$5) -> 5)
       var sizeFee = parseSizeExtraFee(selectedSize);
 
-      var originalFee = 0;
-      var flatRateSale = Number(selectedProduct.customFee) || 0;
-      var flatRateOrig = disc > 0 && disc < 100 ? flatRateSale / (1 - disc / 100) : flatRateSale;
+      // ✅ យកតម្លៃដើមបូកបញ្ចូលគ្នា (តម្លៃទំនិញ + សេវាឆ្លាក់ + ទំហំ) មុននឹងបញ្ចុះតម្លៃ
+      var origUnitTotal = origUnitPrice + ((selectedProduct.isCustom && wantEngrave) ? flatRate : 0) + sizeFee;
       
-      if (selectedProduct.isCustom && wantEngrave) {
-        var isPerChar = (selectedProduct.customMode === 'per_char') || ((selectedProduct.title || '').toLowerCase().indexOf('keychain') !== -1);
-        if (!isPerChar) {
-          originalFee = (charLength > 0) ? flatRateOrig : 0;
-        } else {
-          originalFee = totalFee;
-        }
-      }
+      // ✅ គណនាតម្លៃលក់បន្ទាប់ពីកាត់បញ្ចុះ (%) លើតម្លៃសរុប
+      var finalUnitTotal = (disc > 0 && disc < 100) ? origUnitTotal * (1 - disc / 100) : origUnitTotal;
 
-      var sizeFee = parseSizeExtraFee(selectedSize);
-
-      var finalUnitPrice = baseSalePrice + totalFee + sizeFee;
-      var originalUnitPriceWithFee = origUnitPrice + originalFee + sizeFee;
-
-      var totalProductPrice = finalUnitPrice * (quantity || 1);
-      var totalOrigPrice = originalUnitPriceWithFee * (quantity || 1);
-      var totalSaved = totalOrigPrice - totalProductPrice;
+      var totalProductPrice = finalUnitTotal * (quantity || 1);
+      var totalOrigPrice = origUnitTotal * (quantity || 1);
 
       if (priceEl) {
         if (disc > 0) {
@@ -2585,7 +2568,7 @@ function closeModal() {
           if (quantity > 1) {
             priceEl.innerHTML = 
               '<div class="flex flex-col items-end">' +
-                '<span class="text-[11px] text-slate-400 font-normal">($' + finalUnitPrice.toFixed(2) + ' x ' + quantity + ')</span>' +
+                '<span class="text-[11px] text-slate-400 font-normal">($' + finalUnitTotal.toFixed(2) + ' x ' + quantity + ')</span>' +
                 '<span class="text-2xl font-black text-blue-600 leading-none mt-0.5">$' + totalProductPrice.toFixed(2) + '</span>' +
               '</div>';
           } else {
@@ -2823,8 +2806,10 @@ function closeModal() {
       if (!selectedProduct) return;
 
       var customText = "";
-      var finalUnitPrice = selectedProduct.baseUnitPrice || selectedProduct.price;
-      finalUnitPrice += parseSizeExtraFee(selectedSize);
+      var origUnitPrice = Number(selectedProduct.price) || 0;
+      var disc = selectedProduct.discountPercent || 0;
+      var sizeFee = parseSizeExtraFee(selectedSize);
+      var flatRate = 0;
 
       var wantEngrave = document.getElementById('wantEngraveCheckbox') ? document.getElementById('wantEngraveCheckbox').checked : false;
 
@@ -2841,17 +2826,20 @@ function closeModal() {
         if (mode === 'per_char') {
           if (customText.length > 5) {
             var rate = Number(selectedProduct.customFee) || 0.50;
-            finalUnitPrice += (customText.length - 5) * rate;
+            flatRate = (customText.length - 5) * rate;
           }
         } else {
-          finalUnitPrice += (Number(selectedProduct.customFee) || 0);
+          flatRate = Number(selectedProduct.customFee) || 0;
         }
       } else {
         customText = "";
       }
 
+      // ✅ គណនាតម្លៃសរុបក្នុង ១ ឯកតា ផ្អែកលើតម្លៃដើមសរុបរួចទើបបញ្ចុះតម្លៃ
+      var origUnitTotal = origUnitPrice + flatRate + sizeFee;
+      var finalUnitPrice = (disc > 0 && disc < 100) ? origUnitTotal * (1 - disc / 100) : origUnitTotal;
+
       var itemTitleDisplay = selectedProduct.title;
-      var disc = selectedProduct.discountPercent || 0;
       if (disc > 0 && disc < 100) {
         itemTitleDisplay += " [-" + Math.round(disc) + "%]";
       }
@@ -2882,34 +2870,18 @@ function closeModal() {
         });
       }
 
-      // ក. រក្សាទុកចូល Storage និង Update Badge
       saveCartToStorage();
       updateCartBadge();
-
-      // ខ. បិទផ្ទាំងទំនិញភ្លាមៗ ដោយមិនរុញអេក្រង់ទៅលើ (នៅកន្លែងដដែល)
       closeModal();
 
-      // គ. ផ្តល់សញ្ញារំញ័រទូរសព្ទតិចៗ (Telegram Haptic)
       try {
         if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.HapticFeedback) {
           window.Telegram.WebApp.HapticFeedback.notificationOccurred('success');
         }
       } catch(e) {}
 
-      // ឃ. បង្ហាញ Toast ជូនដំណឹងស្រាលមួយ
       var t = (typeof i18n !== 'undefined' && i18n[currentLang]) ? i18n[currentLang] : {};
       showCartToast(t.addedToCartNotice || "✓ បានដាក់ចូលកន្ត្រកជោគជ័យ!");
-    }
-      
-    // --- ២. ចុច "⚡ ទិញឥឡូវនេះ" ទើបបើកផ្ទាំងកន្ត្រក Checkout តែម្តង ---
-    function buyNowDirectly() {
-      var hadExistingItems = (cart && cart.length > 0);
-      addToCart();
-      openCartModal();
-      if (hadExistingItems) {
-        var t = (typeof i18n !== 'undefined' && i18n[currentLang]) ? i18n[currentLang] : {};
-        showCartToast(t.mergedCartNotice || "✓ បានបញ្ចូលរួមគ្នាជាមួយទំនិញក្នុងកន្ត្រករបស់អ្នក!");
-      }
     }
 
     function updateCartBadge() {
