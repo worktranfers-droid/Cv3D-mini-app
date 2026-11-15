@@ -2172,6 +2172,9 @@
 
 function openModal(p) {
       selectedProduct = p;
+      var engraveChk = document.getElementById('wantEngraveCheckbox');
+      if (engraveChk) engraveChk.checked = false;
+      toggleWantEngraveUI();
       selectedColor = (p.colors && p.colors.length > 0) ? p.colors[0] : "Standard";
       selectedSize = (p.sizes && p.sizes.length > 0) ? p.sizes[0] : "Standard";
       quantity = 1;
@@ -2203,60 +2206,6 @@ function openModal(p) {
       if (el = document.getElementById('modalDesc')) el.innerText = p.desc;
       if (el = document.getElementById('qtyVal')) el.innerText = quantity;
 
-      // ── ពិនិត្យប្រភេទ Custom (Keychain vs Flat Fee) ──
-      var customSection = document.getElementById('custCustomSection');
-      var nameInput = document.getElementById('custCustomNameInput');
-      if (nameInput) nameInput.value = '';
-
-      if (p.isCustom) {
-        if (customSection) customSection.className = "mb-4 bg-blue-50/70 p-3 rounded-2xl border border-blue-200 space-y-2.5 block";
-
-        var isPerChar = (p.customMode === 'per_char') || ((p.title || '').toLowerCase().indexOf('keychain') !== -1);
-        var engraveLabelRow = document.getElementById('wantEngraveLabelRow'); // ជួរប្រអប់ធីក
-        var engraveBox = document.getElementById('engraveInputBox');         // ប្រអប់វាយអក្សរ
-
-        if (isPerChar) {
-          // 🔑 សម្រាប់ Keychain: បង្ហាញប្រអប់វាយអក្សរផ្ទាល់ មិនបាច់មានប្រអប់ធីកទេ
-          if (engraveLabelRow) engraveLabelRow.classList.add('hidden');
-          if (engraveBox) engraveBox.classList.remove('hidden');
-        } else {
-          // 🛡️ សម្រាប់តម្លៃថេរ (Flat Fee): បង្ហាញប្រអប់ធីក និងលាក់ប្រអប់វាយអក្សរទុកសិន
-          if (engraveLabelRow) engraveLabelRow.classList.remove('hidden');
-          if (engraveBox) engraveBox.classList.add('hidden');
-          var engraveChk = document.getElementById('wantEngraveCheckbox');
-          if (engraveChk) engraveChk.checked = false;
-        }
-      } else {
-        if (customSection) customSection.className = "hidden";
-      }
-
-      updateModalLivePrice();
-      updateModalLikeBtnUI();
-
-      var modal = document.getElementById('productModal');
-      if (modal) modal.className = "fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4";}
-
-      // ========================================================
-      // 🎬 បន្ថែមត្រង់នេះ៖ បង្ហាញ ឬលាក់ប៊ូតុងវីដេអូ TikTok លើរូបភាព
-      // ========================================================
-      var vidBtn = document.getElementById('modalVideoBtn');
-      if (vidBtn) {
-        if (p.videoUrl && String(p.videoUrl).trim().length > 0) {
-          vidBtn.classList.remove('hidden');
-          vidBtn.dataset.videoUrl = String(p.videoUrl).trim();
-        } else {
-          vidBtn.classList.add('hidden');
-          vidBtn.dataset.videoUrl = '';
-        }
-      }
-
-      var el;
-      if (el = document.getElementById('modalTitle')) el.innerText = p.title;
-      if (el = document.getElementById('modalCategory')) el.innerText = p.category.toUpperCase();
-      if (el = document.getElementById('modalDesc')) el.innerText = p.desc;
-      if (el = document.getElementById('qtyVal')) el.innerText = quantity;
-
-      // ✅ បង្ហាញផ្លាក Sold Badge នៅចុងខាងស្តាំនៃ Category
       var soldBadgeEl = document.getElementById('modalSoldBadge');
       if (soldBadgeEl) {
         var count = getProductSoldCount(p);
@@ -2272,7 +2221,6 @@ function openModal(p) {
         }
       }
 
-      // ផ្នែក Render ប៊ូតុងពណ៌ (មិនលោត ឬរលាក់ទំហំប៊ូតុងពេលចុច)
       var colorBox = document.getElementById('colorContainer');
       if (colorBox) {
         colorBox.innerHTML = '';
@@ -2292,7 +2240,6 @@ function openModal(p) {
             dotWrapper.className = "flex items-center -space-x-1 flex-shrink-0";
 
             if (parts.length > 1) {
-              // ករណីឈុត ២ ពណ៌ (បង្ហាញរង្វង់ ២ គ្រាប់ត្រួតគ្នា)
               var c1 = parts[0].trim().toLowerCase();
               var c2 = parts[1].split('(')[0].trim().toLowerCase();
 
@@ -2311,7 +2258,6 @@ function openModal(p) {
               dotWrapper.appendChild(dot1);
               dotWrapper.appendChild(dot2);
             } else {
-              // ករណី ១ ពណ៌ទោល (បង្ហាញរង្វង់ ១ គ្រាប់)
               var singleDot = document.createElement('span');
               singleDot.className = "w-3.5 h-3.5 rounded-full border border-black/10 shadow-2xs";
               var bgSingle = getSimpleColorHex(col.toLowerCase());
@@ -2322,7 +2268,6 @@ function openModal(p) {
             }
 
             var labelSpan = document.createElement('span');
-            // មកប្រើកូដសាមញ្ញនេះវិញ (បង្ហាញឈ្មោះអង់គ្លេសពី Google Sheet ផ្ទាល់)
             labelSpan.innerText = col; 
 
             btn.appendChild(dotWrapper);
@@ -2342,7 +2287,6 @@ function openModal(p) {
         }
       }
 
-      // ផ្នែកជ្រើសរើសទំហំ (Size) - គាំទ្រការបូកតម្លៃបន្ថែម (+ $X)
       var sizeBox = document.getElementById('sizeContainer');
       if (sizeBox) {
         sizeBox.innerHTML = '';
@@ -2363,8 +2307,6 @@ function openModal(p) {
                 sChildren[k].className = "text-xs px-3 py-1.5 rounded-xl border border-slate-200 text-slate-600 font-medium hover:bg-slate-50 transition-colors";
               }
               btn.className = "text-xs px-3 py-1.5 rounded-xl border border-blue-600 bg-blue-50 text-blue-600 font-bold transition-colors";
-              
-              // ✅ ហៅគណនាតម្លៃសរុប Live Price ឡើងវិញភ្លាមៗពេលប្តូរទំហំ
               updateModalLivePrice();
             };
             sizeBox.appendChild(btn);
@@ -2372,13 +2314,26 @@ function openModal(p) {
         }
       }
 
-      // ផ្នែកទំនិញ Custom
       var customSection = document.getElementById('custCustomSection');
       var nameInput = document.getElementById('custCustomNameInput');
       if (nameInput) nameInput.value = '';
 
       if (p.isCustom) {
-        if (customSection) customSection.className = "mb-4 bg-blue-50/70 p-3 rounded-2xl border border-blue-200 space-y-2 block";
+        if (customSection) customSection.className = "mb-4 bg-blue-50/70 p-3 rounded-2xl border border-blue-200 space-y-2.5 block";
+
+        var isPerChar = (p.customMode === 'per_char') || ((p.title || '').toLowerCase().indexOf('keychain') !== -1);
+        var engraveLabelRow = document.getElementById('wantEngraveLabelRow');
+        var engraveBox = document.getElementById('engraveInputBox');
+
+        if (isPerChar) {
+          if (engraveLabelRow) engraveLabelRow.classList.add('hidden');
+          if (engraveBox) engraveBox.classList.remove('hidden');
+        } else {
+          if (engraveLabelRow) engraveLabelRow.classList.remove('hidden');
+          if (engraveBox) engraveBox.classList.add('hidden');
+          var engraveChk = document.getElementById('wantEngraveCheckbox');
+          if (engraveChk) engraveChk.checked = false;
+        }
       } else {
         if (customSection) customSection.className = "hidden";
       }
@@ -2389,7 +2344,7 @@ function openModal(p) {
       var modal = document.getElementById('productModal');
       if (modal) modal.className = "fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4";
     }
-    }
+    
     function renderProductSlider(images) {
       var container = document.getElementById('modalSliderContainer');
       var dotsContainer = document.getElementById('sliderDots');
