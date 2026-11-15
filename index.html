@@ -2275,10 +2275,6 @@
         }
       }
 
-      var engraveChk = document.getElementById('wantEngraveCheckbox');
-      if (engraveChk) engraveChk.checked = false;
-      toggleWantEngraveUI();
-
       // ផ្នែកជ្រើសរើសទំហំ (Size) - គាំទ្រការបូកតម្លៃបន្ថែម (+ $X)
       var sizeBox = document.getElementById('sizeContainer');
       if (sizeBox) {
@@ -2310,6 +2306,9 @@
       }
 
       // ផ្នែកទំនិញ Custom
+      var engraveChk = document.getElementById('wantEngraveCheckbox');
+if (engraveChk) engraveChk.checked = false;
+toggleWantEngraveUI();
       var customSection = document.getElementById('custCustomSection');
       var nameInput = document.getElementById('custCustomNameInput');
       if (nameInput) nameInput.value = '';
