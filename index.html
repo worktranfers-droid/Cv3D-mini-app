@@ -800,37 +800,24 @@
           <div id="sizeContainer" class="flex gap-2"></div>
         </div>
 
-        <!-- ផ្នែកសម្រាប់ទំនិញ Custom (ឆ្លាក់ឈ្មោះ) ជាមួយជម្រើសបើក/បិទ -->
-        <div id="custCustomSection" class="hidden bg-blue-50/70 p-3 rounded-2xl border border-blue-200 space-y-2.5">
-          <label class="flex items-center gap-2 cursor-pointer select-none">
-            <input 
-              id="wantEngraveCheckbox" 
-              type="checkbox" 
-              onchange="toggleWantEngraveUI()" 
-              class="w-4 h-4 text-blue-600 rounded cursor-pointer"
-            >
-            <span id="lblWantEngrave" class="text-xs font-bold text-blue-900">✍️ តើអ្នកចង់ឆ្លាក់ឈ្មោះដែរ ឬទេ?</span>
-          </label>
-
-          <!-- ប្រអប់បញ្ចូលឈ្មោះ (លាក់ទុកបើមិនបានធីក) -->
-          <div id="engraveInputBox" class="hidden space-y-2 pt-1 border-t border-blue-200/60">
-            <div class="flex justify-between items-center pt-1">
-              <span class="text-[11px] font-bold text-blue-800">អក្សរ/ឈ្មោះដែលត្រូវឆ្លាក់៖ *</span>
-              <span id="custCustomFeeBadge" class="text-[10px] font-bold bg-blue-200 text-blue-800 px-2 py-0.5 rounded-full"></span>
-            </div>
-            
-            <input 
-              id="custCustomNameInput" 
-              type="text" 
-              oninput="updateModalLivePrice()" 
-              placeholder="ឧ. Milo, Lucky, ឬឈ្មោះរបស់អ្នក..." 
-              class="w-full px-3 py-2 bg-white border border-blue-300 rounded-xl text-xs outline-none focus:ring-2 focus:ring-blue-500 shadow-xs"
-            >
-            
-            <div class="flex justify-between items-center text-[11px] pt-0.5">
-              <span id="charCountNotice" class="text-slate-500 font-medium"></span>
-              <span id="charCountDisplay" class="font-mono font-bold text-blue-600 bg-white px-2 py-0.5 rounded-md border border-blue-100">0 តួអក្សរ</span>
-            </div>
+        <!-- ផ្នែកសម្រាប់ទំនិញ Custom (ឆ្លាក់ឈ្មោះ) -->
+        <div id="custCustomSection" class="hidden bg-blue-50/70 p-3 rounded-2xl border border-blue-200 space-y-2">
+          <div class="flex justify-between items-center">
+            <label id="lblCustCustomTitle" class="text-xs font-bold text-blue-900">✍️ បញ្ចូលឈ្មោះ/អក្សរដែលចង់ឆ្លាក់៖ *</label>
+            <span id="custCustomFeeBadge" class="text-[10px] font-bold bg-blue-200 text-blue-800 px-2 py-0.5 rounded-full"></span>
+          </div>
+          
+          <input 
+            id="custCustomNameInput" 
+            type="text" 
+            oninput="updateModalLivePrice()" 
+            placeholder="ឧ. Milo, Lucky, ឬឈ្មោះរបស់អ្នក..." 
+            class="w-full px-3 py-2 bg-white border border-blue-300 rounded-xl text-xs outline-none focus:ring-2 focus:ring-blue-500 shadow-xs"
+          >
+          
+          <div class="flex justify-between items-center text-[11px] pt-0.5">
+            <span id="charCountNotice" class="text-slate-500 font-medium"></span>
+            <span id="charCountDisplay" class="font-mono font-bold text-blue-600 bg-white px-2 py-0.5 rounded-md border border-blue-100">0 តួអក្សរ</span>
           </div>
         </div>
 
@@ -2182,11 +2169,6 @@
       currentSliderImages = (p.images && p.images.length > 0) ? p.images : [p.image];
       renderProductSlider(currentSliderImages);
 
-      // ដាក់កូដនេះបញ្ចូលក្នុងអនុគមន៍ openModal(p) របស់អ្នក
-      var engraveChk = document.getElementById('wantEngraveCheckbox');
-      if (engraveChk) engraveChk.checked = false;
-      toggleWantEngraveUI();
-
       // ========================================================
       // 🎬 បន្ថែមត្រង់នេះ៖ បង្ហាញ ឬលាក់ប៊ូតុងវីដេអូ TikTok លើរូបភាព
       // ========================================================
@@ -2497,14 +2479,11 @@ function closeModal() {
       var priceEl = document.getElementById('modalPrice');
       var feeBadge = document.getElementById('custCustomFeeBadge');
 
-      if (titleEl) titleEl.innerText = t.lblCustCustomTitle;
+      if (titleEl) titleEl.innerText = t.lblCustomTitle;
 
       var totalFee = 0;
 
-      // ពិនិត្យមើលថាតើអតិថិជនបានធីកជ្រើសរើសឆ្លាក់ឈ្មោះដែរ ឬទេ?
-      var wantEngrave = document.getElementById('wantEngraveCheckbox') ? document.getElementById('wantEngraveCheckbox').checked : false;
-
-      if (selectedProduct.isCustom && wantEngrave) {
+      if (selectedProduct.isCustom) {
         var isPerChar = (selectedProduct.customMode === 'per_char') || 
                         ((selectedProduct.title || '').toLowerCase().indexOf('keychain') !== -1);
 
@@ -2539,21 +2518,17 @@ function closeModal() {
               : '<span class="text-slate-500">' + t.customNoticeFixedNote + '</span>';
           }
         }
-      } else {
-        // ប្រសិនបើមិនមែនជាទំនិញ Custom ឬអតិថិជនមិនបានធីកឆ្លាក់ឈ្មោះ ថ្លៃសេវាគឺ 0
-        totalFee = 0;
-        if (feeBadge) feeBadge.innerText = t.customFree || "ឥតគិតថ្លៃ";
-        if (noticeEl) noticeEl.innerHTML = '';
       }
 
       if (countEl) countEl.innerText = charLength + t.customCharUnit;
 
-      // ទាញយកតម្លៃបន្ថែមពីទំហំដែលបានរើស (ឧ. Giant (+$5) -> 5)
+      // ✅ ទាញយកតម្លៃបន្ថែមពីទំហំដែលបានរើស (ឧ. Giant (+$5) -> 5)
       var sizeFee = parseSizeExtraFee(selectedSize);
 
       var finalUnitPrice = baseSalePrice + totalFee + sizeFee;
       var totalProductPrice = finalUnitPrice * (quantity || 1);
       var totalOrigPrice = (origUnitPrice + totalFee + sizeFee) * (quantity || 1);
+      var totalSaved = totalOrigPrice - totalProductPrice;
 
       if (priceEl) {
         if (disc > 0) {
@@ -2576,7 +2551,7 @@ function closeModal() {
         }
       }
     }
-    
+
     // ==================== ENHANCED ZOOM & SWIPE CONTROLLER ====================
     var zoomIndex = 0;
     var swipeStartX = 0;
@@ -2802,36 +2777,32 @@ function closeModal() {
 
     // --- ១. ចុចដាក់ចូលកន្ត្រក (គ្មាន Popup កន្ត្រក នៅកន្លែងដដែល) ---
     function addToCart() {
-  if (!selectedProduct) return;
+      if (!selectedProduct) return;
 
-  var customText = "";
-  var finalUnitPrice = selectedProduct.baseUnitPrice || selectedProduct.price;
-  finalUnitPrice += parseSizeExtraFee(selectedSize);
+      var customText = "";
+      var finalUnitPrice = selectedProduct.baseUnitPrice || selectedProduct.price;
+      finalUnitPrice += parseSizeExtraFee(selectedSize);
 
-  var wantEngrave = document.getElementById('wantEngraveCheckbox') ? document.getElementById('wantEngraveCheckbox').checked : false;
+      if (selectedProduct.isCustom) {
+        var nameInput = document.getElementById('custCustomNameInput');
+        customText = nameInput ? nameInput.value.trim() : "";
+        if (!customText) {
+          alert("សូមបញ្ចូលឈ្មោះ ឬអក្សរដែលអ្នកចង់ឆ្លាក់ជាមុនសិន!");
+          if (nameInput) nameInput.focus();
+          return;
+        }
 
-  if (selectedProduct.isCustom && wantEngrave) {
-    var nameInput = document.getElementById('custCustomNameInput');
-    customText = nameInput ? nameInput.value.trim() : "";
-    if (!customText) {
-      alert("សូមបញ្ចូលឈ្មោះ ឬអក្សរដែលអ្នកចង់ឆ្លាក់ជាមុនសិន!");
-      if (nameInput) nameInput.focus();
-      return;
-    }
-
-    var mode = selectedProduct.customMode || "flat";
-    if (mode === 'per_char') {
-      if (customText.length > 5) {
-        var rate = Number(selectedProduct.customFee) || 0.50;
-        finalUnitPrice += (customText.length - 5) * rate;
+        var mode = selectedProduct.customMode || "flat";
+        if (mode === 'per_char') {
+          if (customText.length > 5) {
+            var rate = Number(selectedProduct.customFee) || 0.50;
+            finalUnitPrice += (customText.length - 5) * rate;
+          }
+        } else {
+          finalUnitPrice += (Number(selectedProduct.customFee) || 0);
+        }
       }
-    } else {
-      finalUnitPrice += (Number(selectedProduct.customFee) || 0);
-    }
-  } else {
-    customText = ""; // គ្មានការឆ្លាក់ឈ្មោះ
-  }
-      
+
       var itemTitleDisplay = selectedProduct.title;
       var disc = selectedProduct.discountPercent || 0;
       if (disc > 0 && disc < 100) {
