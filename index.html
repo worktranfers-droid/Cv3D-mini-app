@@ -2275,6 +2275,10 @@
         }
       }
 
+      var engraveChk = document.getElementById('wantEngraveCheckbox');
+      if (engraveChk) engraveChk.checked = false;
+      toggleWantEngraveUI();
+
       // ផ្នែកជ្រើសរើសទំហំ (Size) - គាំទ្រការបូកតម្លៃបន្ថែម (+ $X)
       var sizeBox = document.getElementById('sizeContainer');
       if (sizeBox) {
@@ -2479,11 +2483,14 @@ function closeModal() {
       var priceEl = document.getElementById('modalPrice');
       var feeBadge = document.getElementById('custCustomFeeBadge');
 
-      if (titleEl) titleEl.innerText = t.lblCustomTitle;
+      if (titleEl) titleEl.innerText = t.lblCustCustomTitle;
 
       var totalFee = 0;
 
-      if (selectedProduct.isCustom) {
+      // ពិនិត្យមើលថាតើអតិថិជនបានធីកជ្រើសរើសឆ្លាក់ឈ្មោះដែរ ឬទេ?
+      var wantEngrave = document.getElementById('wantEngraveCheckbox') ? document.getElementById('wantEngraveCheckbox').checked : false;
+
+      if (selectedProduct.isCustom && wantEngrave) {
         var isPerChar = (selectedProduct.customMode === 'per_char') || 
                         ((selectedProduct.title || '').toLowerCase().indexOf('keychain') !== -1);
 
@@ -2518,17 +2525,21 @@ function closeModal() {
               : '<span class="text-slate-500">' + t.customNoticeFixedNote + '</span>';
           }
         }
+      } else {
+        // ប្រសិនបើមិនមែនជាទំនិញ Custom ឬអតិថិជនមិនបានធីកឆ្លាក់ឈ្មោះ ថ្លៃសេវាគឺ 0
+        totalFee = 0;
+        if (feeBadge) feeBadge.innerText = t.customFree || "ឥតគិតថ្លៃ";
+        if (noticeEl) noticeEl.innerHTML = '';
       }
 
       if (countEl) countEl.innerText = charLength + t.customCharUnit;
 
-      // ✅ ទាញយកតម្លៃបន្ថែមពីទំហំដែលបានរើស (ឧ. Giant (+$5) -> 5)
+      // ទាញយកតម្លៃបន្ថែមពីទំហំដែលបានរើស (ឧ. Giant (+$5) -> 5)
       var sizeFee = parseSizeExtraFee(selectedSize);
 
       var finalUnitPrice = baseSalePrice + totalFee + sizeFee;
       var totalProductPrice = finalUnitPrice * (quantity || 1);
       var totalOrigPrice = (origUnitPrice + totalFee + sizeFee) * (quantity || 1);
-      var totalSaved = totalOrigPrice - totalProductPrice;
 
       if (priceEl) {
         if (disc > 0) {
@@ -2801,7 +2812,9 @@ function closeModal() {
         } else {
           finalUnitPrice += (Number(selectedProduct.customFee) || 0);
         }
-      }
+    } else {
+      customText = ""; // គ្មានការឆ្លាក់ឈ្មោះ
+    }
 
       var itemTitleDisplay = selectedProduct.title;
       var disc = selectedProduct.discountPercent || 0;
@@ -6138,6 +6151,23 @@ function closeModal() {
         alert("Error: " + err.message);
       });
     }
+
+    function toggleWantEngraveUI() {
+  var chk = document.getElementById('wantEngraveCheckbox');
+  var box = document.getElementById('engraveInputBox');
+  var nameInput = document.getElementById('custCustomNameInput');
+
+  if (!chk || !box) return;
+
+  if (chk.checked) {
+    box.classList.remove('hidden');
+    if (nameInput) nameInput.focus();
+  } else {
+    box.classList.add('hidden');
+    if (nameInput) nameInput.value = ''; // សម្អាតអក្សរចាស់ចេញពេលមិនឆ្លាក់
+  }
+  updateModalLivePrice(); // គណនាតម្លៃសរុបឡើងវិញភ្លាមៗ
+}
     
   </script>
 </body>
