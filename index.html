@@ -2777,7 +2777,9 @@ function closeModal() {
       var finalUnitPrice = selectedProduct.baseUnitPrice || selectedProduct.price;
       finalUnitPrice += parseSizeExtraFee(selectedSize);
 
-      if (selectedProduct.isCustom) {
+      var wantEngrave = document.getElementById('wantEngraveCheckbox') ? document.getElementById('wantEngraveCheckbox').checked : false;
+
+      if (selectedProduct.isCustom && wantEngrave) {
         var nameInput = document.getElementById('custCustomNameInput');
         customText = nameInput ? nameInput.value.trim() : "";
         if (!customText) {
@@ -2795,6 +2797,8 @@ function closeModal() {
         } else {
           finalUnitPrice += (Number(selectedProduct.customFee) || 0);
         }
+      } else {
+        customText = "";
       }
 
       var itemTitleDisplay = selectedProduct.title;
