@@ -35,7 +35,7 @@
   <header class="sticky top-0 z-30 w-full max-w-[430px] mx-auto bg-white/95 backdrop-blur-md border-b border-slate-100 px-4 py-2.5 shadow-sm flex items-center justify-between">
     <div class="flex items-center gap-2.5">
       <div 
-        onclick="scrollToTop()" 
+        onclick="handleSecretLogoTap()" 
         title="Cv3D Studio"
         class="w-9 h-9 rounded-xl overflow-hidden bg-white border border-slate-200/80 shadow-xs flex-shrink-0 flex items-center justify-center p-0.5 cursor-pointer active:scale-95 transition-transform"
       >
@@ -709,6 +709,39 @@
     // --- 6.3 NAVIGATION & LANGUAGE ---
     function scrollToTop() {
       window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // ចុចលើ Logo ៥ ដងជាប់ៗគ្នា ដើម្បីបើកទៅកាន់ផ្ទាំង Admin (admin.html)
+    var logoTapCount = 0;
+    var logoTapTimer = null;
+
+    function handleSecretLogoTap() {
+      logoTapCount++;
+      clearTimeout(logoTapTimer);
+
+      // រំកិលទំព័រឡើងលើកំពូលដូចធម្មតា (ដើម្បីកុំឱ្យអតិថិជនសង្ស័យ)
+      scrollToTop();
+
+      // ប្រសិនបើមិនចុចបន្តក្នុងរយៈពេល 1.5 វិនាទី វានឹងរាប់ពី 0 ឡើងវិញ
+      logoTapTimer = setTimeout(function() {
+        logoTapCount = 0;
+      }, 1500);
+
+      // នៅពេលចុចគ្រប់ ៥ ដង
+      if (logoTapCount >= 5) {
+        logoTapCount = 0;
+        clearTimeout(logoTapTimer);
+
+        // ផ្តល់សញ្ញារំញ័រតិចៗលើទូរសព្ទ (Telegram Haptic Feedback)
+        try {
+          if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.HapticFeedback) {
+            window.Telegram.WebApp.HapticFeedback.notificationOccurred('success');
+          }
+        } catch (e) {}
+
+        // ប្តូរទំព័រទៅកាន់ admin.html ភ្លាមៗ
+        window.location.href = "./admin.html";
+      }
     }
 
     // អនុគមន៍ចុចប្តូរភាសាវិលជុំ៖ ខ្មែរ (km) -> English (en) -> 中文 (zh) -> ខ្មែរ (km)
