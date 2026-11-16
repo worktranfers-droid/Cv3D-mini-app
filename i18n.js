@@ -189,6 +189,12 @@ var i18n = {
     engravePopupDesc: "សូមបញ្ចូលឈ្មោះ ឬអក្សរដែលអ្នកចង់ឆ្លាក់ជាមុនសិន ឬចុច «រំលង» ប្រសិនបើមិនចង់ឆ្លាក់ឈ្មោះ។",
     btnSkipEngrave: "រំលង (មិនឆ្លាក់)",
     btnFillEngrave: "បំពេញឈ្មោះ",
+    adminPortalTitle: "Admin Portal",
+    adminPortalDesc: "សូមបញ្ចូលលេខកូដសម្ងាត់ Admin PIN ដើម្បីចូលគ្រប់គ្រងហាង",
+    adminPinPlaceholder: "បញ្ចូលកូដសម្ងាត់...",
+    btnAdminLogin: "🔓 ចូលគ្រប់គ្រង (Login)",
+    btnAdminVerifying: "⏳ កំពុងផ្ទៀងផ្ទាត់...",
+    linkBackToCustomerShop: "← ត្រឡប់ទៅទំព័រហាងអតិថិជន",
   },
   en: {
     flag: "🇬🇧",
@@ -382,6 +388,12 @@ var i18n = {
     engravePopupDesc: "Please enter the name or text you want to engrave first, or tap 'Skip' to order without engraving.",
     btnSkipEngrave: "Skip",
     btnFillEngrave: "Enter Name",
+    adminPortalTitle: "Admin Portal",
+    adminPortalDesc: "Please enter your Admin PIN to manage the store",
+    adminPinPlaceholder: "Enter secret PIN...",
+    btnAdminLogin: "🔓 Login to Dashboard",
+    btnAdminVerifying: "⏳ Verifying...",
+    linkBackToCustomerShop: "← Back to Customer Store",
   },
   zh: {
     flag: "🇨🇳",
@@ -575,5 +587,11 @@ var i18n = {
     engravePopupDesc: "请先输入您想要刻的名字或文字，如果不需刻字请点击“跳过”。",
     btnSkipEngrave: "跳过 (不刻字)",
     btnFillEngrave: "填写名字",
+    adminPortalTitle: "管理员入口 (Admin Portal)",
+    adminPortalDesc: "请输入管理员密码 (Admin PIN) 以管理店铺",
+    adminPinPlaceholder: "请输入密码...",
+    btnAdminLogin: "🔓 登录后台 (Login)",
+    btnAdminVerifying: "⏳ 正在验证...",
+    linkBackToCustomerShop: "← 返回顾客商城首页",
   }
 };
