@@ -1468,7 +1468,11 @@
       if (el = document.getElementById('lblSelectQty')) el.innerText = t.lblQty;
       if (el = document.getElementById('btnAddToCartText')) el.innerText = t.btnAddToCart;
       if (el = document.getElementById('btnBuyNowText')) el.innerText = t.btnBuyNow;
-      if (el = document.getElementById('custCustomNameInput')) el.placeholder = t.customPlaceholder;
+      
+      if (el = document.getElementById('lblWantEngrave')) el.innerText = t.lblWantEngrave || "✍️ តើអ្នកចង់ឆ្លាក់ឈ្មោះដែរ ឬទេ?";
+      if (el = document.getElementById('lblCustCustomTitle')) el.innerText = t.lblCustCustomTitle || "អក្សរ/ឈ្មោះដែលត្រូវឆ្លាក់៖ *";
+      if (el = document.getElementById('custCustomNameInput')) el.placeholder = t.customPlaceholder || "ឧ. Milo, Lucky, ឬឈ្មោះរបស់អ្នក...";
+
       if (el = document.getElementById('cartModalTitle')) el.innerText = t.cartTitle;
       if (el = document.getElementById('cartEmptyText')) el.innerText = t.cartEmpty;
       if (el = document.getElementById('lblCartZone')) el.innerText = t.lblZone;
