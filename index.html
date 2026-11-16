@@ -35,9 +35,10 @@
   <header class="sticky top-0 z-30 w-full max-w-[430px] mx-auto bg-white/95 backdrop-blur-md border-b border-slate-100 px-4 py-2.5 shadow-sm flex items-center justify-between">
     <div class="flex items-center gap-2.5">
       <div 
-        onclick="handleSecretLogoTap()" 
+        id="secretLogoBox"
+        onclick="handleSecretLogoTap(event)" 
         title="Cv3D Studio"
-        class="w-9 h-9 rounded-xl overflow-hidden bg-white border border-slate-200/80 shadow-xs flex-shrink-0 flex items-center justify-center p-0.5 cursor-pointer active:scale-95 transition-transform"
+        class="w-9 h-9 rounded-xl overflow-hidden bg-white border border-slate-200/80 shadow-xs flex-shrink-0 flex items-center justify-center p-0.5 cursor-pointer active:scale-95 transition-transform touch-manipulation"
       >
         <img 
           src="./Logo.png" 
@@ -715,32 +716,30 @@
     var logoTapCount = 0;
     var logoTapTimer = null;
 
-    function handleSecretLogoTap() {
+    function handleSecretLogoTap(e) {
+      if (e) e.preventDefault();
       logoTapCount++;
       clearTimeout(logoTapTimer);
 
-      // រំកិលទំព័រឡើងលើកំពូលដូចធម្មតា (ដើម្បីកុំឱ្យអតិថិជនសង្ស័យ)
-      scrollToTop();
-
-      // ប្រសិនបើមិនចុចបន្តក្នុងរយៈពេល 1.5 វិនាទី វានឹងរាប់ពី 0 ឡើងវិញ
+      // ពន្យារពេលដល់ 2.5 វិនាទី ដើម្បីឱ្យចុច ៥ ដងទាន់ស្រួល
       logoTapTimer = setTimeout(function() {
         logoTapCount = 0;
-      }, 1500);
+      }, 2500);
 
-      // នៅពេលចុចគ្រប់ ៥ ដង
       if (logoTapCount >= 5) {
         logoTapCount = 0;
         clearTimeout(logoTapTimer);
 
-        // ផ្តល់សញ្ញារំញ័រតិចៗលើទូរសព្ទ (Telegram Haptic Feedback)
         try {
           if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.HapticFeedback) {
             window.Telegram.WebApp.HapticFeedback.notificationOccurred('success');
           }
-        } catch (e) {}
+        } catch (err) {}
 
-        // ប្តូរទំព័រទៅកាន់ admin.html ភ្លាមៗ
-        window.location.href = "./admin.html";
+        // ប្តូរទៅកាន់ទំព័រ admin.html ភ្លាមៗ
+        window.location.assign("./admin.html");
+      } else if (logoTapCount === 1) {
+        scrollToTop();
       }
     }
 
