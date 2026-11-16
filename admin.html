@@ -942,8 +942,8 @@
       localStorage.setItem('app_user_lang', currentLang);
       applyLanguageUI();
 
-      filterAdminProducts();
-      applyOrderFilter();
+      if (typeof filterAdminProducts === 'function') filterAdminProducts();
+      if (typeof applyOrderFilter === 'function') applyOrderFilter();
     }
 
     function applyLanguageUI() {
@@ -978,9 +978,9 @@
       if (el = document.getElementById('navHomeText')) el.innerText = t.navHome;
       if (el = document.getElementById('navOrdersText')) el.innerText = t.navOrders;
       if (el = document.getElementById('navCartText')) el.innerText = t.navCart;
-      if (el = document.getElementById('myOrdersModalTitle')) el.innerText = t.myOrdersTitle;
+      iif (el = document.getElementById('myOrdersModalTitle')) el.innerText = t.myOrdersTitle;
       if (el = document.getElementById('myOrdersModalSub')) el.innerText = t.myOrdersSub;
-      updateDeliveryDropdownUI();
+      if (typeof updateDeliveryDropdownUI === 'function') updateDeliveryDropdownUI();
 
       // --- Admin UI (បកប្រែផ្នែក Admin ទាំងអស់) ---
       if (el = document.getElementById('adminBackBtn')) el.innerText = t.adminBackToShop;
