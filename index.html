@@ -888,6 +888,39 @@
     </div>
   </div>
 
+    <!-- Modal: Custom Engraving Prompt Popup (ចំកណ្តាលអេក្រង់) -->
+  <div id="customEngravePopup" class="fixed inset-0 z-[70] bg-black/60 backdrop-blur-xs hidden flex items-center justify-center p-4 select-none">
+    <div class="bg-white w-full max-w-[330px] rounded-3xl p-5 shadow-2xl text-center space-y-3 border border-slate-100 animate-in fade-in zoom-in-95 duration-150">
+      <div class="w-12 h-12 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center mx-auto text-2xl shadow-2xs">
+        ✍️
+      </div>
+      <h3 id="lblEngravePopupTitle" class="text-sm font-bold text-slate-900">
+        តើអ្នកចង់ឆ្លាក់ឈ្មោះលើទំនិញនេះទេ?
+      </h3>
+      <p id="lblEngravePopupDesc" class="text-xs text-slate-500 leading-relaxed">
+        សូមបញ្ចូលឈ្មោះ ឬអក្សរដែលអ្នកចង់ឆ្លាក់ជាមុនសិន ឬចុច «រំលង» ប្រសិនបើមិនចង់ឆ្លាក់ឈ្មោះ។
+      </p>
+      <div class="flex items-center gap-2 pt-2">
+        <button 
+          id="btnSkipEngravePopup"
+          type="button" 
+          onclick="confirmSkipEngrave()" 
+          class="flex-1 py-2.5 px-3 bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold rounded-xl text-xs active:scale-95 transition-all cursor-pointer"
+        >
+          រំលង (Skip)
+        </button>
+        <button 
+          id="btnFillEngravePopup"
+          type="button" 
+          onclick="focusEngraveInputFromPopup()" 
+          class="flex-1 py-2.5 px-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl text-xs shadow-md shadow-blue-500/25 active:scale-95 transition-all cursor-pointer"
+        >
+          ✍️ បំពេញឈ្មោះ
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- ==================== MODAL: PINCH-TO-ZOOM (SWIPABLE GALLERY) ==================== -->
   <div id="imageZoomModal" class="fixed inset-0 z-[60] bg-black/95 backdrop-blur-md hidden flex flex-col justify-between items-center p-3 select-none touch-none">
     <!-- ផ្នែកខាងលើ៖ ទុកតែប៊ូតុងបិទ ✕ ឱ្យស្រឡះភ្នែក -->
@@ -2775,23 +2808,26 @@ function closeModal() {
       }, 1800);
     }
 
-    // --- ១. ចុចដាក់ចូលកន្ត្រក (គ្មាន Popup កន្ត្រក នៅកន្លែងដដែល) ---
-    function addToCart() {
+    var pendingCartAction = 'add'; // 'add' ឬ 'buyNow'
+
+    // ១. ចុច "ដាក់ចូលកន្ត្រក"
+    function addToCart(skipEngraveCheck) {
       if (!selectedProduct) return;
 
-      var customText = "";
+      var nameInput = document.getElementById('custCustomNameInput');
+      var customText = nameInput ? nameInput.value.trim() : "";
+
+      // បើជាទំនិញ Custom ហើយមិនទាន់បំពេញឈ្មោះ និងមិនទាន់ចុច Skip
+      if (selectedProduct.isCustom && !customText && skipEngraveCheck !== true) {
+        pendingCartAction = 'add';
+        openCustomEngravePopup();
+        return false;
+      }
+
       var finalUnitPrice = selectedProduct.baseUnitPrice || selectedProduct.price;
       finalUnitPrice += parseSizeExtraFee(selectedSize);
 
-      if (selectedProduct.isCustom) {
-        var nameInput = document.getElementById('custCustomNameInput');
-        customText = nameInput ? nameInput.value.trim() : "";
-        if (!customText) {
-          alert("សូមបញ្ចូលឈ្មោះ ឬអក្សរដែលអ្នកចង់ឆ្លាក់ជាមុនសិន!");
-          if (nameInput) nameInput.focus();
-          return;
-        }
-
+      if (selectedProduct.isCustom && customText) {
         var mode = selectedProduct.customMode || "flat";
         if (mode === 'per_char') {
           if (customText.length > 5) {
@@ -2835,33 +2871,102 @@ function closeModal() {
         });
       }
 
-      // ក. រក្សាទុកចូល Storage និង Update Badge
       saveCartToStorage();
       updateCartBadge();
-
-      // ខ. បិទផ្ទាំងទំនិញភ្លាមៗ ដោយមិនរុញអេក្រង់ទៅលើ (នៅកន្លែងដដែល)
       closeModal();
 
-      // គ. ផ្តល់សញ្ញារំញ័រទូរសព្ទតិចៗ (Telegram Haptic)
       try {
         if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.HapticFeedback) {
           window.Telegram.WebApp.HapticFeedback.notificationOccurred('success');
         }
       } catch(e) {}
 
-      // ឃ. បង្ហាញ Toast ជូនដំណឹងស្រាលមួយ
       var t = (typeof i18n !== 'undefined' && i18n[currentLang]) ? i18n[currentLang] : {};
       showCartToast(t.addedToCartNotice || "✓ បានដាក់ចូលកន្ត្រកជោគជ័យ!");
+      return true;
     }
-      
-    // --- ២. ចុច "⚡ ទិញឥឡូវនេះ" ទើបបើកផ្ទាំងកន្ត្រក Checkout តែម្តង ---
-    function buyNowDirectly() {
+
+    // ២. ចុច "⚡ ទិញឥឡូវនេះ"
+    function buyNowDirectly(skipEngraveCheck) {
+      if (!selectedProduct) return;
+
+      var nameInput = document.getElementById('custCustomNameInput');
+      var customText = nameInput ? nameInput.value.trim() : "";
+
+      // បើជាទំនិញ Custom ហើយមិនទាន់បំពេញឈ្មោះ និងមិនទាន់ចុច Skip
+      if (selectedProduct.isCustom && !customText && skipEngraveCheck !== true) {
+        pendingCartAction = 'buyNow';
+        openCustomEngravePopup();
+        return;
+      }
+
       var hadExistingItems = (cart && cart.length > 0);
-      addToCart();
-      openCartModal();
-      if (hadExistingItems) {
-        var t = (typeof i18n !== 'undefined' && i18n[currentLang]) ? i18n[currentLang] : {};
-        showCartToast(t.mergedCartNotice || "✓ បានបញ្ចូលរួមគ្នាជាមួយទំនិញក្នុងកន្ត្រករបស់អ្នក!");
+      var isAdded = addToCart(true);
+      if (isAdded) {
+        openCartModal();
+        if (hadExistingItems) {
+          var t = (typeof i18n !== 'undefined' && i18n[currentLang]) ? i18n[currentLang] : {};
+          showCartToast(t.mergedCartNotice || "✓ បានបញ្ចូលរួមគ្នាជាមួយទំនិញក្នុងកន្ត្រករបស់អ្នក!");
+        }
+      }
+    }
+
+    // ៣. អនុគមន៍បើក Pop-up សួររឿងឆ្លាក់ឈ្មោះ (បកប្រែ ៣ ភាសាស្វ័យប្រវត្តិ)
+    function openCustomEngravePopup() {
+      var t = (typeof i18n !== 'undefined' && i18n[currentLang]) ? i18n[currentLang] : (i18n ? i18n['km'] : {});
+      
+      var elTitle = document.getElementById('lblEngravePopupTitle');
+      var elDesc = document.getElementById('lblEngravePopupDesc');
+      var btnSkip = document.getElementById('btnSkipEngravePopup');
+      var btnFill = document.getElementById('btnFillEngravePopup');
+
+      if (elTitle) elTitle.innerText = t.engravePopupTitle || "តើអ្នកចង់ឆ្លាក់ឈ្មោះលើទំនិញនេះទេ?";
+      if (elDesc) elDesc.innerText = t.engravePopupDesc || "សូមបញ្ចូលឈ្មោះ ឬអក្សរដែលអ្នកចង់ឆ្លាក់ជាមុនសិន ឬចុច «រំលង» ប្រសិនបើមិនចង់ឆ្លាក់ឈ្មោះ។";
+      if (btnSkip) btnSkip.innerText = t.btnSkipEngrave || "រំលង (Skip)";
+      if (btnFill) btnFill.innerText = t.btnFillEngrave || "✍️ បំពេញឈ្មោះ";
+
+      var popup = document.getElementById('customEngravePopup');
+      if (popup) popup.classList.remove('hidden');
+
+      try {
+        if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.HapticFeedback) {
+          window.Telegram.WebApp.HapticFeedback.impactOccurred('medium');
+        }
+      } catch(e) {}
+    }
+
+    // ៤. ប៊ូតុងទី ១៖ ចុច "Skip" -> បិទ Pop-up ហើយចូលកន្ត្រកបញ្ជាទិញភ្លាមៗ
+    function confirmSkipEngrave() {
+      var popup = document.getElementById('customEngravePopup');
+      if (popup) popup.classList.add('hidden');
+
+      if (pendingCartAction === 'buyNow') {
+        buyNowDirectly(true);
+      } else {
+        addToCart(true);
+        openCartModal(); // បើកចូលកន្រ្តកបញ្ជាទិញតាមតម្រូវការ
+      }
+    }
+
+    // ៥. ប៊ូតុងទី ២៖ ចុច "បំពេញឈ្មោះ" -> បិទ Pop-up ហើយលោតទៅប្រអប់បំពេញឈ្មោះ + បន្លិចពណ៌
+    function focusEngraveInputFromPopup() {
+      var popup = document.getElementById('customEngravePopup');
+      if (popup) popup.classList.add('hidden');
+
+      var section = document.getElementById('custCustomSection');
+      var nameInput = document.getElementById('custCustomNameInput');
+
+      if (section) {
+        section.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        section.classList.add('ring-2', 'ring-blue-500');
+        setTimeout(function() {
+          section.classList.remove('ring-2', 'ring-blue-500');
+        }, 1500);
+      }
+      if (nameInput) {
+        setTimeout(function() {
+          nameInput.focus();
+        }, 150);
       }
     }
 
