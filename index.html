@@ -3109,7 +3109,7 @@ function closeModal() {
           details.className = "min-w-0 pr-1";
           var title = document.createElement('h4');
           title.className = "text-xs font-bold text-slate-800 truncate";
-          title.innerText = item.title;
+          title.innerText = String(item.title || '').replace(/^\[[^\]]+\]\s*/, '');
 
           var meta = document.createElement('p');
           meta.className = "text-[10px] text-slate-500 truncate";
