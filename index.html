@@ -2452,7 +2452,12 @@
       }
     }
 
-function closeModal() {
+    function closeModal() {
+      editingCartIndex = -1;
+      var t = (typeof i18n !== 'undefined' && i18n[currentLang]) ? i18n[currentLang] : {};
+      var addBtnText = document.getElementById('btnAddToCartText');
+      if (addBtnText) addBtnText.innerText = t.btnAddToCart || "ដាក់ចូលកន្រ្តក";
+
       var modal = document.getElementById('productModal');
       if (modal) modal.className = "fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden flex items-end sm:items-center justify-center p-0 sm:p-4";
     }
@@ -2848,27 +2853,35 @@ function closeModal() {
         itemTitleDisplay += " (ឆ្លាក់ឈ្មោះ: " + customText + ")";
       }
 
-      var existingIndex = -1;
-      for (var i = 0; i < cart.length; i++) {
-        if (cart[i].id === selectedProduct.id && cart[i].color === selectedColor && cart[i].size === selectedSize && cart[i].customText === customText) {
-          existingIndex = i;
-          break;
-        }
-      }
+      var newItemObj = {
+        id: selectedProduct.id,
+        title: "[" + selectedProduct.id + "] " + itemTitleDisplay,
+        price: finalUnitPrice,
+        image: selectedProduct.image,
+        color: selectedColor,
+        size: selectedSize,
+        customText: customText,
+        qty: quantity
+      };
 
-      if (existingIndex > -1) {
-        cart[existingIndex].qty += quantity;
+      var wasEditing = (editingCartIndex > -1 && cart[editingCartIndex]);
+
+      if (wasEditing) {
+        // Update ជាន់លើទំនិញចាស់ដែលបានចុចកែ
+        cart[editingCartIndex] = newItemObj;
       } else {
-        cart.push({
-          id: selectedProduct.id,
-          title: "[" + selectedProduct.id + "] " + itemTitleDisplay,
-          price: finalUnitPrice,
-          image: selectedProduct.image,
-          color: selectedColor,
-          size: selectedSize,
-          customText: customText,
-          qty: quantity
-        });
+        var existingIndex = -1;
+        for (var i = 0; i < cart.length; i++) {
+          if (cart[i].id === selectedProduct.id && cart[i].color === selectedColor && cart[i].size === selectedSize && cart[i].customText === customText) {
+            existingIndex = i;
+            break;
+          }
+        }
+        if (existingIndex > -1) {
+          cart[existingIndex].qty += quantity;
+        } else {
+          cart.push(newItemObj);
+        }
       }
 
       saveCartToStorage();
@@ -2881,10 +2894,16 @@ function closeModal() {
         }
       } catch(e) {}
 
+      // បើទើបតែកែប្រែទំនិញក្នុងកន្ត្រក ឱ្យបើកកន្ត្រកមកវិញដោយស្វ័យប្រវត្តិ
+      if (wasEditing) {
+        openCartModal();
+        showCartToast(currentLang === 'zh' ? "✓ 修改已保存！" : (currentLang === 'en' ? "✓ Item updated!" : "✓ បានកែប្រែព័ត៌មានទំនិញជោគជ័យ!"));
+        return true;
+      }
+
       var t = (typeof i18n !== 'undefined' && i18n[currentLang]) ? i18n[currentLang] : {};
       showCartToast(t.addedToCartNotice || "✓ បានដាក់ចូលកន្ត្រកជោគជ័យ!");
       return true;
-    }
 
     // ២. ចុច "⚡ ទិញឥឡូវនេះ"
     function buyNowDirectly(skipEngraveCheck) {
@@ -3094,10 +3113,13 @@ function closeModal() {
           subTotal += itemTotal;
 
           var itemDiv = document.createElement('div');
-          itemDiv.className = "bg-white p-2.5 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between gap-3";
+          itemDiv.className = "bg-white p-2.5 rounded-2xl border border-slate-200 hover:border-blue-300 shadow-sm flex items-center justify-between gap-2.5 transition-colors";
 
+          // ផ្នែកខាងឆ្វេង៖ ចុចលើវាដើម្បីកែប្រែព័ត៌មានទំនិញ (ពណ៌, ទំហំ, ឈ្មោះឆ្លាក់)
           var leftDiv = document.createElement('div');
-          leftDiv.className = "flex items-center gap-2.5 min-w-0";
+          leftDiv.className = "flex items-center gap-2.5 min-w-0 flex-1 cursor-pointer group";
+          leftDiv.title = "ចុចដើម្បីកែប្រែព័ត៌មានទំនិញនេះ";
+          leftDiv.onclick = function() { editCartItem(idx); };
 
           var img = document.createElement('img');
           img.src = item.image;
@@ -3106,29 +3128,47 @@ function closeModal() {
           leftDiv.appendChild(img);
 
           var details = document.createElement('div');
-          details.className = "min-w-0 pr-1";
-          var title = document.createElement('h4');
-          title.className = "text-xs font-bold text-slate-800 truncate";
-          title.innerText = String(item.title || '').replace(/^\[[^\]]+\]\s*/, '');
+          details.className = "min-w-0 pr-1 flex-1";
+          
+          // ដក [P-001] និង (ឆ្លាក់ឈ្មោះ: ...) ចេញពីចំណងជើង ដើម្បីកុំឱ្យវែងពេក
+          var cleanTitle = String(item.title || '')
+            .replace(/^\[[^\]]+\]\s*/, '')
+            .replace(/\s*\(ឆ្លាក់ឈ្មោះ:[^)]*\)/, '');
+
+          var titleRow = document.createElement('div');
+          titleRow.className = "flex items-center gap-1";
+          titleRow.innerHTML = 
+            '<h4 class="text-xs font-bold text-slate-800 truncate group-hover:text-blue-600 transition-colors">' + cleanTitle + '</h4>' +
+            '<span class="text-[10px] text-slate-400 group-hover:text-blue-600 flex-shrink-0">✏️</span>';
 
           var meta = document.createElement('p');
           meta.className = "text-[10px] text-slate-500 truncate";
           meta.innerText = item.color + " | " + item.size;
 
-          var price = document.createElement('p');
-          price.className = "text-[11px] font-bold text-blue-600";
-          price.innerText = "$" + item.price.toFixed(2);
-
-          details.appendChild(title);
+          details.appendChild(titleRow);
           details.appendChild(meta);
+
+          // បង្ហាញឈ្មោះដែលបានឆ្លាក់ដាច់ដោយឡែកជា Badge ពណ៌ខៀវ (មើលឃើញច្បាស់មិនបាត់អក្សរ)
+          if (item.customText && String(item.customText).trim() !== "") {
+            var customBadge = document.createElement('div');
+            customBadge.className = "mt-0.5 inline-flex items-center gap-1 bg-blue-50 text-blue-700 border border-blue-200/80 px-1.5 py-0.2 rounded-md text-[10px] font-bold max-w-full";
+            customBadge.innerHTML = '<span>✍️</span><span class="truncate">' + item.customText + '</span>';
+            details.appendChild(customBadge);
+          }
+
+          var price = document.createElement('p');
+          price.className = "text-[11px] font-bold text-blue-600 mt-0.5";
+          price.innerText = "$" + item.price.toFixed(2);
           details.appendChild(price);
+
           leftDiv.appendChild(details);
 
+          // ផ្នែកខាងស្តាំ៖ ប៊ូតុងដក-បូកចំនួន និងប៊ូតុងលុប
           var rightDiv = document.createElement('div');
-          rightDiv.className = "flex items-center gap-2 flex-shrink-0";
+          rightDiv.className = "flex items-center gap-1.5 flex-shrink-0";
 
           var qtyBox = document.createElement('div');
-          qtyBox.className = "flex items-center gap-1.5 bg-slate-100 rounded-lg p-0.5 border border-slate-200/60";
+          qtyBox.className = "flex items-center gap-1 bg-slate-100 rounded-lg p-0.5 border border-slate-200/60";
 
           var minusBtn = document.createElement('button');
           minusBtn.type = "button";
@@ -3150,7 +3190,6 @@ function closeModal() {
           qtyBox.appendChild(qtyVal);
           qtyBox.appendChild(plusBtn);
 
-          // ✅ ប៊ូតុងលុបថ្មី៖ ជារង្វង់មូលពណ៌ប្រផេះ hover ក្រហម ច្បាស់ មិនច្រឡំដៃ
           var delBtn = document.createElement('button');
           delBtn.type = "button";
           delBtn.className = "w-6 h-6 rounded-full bg-slate-100 hover:bg-rose-50 text-slate-400 hover:text-rose-600 flex items-center justify-center text-xs font-bold transition-colors active:scale-90";
@@ -3223,6 +3262,75 @@ function closeModal() {
       saveCartToStorage();
       updateCartBadge();
       renderCartItems();
+    }
+
+    var editingCartIndex = -1; // -1 មានន័យថាបន្ថែមថ្មី, >= 0 មានន័យថាកំពុងកែប្រែទំនិញក្នុងកន្ត្រក
+
+    // អនុគមន៍ពេលអតិថិជនចុចលើទំនិញក្នុងកន្ត្រកដើម្បីកែប្រែ
+    function editCartItem(index) {
+      var item = cart[index];
+      if (!item) return;
+
+      // ស្វែងរកទិន្នន័យដើមនៃផលិតផល
+      var prod = null;
+      for (var i = 0; i < customerProducts.length; i++) {
+        if (String(customerProducts[i].id) === String(item.id)) {
+          prod = customerProducts[i];
+          break;
+        }
+      }
+      if (!prod) return;
+
+      editingCartIndex = index;
+      closeCartModal();
+      openModal(prod);
+
+      // ១. កំណត់ចំនួន (Quantity) តាមរបស់ចាស់
+      quantity = item.qty || 1;
+      var qEl = document.getElementById('qtyVal');
+      if (qEl) qEl.innerText = quantity;
+
+      // ២. កំណត់ពណ៌ (Color) តាមរបស់ចាស់ និងប្តូរពណ៌ប៊ូតុងឱ្យចំជម្រើសចាស់
+      selectedColor = item.color;
+      var colorBox = document.getElementById('colorContainer');
+      if (colorBox) {
+        var cBtns = colorBox.children;
+        for (var j = 0; j < cBtns.length; j++) {
+          var btnText = cBtns[j].innerText.trim();
+          if (btnText === item.color) {
+            cBtns[j].className = "flex items-center gap-2 px-3 py-1.5 rounded-xl border border-blue-600 bg-blue-50 text-blue-700 text-xs font-bold ring-1 ring-blue-500/30 transition-colors";
+          } else {
+            cBtns[j].className = "flex items-center gap-2 px-3 py-1.5 rounded-xl border border-slate-200 bg-white text-slate-700 text-xs font-semibold hover:bg-slate-50 transition-colors";
+          }
+        }
+      }
+
+      // ៣. កំណត់ទំហំ (Size) តាមរបស់ចាស់
+      selectedSize = item.size;
+      var sizeBox = document.getElementById('sizeContainer');
+      if (sizeBox) {
+        var sBtns = sizeBox.children;
+        for (var k = 0; k < sBtns.length; k++) {
+          if (sBtns[k].innerText.trim() === item.size) {
+            sBtns[k].className = "text-xs px-3 py-1.5 rounded-xl border border-blue-600 bg-blue-50 text-blue-600 font-bold transition-colors";
+          } else {
+            sBtns[k].className = "text-xs px-3 py-1.5 rounded-xl border border-slate-200 text-slate-600 font-medium hover:bg-slate-50 transition-colors";
+          }
+        }
+      }
+
+      // ៤. បំពេញឈ្មោះដែលបានឆ្លាក់ចាស់ចូលប្រអប់វិញ
+      var nameInput = document.getElementById('custCustomNameInput');
+      if (nameInput) {
+        nameInput.value = item.customText || "";
+      }
+
+      // ៥. គណនាតម្លៃសរុបឡើងវិញ និងប្តូរអក្សរប៊ូតុងទៅជា "រក្សាទុកការកែប្រែ"
+      updateModalLivePrice();
+      var addBtnText = document.getElementById('btnAddToCartText');
+      if (addBtnText) {
+        addBtnText.innerText = (currentLang === 'zh') ? "保存修改" : (currentLang === 'en' ? "Update Item" : "រក្សាទុកការកែប្រែ");
+      }
     }
 
     function submitCartOrder() {
