@@ -184,7 +184,11 @@ var i18n = {
     lblBackupTitle: "☁️ បម្រុងទុកទិន្នន័យ (Cross-Account Backup)",
     lblBackupSummary: "គណនី៖ cheavireak168@gmail.com",
     lblBackupDesc: "ថតចម្លងទិន្នន័យ Google Sheet ទាំងមូលទៅទុកក្នុងគណនីទី ២ ដោយសុវត្ថិភាព (Auto-Backup ម៉ោង 2:00 AM រាល់ថ្ងៃ)៖",
-    btnBackupNowText: "Backup ទិន្នន័យ"
+    btnBackupNowText: "Backup ទិន្នន័យ",
+    engravePopupTitle: "តើអ្នកចង់ឆ្លាក់ឈ្មោះលើទំនិញនេះទេ?",
+    engravePopupDesc: "សូមបញ្ចូលឈ្មោះ ឬអក្សរដែលអ្នកចង់ឆ្លាក់ជាមុនសិន ឬចុច «រំលង» ប្រសិនបើមិនចង់ឆ្លាក់ឈ្មោះ។",
+    btnSkipEngrave: "រំលង (មិនឆ្លាក់)",
+    btnFillEngrave: "បំពេញឈ្មោះ",
   },
   en: {
     flag: "🇬🇧",
@@ -373,7 +377,11 @@ var i18n = {
     lblBackupTitle: "☁️ Data Backup (Cross-Account)",
     lblBackupSummary: "Account: cheavireak168@gmail.com",
     lblBackupDesc: "Clone the entire Google Sheet to your secondary backup account safely (Auto-Backup runs daily at 2:00 AM):",
-    btnBackupNowText: "Backup Data"
+    btnBackupNowText: "Backup Data",
+    engravePopupTitle: "Do you want to engrave a name?",
+    engravePopupDesc: "Please enter the name or text you want to engrave first, or tap 'Skip' to order without engraving.",
+    btnSkipEngrave: "Skip",
+    btnFillEngrave: "Enter Name",
   },
   zh: {
     flag: "🇨🇳",
@@ -562,6 +570,10 @@ var i18n = {
     lblBackupTitle: "☁️ 数据备份 (跨账号安全备份)",
     lblBackupSummary: "备份账号：cheavireak168@gmail.com",
     lblBackupDesc: "将整个 Google 表格安全备份至备用账号（每天凌晨 2:00 自动备份）：",
-    btnBackupNowText: "数据备份"
+    btnBackupNowText: "数据备份",
+    engravePopupTitle: "需要定制刻字吗？",
+    engravePopupDesc: "请先输入您想要刻的名字或文字，如果不需刻字请点击“跳过”。",
+    btnSkipEngrave: "跳过 (不刻字)",
+    btnFillEngrave: "填写名字",
   }
 };
