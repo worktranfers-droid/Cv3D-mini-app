@@ -17,7 +17,7 @@
 
     .mobile-frame {
       width: 100%;
-      max-width: 480px;
+      max-width: 430px;
       min-height: 100vh;
       margin: 0 auto;
       background-color: #f8fafc;
@@ -53,10 +53,10 @@
     
     <!-- ប៊ូតុងខាងស្ដាំនៃ Admin Header -->
     <div class="flex items-center gap-1.5">
-      <!-- បើកទៅកាន់ហាងអតិថិជន (index.html) -->
-      <a href="./index.html" id="adminBackBtn" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-3 py-1.5 rounded-xl border border-slate-200 transition-all active:scale-95 shadow-2xs">
+      <!-- ចុចលើ 'ទៅហាងវិញ' ដើម្បី Logout និងត្រឡប់ទៅ index.html ភ្លាមៗ -->
+      <button type="button" onclick="logoutAndGoToShop()" id="adminBackBtn" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-3 py-1.5 rounded-xl border border-slate-200 transition-all active:scale-95 shadow-2xs cursor-pointer">
         🛒 ទៅហាងវិញ
-      </a>
+      </button>
 
       <!-- ប៊ូតុង Refresh សម្រាប់ Admin -->
       <button 
@@ -69,17 +69,6 @@
         <svg id="adminRefreshIcon" class="w-4 h-4 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
           <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
         </svg>
-      </button>
-
-      <!-- ប៊ូតុង Logout Lock -->
-      <button 
-        id="adminLogoutBtn" 
-        type="button" 
-        onclick="logoutAdminPin()" 
-        title="ចាក់សោ Admin (Logout)" 
-        class="w-9 h-9 bg-rose-50 hover:bg-rose-100 text-rose-600 rounded-xl border border-rose-200 flex items-center justify-center text-sm transition-all active:scale-90 shadow-2xs flex-shrink-0"
-      >
-        🔒
       </button>
 
       <!-- ប៊ូតុង Icon ភាសា -->
@@ -102,14 +91,34 @@
         <p class="text-xs text-slate-500 mt-1">សូមបញ្ចូលលេខកូដសម្ងាត់ Admin PIN ដើម្បីចូលគ្រប់គ្រងហាង</p>
       </div>
       <div class="space-y-2.5">
-        <input 
-          id="adminLoginPinInput" 
-          type="password" 
-          inputmode="numeric"
-          placeholder="••••••" 
-          onkeydown="if(event.key==='Enter') submitAdminLogin()"
-          class="w-full text-center tracking-widest text-base font-bold py-2.5 px-4 bg-slate-50 border border-slate-300 rounded-2xl outline-none focus:ring-2 focus:ring-blue-500"
-        >
+        <!-- ប្រអប់វាយ Password មានរូបភ្នែកនៅខាងស្តាំ -->
+        <div class="relative flex items-center">
+          <input 
+            id="adminLoginPinInput" 
+            type="password" 
+            autocomplete="off"
+            placeholder="បញ្ចូលកូដសម្ងាត់..." 
+            onkeydown="if(event.key==='Enter') submitAdminLogin()"
+            class="w-full text-center tracking-wider text-sm font-bold py-2.5 pl-10 pr-10 bg-slate-50 border border-slate-300 rounded-2xl outline-none focus:ring-2 focus:ring-blue-500"
+          >
+          <button 
+            type="button" 
+            onclick="toggleAdminPinVisibility()" 
+            title="បង្ហាញ / លាក់កូដសម្ងាត់"
+            class="absolute right-3 text-slate-400 hover:text-slate-700 active:scale-90 transition-all cursor-pointer flex items-center justify-center"
+          >
+            <!-- Icon ភ្នែកបិទ (លំនាំដើម) -->
+            <svg id="eyeIconHidden" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
+            </svg>
+            <!-- Icon ភ្នែកបើក (បង្ហាញពេលចុចមើល) -->
+            <svg id="eyeIconVisible" class="w-5 h-5 hidden text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+              <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+            </svg>
+          </button>
+        </div>
+
         <button 
           id="btnAdminLoginSubmit"
           type="button" 
@@ -119,7 +128,9 @@
           🔓 ចូលគ្រប់គ្រង (Login)
         </button>
       </div>
-      <a href="./index.html" class="block text-[11px] text-slate-400 hover:text-slate-600 pt-1">← ត្រឡប់ទៅទំព័រហាងអតិថិជន</a>
+      <button type="button" onclick="logoutAndGoToShop()" class="w-full text-[11px] text-slate-400 hover:text-slate-600 pt-1 cursor-pointer">
+        ← ត្រឡប់ទៅទំព័រហាងអតិថិជន
+      </button>
     </div>
   </div>
   <!-- ==================== ADMIN VIEW ==================== -->
@@ -1121,15 +1132,31 @@
       }
     };
 
+    // បើក/បិទ មើលលេខកូដសម្ងាត់ (រូបភ្នែក)
+    function toggleAdminPinVisibility() {
+      var inp = document.getElementById('adminLoginPinInput');
+      var eyeHidden = document.getElementById('eyeIconHidden');
+      var eyeVisible = document.getElementById('eyeIconVisible');
+      if (!inp) return;
+
+      if (inp.type === 'password') {
+        inp.type = 'text';
+        if (eyeHidden) eyeHidden.classList.add('hidden');
+        if (eyeVisible) eyeVisible.classList.remove('hidden');
+      } else {
+        inp.type = 'password';
+        if (eyeHidden) eyeHidden.classList.remove('hidden');
+        if (eyeVisible) eyeVisible.classList.add('hidden');
+      }
+    }
+
     function showAdminLockScreen() {
       var lock = document.getElementById('adminLockScreen');
       var sec = document.getElementById('adminSection');
       var refBtn = document.getElementById('adminRefreshBtn');
-      var logBtn = document.getElementById('adminLogoutBtn');
       if (lock) lock.classList.remove('hidden');
       if (sec) sec.classList.add('hidden');
       if (refBtn) refBtn.classList.add('hidden');
-      if (logBtn) logBtn.classList.add('hidden');
       var inp = document.getElementById('adminLoginPinInput');
       if (inp) inp.focus();
     }
@@ -1138,7 +1165,7 @@
       var inp = document.getElementById('adminLoginPinInput');
       var pin = inp ? inp.value.trim() : '';
       if (!pin) {
-        alert("សូមបញ្ចូលលេខកូដ PIN!");
+        alert("សូមបញ្ចូលលេខកូដសម្ងាត់!");
         return;
       }
       verifyAndUnlockAdmin(pin, false);
@@ -1165,7 +1192,7 @@
             localStorage.removeItem('saved_admin_pin');
             adminPin = '';
             showAdminLockScreen();
-            if (!isAuto) alert("❌ លេខកូដ PIN មិនត្រឹមត្រូវ!");
+            if (!isAuto) alert("❌ លេខកូដសម្ងាត់មិនត្រឹមត្រូវ!");
           }
         })
         .catch(function(err) {
@@ -1182,11 +1209,9 @@
       var lock = document.getElementById('adminLockScreen');
       var sec = document.getElementById('adminSection');
       var refBtn = document.getElementById('adminRefreshBtn');
-      var logBtn = document.getElementById('adminLogoutBtn');
       if (lock) lock.classList.add('hidden');
       if (sec) sec.className = "px-4 pt-3 space-y-3 max-w-4xl mx-auto";
       if (refBtn) refBtn.classList.remove('hidden');
-      if (logBtn) logBtn.classList.remove('hidden');
 
       switchAdminTab('products');
       loadAppSettings();
@@ -1194,14 +1219,11 @@
       loadFilamentInventory();
     }
 
-    function logoutAdminPin() {
-      if (confirm("តើអ្នកចង់ចាក់សោផ្ទាំង Admin (Logout) មែនទេ?")) {
-        localStorage.removeItem('saved_admin_pin');
-        adminPin = '';
-        var inp = document.getElementById('adminLoginPinInput');
-        if (inp) inp.value = '';
-        showAdminLockScreen();
-      }
+    // ចុចលើ 'ទៅហាងវិញ' -> លុប PIN (Logout) រួចត្រឡប់ទៅ index.html ភ្លាមៗ
+    function logoutAndGoToShop() {
+      localStorage.removeItem('saved_admin_pin');
+      adminPin = '';
+      window.location.assign("./index.html");
     }
 
     // --- អនុគមន៍ជំនួយសម្រាប់ស្គាល់កូដពណ៌ (Hex Color Mapper) ---
