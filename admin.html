@@ -54,7 +54,7 @@
     <!-- ប៊ូតុងខាងស្ដាំនៃ Admin Header -->
     <div class="flex items-center gap-1.5">
       <!-- ចុចលើ 'ទៅហាងវិញ' ដើម្បី Logout និងត្រឡប់ទៅ index.html ភ្លាមៗ -->
-      <button type="button" onclick="logoutAndGoToShop()" id="adminBackBtn" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-3 py-1.5 rounded-xl border border-slate-200 transition-all active:scale-95 shadow-2xs cursor-pointer">
+      <button type="button" onclick="logoutAndGoToShop()" id="adminBackBtn" class="hidden text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-3 py-1.5 rounded-xl border border-slate-200 transition-all active:scale-95 shadow-2xs cursor-pointer">
         🛒 ទៅហាងវិញ
       </button>
 
@@ -1158,9 +1158,11 @@
       var lock = document.getElementById('adminLockScreen');
       var sec = document.getElementById('adminSection');
       var refBtn = document.getElementById('adminRefreshBtn');
+      var backBtn = document.getElementById('adminBackBtn');
       if (lock) lock.classList.remove('hidden');
       if (sec) sec.classList.add('hidden');
       if (refBtn) refBtn.classList.add('hidden');
+      if (backBtn) backBtn.classList.add('hidden');
       var inp = document.getElementById('adminLoginPinInput');
       if (inp) inp.focus();
     }
@@ -1213,9 +1215,11 @@
       var lock = document.getElementById('adminLockScreen');
       var sec = document.getElementById('adminSection');
       var refBtn = document.getElementById('adminRefreshBtn');
+      var backBtn = document.getElementById('adminBackBtn');
       if (lock) lock.classList.add('hidden');
       if (sec) sec.className = "px-4 pt-3 space-y-3 max-w-4xl mx-auto";
       if (refBtn) refBtn.classList.remove('hidden');
+      if (backBtn) backBtn.classList.remove('hidden');
 
       switchAdminTab('products');
       loadAppSettings();
