@@ -93,6 +93,7 @@
         <button type="button" onclick="openSellerChat()" title="ឆាតសួរនាំ" class="w-9 h-9 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl border border-slate-200/80 flex items-center justify-center text-sm transition-all active:scale-90 shadow-2xs">
           💬
         </button>
+      </div>
 
       <!-- ប៊ូតុង Icon ភាសា -->
       <button id="langToggleBtn" type="button" onclick="toggleLanguage()" title="ប្តូរភាសា" class="w-9 h-9 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl border border-slate-200 flex items-center justify-center text-base transition-all active:scale-90 shadow-2xs">
@@ -2175,6 +2176,45 @@
           window.Telegram.WebApp.HapticFeedback.impactOccurred('medium');
         }
       } catch(e) {}
+    }
+
+    // ៤. ប៊ូតុងទី ១៖ ចុច "Skip" -> បិទ Pop-up ហើយចូលកន្ត្រកបញ្ជាទិញភ្លាមៗ
+    function confirmSkipEngrave() {
+      var popup = document.getElementById('customEngravePopup');
+      if (popup) popup.classList.add('hidden');
+
+      if (pendingCartAction === 'buyNow') {
+        buyNowDirectly(true);
+      } else {
+        addToCart(true);
+        openCartModal();
+      }
+    }
+
+    // ៥. ប៊ូតុងទី ២៖ ចុច "បំពេញឈ្មោះ" -> បិទ Pop-up រួចរំកិលទៅកន្លែងបំពេញឈ្មោះ និងបើក Keyboard ភ្លាមៗ
+    function focusEngraveInputFromPopup() {
+      var popup = document.getElementById('customEngravePopup');
+      if (popup) popup.classList.add('hidden');
+
+      var section = document.getElementById('custCustomSection');
+      var nameInput = document.getElementById('custCustomNameInput');
+
+      if (section) {
+        section.classList.remove('hidden');
+        section.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        section.classList.add('ring-2', 'ring-blue-500');
+        setTimeout(function() {
+          section.classList.remove('ring-2', 'ring-blue-500');
+        }, 1800);
+      }
+
+      if (nameInput) {
+        nameInput.focus();
+        setTimeout(function() {
+          nameInput.focus();
+          nameInput.click();
+        }, 250);
+      }
     }
     
     function updateCartBadge() {
