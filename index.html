@@ -24,6 +24,11 @@
       box-shadow: 0 0 40px rgba(0, 0, 0, 0.45);
       position: relative;
     }
+    @media (min-width: 768px) {
+      .mobile-frame {
+        max-width: 768px;
+      }
+    }
   </style>
 </head>
 <body class="bg-slate-50 text-slate-800 font-sans pb-24 select-none">
@@ -32,7 +37,7 @@
   <!-- ========================================================= -->
   <!-- 1. HEADER (LOGO + CUSTOMER ACTION BUTTONS)                -->
   <!-- ========================================================= -->
-  <header class="sticky top-0 z-30 w-full max-w-[430px] mx-auto bg-white/95 backdrop-blur-md border-b border-slate-100 px-4 py-2.5 shadow-sm flex items-center justify-between">
+  <header class="sticky top-0 z-30 w-full max-w-[430px] md:max-w-[768px] mx-auto bg-white/95 backdrop-blur-md border-b border-slate-100 px-4 md:px-6 py-2.5 shadow-sm flex items-center justify-between">
     <div class="flex items-center gap-2.5">
       <div 
         id="secretLogoBox"
@@ -133,10 +138,40 @@
 
     <!-- បញ្ជីទំនិញ (Product Grid) -->
     <main class="px-4">
-      <div id="customerGrid" class="grid grid-cols-2 gap-3"></div>
-      <div id="custLoader" class="text-center py-16 text-slate-400 text-xs">
-        <div class="w-6 h-6 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-2"></div>
-        <span id="custLoaderText">កំពុងទាញទិន្នន័យពីហាង...</span>
+      <div id="customerGrid" class="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4"></div>
+      <div id="custLoader" class="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
+        <div class="bg-white rounded-2xl p-2.5 border border-slate-100 space-y-2.5 animate-pulse">
+          <div class="w-full h-36 md:h-44 rounded-xl bg-slate-200/80"></div>
+          <div class="h-3.5 bg-slate-200/80 rounded-md w-3/4"></div>
+          <div class="flex justify-between items-center pt-1">
+            <div class="h-4 bg-slate-200/80 rounded-md w-1/3"></div>
+            <div class="h-5 bg-slate-200/80 rounded-lg w-10"></div>
+          </div>
+        </div>
+        <div class="bg-white rounded-2xl p-2.5 border border-slate-100 space-y-2.5 animate-pulse">
+          <div class="w-full h-36 md:h-44 rounded-xl bg-slate-200/80"></div>
+          <div class="h-3.5 bg-slate-200/80 rounded-md w-2/3"></div>
+          <div class="flex justify-between items-center pt-1">
+            <div class="h-4 bg-slate-200/80 rounded-md w-1/3"></div>
+            <div class="h-5 bg-slate-200/80 rounded-lg w-10"></div>
+          </div>
+        </div>
+        <div class="bg-white rounded-2xl p-2.5 border border-slate-100 space-y-2.5 animate-pulse">
+          <div class="w-full h-36 md:h-44 rounded-xl bg-slate-200/80"></div>
+          <div class="h-3.5 bg-slate-200/80 rounded-md w-4/5"></div>
+          <div class="flex justify-between items-center pt-1">
+            <div class="h-4 bg-slate-200/80 rounded-md w-1/3"></div>
+            <div class="h-5 bg-slate-200/80 rounded-lg w-10"></div>
+          </div>
+        </div>
+        <div class="bg-white rounded-2xl p-2.5 border border-slate-100 space-y-2.5 animate-pulse">
+          <div class="w-full h-36 md:h-44 rounded-xl bg-slate-200/80"></div>
+          <div class="h-3.5 bg-slate-200/80 rounded-md w-3/5"></div>
+          <div class="flex justify-between items-center pt-1">
+            <div class="h-4 bg-slate-200/80 rounded-md w-1/3"></div>
+            <div class="h-5 bg-slate-200/80 rounded-lg w-10"></div>
+          </div>
+        </div>
       </div>
     </main>
 
@@ -151,7 +186,7 @@
   <!-- ========================================================= -->
   <!-- 4. BOTTOM NAVIGATION BAR                                  -->
   <!-- ========================================================= -->
-  <nav id="bottomNavContainer" class="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[430px] z-40 bg-white/95 backdrop-blur-md border-t border-slate-200/80 px-8 py-2 shadow-lg flex justify-around items-center select-none">
+  <nav id="bottomNavContainer" class="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[430px] md:max-w-[768px] z-40 bg-white/95 backdrop-blur-md border-t border-slate-200/80 px-8 py-2 shadow-lg flex justify-around items-center select-none">
     <!-- 🏠 Home -->
     <button type="button" onclick="scrollToTop()" class="flex flex-col items-center gap-0.5 text-blue-600 active:scale-90 transition-all">
       <span class="text-xl">🏠</span>
@@ -1059,8 +1094,7 @@
       }
 
       if (!hasCached && loader) {
-        loader.className = "text-center py-16 text-slate-400 text-xs";
-        loader.innerHTML = '<div class="w-6 h-6 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-2"></div><span id="custLoaderText">កំពុងទាញទិន្នន័យពីហាង...</span>';
+        loader.className = "grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4";
       }
 
       // ២. ទាញទិន្នន័យថ្មីចុងក្រោយពី Google Sheet នៅផ្ទៃខាងក្រោយ (Background Sync)
@@ -1246,7 +1280,7 @@
       grid.innerHTML = '';
 
       if (!items || items.length === 0) {
-        grid.innerHTML = '<p class="col-span-2 text-center text-xs text-slate-400 py-12">' + (t.emptyShop || 'មិនទាន់មានទំនិញក្នុងប្រភេទទំនិញនេះនៅឡើយទេ') + '</p>';
+        grid.innerHTML = '<p class="col-span-full text-center text-xs text-slate-400 py-12">' + (t.emptyShop || 'មិនទាន់មានទំនិញក្នុងប្រភេទទំនិញនេះនៅឡើយទេ') + '</p>';
         return;
       }
 
@@ -1258,7 +1292,7 @@
 
           var topDiv = document.createElement('div');
           var imgContainer = document.createElement('div');
-          imgContainer.className = "w-full h-36 rounded-xl overflow-hidden bg-slate-100 mb-2 relative";
+          imgContainer.className = "w-full h-36 md:h-44 rounded-xl overflow-hidden bg-slate-100 mb-2 relative";
 
           var img = document.createElement('img');
           img.src = p.image || "https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&w=600&q=80";
@@ -1273,10 +1307,25 @@
           var origPrice = Number(p.price) || 0;
           var salePrice = (disc > 0 && disc < 100) ? (origPrice * (1 - disc / 100)) : origPrice;
 
-          // បង្ហាញ Badge Discount លើរូបភាព
+          // ប៊ូតុង Like (បេះដូង) នៅជ្រុងខាងស្តាំលើនៃរូបភាពទំនិញ
+          var likedNow = isProductLiked(p.id);
+          var cardLikeBtn = document.createElement('button');
+          cardLikeBtn.type = "button";
+          cardLikeBtn.setAttribute('data-card-like-id', String(p.id).trim());
+          cardLikeBtn.title = "ចូលចិត្តទំនិញនេះ";
+          cardLikeBtn.className = "absolute top-2 right-2 w-7 h-7 rounded-full bg-white/90 hover:bg-white backdrop-blur-md shadow-xs border border-slate-200/70 flex items-center justify-center active:scale-90 transition-all z-10 cursor-pointer";
+          cardLikeBtn.innerHTML = likedNow
+            ? '<svg class="w-3.5 h-3.5 text-rose-500 fill-rose-500" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>'
+            : '<svg class="w-3.5 h-3.5 text-slate-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg>';
+          cardLikeBtn.onclick = function(e) {
+            toggleProductLike(p.id, e);
+          };
+          imgContainer.appendChild(cardLikeBtn);
+
+          // បង្ហាញ Badge Discount លើរូបភាព (ខាងក្រោមស្តាំ ដើម្បីកុំឱ្យបាំងប៊ូតុង Like)
           if (disc > 0) {
             var discSpan = document.createElement('span');
-            discSpan.className = "absolute top-2 right-2 bg-rose-500 text-white text-[10px] font-black px-1.5 py-0.5 rounded-lg shadow-sm";
+            discSpan.className = "absolute bottom-2 right-2 bg-rose-500 text-white text-[10px] font-black px-1.5 py-0.5 rounded-lg shadow-sm";
             discSpan.innerText = "-" + Math.round(disc) + "%";
             imgContainer.appendChild(discSpan);
           }
@@ -3175,6 +3224,17 @@
       localStorage.setItem('cv3d_liked_pids', JSON.stringify(likedProductIds));
       updateHeaderWishlistBadgeUI();
       updateModalLikeBtnUI();
+
+      // ធ្វើបច្ចុប្បន្នភាពរូបបេះដូងលើកាតទំនិញខាងក្រៅភ្លាមៗ
+      var cardBtns = document.querySelectorAll('[data-card-like-id]');
+      for (var c = 0; c < cardBtns.length; c++) {
+        if (cardBtns[c].getAttribute('data-card-like-id') === pid) {
+          var isNowLiked = isProductLiked(pid);
+          cardBtns[c].innerHTML = isNowLiked
+            ? '<svg class="w-3.5 h-3.5 text-rose-500 fill-rose-500" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>'
+            : '<svg class="w-3.5 h-3.5 text-slate-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg>';
+        }
+      }
 
       // Refresh បញ្ជី Wishlist ភ្លាមៗប្រសិនបើផ្ទាំង Wishlist កំពុងបើក
       var wModal = document.getElementById('wishlistModal');
