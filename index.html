@@ -2925,6 +2925,15 @@
         appSettings.banner_speed = parseInt(res.banner_speed, 10) || 4;
         localStorage.setItem('app_banner_speed', String(appSettings.banner_speed));
       }
+      if (res.category_order && String(res.category_order).trim() !== '') {
+        var sheetCatOrder = String(res.category_order).split(',').map(function(s) { return s.trim(); }).filter(Boolean);
+        if (sheetCatOrder.length > 0) {
+          localStorage.setItem('app_category_order', JSON.stringify(sheetCatOrder));
+          if (typeof renderDynamicCategories === 'function' && customerProducts && customerProducts.length > 0) {
+            renderDynamicCategories();
+          }
+        }
+      }
       if (res.social_phone_val !== undefined || res.social_tg_val !== undefined) {
         appSocialSettings = {
           phone_enabled: (String(res.social_phone_enabled).toLowerCase() === 'yes' || res.social_phone_enabled === true),
