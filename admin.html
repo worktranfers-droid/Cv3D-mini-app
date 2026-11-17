@@ -650,10 +650,11 @@
 
         <!-- ៤ ប្រអប់ក្នុង ១ ជួរទន្ទឹមគ្នា៖ ប្រភេទ, តម្លៃ ($), បញ្ចុះ (%), Badge -->
         <div class="grid grid-cols-4 gap-2">
-          <!-- ១. ប្រភេទ (Dropdown) -->
+          <!-- ១. ប្រភេទ (អាចរើសបាន ១ ឬ ២+ ប្រភេទព្រមគ្នា) -->
           <div>
             <label id="lblAddCategory" class="block text-xs font-semibold text-slate-600 mb-1">ប្រភេទ</label>
-            <select id="addCategory" class="w-full border border-slate-300 p-2 rounded-xl text-xs outline-none bg-white focus:ring-2 focus:ring-blue-500 font-semibold text-slate-700 cursor-pointer shadow-2xs">
+            <input id="addCategory" type="hidden" value="">
+            <select id="addCategoryPicker" onchange="toggleProductCategoryChip(this)" class="w-full border border-slate-300 p-2 rounded-xl text-xs outline-none bg-white focus:ring-2 focus:ring-blue-500 font-semibold text-slate-700 cursor-pointer shadow-2xs">
               <!-- Category នឹងត្រូវទាញបញ្ចូលតាម JS -->
             </select>
           </div>
@@ -681,6 +682,9 @@
             </select>
           </div>
         </div>
+
+        <!-- បង្ហាញ Category ដែលបានរើសសម្រាប់ទំនិញនេះ (អាចដាក់ ១ ឬ ២ ប្រភេទ) -->
+        <div id="selectedCategoryChips" class="flex flex-wrap items-center gap-1.5 min-h-[24px]"></div>
 
         <div>
           <label id="lblAddDesc" class="block text-xs font-semibold text-slate-600 mb-1">ការពិពណ៌នា</label>
@@ -2439,7 +2443,7 @@
         alert("មិនអាចបើកផ្ទាំងបន្ថែមបានទេ៖ " + err.message);
       }
 
-      updateCategoryDropdownUI('Pet');
+      updateCategoryDropdownUI('custom');
 
       var vidInput = document.getElementById('addVideoUrl');
         if (vidInput) {
@@ -2518,7 +2522,7 @@
         if (typeof updateColorDropdownOptions === 'function') updateColorDropdownOptions();
 
         // ✅ ហៅទាញយកប្រភេទពិតប្រាកដរបស់ផលិតផលមកដាក់ក្នុង Dropdown
-        updateCategoryDropdownUI(p.category || 'Pet');
+        updateCategoryDropdownUI(p.category || 'custom');
 
       } catch (err) {
         console.error("កំហុសពេលបើកផ្ទាំងកែប្រែ:", err);
@@ -2650,10 +2654,16 @@
 
       var categories = [];
       for (var i = 0; i < adminProducts.length; i++) {
-        var cat = (adminProducts[i].category || '').trim();
-        if (cat) {
-          var exists = categories.some(function(c) { return c.toLowerCase() === cat.toLowerCase(); });
-          if (!exists) categories.push(cat);
+        var rawCatStr = (adminProducts[i].category || '').trim();
+        if (rawCatStr) {
+          var parts = rawCatStr.split(',');
+          for (var pIdx = 0; pIdx < parts.length; pIdx++) {
+            var cat = parts[pIdx].trim();
+            if (cat) {
+              var exists = categories.some(function(c) { return c.toLowerCase() === cat.toLowerCase(); });
+              if (!exists) categories.push(cat);
+            }
+          }
         }
       }
 
@@ -3277,59 +3287,120 @@
       }
     }
 
-    // អនុគមន៍ទាញយកតែ Category ណាដែលមានពិតប្រាកដក្នុងទំនិញ Google Sheet ប៉ុណ្ណោះ
+    // អនុគមន៍ទាញយក Category ស្តង់ដារ និង Category ដែលមានក្នុង Google Sheet (បំបែកក្បៀស ,)
     function getAllAvailableCategories() {
-      var categories = [];
-      var prods = (typeof adminProducts !== 'undefined' && adminProducts.length > 0) ? adminProducts : (customerProducts || []);
+      var standardCats = ['custom', 'fidget', 'desk', 'pets', 'home'];
+      var categories = standardCats.slice();
+      var prods = (typeof adminProducts !== 'undefined' && adminProducts.length > 0) ? adminProducts : [];
       
       for (var i = 0; i < prods.length; i++) {
-        var cat = (prods[i].category || '').trim();
-        if (cat) {
-          var exists = categories.some(function(c) { 
-            return c.toLowerCase() === cat.toLowerCase(); 
-          });
-          if (!exists) {
-            categories.push(cat);
+        var rawCatStr = (prods[i].category || '').trim();
+        if (rawCatStr) {
+          var parts = rawCatStr.split(',');
+          for (var j = 0; j < parts.length; j++) {
+            var cat = parts[j].trim();
+            if (cat) {
+              var exists = categories.some(function(c) { 
+                return c.toLowerCase() === cat.toLowerCase(); 
+              });
+              if (!exists) {
+                categories.push(cat);
+              }
+            }
           }
         }
       }
 
-      if (categories.length === 0) {
-        categories = ['Pet', 'Fidget', 'Desk', 'Custom'];
+      var savedOrder = JSON.parse(localStorage.getItem('app_category_order') || '[]');
+      if (savedOrder && savedOrder.length > 0) {
+        for (var k = 0; k < savedOrder.length; k++) {
+          var sc = String(savedOrder[k] || '').trim();
+          if (sc && !categories.some(function(c) { return c.toLowerCase() === sc.toLowerCase(); })) {
+            categories.push(sc);
+          }
+        }
       }
 
       return categories;
     }
 
-    // បញ្ចូល Category ចូល Dropdown (សុទ្ធសាធ គ្មាន option វាយថ្មីឡើយ)
+    var selectedProductCategories = [];
+
+    function renderSelectedCategoryChips() {
+      var hiddenInput = document.getElementById('addCategory');
+      var container = document.getElementById('selectedCategoryChips');
+      if (hiddenInput) {
+        hiddenInput.value = selectedProductCategories.join(', ');
+      }
+      if (!container) return;
+
+      container.innerHTML = '';
+      if (selectedProductCategories.length === 0) {
+        container.innerHTML = '<span class="text-[10px] text-slate-400 italic">* ចុចរើសប្រភេទខាងលើ (អាចរើសបាន ១ ឬ ២ ប្រភេទ)</span>';
+        return;
+      }
+
+      for (var i = 0; i < selectedProductCategories.length; i++) {
+        (function(catName, idx) {
+          var chip = document.createElement('span');
+          chip.className = "inline-flex items-center gap-1 bg-blue-50 text-blue-700 border border-blue-200 px-2 py-0.5 rounded-lg text-[10px] font-bold capitalize";
+          chip.innerHTML = '<span>🏷️ ' + catName + '</span>';
+
+          var rmBtn = document.createElement('button');
+          rmBtn.type = "button";
+          rmBtn.className = "text-blue-400 hover:text-rose-600 font-extrabold ml-0.5 cursor-pointer";
+          rmBtn.innerText = "✕";
+          rmBtn.onclick = function() {
+            selectedProductCategories.splice(idx, 1);
+            renderSelectedCategoryChips();
+          };
+          chip.appendChild(rmBtn);
+          container.appendChild(chip);
+        })(selectedProductCategories[i], i);
+      }
+    }
+
+    function toggleProductCategoryChip(selectEl) {
+      if (!selectEl) return;
+      var val = String(selectEl.value || '').trim();
+      if (!val) return;
+
+      var existsIdx = -1;
+      for (var i = 0; i < selectedProductCategories.length; i++) {
+        if (selectedProductCategories[i].toLowerCase() === val.toLowerCase()) {
+          existsIdx = i;
+          break;
+        }
+      }
+
+      if (existsIdx === -1) {
+        selectedProductCategories.push(val);
+      }
+      selectEl.value = "";
+      renderSelectedCategoryChips();
+    }
+
+    // បញ្ចូល Category ចូល Dropdown Picker (គាំទ្រការជ្រើសរើស ១ ឬ ២+ ប្រភេទ)
     function updateCategoryDropdownUI(selectedVal) {
-      var sel = document.getElementById('addCategory');
+      var sel = document.getElementById('addCategoryPicker');
       if (!sel) return;
 
       var cats = getAllAvailableCategories();
-      sel.innerHTML = '';
-
-      var targetVal = String(selectedVal || '').toLowerCase().trim();
-      var foundMatch = false;
+      sel.innerHTML = '<option value="">+ រើសប្រភេទ...</option>';
 
       for (var i = 0; i < cats.length; i++) {
         var opt = document.createElement('option');
         opt.value = cats[i];
-        opt.innerText = cats[i];
-        if (targetVal && cats[i].toLowerCase().trim() === targetVal) {
-          opt.selected = true;
-          foundMatch = true;
-        }
+        opt.innerText = cats[i].charAt(0).toUpperCase() + cats[i].slice(1);
         sel.appendChild(opt);
       }
 
-      // ប្រសិនបើតម្លៃដើមរបស់ទំនិញមិនទាន់មានក្នុង List បន្ថែមវាជា Option ថ្មីភ្លាម
-      if (selectedVal && !foundMatch) {
-        var extraOpt = document.createElement('option');
-        extraOpt.value = selectedVal;
-        extraOpt.innerText = selectedVal;
-        extraOpt.selected = true;
-        sel.appendChild(extraOpt);
+      if (selectedVal !== undefined) {
+        selectedProductCategories = String(selectedVal || '')
+          .split(',')
+          .map(function(s) { return s.trim(); })
+          .filter(Boolean);
+        renderSelectedCategoryChips();
       }
     }
     
@@ -3373,8 +3444,7 @@
 
         // ធ្វើបច្ចុប្បន្នភាព UI លើ App គ្រប់កន្លែង (ផ្ទាំង Setting, Dropdown បន្ថែមទំនិញ, និងទំព័រ Home)
         if (typeof renderAdminCategoryOrderManager === 'function') renderAdminCategoryOrderManager();
-        if (typeof renderDynamicCategories === 'function') renderDynamicCategories();
-        if (typeof updateCategoryDropdownUI === 'function') updateCategoryDropdownUI(newCat);
+        if (typeof updateCategoryDropdownUI === 'function') updateCategoryDropdownUI();
 
         alert("✓ បានបន្ថែម Category '" + newCat + "' ចូល Google Sheet (Catalog Products) រួចរាល់!");
       })
