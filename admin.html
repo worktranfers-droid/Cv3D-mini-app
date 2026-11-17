@@ -2079,20 +2079,20 @@
               };
             }
 
-            updateDeliveryDropdownUI();
+            if (typeof updateDeliveryDropdownUI === "function") updateDeliveryDropdownUI();
             updateShippingSummaryText();
             updateImageQualitySummaryText();
             updateSocialSummaryUI();
-            renderPromoBanner();
+            if (typeof renderPromoBanner === "function") renderPromoBanner();
             renderFooterSocialLinks(); // បង្ហាញ Icon ភ្លាមៗក្រោយទាញទិន្នន័យពី Sheet បាន
             if (typeof renderCartItems === "function") renderCartItems();
           }
         })
         .catch(function(err) {
           console.warn("ប្រើតម្លៃកំណត់លំនាំដើម:", err);
-          updateDeliveryDropdownUI();
+          if (typeof updateDeliveryDropdownUI === "function") updateDeliveryDropdownUI();
           updateShippingSummaryText();
-          renderPromoBanner();
+          if (typeof renderPromoBanner === "function") renderPromoBanner();
           renderFooterSocialLinks();
         });
     }
