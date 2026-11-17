@@ -15,24 +15,29 @@
     }
     ::-webkit-scrollbar { display: none; }
 
-    .mobile-frame {
+    .app-frame {
       width: 100%;
-      max-width: 430px;
+      max-width: 1200px;
       min-height: 100vh;
       margin: 0 auto;
       background-color: #f8fafc;
-      box-shadow: 0 0 40px rgba(0, 0, 0, 0.45);
+      box-shadow: 0 0 40px rgba(0, 0, 0, 0.25);
       position: relative;
+      transition: max-width 0.25s ease;
+    }
+    .app-frame.force-mobile {
+      max-width: 430px !important;
+      box-shadow: 0 0 40px rgba(0, 0, 0, 0.45);
     }
   </style>
 </head>
 <body class="bg-slate-50 text-slate-800 font-sans pb-16 select-none">
-  <div class="mobile-frame">
+  <div id="adminAppFrame" class="app-frame">
 
   <!-- ========================================================= -->
   <!-- 1. ADMIN HEADER                                           -->
   <!-- ========================================================= -->
-  <header class="sticky top-0 z-30 w-full max-w-[480px] mx-auto bg-white/95 backdrop-blur-md border-b border-slate-100 px-4 py-2.5 shadow-sm flex items-center justify-between">
+  <header class="sticky top-0 z-30 w-full mx-auto bg-white/95 backdrop-blur-md border-b border-slate-100 px-4 sm:px-6 py-2.5 shadow-sm flex items-center justify-between">
     <div class="flex items-center gap-2.5">
       <div class="w-9 h-9 rounded-xl overflow-hidden bg-white border border-slate-200/80 shadow-xs flex-shrink-0 flex items-center justify-center p-0.5">
         <img 
@@ -56,6 +61,17 @@
       <!-- ចុចលើ 'ទៅហាងវិញ' ដើម្បី Logout និងត្រឡប់ទៅ index.html ភ្លាមៗ -->
       <button type="button" onclick="logoutAndGoToShop()" id="adminBackBtn" class="hidden text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-3 py-1.5 rounded-xl border border-slate-200 transition-all active:scale-95 shadow-2xs cursor-pointer">
         🛒 ទៅហាងវិញ
+      </button>
+
+      <!-- ប៊ូតុងប្តូរទម្រង់មើល ទូរសព្ទ / កុំព្យូទ័រ (បង្ហាញតែលើអេក្រង់កុំព្យូទ័រ) -->
+      <button 
+        id="adminViewModeBtn" 
+        type="button" 
+        onclick="toggleAdminViewMode()" 
+        title="ប្តូរទម្រង់ ទូរសព្ទ / កុំព្យូទ័រ" 
+        class="hidden md:flex w-9 h-9 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl border border-slate-200 items-center justify-center text-base transition-all active:scale-90 shadow-2xs flex-shrink-0 cursor-pointer"
+      >
+        <span id="adminViewModeIcon">📱</span>
       </button>
 
       <!-- ប៊ូតុង Refresh សម្រាប់ Admin -->
@@ -131,7 +147,7 @@
     </div>
   </div>
   <!-- ==================== ADMIN VIEW ==================== -->
-  <section id="adminSection" class="hidden px-4 pt-3 space-y-3 max-w-4xl mx-auto">
+  <section id="adminSection" class="hidden px-4 sm:px-6 pt-4 space-y-4 w-full mx-auto">
     <div class="flex justify-between items-center bg-white p-3 rounded-2xl border border-slate-200 shadow-sm">
       <div>
         <h2 id="adminTitleText" class="text-xs font-bold text-slate-800">🛠️ Admin Dashboard</h2>
@@ -176,7 +192,7 @@
         <span>កំពុងធ្វើបច្ចុប្បន្នភាព...</span>
       </div>
 
-      <div id="adminList" class="space-y-2.5"></div>
+      <div id="adminList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3"></div>
     </div>
 
     <!-- កុងតឺន័រទី ២៖ គ្រប់គ្រងការកុម្ម៉ង់ទិញ -->
@@ -207,11 +223,11 @@
         <div class="w-6 h-6 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-2"></div>
         <span>កំពុងទាញបញ្ជីការកុម្ម៉ង់...</span>
       </div>
-      <div id="adminOrdersList" class="space-y-3"></div>
+      <div id="adminOrdersList" class="grid grid-cols-1 md:grid-cols-2 gap-3 items-start"></div>
     </div>
 
     <!-- កុងតឺន័រទី ៣៖ ការកំណត់ (Settings Tab) -->
-    <div id="adminSettingsContainer" class="hidden space-y-3">
+    <div id="adminSettingsContainer" class="hidden grid grid-cols-1 md:grid-cols-2 gap-3.5 items-start">
       
       <!-- ១. ប្លុករៀបលំដាប់ Category (Accordion + Save 💾 ចូល Google Sheet) -->
       <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-xs">
@@ -646,12 +662,14 @@
   </section>
   <!-- Modal 6: Add / Edit Product -->
   <div id="addModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
-    <div class="bg-white w-full max-w-md rounded-3xl p-5 shadow-2xl relative max-h-[92vh] overflow-y-auto">
+    <div id="addModalCard" class="bg-white w-full max-w-md md:max-w-2xl rounded-3xl p-5 sm:p-6 shadow-2xl relative max-h-[92vh] overflow-y-auto transition-all">
       <button type="button" onclick="closeAddModal()" class="absolute top-4 right-4 bg-slate-100 w-8 h-8 rounded-full font-bold text-slate-500">✕</button>
       <h3 id="modalFormTitle" class="text-base font-bold text-slate-800 mb-4">➕ បន្ថែមផលិតផលថ្មី</h3>
       <input id="editProductId" type="hidden" value="">
 
-      <div class="space-y-3">
+      <div id="addModalFormGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- ផ្នែកខាងឆ្វេង៖ ព័ត៌មានទូទៅ និងតម្លៃ -->
+        <div class="space-y-3">
         <div>
           <label id="lblAddTitle" class="block text-xs font-semibold text-slate-600 mb-1">ឈ្មោះផលិតផល</label>
           <input id="addTitle" type="text" placeholder="ឧ. Articulated Dragon" class="w-full border border-slate-300 p-2 rounded-xl text-xs outline-none focus:ring-2 focus:ring-blue-500">
@@ -697,9 +715,39 @@
 
         <div>
           <label id="lblAddDesc" class="block text-xs font-semibold text-slate-600 mb-1">ការពិពណ៌នា</label>
-          <textarea id="addDesc" rows="2" placeholder="ព័ត៌មានលម្អិត..." class="w-full border border-slate-300 p-2 rounded-xl text-xs outline-none"></textarea>
+          <textarea id="addDesc" rows="3" placeholder="ព័ត៌មានលម្អិត..." class="w-full border border-slate-300 p-2 rounded-xl text-xs outline-none"></textarea>
         </div>
-        
+
+        <div>
+          <label id="lblAddSizes" class="block text-xs font-semibold text-slate-600 mb-1">ជម្រើសទំហំ (បំបែកដោយក្បៀស ,)</label>
+          <input id="addSizes" type="text" placeholder="Standard, Giant" class="w-full border border-slate-300 p-2 rounded-xl text-xs outline-none">
+        </div>
+
+        <!-- Custom Product Settings -->
+        <div class="bg-amber-50 p-3 rounded-2xl border border-amber-200 space-y-2">
+          <label class="flex items-center gap-2 cursor-pointer">
+            <input id="addIsCustom" type="checkbox" onchange="toggleCustomFeeInput()" class="w-4 h-4 text-blue-600 rounded">
+            <span id="lblAddIsCustom" class="text-xs font-bold text-amber-900">🛠️ ទំនិញ Custom (ឆ្លាក់ឈ្មោះ/រៀបចំពិសេស)</span>
+          </label>
+          
+          <div id="customFeeContainer" class="hidden pt-1 space-y-2">
+            <div>
+              <label id="lblCustomFeeType" class="block text-[11px] font-semibold text-amber-800 mb-1">របៀបគិតថ្លៃសេវា Custom៖</label>
+              <select id="addCustomMode" onchange="updateCustomModeUI()" class="w-full border border-amber-300 p-2 rounded-xl text-xs bg-white outline-none">
+                <option value="flat" id="optCustomFlat">ថ្លៃសេវាថេរ (Flat Fee - សម្រាប់ចានឆ្កែ/ទំនិញទូទៅ)</option>
+                <option value="per_char" id="optCustomPerChar">គិតតាមចំនួនអក្សរ (Per Char - សម្រាប់ Keychain)</option>
+              </select>
+            </div>
+            <div>
+              <label id="lblCustomFeeVal" class="block text-[11px] font-semibold text-amber-800 mb-1">ថ្លៃសេវាថេរ ($)</label>
+              <input id="addCustomFee" type="number" step="0.1" placeholder="ឧ. 1.50" class="w-full border border-amber-300 p-2 rounded-xl text-xs bg-white outline-none">
+            </div>
+          </div>
+        </div>
+        </div>
+
+        <!-- ផ្នែកខាងស្តាំ៖ រូបភាព វីដេអូ និងជម្រើសពណ៌ -->
+        <div class="space-y-3">
         <!-- ផ្នែក Upload រូបភាព និងប៊ូតុងបើក Link នៅខាងស្ដាំ -->
         <div class="space-y-2">
           <!-- ជួរ Choose File + ប៊ូតុង 🔗 Link -->
@@ -813,36 +861,13 @@
           >
         </div>
         
-        <div>
-          <label id="lblAddSizes" class="block text-xs font-semibold text-slate-600 mb-1">ជម្រើសទំហំ (បំបែកដោយក្បៀស ,)</label>
-          <input id="addSizes" type="text" placeholder="Standard, Giant" class="w-full border border-slate-300 p-2 rounded-xl text-xs outline-none">
         </div>
-        
-        <!-- Custom Product Settings -->
-        <div class="bg-amber-50 p-3 rounded-2xl border border-amber-200 space-y-2">
-          <label class="flex items-center gap-2 cursor-pointer">
-            <input id="addIsCustom" type="checkbox" onchange="toggleCustomFeeInput()" class="w-4 h-4 text-blue-600 rounded">
-            <span id="lblAddIsCustom" class="text-xs font-bold text-amber-900">🛠️ ទំនិញ Custom (ឆ្លាក់ឈ្មោះ/រៀបចំពិសេស)</span>
-          </label>
-          
-          <div id="customFeeContainer" class="hidden pt-1 space-y-2">
-            <div>
-              <label id="lblCustomFeeType" class="block text-[11px] font-semibold text-amber-800 mb-1">របៀបគិតថ្លៃសេវា Custom៖</label>
-              <select id="addCustomMode" onchange="updateCustomModeUI()" class="w-full border border-amber-300 p-2 rounded-xl text-xs bg-white outline-none">
-                <option value="flat" id="optCustomFlat">ថ្លៃសេវាថេរ (Flat Fee - សម្រាប់ចានឆ្កែ/ទំនិញទូទៅ)</option>
-                <option value="per_char" id="optCustomPerChar">គិតតាមចំនួនអក្សរ (Per Char - សម្រាប់ Keychain)</option>
-              </select>
-            </div>
-            <div>
-              <label id="lblCustomFeeVal" class="block text-[11px] font-semibold text-amber-800 mb-1">ថ្លៃសេវាថេរ ($)</label>
-              <input id="addCustomFee" type="number" step="0.1" placeholder="ឧ. 1.50" class="w-full border border-amber-300 p-2 rounded-xl text-xs bg-white outline-none">
-            </div>
-          </div>
+
+        <div class="md:col-span-2 pt-1">
+          <button id="saveProdBtn" type="button" onclick="saveProductData()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-2xl text-xs shadow-md active:scale-98 transition-all cursor-pointer">
+            💾 រក្សាទុកចូល Google Sheet
+          </button>
         </div>
-        
-        <button id="saveProdBtn" type="button" onclick="saveProductData()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-2xl text-xs mt-2 shadow-md">
-          💾 រក្សាទុកចូល Google Sheet
-        </button>
       </div>
     </div>
   </div>
@@ -1130,6 +1155,50 @@
     }
 
 
+    // --- HYBRID RESPONSIVE VIEW MODE (AUTO-DESKTOP + 📱/💻 TOGGLE) ---
+    var isForcedMobileView = (localStorage.getItem('admin_force_mobile_view') === 'yes');
+
+    function applyAdminViewMode() {
+      var frame = document.getElementById('adminAppFrame');
+      var icon = document.getElementById('adminViewModeIcon');
+      var btn = document.getElementById('adminViewModeBtn');
+      var adminList = document.getElementById('adminList');
+      var ordersList = document.getElementById('adminOrdersList');
+      var settingsCon = document.getElementById('adminSettingsContainer');
+      var modalCard = document.getElementById('addModalCard');
+      var modalGrid = document.getElementById('addModalFormGrid');
+
+      if (isForcedMobileView) {
+        if (frame) frame.classList.add('force-mobile');
+        if (icon) icon.innerText = '💻';
+        if (btn) btn.title = 'ប្តូរទៅទម្រង់កុំព្យូទ័រ (Desktop View)';
+        if (adminList) adminList.className = 'space-y-2.5';
+        if (ordersList) ordersList.className = 'space-y-3';
+        if (settingsCon && !settingsCon.classList.contains('hidden')) {
+          settingsCon.className = 'space-y-3';
+        }
+        if (modalCard) modalCard.className = 'bg-white w-full max-w-md rounded-3xl p-5 shadow-2xl relative max-h-[92vh] overflow-y-auto transition-all';
+        if (modalGrid) modalGrid.className = 'grid grid-cols-1 gap-3';
+      } else {
+        if (frame) frame.classList.remove('force-mobile');
+        if (icon) icon.innerText = '📱';
+        if (btn) btn.title = 'ប្តូរទៅទម្រង់ទូរសព្ទ (Mobile Preview)';
+        if (adminList) adminList.className = 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3';
+        if (ordersList) ordersList.className = 'grid grid-cols-1 md:grid-cols-2 gap-3 items-start';
+        if (settingsCon && !settingsCon.classList.contains('hidden')) {
+          settingsCon.className = 'grid grid-cols-1 md:grid-cols-2 gap-3.5 items-start';
+        }
+        if (modalCard) modalCard.className = 'bg-white w-full max-w-md md:max-w-2xl rounded-3xl p-5 sm:p-6 shadow-2xl relative max-h-[92vh] overflow-y-auto transition-all';
+        if (modalGrid) modalGrid.className = 'grid grid-cols-1 md:grid-cols-2 gap-4';
+      }
+    }
+
+    function toggleAdminViewMode() {
+      isForcedMobileView = !isForcedMobileView;
+      localStorage.setItem('admin_force_mobile_view', isForcedMobileView ? 'yes' : 'no');
+      applyAdminViewMode();
+    }
+
     // --- ADMIN STANDALONE AUTH & INITIALIZATION ---
     window.onload = function() {
       try {
@@ -1139,6 +1208,7 @@
         }
       } catch (e) {}
 
+      applyAdminViewMode();
       applyLanguageUI();
 
       // ពិនិត្យ PIN ដែលធ្លាប់រក្សាទុកក្នុង Browser/Telegram
@@ -1230,7 +1300,7 @@
       var refBtn = document.getElementById('adminRefreshBtn');
       var backBtn = document.getElementById('adminBackBtn');
       if (lock) lock.classList.add('hidden');
-      if (sec) sec.className = "px-4 pt-3 space-y-3 max-w-4xl mx-auto";
+      if (sec) sec.className = "px-4 sm:px-6 pt-4 space-y-4 w-full mx-auto";
       if (refBtn) refBtn.classList.remove('hidden');
       if (backBtn) backBtn.classList.remove('hidden');
 
@@ -1670,7 +1740,7 @@
       } else if (tab === 'settings') {
         // --- ផ្ទាំងទី ៣៖ ⚙️ ការកំណត់ ---
         if (tabS) tabS.className = "flex-1 py-2 rounded-xl text-xs font-bold bg-white text-slate-800 shadow-xs transition-all";
-        if (conS) conS.className = "space-y-3";
+        if (conS) conS.className = isForcedMobileView ? "space-y-3" : "grid grid-cols-1 md:grid-cols-2 gap-3.5 items-start";
         if (addBtn) addBtn.className = "hidden";
 
         // បញ្ចូលទិន្នន័យចាស់ចូលក្នុង Form កំណត់ថ្លៃដឹកជញ្ជូន
