@@ -195,6 +195,15 @@ var i18n = {
     btnAdminLogin: "🔓 ចូលគ្រប់គ្រង (Login)",
     btnAdminVerifying: "⏳ កំពុងផ្ទៀងផ្ទាត់...",
     linkBackToCustomerShop: "← ត្រឡប់ទៅទំព័រហាងអតិថិជន",
+    catLabels: {
+      "custom": "ឆ្លាក់ឈ្មោះ (Custom)",
+      "fidget": "របស់លេង & Fidget",
+      "desk": "តុធ្វើការ & ទូរសព្ទ",
+      "pet": "សត្វចិញ្ចឹម (Pets)",
+      "pets": "សត្វចិញ្ចឹម (Pets)",
+      "home": "តុបតែងផ្ទះ & កាដូ",
+      "keychain": "បន្តោងសោ (Keychain)"
+    },
   },
   en: {
     flag: "🇬🇧",
@@ -394,6 +403,15 @@ var i18n = {
     btnAdminLogin: "🔓 Login to Dashboard",
     btnAdminVerifying: "⏳ Verifying...",
     linkBackToCustomerShop: "← Back to Customer Store",
+    catLabels: {
+      "custom": "Custom",
+      "fidget": "Toys & Fidget",
+      "desk": "Desk & Tech",
+      "pet": "Pets",
+      "pets": "Pets",
+      "home": "Home & Gifts",
+      "keychain": "Keychain"
+    },
   },
   zh: {
     flag: "🇨🇳",
@@ -593,5 +611,14 @@ var i18n = {
     btnAdminLogin: "🔓 登录后台 (Login)",
     btnAdminVerifying: "⏳ 正在验证...",
     linkBackToCustomerShop: "← 返回顾客商城首页",
+    catLabels: {
+      "custom": "专属定制 (Custom)",
+      "fidget": "解压玩具 (Fidget)",
+      "desk": "桌面数码 (Desk)",
+      "pet": "宠物用品 (Pets)",
+      "pets": "宠物用品 (Pets)",
+      "home": "家居礼品 (Home)",
+      "keychain": "钥匙扣 (Keychain)"
+    },
   }
 };
