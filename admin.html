@@ -1186,7 +1186,7 @@
       var ordersList = document.getElementById('adminOrdersList');
       var settingsCon = document.getElementById('adminSettingsContainer');
       var modalCard = document.getElementById('addModalCard');
-      var modalGrid = document.getElementById('addModalFormGrid');
+      var modalGrid = document.getElementById('addModalFormGrid'); // 👈 ប្រអប់ Form ក្នុង Modal
 
       if (isForcedMobileView) {
         if (frame) frame.classList.add('force-mobile');
@@ -1197,8 +1197,9 @@
         if (settingsCon && !settingsCon.classList.contains('hidden')) {
           settingsCon.className = 'space-y-3';
         }
-        if (modalCard) modalCard.className = 'bg-white w-full max-w-md rounded-3xl p-5 shadow-2xl relative max-h-[92vh] overflow-y-auto transition-all';
-        if (modalGrid) modalGrid.className = 'grid grid-cols-1 gap-3';
+        // 👇 កែតម្រូវ Modal និង Form ឱ្យមកជាទម្រង់ 1 ជួរឈរ (Column) ពេលនៅទម្រង់ Mobile View
+        if (modalCard) modalCard.className = 'bg-white w-full max-w-sm rounded-3xl p-4 shadow-2xl relative max-h-[92vh] overflow-y-auto transition-all';
+        if (modalGrid) modalGrid.className = 'grid grid-cols-1 gap-3'; 
       } else {
         if (frame) frame.classList.remove('force-mobile');
         if (icon) icon.innerText = '📱';
@@ -1209,7 +1210,7 @@
           settingsCon.className = 'grid grid-cols-1 md:grid-cols-2 gap-3.5 items-start';
         }
         if (modalCard) modalCard.className = 'bg-white w-full max-w-md md:max-w-2xl rounded-3xl p-5 sm:p-6 shadow-2xl relative max-h-[92vh] overflow-y-auto transition-all';
-        if (modalGrid) modalGrid.className = 'grid grid-cols-1 md:grid-cols-2 gap-4';
+        if (modalGrid) modalGrid.className = 'grid grid-cols-1 md:grid-cols-2 gap-4'; // 🖥️ ទម្រង់ Desktop ដើម (2 ភាគទន្ទឹមគ្នា)
       }
     }
 
