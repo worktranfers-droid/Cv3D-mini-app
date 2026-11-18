@@ -949,7 +949,7 @@
 
     // កំណត់ភាសាបច្ចុប្បន្នដោយហៅអនុគមន៍ស្វ័យប្រវត្តិនេះ
     var currentLang = detectDefaultLanguage();
-        var adminPin = localStorage.getItem('saved_admin_pin') || '';
+        var adminPin = '';
         var adminProducts = [];
         var adminCostData = {};
 
@@ -1256,12 +1256,8 @@
       applyAdminViewMode();
       applyLanguageUI();
 
-      // ពិនិត្យ PIN ដែលធ្លាប់រក្សាទុកក្នុង Browser/Telegram
-      if (adminPin) {
-        verifyAndUnlockAdmin(adminPin, true);
-      } else {
-        showAdminLockScreen();
-      }
+      localStorage.removeItem('saved_admin_pin');
+      showAdminLockScreen();
     };
 
     // បើក/បិទ មើលលេខកូដសម្ងាត់ (រូបភ្នែក)
@@ -1320,7 +1316,6 @@
           }
           if (res && res.valid) {
             adminPin = pin;
-            localStorage.setItem('saved_admin_pin', pin);
             unlockAdminDashboard();
           } else {
             localStorage.removeItem('saved_admin_pin');
