@@ -2683,29 +2683,37 @@
       var box = document.getElementById('editCostProfitBox');
       if (!box) return;
 
-      if (!currentEditingCalcData || !(currentEditingCalcData.totalCost > 0)) {
+      if (!currentEditingCalcData || !(Number(currentEditingCalcData.totalCost) > 0)) {
         box.classList.add('hidden');
         return;
       }
 
       var t = (typeof i18n !== 'undefined' && i18n[currentLang]) ? i18n[currentLang] : {};
-      var rawPrice = parseFloat(document.getElementById('addPrice') ? document.getElementById('addPrice').value : '0') || 0;
-      var rawDisc = parseFloat(document.getElementById('addDiscount') ? document.getElementById('addDiscount').value : '0') || 0;
-      var effectiveSale = (rawDisc > 0 && rawDisc < 100) ? (rawPrice * (1 - rawDisc / 100)) : rawPrice;
+      var priceInput = document.getElementById('addPrice');
+      var discInput = document.getElementById('addDiscount');
+
+      var rawPrice = parseFloat(priceInput && priceInput.value !== '' ? priceInput.value : '0') || 0;
+      var rawDisc = parseFloat(discInput && discInput.value !== '' ? discInput.value : '0') || 0;
+      if (rawDisc > 0 && rawDisc < 1) rawDisc = rawDisc * 100;
+
+      // ថ្លៃលក់ពិតប្រាកដ (ក្រោយបញ្ចុះតម្លៃបើមាន)
+      var salePrice = (rawDisc > 0 && rawDisc < 100) ? (rawPrice * (1 - rawDisc / 100)) : rawPrice;
       var cost = Number(currentEditingCalcData.totalCost) || 0;
-      var netProfit = effectiveSale - cost;
-      var marginPct = effectiveSale > 0 ? Math.round((netProfit / effectiveSale) * 100) : 0;
+
+      // Net Profit = ថ្លៃលក់ - ថ្លៃដើម
+      var netProfit = salePrice - cost;
+      var marginPct = salePrice > 0 ? Math.round((netProfit / salePrice) * 100) : 0;
 
       var lblTitle = document.getElementById('lblModalCostTitle');
       var costEl = document.getElementById('modalCostVal');
       var profitEl = document.getElementById('modalProfitVal');
       var specEl = document.getElementById('modalPrintSpecVal');
 
-      if (lblTitle) lblTitle.innerText = (t.costLabel || 'Cost:');
+      if (lblTitle) lblTitle.innerText = (t.costLabel || 'Est. Cost:');
       if (costEl) costEl.innerText = '$' + cost.toFixed(2);
       if (profitEl) {
         var sign = netProfit >= 0 ? '+' : '-';
-        profitEl.innerText = (t.profitLabel || 'Profit: ') + sign + '$' + Math.abs(netProfit).toFixed(2) + ' (' + marginPct + '%)';
+        profitEl.innerText = (t.profitLabel || 'Net Profit: ') + sign + '$' + Math.abs(netProfit).toFixed(2) + ' (' + marginPct + '%)';
         profitEl.className = netProfit >= 0
           ? 'font-mono font-bold px-2 py-0.5 rounded-md border text-emerald-700 bg-emerald-50 border-emerald-200'
           : 'font-mono font-bold px-2 py-0.5 rounded-md border text-rose-700 bg-rose-50 border-rose-200';
