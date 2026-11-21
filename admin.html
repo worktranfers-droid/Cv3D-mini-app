@@ -2607,26 +2607,34 @@
           idBadgeEl.innerText = p.id;
           idBadgeEl.classList.remove('hidden');
         }
-        currentEditingCalcData = p.costAnalysis || (adminCostData ? (adminCostData[(p.id || "").trim()] || adminCostData[(p.title || "").trim().toLowerCase()]) : null);
-        updateEditCostProfitPreview();
-        if (el = document.getElementById('addTitle')) el.value = p.title || '';
-        if (el = document.getElementById('addPrice')) el.value = p.price || '';
-        if (el = document.getElementById('addDesc')) el.value = p.desc || '';
-        if (el = document.getElementById('addImage')) el.value = p.image || '';
-        if (el = document.getElementById('addColors')) el.value = Array.isArray(p.colors) ? p.colors.join(', ') : (p.colors || '');
-        if (el = document.getElementById('addSizes')) el.value = Array.isArray(p.sizes) ? p.sizes.join(', ') : (p.sizes || '');
-        if (el = document.getElementById('addBadge')) el.value = p.badge || '';
+if (el = document.getElementById('addTitle')) el.value = p.title || '';
 
-        // ទាញ Link វីដេអូចាស់មកបង្ហាញក្នុងប្រអប់
-        var vidInput = document.getElementById('addVideoUrl');
-        if (vidInput) {
-          vidInput.value = p.videoUrl || '';
-          checkVideoClearBtnVisibility(); // បើមាន Link វានឹងបង្ហាញប៊ូតុង ✕ ភ្លាម
-        }
+// សម្អាត Price និង Discount ឱ្យជាលេខត្រឹមត្រូវ
+var cleanPrice = parseFloat(String(p.price || 0).replace(/[^0-9.]/g, '')) || 0;
+var rawDiscStr = p.discount ? String(p.discount).replace('%', '').trim() : '';
+var cleanDiscNum = parseFloat(rawDiscStr) || 0;
+if (cleanDiscNum > 0 && cleanDiscNum < 1) cleanDiscNum = cleanDiscNum * 100;
 
-        // បញ្ចូលភាគរយ Discount
-        var rawDisc = p.discount ? String(p.discount).replace('%', '') : '';
-        if (el = document.getElementById('addDiscount')) el.value = rawDisc;
+if (el = document.getElementById('addPrice')) el.value = cleanPrice > 0 ? cleanPrice : '';
+if (el = document.getElementById('addDesc')) el.value = p.desc || '';
+if (el = document.getElementById('addImage')) el.value = p.image || '';
+if (el = document.getElementById('addColors')) el.value = Array.isArray(p.colors) ? p.colors.join(', ') : (p.colors || '');
+if (el = document.getElementById('addSizes')) el.value = Array.isArray(p.sizes) ? p.sizes.join(', ') : (p.sizes || '');
+if (el = document.getElementById('addBadge')) el.value = p.badge || '';
+
+// ទាញ Link វីដេអូចាស់មកបង្ហាញក្នុងប្រអប់
+var vidInput = document.getElementById('addVideoUrl');
+if (vidInput) {
+  vidInput.value = p.videoUrl || '';
+  checkVideoClearBtnVisibility(); // បើមាន Link វានឹងបង្ហាញប៊ូតុង × ភ្លាម
+}
+
+// បញ្ចូលភាគរយ Discount
+if (el = document.getElementById('addDiscount')) el.value = cleanDiscNum > 0 ? cleanDiscNum : '';
+
+// ✅ ហៅ updateEditCostProfitPreview() នៅត្រង់នេះ (ក្រោយពេល addPrice និង addDiscount មានតម្លៃរួច)
+currentEditingCalcData = p.costAnalysis || (adminCostData ? (adminCostData[(p.id || "").trim()] || adminCostData[(p.title || "").trim().toLowerCase()]) : null);
+updateEditCostProfitPreview();
 
         var isCust = (p.isCustom === true || String(p.isCustom).toLowerCase() === 'yes');
         if (document.getElementById('addIsCustom')) document.getElementById('addIsCustom').checked = isCust;
@@ -2692,8 +2700,8 @@
       var priceInput = document.getElementById('addPrice');
       var discInput = document.getElementById('addDiscount');
 
-      var rawPrice = parseFloat(priceInput && priceInput.value !== '' ? priceInput.value : '0') || 0;
-      var rawDisc = parseFloat(discInput && discInput.value !== '' ? discInput.value : '0') || 0;
+      var rawPrice = parseFloat(String(priceInput && priceInput.value !== '' ? priceInput.value : '0').replace(/[^0-9.]/g, '')) || 0;
+      var rawDisc = parseFloat(String(discInput && discInput.value !== '' ? discInput.value : '0').replace('%', '')) || 0;
       if (rawDisc > 0 && rawDisc < 1) rawDisc = rawDisc * 100;
 
       // ថ្លៃលក់ពិតប្រាកដ (ក្រោយបញ្ចុះតម្លៃបើមាន)
