@@ -637,17 +637,15 @@
   <!-- ========================================================= -->
   <script>
     // --- 6.1 CONFIGURATION & STATE ---
-    var API_URL = "https://script.google.com/macros/s/AKfycbxdsFeRnhFqZDwoPovJLhpJQxprKcoix3kU5WGp9aTtvfmnoreawVHrZsQh7NzrC1k6cA/exec"; 
+    var API_URL = "https://script.google.com/macros/s/AKfycbxdsFeRnhFqZDwoPovJLhpJQxprKcoix3kU5WGp9aTtvfmnoreawVHrZsQh7NzrC1k6cA/exec";
 
     // --- អនុគមន៍ចាប់យកភាសាដោយស្វ័យប្រវត្តិតាមទូរស័ព្ទ ឬ Telegram របស់ភ្ញៀវ ---
     function detectDefaultLanguage() {
-      // ១. ប្រសិនបើភ្ញៀវធ្លាប់ចុចរើសភាសាដោយខ្លួនឯង យកតាមជម្រើសចាស់របស់គាត់
       var savedLang = localStorage.getItem('app_user_lang');
       if (savedLang) return savedLang;
 
-      var detected = 'km'; // ភាសាលំនាំដើម (Default) ប្រសិនបើមិនស្គាល់
+      var detected = 'km';
 
-      // ២. ចាប់យកភាសាតាមគណនី Telegram របស់អតិថិជន
       try {
         if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initDataUnsafe && window.Telegram.WebApp.initDataUnsafe.user) {
           var tgLang = window.Telegram.WebApp.initDataUnsafe.user.language_code || '';
@@ -655,32 +653,30 @@
         }
       } catch (e) {}
 
-      // ៣. ប្រសិនបើមិនទាន់ឃើញ ពិនិត្យតាមភាសាដែលទូរស័ព្ទគាត់កំពុងប្រើ
       if (detected === 'km' && typeof navigator !== 'undefined' && navigator.language) {
         detected = navigator.language.toLowerCase();
       }
 
-      // ៤. ផ្គូផ្គងទៅនឹងភាសាទាំង ៣ ក្នុង App (km, en, zh)
       if (detected.indexOf('zh') !== -1) {
-        return 'zh'; // ភាសាចិន (zh, zh-CN, zh-TW, etc.)
+        return 'zh';
       } else if (detected.indexOf('en') !== -1) {
-        return 'en'; // ភាសាអង់គ្លេស
+        return 'en';
       } else {
-        return 'km'; // ខ្មែរ (លំនាំដើម)
+        return 'km';
       }
     }
 
-    // កំណត់ភាសាបច្ចុប្បន្នដោយហៅអនុគមន៍ស្វ័យប្រវត្តិនេះ
     var currentLang = detectDefaultLanguage();
-            var customerProducts = [];
-        var currentCustomerCategory = 'all';
-    
+    var customerProducts = [];
+    var currentCustomerCategory = 'all';
+
     var selectedProduct = null;
     var selectedColor = "";
     var selectedSize = "";
     var quantity = 1;
+    var editingCartIndex = -1;
+    var pendingCartAction = 'add';
 
-    // ✅ ទាញយកកន្ត្រកចាស់ពី localStorage (ការពារកុំឱ្យបាត់ទំនិញពេលច្រឡំបិទ App)
     var cart = JSON.parse(localStorage.getItem('cv3d_customer_cart') || '[]');
     var MY_TELEGRAM_USERNAME = "Vireak699";
 
@@ -695,7 +691,7 @@
       free_shipping_min: 20.00,
       banner_enabled: true,
       banner_images: "",
-      banner_speed: parseInt(localStorage.getItem('app_banner_speed') || '4', 10), // វិនាទីផ្លាស់ប្តូរ
+      banner_speed: parseInt(localStorage.getItem('app_banner_speed') || '4', 10),
       sold_badge_enabled: (localStorage.getItem('app_sold_badge_enabled') !== 'no'),
       sold_badge_min: parseInt(localStorage.getItem('app_sold_badge_min') || '5', 10)
     };
@@ -703,7 +699,8 @@
     var activeBannerIndex = 0;
     var bannerAutoSlideTimer = null;
 
-            
+    var myCustomerOrders = [];
+
     // --- 6.2 INITIALIZATION ---
     window.onload = function() {
       try {
@@ -717,12 +714,8 @@
 
       applyLanguageUI();
 
-      // ✅ ១. ទាញតែទិន្នន័យចាំបាច់សម្រាប់ Customer ប៉ុណ្ណោះ (Home Page)
-      loadAppSettings();      // សម្រាប់ Banner & ថ្លៃដឹកជញ្ជូន
-      loadCustomerData();     // សម្រាប់ទំនិញលើទំព័រដើម
-
-      // ❌ ដក loadFilamentInventory() ចេញ (កុំឱ្យទាញពេលបើក App)
-      // ❌ មិនទាញទិន្នន័យ Admin ឡើយ
+      loadAppSettings();
+      loadCustomerData();
 
       updateCartBadge();
       if (typeof updateHeaderBadgeUI === 'function') {
@@ -738,9 +731,9 @@
         method: "POST",
         headers: { "Content-Type": "text/plain;charset=utf-8" },
         body: JSON.stringify(payload)
-      }).then(function(res) { 
+      }).then(function(res) {
         if (!res.ok) throw new Error("HTTP " + res.status);
-        return res.json(); 
+        return res.json();
       });
     }
 
@@ -749,7 +742,6 @@
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    // ចុចលើ Logo ៥ ដងជាប់ៗគ្នា ដើម្បីបើកទៅកាន់ផ្ទាំង Admin (admin.html)
     var logoTapCount = 0;
     var logoTapTimer = null;
 
@@ -758,7 +750,6 @@
       logoTapCount++;
       clearTimeout(logoTapTimer);
 
-      // ពន្យារពេលដល់ 2.5 វិនាទី ដើម្បីឱ្យចុច ៥ ដងទាន់ស្រួល
       logoTapTimer = setTimeout(function() {
         logoTapCount = 0;
       }, 2500);
@@ -773,14 +764,12 @@
           }
         } catch (err) {}
 
-        // ប្តូរទៅកាន់ទំព័រ admin.html ភ្លាមៗ
         window.location.assign("./admin.html");
       } else if (logoTapCount === 1) {
         scrollToTop();
       }
     }
 
-    // អនុគមន៍ចុចប្តូរភាសាវិលជុំ៖ ខ្មែរ (km) -> English (en) -> 中文 (zh) -> ខ្មែរ (km)
     function toggleLanguage() {
       if (currentLang === 'km') {
         currentLang = 'en';
@@ -810,8 +799,8 @@
       if (el = document.getElementById('custSearchInput')) el.placeholder = t.searchPlaceholder;
       if (el = document.getElementById('custLoaderText')) el.innerText = t.loaderText;
       if (el = document.getElementById('lblModalVideoText')) {
-      el.innerText = (currentLang === 'zh') ? "视频" : (currentLang === 'en') ? "Video" : "វីដេអូ";
-    }
+        el.innerText = (currentLang === 'zh') ? "视频" : (currentLang === 'en') ? "Video" : "វីដេអូ";
+      }
       if (el = document.getElementById('lblSelectColor')) el.innerText = t.lblColor;
       if (el = document.getElementById('lblSelectSize')) el.innerText = t.lblSize;
       if (el = document.getElementById('lblSelectQty')) el.innerText = t.lblQty;
@@ -840,14 +829,13 @@
       if (el = document.getElementById('lblSuccessOrderCode')) el.innerText = t.successOrderCode;
       if (el = document.getElementById('lblSuccessStatus')) el.innerText = t.successStatus;
       if (el = document.getElementById('successStatusBadge')) el.innerText = t.successStatusPending;
-      if (el = document.getElementById('btnSuccessCloseApp')) el.innerText = t.successCloseApp;
-      if (el = document.getElementById('btnSuccessContinue')) el.innerText = t.successContinue;
+      if (el = document.getElementById('btnSuccessCloseAppText')) el.innerText = t.successCloseApp;
+      if (el = document.getElementById('btnSuccessContinueText')) el.innerText = t.successContinue;
 
-      // --- បកប្រែផ្ទាំង  Modal ---
-      if (el = document.getElementById('lblTitle')) el.innerText = t.Title || "❤️ ទំនិញដែលអ្នកចូលចិត្ត";
-      if (el = document.getElementById('lblEmpty')) el.innerText = t.Empty || "អ្នកមិនទាន់បាន Like ទំនិញណាមួយនៅឡើយទេ";
-      if (el = document.getElementById('headerBtn')) el.title = t.btnTooltip || "ទំនិញដែលបាន Like";
-
+      // --- បកប្រែផ្ទាំង Wishlist Modal ---
+      if (el = document.getElementById('wishlistModalTitle')) el.innerText = t.wishlistTitle || t.Title || "❤️ ទំនិញដែលអ្នកចូលចិត្ត";
+      if (el = document.getElementById('wishlistEmptyText')) el.innerText = t.wishlistEmpty || t.Empty || "អ្នកមិនទាន់បាន Like ទំនិញណាមួយនៅឡើយទេ";
+      if (el = document.getElementById('headerWishlistBtn')) el.title = t.wishlistBtnTooltip || t.btnTooltip || "ទំនិញដែលបាន Like";
     }
 
     function openSellerChat() {
@@ -916,8 +904,8 @@
           img.src = imgUrl;
           img.id = 'banner-slide-' + idx;
           img.className = "absolute inset-0 w-full h-full object-cover transition-opacity duration-700 ease-in-out " + (idx === 0 ? "opacity-100 z-10" : "opacity-0 z-0");
-          img.onerror = function() { 
-            this.src = "https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&w=800&q=80"; 
+          img.onerror = function() {
+            this.src = "https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&w=800&q=80";
           };
           container.appendChild(img);
 
@@ -959,25 +947,13 @@
       restartBannerAutoSlide();
     }
 
-    function handleBannerScroll() {
-      var container = document.getElementById('bannerSliderContainer');
-      if (!container) return;
-
-      var newIndex = Math.round(container.scrollLeft / container.offsetWidth);
-      if (newIndex !== activeBannerIndex && newIndex < currentBannerImages.length) {
-        activeBannerIndex = newIndex;
-        updateBannerDotsUI();
-        restartBannerAutoSlide();
-      }
-    }
-
     function updateBannerDotsUI() {
       var dotsContainer = document.getElementById('bannerSliderDots');
       if (!dotsContainer) return;
       var dots = dotsContainer.children;
       for (var i = 0; i < dots.length; i++) {
-        dots[i].className = (i === activeBannerIndex) 
-          ? "w-4 h-1.5 rounded-full bg-white transition-all cursor-pointer p-0 border-0 outline-none" 
+        dots[i].className = (i === activeBannerIndex)
+          ? "w-4 h-1.5 rounded-full bg-white transition-all cursor-pointer p-0 border-0 outline-none"
           : "w-1.5 h-1.5 rounded-full bg-white/40 transition-all cursor-pointer p-0 border-0 outline-none";
       }
     }
@@ -985,20 +961,13 @@
     function initBannerAutoSlide() {
       stopBannerAutoSlide();
       var speedSec = (appSettings.banner_speed && appSettings.banner_speed >= 2) ? appSettings.banner_speed : 4;
-      var intervalMs = speedSec * 1000; // បម្លែងទៅជា Milliseconds
+      var intervalMs = speedSec * 1000;
 
       bannerAutoSlideTimer = setInterval(function() {
         if (!currentBannerImages || currentBannerImages.length <= 1) return;
         var nextIndex = (activeBannerIndex + 1) % currentBannerImages.length;
         goToBannerSlide(nextIndex);
       }, intervalMs);
-    }
-
-    function handleBannerSpeedChange(val) {
-      var speed = parseInt(val, 10) || 4;
-      appSettings.banner_speed = speed;
-      localStorage.setItem('app_banner_speed', String(speed));
-      initBannerAutoSlide(); // ផ្លាស់ប្តូរល្បឿន Slide ភ្លាមៗ
     }
 
     function stopBannerAutoSlide() {
@@ -1015,67 +984,11 @@
       }
     }
 
-    // អនុគមន៍ពេលចុច ធីក ឬដោះធីក Banner (Auto-Save ភ្លាមៗពេលដោះធីក)
-    function handleBannerToggle(chk) {
-      toggleBannerInputUI();
-      
-      // ប្រសិនបើដោះធីក (បិទ Banner) ធ្វើការ Auto-Save ទៅ Google Sheet ភ្លាមៗ
-      if (!chk.checked) {
-        appSettings.banner_enabled = false;
-        callBackendPost({ action: "updateSettings", pin: adminPin, settings: appSettings })
-          .then(function() {
-            renderPromoBanner(); // បិទ Banner លើ Home ភ្លាម
-          })
-          .catch(function(err) {
-            console.warn("Auto-save failed:", err);
-          });
-      }
-    }
-
-    // អនុគមន៍រក្សាទុក Banner ពេលចុច Icon 💾
-    function saveBannerSettings(btn) {
-      var isBannerOn = document.getElementById('setBannerEnabled') ? document.getElementById('setBannerEnabled').checked : false;
-      var bannerImgs = document.getElementById('setBannerImages') ? document.getElementById('setBannerImages').value.trim() : '';
-      var bannerSpeed = document.getElementById('setBannerSpeed') ? parseInt(document.getElementById('setBannerSpeed').value, 10) : 4;
-
-      appSettings.banner_enabled = isBannerOn;
-      appSettings.banner_images = bannerImgs;
-      appSettings.banner_speed = bannerSpeed;
-      localStorage.setItem('app_banner_speed', String(bannerSpeed));
-
-      if (btn) {
-        btn.disabled = true;
-        btn.style.opacity = "0.5";
-      }
-
-      callBackendPost({ action: "updateSettings", pin: adminPin, settings: appSettings })
-        .then(function(res) {
-          if (btn) {
-            btn.disabled = false;
-            btn.style.opacity = "1";
-          }
-          if (res && res.success) {
-            renderPromoBanner();
-            alert("✓ ការកំណត់ Slide Banner ត្រូវបានរក្សាទុកជោគជ័យ!");
-          } else {
-            alert("❌ មិនអាចរក្សាទុកបាន៖ " + (res.message || ""));
-          }
-        })
-        .catch(function(err) {
-          if (btn) {
-            btn.disabled = false;
-            btn.style.opacity = "1";
-          }
-          alert("Error: " + err.message);
-        });
-    }
-
     // --- 6.5 CUSTOMER CATALOG & FILTER ---
     function loadCustomerData(forceFresh) {
       var loader = document.getElementById('custLoader');
       var hasCached = false;
 
-      // ១. បង្ហាញទិន្នន័យពី Cache ភ្លាមៗ (Instant Load 0.1s) ប្រសិនបើធ្លាប់បើកម្តងរួចហើយ
       if (!forceFresh) {
         try {
           var cachedRaw = localStorage.getItem('cv3d_cached_catalog_v1');
@@ -1087,6 +1000,7 @@
               if (loader) loader.className = "hidden";
               renderDynamicCategories();
               applyCustomerFilter();
+              renderWishlistItems();
               checkAndOpenSharedProduct();
             }
           }
@@ -1097,7 +1011,6 @@
         loader.className = "grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4";
       }
 
-      // ២. ទាញទិន្នន័យថ្មីចុងក្រោយពី Google Sheet នៅផ្ទៃខាងក្រោយ (Background Sync)
       callBackendPost({ action: "getCatalog" })
         .then(function(data) {
           customerProducts = data || [];
@@ -1107,13 +1020,14 @@
           if (loader) loader.className = "hidden";
           renderDynamicCategories();
           applyCustomerFilter();
+          renderWishlistItems();
           if (!hasCached) {
             checkAndOpenSharedProduct();
           }
         })
         .catch(function(err) {
           if (!hasCached && loader) {
-            loader.innerHTML = '<div class="py-10 text-center">' +
+            loader.innerHTML = '<div class="col-span-full py-10 text-center">' +
               '<p class="text-rose-500 font-bold mb-2">កំហុសទាញទិន្នន័យ៖ ' + err.message + '</p>' +
               '<button type="button" onclick="loadCustomerData(true)" class="px-3 py-1.5 bg-blue-600 text-white rounded-xl text-xs font-semibold shadow-sm">ព្យាយាមម្តងទៀត 🔄</button>' +
             '</div>';
@@ -1121,21 +1035,17 @@
         });
     }
 
-    // អនុគមន៍បង្ហាញ Category លើទំព័រដើម (Home) ដោយអានផ្ទាល់ពីទំនិញក្នុង Google Sheet
-    // --- អនុគមន៍ចាប់យក ID ពី Link Share ហើយបើក Modal ទំនិញភ្លាមៗ ---
     function checkAndOpenSharedProduct() {
       if (!customerProducts || customerProducts.length === 0) return;
 
       var targetId = "";
 
-      // ១. រកមើលតាម Telegram Mini App start_param (ពេលបើកតាម Bot)
       try {
         if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initDataUnsafe) {
           targetId = window.Telegram.WebApp.initDataUnsafe.start_param || "";
         }
       } catch(e) {}
 
-      // ២. រកមើលតាម URL Query Parameter (?p=P-001 ឬ ?prod=P-001)
       if (!targetId) {
         try {
           var params = new URLSearchParams(window.location.search);
@@ -1143,7 +1053,6 @@
         } catch(e) {}
       }
 
-      // ៣. រកមើលតាម Hash (#p=P-001 ឬ #P-001)
       if (!targetId && window.location.hash) {
         var hashStr = window.location.hash;
         var match = hashStr.match(/p=([^&]+)/i) || hashStr.match(/#(P-?\d+)/i);
@@ -1152,7 +1061,6 @@
         }
       }
 
-      // ប្រសិនបើឃើញ ID ទំនិញ ស្វែងរកក្នុងបញ្ជីទំនិញ រួចបើក Modal ភ្លាម
       if (targetId) {
         targetId = String(targetId).trim().toLowerCase();
         for (var i = 0; i < customerProducts.length; i++) {
@@ -1165,7 +1073,6 @@
       }
     }
 
-    // បកប្រែឈ្មោះ Category តាមភាសាបច្ចុប្បន្ន (KM / EN / ZH)
     function formatCategoryDisplayLabel(catKey) {
       var clean = String(catKey || '').trim();
       if (!clean) return '';
@@ -1183,7 +1090,6 @@
       var container = document.getElementById('categoryContainer');
       if (!container) return;
 
-      // ១. ទាញរាល់ Category ទាំងអស់ដែលមានក្នុងទំនិញជាក់ស្តែង (គាំទ្រការបំបែកដោយក្បៀស ,)
       var foundCategories = {};
       var totalCount = customerProducts ? customerProducts.length : 0;
 
@@ -1200,7 +1106,6 @@
         }
       }
 
-      // ២. អានលំដាប់ Category ដែលបានរៀប (លំដាប់ស្តង់ដារ: custom -> fidget -> desk -> pets -> home)
       var defaultPriority = ['custom', 'fidget', 'desk', 'pets', 'pet', 'home'];
       var savedOrder = JSON.parse(localStorage.getItem('app_category_order') || '[]');
       var orderSource = (savedOrder && savedOrder.length > 0) ? savedOrder : defaultPriority;
@@ -1214,12 +1119,10 @@
         }
       }
 
-      // ៣. បញ្ចូល Category ថ្មីៗដែលទើបបន្ថែមក្នុង Google Sheet
       for (var remainKey in foundCategories) {
         categories.push(foundCategories[remainKey]);
       }
 
-      // ៤. បង្ហាញប៊ូតុង Category នៅលើអេក្រង់ (បកប្រែ ៣ ភាសាស្វ័យប្រវត្តិ)
       container.innerHTML = '';
       for (var j = 0; j < categories.length; j++) {
         (function(cat) {
@@ -1228,10 +1131,10 @@
           var isActive = (currentCustomerCategory.toLowerCase() === cat.toLowerCase());
           var label = formatCategoryDisplayLabel(cat);
 
-          btn.className = isActive 
+          btn.className = isActive
             ? "cat-pill active bg-slate-900 text-white text-xs px-3.5 py-1.5 rounded-full font-medium whitespace-nowrap shadow-sm flex items-center gap-1.5 transition-all"
             : "cat-pill bg-white border border-slate-200 text-slate-600 text-xs px-3.5 py-1.5 rounded-full font-medium whitespace-nowrap flex items-center gap-1.5 hover:bg-slate-50 transition-all";
-          
+
           if (cat === 'all') {
             btn.innerHTML = '<span>' + label + '</span>' +
                             '<span class="' + (isActive ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-500') + ' text-[10px] font-bold px-1.5 py-0.2 rounded-full">' + totalCount + '</span>';
@@ -1248,7 +1151,7 @@
         })(categories[j]);
       }
     }
-    
+
     function applyCustomerFilter() {
       var input = document.getElementById('custSearchInput');
       var query = (input ? input.value : '').toLowerCase().trim();
@@ -1261,11 +1164,10 @@
       for (var i = 0; i < customerProducts.length; i++) {
         var p = customerProducts[i];
         var rawCatStr = String(p.category || 'other').toLowerCase();
-        // បំបែក Category ដោយក្បៀស (,) ដើម្បីឱ្យទំនិញ ១ អាចបង្ហាញក្នុង Category ២ ឬច្រើនបាន
         var prodCats = rawCatStr.split(',').map(function(s) { return s.trim(); });
-        
+
         var matchCat = (currentCat === 'all') || (prodCats.indexOf(currentCat) !== -1);
-        var matchText = (String(p.title || '')).toLowerCase().indexOf(query) !== -1 || 
+        var matchText = (String(p.title || '')).toLowerCase().indexOf(query) !== -1 ||
                         (String(p.desc || '')).toLowerCase().indexOf(query) !== -1;
 
         if (matchCat && matchText) filtered.push(p);
@@ -1301,28 +1203,23 @@
           img.onerror = function() { this.src = "https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&w=600&q=80"; };
           imgContainer.appendChild(img);
 
-          // គណនា Discount
           var disc = parseFloat(String(p.discount || '0').replace('%', '')) || 0;
           if (disc > 0 && disc < 1) disc = disc * 100;
           var origPrice = Number(p.price) || 0;
           var salePrice = (disc > 0 && disc < 100) ? (origPrice * (1 - disc / 100)) : origPrice;
 
-          // ប៊ូតុង Like (បេះដូង) នៅជ្រុងខាងស្តាំលើនៃរូបភាពទំនិញ
           var likedNow = isProductLiked(p.id);
           var cardLikeBtn = document.createElement('button');
           cardLikeBtn.type = "button";
           cardLikeBtn.setAttribute('data-card-like-id', String(p.id).trim());
           cardLikeBtn.title = "ចូលចិត្តទំនិញនេះ";
           cardLikeBtn.className = "absolute top-2 right-2 w-7 h-7 rounded-full bg-white/90 hover:bg-white backdrop-blur-md shadow-xs border border-slate-200/70 flex items-center justify-center active:scale-90 transition-all z-10 cursor-pointer";
-          cardLikeBtn.innerHTML = likedNow
-            ? '<svg class="w-3.5 h-3.5 text-rose-500 fill-rose-500" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>'
-            : '<svg class="w-3.5 h-3.5 text-slate-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg>';
+          cardLikeBtn.innerHTML = getCardLikeSvg(likedNow);
           cardLikeBtn.onclick = function(e) {
             toggleProductLike(p.id, e);
           };
           imgContainer.appendChild(cardLikeBtn);
 
-          // បង្ហាញ Badge Discount លើរូបភាព (ខាងក្រោមស្តាំ ដើម្បីកុំឱ្យបាំងប៊ូតុង Like)
           if (disc > 0) {
             var discSpan = document.createElement('span');
             discSpan.className = "absolute bottom-2 right-2 bg-rose-500 text-white text-[10px] font-black px-1.5 py-0.5 rounded-lg shadow-sm";
@@ -1360,11 +1257,11 @@
           priceContainer.className = "flex items-baseline gap-1.5";
 
           if (disc > 0) {
-            priceContainer.innerHTML = 
+            priceContainer.innerHTML =
               '<span class="text-sm font-extrabold text-rose-600">$' + salePrice.toFixed(2) + '</span>' +
               '<span class="text-[10px] text-slate-400 line-through font-medium">$' + origPrice.toFixed(2) + '</span>';
           } else {
-            priceContainer.innerHTML = 
+            priceContainer.innerHTML =
               '<span class="text-sm font-extrabold text-blue-600">$' + origPrice.toFixed(2) + '</span>';
           }
 
@@ -1382,21 +1279,16 @@
       }
     }
 
-    // --- អនុគមន៍ជំនួយសម្រាប់ស្គាល់កូដពណ៌ (Hex Color Mapper) ---
     function getSimpleColorHex(name) {
       var n = String(name || '').toLowerCase().trim();
       if (!n) return '#e2e8f0';
 
-      // ១. ប្រសិនបើអ្នកប្រើប្រាស់វាយកូដ Hex ផ្ទាល់ (ឧ. #fcd5b5, #f5cba7, #ff0000)
       var hexMatch = n.match(/#(?:[0-9a-f]{3}){1,2}\b/i);
       if (hexMatch) return hexMatch[0];
 
-      // ២. ពណ៌សាច់ / ស្បែក (Skin / 肤色 / 肉色 / Beige / Nude)
       if (n.indexOf('skin') !== -1 || n.indexOf('肤色') !== -1 || n.indexOf('肉色') !== -1 || n.indexOf('beige') !== -1 || n.indexOf('nude') !== -1 || n.indexOf('សាច់') !== -1 || n.indexOf('ស្បែក') !== -1) {
         return '#f5cba7';
       }
-
-      // ៣. ពណ៌ Filament ពិសេស (Gradient / Texture)
       if (n.indexOf('rainbow') !== -1 || n.indexOf('彩虹') !== -1 || n.indexOf('ឥន្ទធនូ') !== -1) {
         return 'linear-gradient(135deg, #f43f5e, #eab308, #06b6d4, #8b5cf6)';
       }
@@ -1407,14 +1299,12 @@
         return 'linear-gradient(135deg, #fb923c, #b45309)';
       }
 
-      // ៤. ពណ៌គោលទូទៅ (ខ្មៅ, ស, ប្រផេះ, ប្រាក់, មាស)
       if (n.indexOf('black') !== -1 || n.indexOf('黑') !== -1 || n.indexOf('ខ្មៅ') !== -1) return '#0f172a';
       if (n.indexOf('white') !== -1 || n.indexOf('白') !== -1 || n.indexOf('ស') !== -1) return '#ffffff';
       if (n.indexOf('gold') !== -1 || n.indexOf('金') !== -1 || n.indexOf('មាស') !== -1) return '#eab308';
       if (n.indexOf('silver') !== -1 || n.indexOf('银') !== -1 || n.indexOf('ប្រាក់') !== -1) return '#cbd5e1';
       if (n.indexOf('grey') !== -1 || n.indexOf('gray') !== -1 || n.indexOf('灰') !== -1 || n.indexOf('ប្រផេះ') !== -1) return '#94a3b8';
 
-      // ៥. ពណ៌ធម្មជាតិ និងពណ៌ចម្រុះ
       if (n.indexOf('fire red') !== -1 || n.indexOf('crimson') !== -1 || n.indexOf('深红') !== -1 || n.indexOf('火红') !== -1) return '#dc2626';
       if (n.indexOf('red') !== -1 || n.indexOf('红') !== -1 || n.indexOf('ក្រហម') !== -1) return '#ef4444';
       if (n.indexOf('sky blue') !== -1 || n.indexOf('cyan') !== -1 || n.indexOf('天蓝') !== -1 || n.indexOf('青') !== -1 || n.indexOf('ផ្ទៃមេឃ') !== -1) return '#38bdf8';
@@ -1450,7 +1340,6 @@
       quantity = 1;
       activeImageIndex = 0;
 
-      // កំណត់តម្លៃបញ្ចុះសម្រាប់ទំនិញ
       var disc = parseFloat(String(p.discount || '0').replace('%', '')) || 0;
       if (disc > 0 && disc < 1) disc = disc * 100;
       var orig = Number(p.price) || 0;
@@ -1460,9 +1349,6 @@
       currentSliderImages = (p.images && p.images.length > 0) ? p.images : [p.image];
       renderProductSlider(currentSliderImages);
 
-      // ========================================================
-      // 🎬 បន្ថែមត្រង់នេះ៖ បង្ហាញ ឬលាក់ប៊ូតុងវីដេអូ TikTok លើរូបភាព
-      // ========================================================
       var vidBtn = document.getElementById('modalVideoBtn');
       if (vidBtn) {
         if (p.videoUrl && String(p.videoUrl).trim().length > 0) {
@@ -1485,13 +1371,12 @@
       if (el = document.getElementById('modalDesc')) el.innerText = p.desc;
       if (el = document.getElementById('qtyVal')) el.innerText = quantity;
 
-      // ✅ បង្ហាញផ្លាក Sold Badge នៅចុងខាងស្តាំនៃ Category
       var soldBadgeEl = document.getElementById('modalSoldBadge');
       if (soldBadgeEl) {
         var count = getProductSoldCount(p);
         var minThreshold = appSettings.sold_badge_min || 5;
         if (appSettings.sold_badge_enabled && count >= minThreshold) {
-          soldBadgeEl.innerHTML = 
+          soldBadgeEl.innerHTML =
             '<span class="inline-flex items-center gap-1 bg-amber-50 text-amber-700 border border-amber-200/90 text-[10px] font-bold px-2 py-0.5 rounded-md shadow-2xs font-mono">' +
               '<span class="text-amber-500 text-[10px]">🔥</span>' +
               '<span>Sold ' + count + '+</span>' +
@@ -1501,7 +1386,6 @@
         }
       }
 
-      // ផ្នែក Render ប៊ូតុងពណ៌ (មិនលោត ឬរលាក់ទំហំប៊ូតុងពេលចុច)
       var colorBox = document.getElementById('colorContainer');
       if (colorBox) {
         colorBox.innerHTML = '';
@@ -1510,10 +1394,10 @@
             var btn = document.createElement('button');
             btn.type = "button";
             var isSelected = (idx === 0);
-            
+
             btn.className = "flex items-center gap-2 px-3 py-1.5 rounded-xl border text-xs font-semibold transition-colors " +
-              (isSelected 
-                ? "border-blue-600 bg-blue-50 text-blue-700 font-bold ring-1 ring-blue-500/30" 
+              (isSelected
+                ? "border-blue-600 bg-blue-50 text-blue-700 font-bold ring-1 ring-blue-500/30"
                 : "border-slate-200 bg-white text-slate-700 hover:bg-slate-50");
 
             var parts = col.split('+');
@@ -1521,7 +1405,6 @@
             dotWrapper.className = "flex items-center -space-x-1 flex-shrink-0";
 
             if (parts.length > 1) {
-              // ករណីឈុត ២ ពណ៌ (បង្ហាញរង្វង់ ២ គ្រាប់ត្រួតគ្នា)
               var c1 = parts[0].trim().toLowerCase();
               var c2 = parts[1].split('(')[0].trim().toLowerCase();
 
@@ -1540,7 +1423,6 @@
               dotWrapper.appendChild(dot1);
               dotWrapper.appendChild(dot2);
             } else {
-              // ករណី ១ ពណ៌ទោល (បង្ហាញរង្វង់ ១ គ្រាប់)
               var singleDot = document.createElement('span');
               singleDot.className = "w-3.5 h-3.5 rounded-full border border-black/10 shadow-2xs";
               var bgSingle = getSimpleColorHex(col.toLowerCase());
@@ -1551,8 +1433,7 @@
             }
 
             var labelSpan = document.createElement('span');
-            // មកប្រើកូដសាមញ្ញនេះវិញ (បង្ហាញឈ្មោះអង់គ្លេសពី Google Sheet ផ្ទាល់)
-            labelSpan.innerText = col; 
+            labelSpan.innerText = col;
 
             btn.appendChild(dotWrapper);
             btn.appendChild(labelSpan);
@@ -1571,7 +1452,6 @@
         }
       }
 
-      // ផ្នែកជ្រើសរើសទំហំ (Size) - គាំទ្រការបូកតម្លៃបន្ថែម (+ $X)
       var sizeBox = document.getElementById('sizeContainer');
       if (sizeBox) {
         sizeBox.innerHTML = '';
@@ -1580,9 +1460,9 @@
             var btn = document.createElement('button');
             btn.type = "button";
             btn.innerText = sz;
-            
+
             var isSelected = (idx === 0);
-            btn.className = "text-xs px-3 py-1.5 rounded-xl border font-medium transition-colors " + 
+            btn.className = "text-xs px-3 py-1.5 rounded-xl border font-medium transition-colors " +
               (isSelected ? "border-blue-600 bg-blue-50 text-blue-600 font-bold" : "border-slate-200 text-slate-600 hover:bg-slate-50");
 
             btn.onclick = function() {
@@ -1592,8 +1472,6 @@
                 sChildren[k].className = "text-xs px-3 py-1.5 rounded-xl border border-slate-200 text-slate-600 font-medium hover:bg-slate-50 transition-colors";
               }
               btn.className = "text-xs px-3 py-1.5 rounded-xl border border-blue-600 bg-blue-50 text-blue-600 font-bold transition-colors";
-              
-              // ✅ ហៅគណនាតម្លៃសរុប Live Price ឡើងវិញភ្លាមៗពេលប្តូរទំហំ
               updateModalLivePrice();
             };
             sizeBox.appendChild(btn);
@@ -1601,13 +1479,12 @@
         }
       }
 
-      // ផ្នែកទំនិញ Custom
       var customSection = document.getElementById('custCustomSection');
       var nameInput = document.getElementById('custCustomNameInput');
       if (nameInput) nameInput.value = '';
 
       if (p.isCustom) {
-        if (customSection) customSection.className = "mb-4 bg-blue-50/70 p-3 rounded-2xl border border-blue-200 space-y-2 block";
+        if (customSection) customSection.className = "bg-blue-50/70 p-3 rounded-2xl border border-blue-200 space-y-2 block";
       } else {
         if (customSection) customSection.className = "hidden";
       }
@@ -1618,7 +1495,7 @@
       var modal = document.getElementById('productModal');
       if (modal) modal.className = "fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4";
     }
-    
+
     function renderProductSlider(images) {
       var container = document.getElementById('modalSliderContainer');
       var dotsContainer = document.getElementById('sliderDots');
@@ -1646,7 +1523,7 @@
         })(images[i], i);
       }
 
-      dotsContainer.className = images.length > 1 
+      dotsContainer.className = images.length > 1
         ? "absolute bottom-2.5 left-1/2 -translate-x-1/2 flex items-center gap-1.5 bg-black/40 backdrop-blur-md px-2.5 py-1 rounded-full z-10"
         : "hidden";
     }
@@ -1669,7 +1546,6 @@
       }
     }
 
-        // --- អនុគមន៍ចែករំលែកទំនិញ (Clean Short Link + Deep Link ត្រង់ទៅទំនិញ) ---
     function shareCurrentProduct() {
       if (!selectedProduct) return;
 
@@ -1677,7 +1553,6 @@
       var prodPrice = "$" + Number(selectedProduct.price || 0).toFixed(2);
       var prodId = String(selectedProduct.id || "").trim();
 
-      // កាត់កន្ទុយវែងៗ (#tgWebAppData...) ចោលទាំងអស់ យកតែ Link GitHub Pages ស្អាត
       var cleanOrigin = "https://worktranfers-droid.github.io/Cv3D-mini-app/";
       try {
         var base = (window.location.origin + window.location.pathname).split('#')[0].split('?')[0];
@@ -1687,7 +1562,6 @@
       } catch(e) {}
       if (!cleanOrigin.endsWith('/')) cleanOrigin += '/';
 
-      // បង្កើត Link ខ្លីស្អាត: https://worktranfers-droid.github.io/Cv3D-mini-app/?p=P-001
       var shareUrl = cleanOrigin + "?p=" + encodeURIComponent(prodId);
 
       var shareText = "✨ មើលទំនិញ 3D Print មួយនេះស្អាតណាស់៖\n" +
@@ -1740,7 +1614,6 @@
       var url = vidBtn ? vidBtn.dataset.videoUrl : '';
       if (!url) return;
 
-      // បើកតាម Telegram WebApp SDK ដោយសុវត្ថិភាព
       if (window.Telegram && window.Telegram.WebApp && typeof window.Telegram.WebApp.openLink === 'function') {
         window.Telegram.WebApp.openLink(url);
       } else {
@@ -1748,20 +1621,6 @@
       }
     }
 
-    function updateCustomModeUI() {
-      var t = (typeof i18n !== 'undefined' && i18n[currentLang]) ? i18n[currentLang] : null;
-      var mode = document.getElementById('addCustomMode') ? document.getElementById('addCustomMode').value : 'flat';
-      var lbl = document.getElementById('lblCustomFeeVal');
-      var input = document.getElementById('addCustomFee');
-      if (mode === 'per_char') {
-        if (lbl) lbl.innerText = t ? t.lblCustomFeePerCharAmount : "ថ្លៃបន្ថែមក្នុង ១ អក្សរ ($) (គិតចាប់ពីអក្សរទី ៦ ឡើងទៅ)";
-        if (input) input.placeholder = "0.50";
-      } else {
-        if (lbl) lbl.innerText = t ? t.lblCustomFeeAmount : "ថ្លៃសេវាថេរ ($)";
-        if (input) input.placeholder = "1.50";
-      }
-    }
-    
     function updateModalLivePrice() {
       if (!selectedProduct) return;
 
@@ -1785,7 +1644,7 @@
       var totalFee = 0;
 
       if (selectedProduct.isCustom) {
-        var isPerChar = (selectedProduct.customMode === 'per_char') || 
+        var isPerChar = (selectedProduct.customMode === 'per_char') ||
                         ((selectedProduct.title || '').toLowerCase().indexOf('keychain') !== -1);
 
         if (isPerChar) {
@@ -1814,8 +1673,8 @@
             feeBadge.className = "text-[10px] font-bold bg-blue-200 text-blue-800 px-2 py-0.5 rounded-full inline-block";
           }
           if (noticeEl) {
-            noticeEl.innerHTML = (charLength > 0) 
-              ? '<span class="text-blue-600 font-semibold">' + t.customNoticeFixedAdded + '</span>' 
+            noticeEl.innerHTML = (charLength > 0)
+              ? '<span class="text-blue-600 font-semibold">' + t.customNoticeFixedAdded + '</span>'
               : '<span class="text-slate-500">' + t.customNoticeFixedNote + '</span>';
           }
         }
@@ -1823,17 +1682,15 @@
 
       if (countEl) countEl.innerText = charLength + t.customCharUnit;
 
-      // ✅ ទាញយកតម្លៃបន្ថែមពីទំហំដែលបានរើស (ឧ. Giant (+$5) -> 5)
       var sizeFee = parseSizeExtraFee(selectedSize);
 
       var finalUnitPrice = baseSalePrice + totalFee + sizeFee;
       var totalProductPrice = finalUnitPrice * (quantity || 1);
       var totalOrigPrice = (origUnitPrice + totalFee + sizeFee) * (quantity || 1);
-      var totalSaved = totalOrigPrice - totalProductPrice;
 
       if (priceEl) {
         if (disc > 0) {
-          priceEl.innerHTML = 
+          priceEl.innerHTML =
             '<div class="flex items-center gap-2 flex-wrap">' +
               '<span class="text-2xl font-black text-rose-600 leading-none">$' + totalProductPrice.toFixed(2) + '</span>' +
               '<span class="text-xs text-slate-400 line-through font-medium">$' + totalOrigPrice.toFixed(2) + '</span>' +
@@ -1841,7 +1698,7 @@
             '</div>';
         } else {
           if (quantity > 1) {
-            priceEl.innerHTML = 
+            priceEl.innerHTML =
               '<div class="flex items-baseline gap-1.5">' +
                 '<span class="text-2xl font-black text-blue-600 leading-none">$' + totalProductPrice.toFixed(2) + '</span>' +
                 '<span class="text-[11px] text-slate-400 font-normal">($' + finalUnitPrice.toFixed(2) + ' x ' + quantity + ')</span>' +
@@ -1859,7 +1716,6 @@
     var swipeStartY = 0;
 
     function openZoomForImage(imgUrl) {
-      // ស្វែងរក Index នៃរូបភាពដែលកំពុងចុច
       zoomIndex = currentSliderImages.indexOf(imgUrl);
       if (zoomIndex === -1) zoomIndex = 0;
 
@@ -1879,21 +1735,18 @@
       var nextBtn = document.getElementById('zoomNextBtn');
 
       if (zoomedImg) zoomedImg.src = currentSliderImages[zoomIndex];
-      
-      // បង្ហាញលេខរៀងរូបភាព (ឧទាហរណ៍៖ 1/3, 2/3, 3/3)
+
       if (counterBtn) {
         counterBtn.innerText = (zoomIndex + 1) + " / " + currentSliderImages.length;
       }
 
-      // បង្ហាញ ឬលាក់ប៊ូតុងព្រួញ ‹ › អាស្រ័យលើចំនួនរូបភាពជាក់ស្ដែង
       var hasMultiple = currentSliderImages.length > 1;
       if (prevBtn) prevBtn.style.display = hasMultiple ? "flex" : "none";
       if (nextBtn) nextBtn.style.display = hasMultiple ? "flex" : "none";
 
       resetZoomState();
     }
-    
-    // អនុគមន៍ប្តូរទៅរូបមុន ឬរូបបន្ទាប់
+
     function navigateZoomImage(direction) {
       if (!currentSliderImages || currentSliderImages.length <= 1) return;
       zoomIndex += direction;
@@ -1984,18 +1837,16 @@
         if (e.touches.length < 2) startDist = 0;
         if (e.touches.length === 0) isDragging = false;
 
-        // ដំណើរការ Swipe អូសឆ្វេង-ស្ដាំ នៅពេលដែលរូបភាពមិនត្រូវបាន Zoom ពង្រីកធំ (Scale = 1)
         if (currentScale <= 1 && e.changedTouches && e.changedTouches.length === 1) {
           var touch = e.changedTouches[0];
           var diffX = touch.clientX - swipeStartX;
           var diffY = touch.clientY - swipeStartY;
 
-          // ប្រសិនបើអូសផ្ដេកលើសពី 45px
           if (Math.abs(diffX) > 45 && Math.abs(diffX) > Math.abs(diffY)) {
             if (diffX < 0) {
-              navigateZoomImage(1);  // អូសទៅឆ្វេង -> បង្ហាញរូបបន្ទាប់
+              navigateZoomImage(1);
             } else {
-              navigateZoomImage(-1); // អូសទៅស្ដាំ -> បង្ហាញរូបមុន
+              navigateZoomImage(-1);
             }
           }
           resetZoomState();
@@ -2004,7 +1855,6 @@
     }
 
     // --- 6.7 SHOPPING CART ---
-    // --- អនុគមន៍រក្សាទុកកន្ត្រកចូលទូរសព្ទ (localStorage) ---
     function saveCartToStorage() {
       try {
         localStorage.setItem('cv3d_customer_cart', JSON.stringify(cart));
@@ -2013,7 +1863,6 @@
       }
     }
 
-    // --- អនុគមន៍ផ្ទៀងផ្ទាត់ និងធ្វើបច្ចុប្បន្នភាពតម្លៃក្នុងកន្ត្រកឱ្យស្មើនឹងតម្លៃបច្ចុប្បន្ន ---
     function syncCartPricesWithCatalog() {
       if (!cart || cart.length === 0 || !customerProducts || customerProducts.length === 0) return;
       var hasPriceChanged = false;
@@ -2057,7 +1906,6 @@
       }
     }
 
-    // --- Toast Alert បង្ហាញជូនដំណឹងថាបានចូលកន្ត្រកយ៉ាងរលូន ---
     function showCartToast(message) {
       var toast = document.getElementById('cartToastNotification');
       if (!toast) {
@@ -2076,16 +1924,12 @@
       }, 1800);
     }
 
-    var pendingCartAction = 'add'; // 'add' ឬ 'buyNow'
-
-    // ១. ចុច "ដាក់ចូលកន្ត្រក"
     function addToCart(skipEngraveCheck) {
-      if (!selectedProduct) return;
+      if (!selectedProduct) return false;
 
       var nameInput = document.getElementById('custCustomNameInput');
       var customText = nameInput ? nameInput.value.trim() : "";
 
-      // បើជាទំនិញ Custom ហើយមិនទាន់បំពេញឈ្មោះ និងមិនទាន់ចុច Skip
       if (selectedProduct.isCustom && !customText && skipEngraveCheck !== true) {
         pendingCartAction = 'add';
         openCustomEngravePopup();
@@ -2130,7 +1974,6 @@
       var wasEditing = (editingCartIndex > -1 && cart[editingCartIndex]);
 
       if (wasEditing) {
-        // Update ជាន់លើទំនិញចាស់ដែលបានចុចកែ
         cart[editingCartIndex] = newItemObj;
       } else {
         var existingIndex = -1;
@@ -2157,7 +2000,6 @@
         }
       } catch(e) {}
 
-      // បើទើបតែកែប្រែទំនិញក្នុងកន្ត្រក ឱ្យបើកកន្ត្រកមកវិញដោយស្វ័យប្រវត្តិ
       if (wasEditing) {
         openCartModal();
         showCartToast(currentLang === 'zh' ? "✓ 修改已保存！" : (currentLang === 'en' ? "✓ Item updated!" : "✓ បានកែប្រែព័ត៌មានទំនិញជោគជ័យ!"));
@@ -2167,16 +2009,14 @@
       var t = (typeof i18n !== 'undefined' && i18n[currentLang]) ? i18n[currentLang] : {};
       showCartToast(t.addedToCartNotice || "✓ បានដាក់ចូលកន្ត្រកជោគជ័យ!");
       return true;
-      }
+    }
 
-    // ២. ចុច "⚡ ទិញឥឡូវនេះ"
     function buyNowDirectly(skipEngraveCheck) {
       if (!selectedProduct) return;
 
       var nameInput = document.getElementById('custCustomNameInput');
       var customText = nameInput ? nameInput.value.trim() : "";
 
-      // បើជាទំនិញ Custom ហើយមិនទាន់បំពេញឈ្មោះ និងមិនទាន់ចុច Skip
       if (selectedProduct.isCustom && !customText && skipEngraveCheck !== true) {
         pendingCartAction = 'buyNow';
         openCustomEngravePopup();
@@ -2194,23 +2034,20 @@
       }
     }
 
-    // ៣. អនុគមន៍បើក Pop-up សួររឿងឆ្លាក់ឈ្មោះ (បំបែករវាង Per Char ដែលតម្រូវឱ្យបំពេញ និង Flat ដែលអាច Skip បាន)
     function openCustomEngravePopup() {
       var t = (typeof i18n !== 'undefined' && i18n[currentLang]) ? i18n[currentLang] : (i18n ? i18n['km'] : {});
-      
+
       var elTitle = document.getElementById('lblEngravePopupTitle');
       var elDesc = document.getElementById('lblEngravePopupDesc');
       var btnSkip = document.getElementById('btnSkipEngravePopup');
       var btnFill = document.getElementById('btnFillEngravePopup');
 
-      // ពិនិត្យមើលថាតើទំនិញនេះជាប្រភេទ Per Char (ដូចជា Custom Keychain) ឬអត់
       var isPerChar = selectedProduct && (
-        selectedProduct.customMode === 'per_char' || 
+        selectedProduct.customMode === 'per_char' ||
         ((selectedProduct.title || '').toLowerCase().indexOf('keychain') !== -1)
       );
 
       if (isPerChar) {
-        // ករណី Per Char៖ តម្រូវឱ្យវាយអក្សរចូល មិនអនុញ្ញាតឱ្យ Skip ឡើយ
         if (elTitle) {
           elTitle.innerText = (currentLang === 'zh') ? "请输入要刻制的名字或文字" :
                               (currentLang === 'en') ? "Engraving Text Required" :
@@ -2221,10 +2058,9 @@
                              (currentLang === 'en') ? "This custom item requires a name or text to be engraved before adding to your cart." :
                              "ផលិតផលនេះតម្រូវឱ្យលោកអ្នកបញ្ចូលឈ្មោះ ឬអក្សរជាមុនសិន ទើបអាចដាក់ចូលកន្ត្រកបញ្ជាទិញបាន។";
         }
-        if (btnSkip) btnSkip.classList.add('hidden'); // លាក់ប៊ូតុង Skip ចោល
+        if (btnSkip) btnSkip.classList.add('hidden');
         if (btnFill) btnFill.innerText = t.btnFillEngrave || "✍️ បំពេញឈ្មោះ";
       } else {
-        // ករណី Flat Fee (ដូចជាចានទ្រឆ្កែ)៖ បង្ហាញប៊ូតុង Skip និង បំពេញឈ្មោះ ទាំងពីរ
         if (elTitle) elTitle.innerText = t.engravePopupTitle || "តើអ្នកចង់ឆ្លាក់ឈ្មោះលើទំនិញនេះទេ?";
         if (elDesc) elDesc.innerText = t.engravePopupDesc || "សូមបញ្ចូលឈ្មោះ ឬអក្សរដែលអ្នកចង់ឆ្លាក់ជាមុនសិន ឬចុច «រំលង» ប្រសិនបើមិនចង់ឆ្លាក់ឈ្មោះ។";
         if (btnSkip) {
@@ -2244,7 +2080,6 @@
       } catch(e) {}
     }
 
-    // ៤. ប៊ូតុងទី ១៖ ចុច "Skip" -> បិទ Pop-up ហើយចូលកន្ត្រកបញ្ជាទិញភ្លាមៗ
     function confirmSkipEngrave() {
       var popup = document.getElementById('customEngravePopup');
       if (popup) popup.classList.add('hidden');
@@ -2257,7 +2092,6 @@
       }
     }
 
-    // ៥. ប៊ូតុងទី ២៖ ចុច "បំពេញឈ្មោះ" -> បិទ Pop-up រួចរំកិលទៅកន្លែងបំពេញឈ្មោះ និងបើក Keyboard ភ្លាមៗ
     function focusEngraveInputFromPopup() {
       var popup = document.getElementById('customEngravePopup');
       if (popup) popup.classList.add('hidden');
@@ -2282,7 +2116,7 @@
         }, 250);
       }
     }
-    
+
     function updateCartBadge() {
       var totalCount = 0;
       for (var i = 0; i < cart.length; i++) {
@@ -2291,8 +2125,8 @@
       var badge = document.getElementById('floatingCartBadge');
       if (badge) {
         badge.innerText = totalCount;
-        badge.className = totalCount > 0 
-          ? "absolute -top-1 -right-2 bg-rose-500 text-white text-[9px] font-extrabold w-4 h-4 rounded-full flex items-center justify-center border border-white shadow-xs animate-pulse" 
+        badge.className = totalCount > 0
+          ? "absolute -top-1 -right-2 bg-rose-500 text-white text-[9px] font-extrabold w-4 h-4 rounded-full flex items-center justify-center border border-white shadow-xs animate-pulse"
           : "hidden";
       }
     }
@@ -2314,7 +2148,7 @@
       var t = i18n[currentLang] || i18n['km'];
       if (zone) {
         var currentSelected = zone.value || "phnom_penh";
-        zone.innerHTML = 
+        zone.innerHTML =
           '<option value="phnom_penh" data-cost="' + appSettings.ship_phnom_penh + '">' + t.optPhnomPenh + ' (+$' + appSettings.ship_phnom_penh.toFixed(2) + ')</option>' +
           '<option value="province" data-cost="' + appSettings.ship_province + '">' + t.optProvince + ' (+$' + appSettings.ship_province.toFixed(2) + ')</option>';
         zone.value = currentSelected;
@@ -2342,8 +2176,8 @@
       if (!list) return;
       list.innerHTML = '';
 
-      if (cart.length === 0) {
-        emptyState.className = "text-center py-10 text-slate-400 text-xs block";
+      if (!cart || cart.length === 0) {
+        if (emptyState) emptyState.className = "text-center py-10 text-slate-400 text-xs block";
         if (form) form.className = "hidden";
         if (bottomBar) bottomBar.className = "hidden";
         if (totalEl) totalEl.innerText = "$0.00";
@@ -2354,7 +2188,6 @@
       if (form) form.className = "space-y-2.5 bg-slate-50 p-3.5 rounded-2xl border border-slate-200";
       if (bottomBar) bottomBar.className = "p-4 border-t border-slate-100 bg-white flex-shrink-0 space-y-2 shadow-[0_-4px_10px_rgba(0,0,0,0.03)] block";
 
-      // ✅ ត្រួតពិនិត្យឱ្យបានច្បាស់លាស់៖ លុះត្រាតែមានការវាយអក្សរឆ្លាក់ឈ្មោះពិតប្រាកដ ទើបលោតប្រអប់លឿង
       var hasCustomItem = false;
       for (var c = 0; c < cart.length; c++) {
         if (cart[c].customText && String(cart[c].customText).trim().length > 0) {
@@ -2371,7 +2204,7 @@
       if (noticeBox) {
         if (hasCustomItem) {
           noticeBox.className = "p-2.5 rounded-xl text-xs space-y-1 bg-amber-50 border border-amber-200 text-amber-900";
-          noticeBox.innerHTML = 
+          noticeBox.innerHTML =
             '<div class="font-bold flex items-center gap-1 text-amber-800">' +
               '<span>⚠️ ' + (t.policyCustomTitle || 'លក្ខខណ្ឌទំនិញ Custom (ឆ្លាក់ឈ្មោះ)៖') + '</span>' +
             '</div>' +
@@ -2380,7 +2213,7 @@
             '</p>';
         } else if (isProvince) {
           noticeBox.className = "p-2.5 rounded-xl text-xs space-y-1 bg-blue-50 border border-blue-200 text-blue-900";
-          noticeBox.innerHTML = 
+          noticeBox.innerHTML =
             '<div class="font-bold flex items-center gap-1 text-blue-800">' +
               '<span>💳 ' + (t.policyProvinceTitle || 'លក្ខខណ្ឌដឹកជញ្ជូនតាមបណ្តាខេត្ត៖') + '</span>' +
             '</div>' +
@@ -2389,7 +2222,7 @@
             '</p>';
         } else {
           noticeBox.className = "p-2.5 rounded-xl text-xs space-y-1 bg-emerald-50 border border-emerald-200 text-emerald-900";
-          noticeBox.innerHTML = 
+          noticeBox.innerHTML =
             '<div class="font-bold flex items-center gap-1 text-emerald-800">' +
               '<span>🚚 ' + (t.policyNormalTitle || 'មិនត្រូវការបង់ប្រាក់មុនឡើយ!') + '</span>' +
             '</div>' +
@@ -2409,7 +2242,6 @@
           var itemDiv = document.createElement('div');
           itemDiv.className = "bg-white p-2.5 rounded-2xl border border-slate-200 hover:border-blue-300 shadow-sm flex items-center justify-between gap-2.5 transition-colors";
 
-          // ផ្នែកខាងឆ្វេង៖ ចុចលើវាដើម្បីកែប្រែព័ត៌មានទំនិញ (ពណ៌, ទំហំ, ឈ្មោះឆ្លាក់)
           var leftDiv = document.createElement('div');
           leftDiv.className = "flex items-center gap-2.5 min-w-0 flex-1 cursor-pointer group";
           leftDiv.title = "ចុចដើម្បីកែប្រែព័ត៌មានទំនិញនេះ";
@@ -2423,15 +2255,14 @@
 
           var details = document.createElement('div');
           details.className = "min-w-0 pr-1 flex-1";
-          
-          // ដក [P-001] និង (ឆ្លាក់ឈ្មោះ: ...) ចេញពីចំណងជើង ដើម្បីកុំឱ្យវែងពេក
+
           var cleanTitle = String(item.title || '')
             .replace(/^\[[^\]]+\]\s*/, '')
             .replace(/\s*\(ឆ្លាក់ឈ្មោះ:[^)]*\)/, '');
 
           var titleRow = document.createElement('div');
           titleRow.className = "flex items-center gap-1";
-          titleRow.innerHTML = 
+          titleRow.innerHTML =
             '<h4 class="text-xs font-bold text-slate-800 truncate group-hover:text-blue-600 transition-colors">' + cleanTitle + '</h4>' +
             '<span class="text-[10px] text-slate-400 group-hover:text-blue-600 flex-shrink-0">✏️</span>';
 
@@ -2442,7 +2273,6 @@
           details.appendChild(titleRow);
           details.appendChild(meta);
 
-          // បង្ហាញឈ្មោះដែលបានឆ្លាក់ដាច់ដោយឡែកជា Badge ពណ៌ខៀវ (មើលឃើញច្បាស់មិនបាត់អក្សរ)
           if (item.customText && String(item.customText).trim() !== "") {
             var customBadge = document.createElement('div');
             customBadge.className = "mt-0.5 inline-flex items-center gap-1 bg-blue-50 text-blue-700 border border-blue-200/80 px-1.5 py-0.2 rounded-md text-[10px] font-bold max-w-full";
@@ -2457,7 +2287,6 @@
 
           leftDiv.appendChild(details);
 
-          // ផ្នែកខាងស្តាំ៖ ប៊ូតុងដក-បូកចំនួន និងប៊ូតុងលុប
           var rightDiv = document.createElement('div');
           rightDiv.className = "flex items-center gap-1.5 flex-shrink-0";
 
@@ -2514,7 +2343,7 @@
         var txtShipLabel = (currentLang === 'zh') ? '运费' : (currentLang === 'en' ? 'Shipping' : 'ដឹក');
 
         if (isFreeShipping) {
-          totalEl.innerHTML = 
+          totalEl.innerHTML =
             '<div>' +
               '<span class="text-[10px] bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-md font-bold inline-block mb-1">' + txtFreeBadge + '</span>' +
               '<div class="flex items-baseline justify-end gap-1.5">' +
@@ -2528,7 +2357,7 @@
                                 (currentLang === 'en') ? ('Add $' + needMore + ' more for free shipping') :
                                 ('ទិញថែម $' + needMore + ' ទៀតដើម្បីដឹកឥតគិតថ្លៃ');
 
-          totalEl.innerHTML = 
+          totalEl.innerHTML =
             '<div>' +
               '<span class="text-[10px] text-slate-400 block mb-1 font-medium">' + txtNeedMoreHint + '</span>' +
               '<div class="flex items-baseline justify-end gap-1.5">' +
@@ -2539,7 +2368,7 @@
         }
       }
     }
-    
+
     function changeCartItemQty(index, delta) {
       if (!cart[index]) return;
       cart[index].qty += delta;
@@ -2558,14 +2387,10 @@
       renderCartItems();
     }
 
-    var editingCartIndex = -1; // -1 មានន័យថាបន្ថែមថ្មី, >= 0 មានន័យថាកំពុងកែប្រែទំនិញក្នុងកន្ត្រក
-
-    // អនុគមន៍ពេលអតិថិជនចុចលើទំនិញក្នុងកន្ត្រកដើម្បីកែប្រែ
     function editCartItem(index) {
       var item = cart[index];
       if (!item) return;
 
-      // ស្វែងរកទិន្នន័យដើមនៃផលិតផល
       var prod = null;
       for (var i = 0; i < customerProducts.length; i++) {
         if (String(customerProducts[i].id) === String(item.id)) {
@@ -2579,12 +2404,10 @@
       closeCartModal();
       openModal(prod);
 
-      // ១. កំណត់ចំនួន (Quantity) តាមរបស់ចាស់
       quantity = item.qty || 1;
       var qEl = document.getElementById('qtyVal');
       if (qEl) qEl.innerText = quantity;
 
-      // ២. កំណត់ពណ៌ (Color) តាមរបស់ចាស់ និងប្តូរពណ៌ប៊ូតុងឱ្យចំជម្រើសចាស់
       selectedColor = item.color;
       var colorBox = document.getElementById('colorContainer');
       if (colorBox) {
@@ -2599,7 +2422,6 @@
         }
       }
 
-      // ៣. កំណត់ទំហំ (Size) តាមរបស់ចាស់
       selectedSize = item.size;
       var sizeBox = document.getElementById('sizeContainer');
       if (sizeBox) {
@@ -2613,13 +2435,11 @@
         }
       }
 
-      // ៤. បំពេញឈ្មោះដែលបានឆ្លាក់ចាស់ចូលប្រអប់វិញ
       var nameInput = document.getElementById('custCustomNameInput');
       if (nameInput) {
         nameInput.value = item.customText || "";
       }
 
-      // ៥. គណនាតម្លៃសរុបឡើងវិញ និងប្តូរអក្សរប៊ូតុងទៅជា "រក្សាទុកការកែប្រែ"
       updateModalLivePrice();
       var addBtnText = document.getElementById('btnAddToCartText');
       if (addBtnText) {
@@ -2632,16 +2452,14 @@
 
       var phoneEl = document.getElementById('cartPhoneInput');
       var locEl = document.getElementById('cartLocInput');
-      var noteEl = document.getElementById('cartNoteInput');
       var zoneSelect = document.getElementById('cartDeliveryZone');
 
       var phone = phoneEl ? phoneEl.value.trim() : '';
       var location = locEl ? locEl.value.trim() : '';
-      var noteText = noteEl ? noteEl.value.trim() : '';
-      var t = i18n[currentLang];
+      var t = i18n[currentLang] || i18n['km'];
 
       if (!phone || !location) {
-        alert(t.alertFillInfo);
+        alert(t.alertFillInfo || "សូមបញ្ចូលលេខទូរសព្ទ និងទីតាំងដឹកជញ្ជូនរបស់អ្នក!");
         return;
       }
 
@@ -2699,8 +2517,7 @@
         saveCartToStorage();
         updateCartBadge();
         closeCartModal();
-        
-        // ✅ ហៅអនុគមន៍ថ្មីត្រង់នេះ៖
+
         showOrderSuccessModal(orderId);
       })
       .catch(function(err) {
@@ -2712,24 +2529,17 @@
       });
     }
 
-    // =========================================================
-    // គ្រប់គ្រងផ្ទាំងជោគជ័យ ORDER SUCCESS MODAL (លំដាប់លំដោយត្រឹមត្រូវ)
-    // =========================================================
-
-    // ១. អនុគមន៍បើកបង្ហាញ Modal (ដក hidden ចេញ)
     function showOrderSuccessModal(orderId) {
-      // ដាក់លេខកូដ Order ពិតប្រាកដដែលទើបកុម្ម៉ង់
       var idEl = document.getElementById('successOrderId');
       if (idEl) idEl.innerText = orderId || '';
 
       var modal = document.getElementById('orderSuccessModal');
       if (modal) {
         modal.classList.remove('hidden');
-        document.body.style.overflow = 'hidden'; // ការពារកុំឱ្យ scroll ទំព័រក្រោយ
+        document.body.style.overflow = 'hidden';
       }
     }
 
-    // ២. អនុគមន៍បិទ Modal ពេលចុច "🛍️ ទិញទំនិញបន្ត" (បន្ថែម hidden វិញ)
     function closeSuccessModal() {
       var modal = document.getElementById('orderSuccessModal');
       if (modal) {
@@ -2738,7 +2548,6 @@
       }
     }
 
-    // ៣. អនុគមន៍បិទ Mini App ពេលចុច "🚪 រួចរាល់ (បិទ App)"
     function closeTelegramMiniApp() {
       closeSuccessModal();
       try {
@@ -2759,8 +2568,7 @@
 
       if (container) container.innerHTML = '';
       if (emptyState) emptyState.className = "hidden";
-      
-      // បង្ហាញ Modal ជាផ្ទាំង Pop-up ពេញអេក្រង់
+
       if (modal) modal.className = "fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4";
       if (loader) loader.className = "text-center py-10 text-slate-400 text-xs block";
 
@@ -2777,7 +2585,7 @@
         if (loader) loader.className = "hidden";
         if (container) {
           var t = (typeof i18n !== 'undefined' && i18n[currentLang]) ? i18n[currentLang] : (i18n ? i18n['km'] : {});
-          container.innerHTML = 
+          container.innerHTML =
             '<div class="bg-amber-50 border border-amber-200 rounded-2xl p-4 text-center space-y-3">' +
               '<p class="text-xs text-amber-800 font-medium">' + (t.myOrdersTgNotFound || "⚠️ មិនអាចចាប់យកគណនី Telegram ដោយស្វ័យប្រវត្តិបានទេ។") + '</p>' +
               '<p class="text-[11px] text-slate-500">' + (t.myOrdersPhonePrompt || "សូមបញ្ចូលលេខទូរសព្ទដែលអ្នកធ្លាប់កុម្ម៉ង់ទិញដើម្បីពិនិត្យ៖") + '</p>' +
@@ -2793,33 +2601,33 @@
       fetchOrdersFromServer(currentUserId, 'id');
     }
 
-    var myCustomerOrders = []; // រក្សាទុកបញ្ជីការកុម្ម៉ង់ដើម្បីងាយស្រួលប្តូរភាសា
-
     function fetchOrdersFromServer(queryValue, type) {
       var loader = document.getElementById('myOrdersLoader');
       var container = document.getElementById('myOrdersContainer');
       var emptyState = document.getElementById('myOrdersEmpty');
 
-      loader.className = "text-center py-10 text-slate-400 text-xs";
-      container.innerHTML = '';
-      emptyState.className = "hidden";
+      if (loader) loader.className = "text-center py-10 text-slate-400 text-xs";
+      if (container) container.innerHTML = '';
+      if (emptyState) emptyState.className = "hidden";
 
       callBackendPost({ action: "getMyOrders", queryValue: queryValue, type: type })
         .then(function(res) {
-          loader.className = "hidden";
+          if (loader) loader.className = "hidden";
           if (res && res.success && res.orders && res.orders.length > 0) {
-            myCustomerOrders = res.orders; // ចងចាំទិន្នន័យ
+            myCustomerOrders = res.orders;
             renderMyOrdersList();
           } else {
             myCustomerOrders = [];
-            emptyState.className = "text-center py-10 text-slate-400 text-xs";
-            var t = (typeof i18n !== 'undefined' && i18n[currentLang]) ? i18n[currentLang] : {};
-            emptyState.innerHTML = '<span class="text-3xl block mb-2">🛍️</span><p class="text-xs text-slate-400">' + (t.cartEmpty || "មិនទាន់មានប្រវត្តិការកុម្ម៉ង់ទិញនៅឡើយទេ!") + '</p>';
+            if (emptyState) {
+              emptyState.className = "text-center py-10 text-slate-400 text-xs";
+              var t = (typeof i18n !== 'undefined' && i18n[currentLang]) ? i18n[currentLang] : {};
+              emptyState.innerHTML = '<span class="text-3xl block mb-2">🛍️</span><p class="text-xs text-slate-400">' + (t.cartEmpty || "មិនទាន់មានប្រវត្តិការកុម្ម៉ង់ទិញនៅឡើយទេ!") + '</p>';
+            }
           }
         })
         .catch(function(err) {
-          loader.className = "hidden";
-          container.innerHTML = '<p class="text-center text-xs text-rose-500 py-6">Error: ' + err.message + '</p>';
+          if (loader) loader.className = "hidden";
+          if (container) container.innerHTML = '<p class="text-center text-xs text-rose-500 py-6">Error: ' + err.message + '</p>';
         });
     }
 
@@ -2835,16 +2643,13 @@
     function closeMyOrdersModal() {
       var modal = document.getElementById('myOrdersModal');
       var loader = document.getElementById('myOrdersLoader');
-      // បិទ Modal វិញដោយដាក់ class hidden (និងដក flex ចេញ)
       if (modal) modal.className = "fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden items-end sm:items-center justify-center p-0 sm:p-4";
       if (loader) loader.className = "hidden";
     }
 
-    // បង្ហាញកាលបរិច្ឆេទជាទម្រង់៖ 03 Nov 2026 09:40 ឬ 25 Oct 2026 10:17 (ឆ្លាតវៃ មិនច្រឡំខែ)
     function formatOrderDate(rawDate, orderId) {
       var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
-      // វិធីសាស្ត្រពិសេស៖ ប្រសិនបើមាន orderId (ឧ. ORD-1793673604) ទាញម៉ោងពិតពី Timestamp ផ្ទាល់
       if (orderId && String(orderId).indexOf("ORD-") !== -1) {
         var ts = parseInt(String(orderId).replace("ORD-", "").trim(), 10);
         if (!isNaN(ts) && ts > 1000000000) {
@@ -2861,7 +2666,6 @@
       if (!rawDate) return "";
       var str = String(rawDate).trim();
 
-      // ១. ប្រសិនបើជាទម្រង់ DD-MM-YYYY (ឧ. 25-10-2026 10:17)
       var dmyMatch = str.match(/^(\d{1,2})-(\d{1,2})-(\d{4})\s+(\d{1,2}):(\d{1,2})/);
       if (dmyMatch) {
         var day = ("0" + dmyMatch[1]).slice(-2);
@@ -2873,7 +2677,6 @@
         return day + " " + monthName + " " + yr + " " + hr + ":" + min;
       }
 
-      // ២. ប្រសិនបើជាទម្រង់ Date ISO ពី Google Sheet
       try {
         var d = new Date(str);
         if (!isNaN(d.getTime())) {
@@ -2894,14 +2697,11 @@
       if (!container || !myCustomerOrders) return;
       container.innerHTML = '';
 
-      var t = (typeof i18n !== 'undefined' && i18n[currentLang]) ? i18n[currentLang] : {};
-
       for (var i = 0; i < myCustomerOrders.length; i++) {
         var ord = myCustomerOrders[i];
         var card = document.createElement('div');
         card.className = "bg-slate-50 border border-slate-200 rounded-2xl p-3.5 space-y-2 text-xs shadow-sm";
 
-        // ១. កាលបរិច្ឆេទខ្លី (គ្មានវិនាទី)
         var shortDate = formatOrderDate(ord.date, ord.orderId);
 
         var topRow = document.createElement('div');
@@ -2910,7 +2710,6 @@
                            '<span class="text-[10px] text-slate-400 font-mono">' + shortDate + '</span>';
         card.appendChild(topRow);
 
-        // ២. ស្វែងរកស្ថានភាព និងបកប្រែតាមភាសាបច្ចុប្បន្ន (KM / EN / ZH)
         var rawStatus = String(ord.status || "");
         var statusLabel = rawStatus;
         var badgeClass = "p-1.5 rounded-xl text-center font-bold text-xs shadow-sm ";
@@ -2941,13 +2740,11 @@
         badgeRow.innerHTML = '<div class="' + badgeClass + '">' + statusLabel + '</div>';
         card.appendChild(badgeRow);
 
-        // ៣. បញ្ជីទំនិញ
         var itemRow = document.createElement('div');
         itemRow.className = "text-slate-600 whitespace-pre-line text-[11px] bg-white p-2 rounded-xl border border-slate-100";
         itemRow.innerText = ord.items;
         card.appendChild(itemRow);
 
-        // ៤. ពាក្យតម្លៃសរុប (Total / 总计) តាមភាសា
         var totalText = (currentLang === 'zh') ? "总计：" :
                         (currentLang === 'en') ? "Total:" : "តម្លៃសរុប៖";
 
@@ -2960,7 +2757,6 @@
         container.appendChild(card);
       }
     }
-
 
     // --- CUSTOMER APP SETTINGS & INSTANT CACHE ---
     function applyCustomerSettingsObj(res) {
@@ -3022,17 +2818,14 @@
         });
     }
 
-    // អនុគមន៍ផ្ញើសារសួរនាំពីផលិតផលទៅកាន់ Telegram Admin
     function askAboutCurrentProduct() {
       if (!selectedProduct) return;
 
-      // ១. រៀបចំរូបភាពសម្រាប់ភ្ជាប់ជាមួយសារ
       var imgUrl = selectedProduct.image || "";
       if (selectedProduct.images && selectedProduct.images.length > 0) {
         imgUrl = selectedProduct.images[0];
       }
 
-      // ២. បង្កើតទម្រង់សារដែលមាន ID, ឈ្មោះ, តម្លៃ, ពណ៌ និងតំណភ្ជាប់រូបភាព
       var msg = "👋 ជម្រាបសួរ Admin! ខ្ញុំចង់សួរព័ត៌មានបន្ថែមពីទំនិញនេះ៖\n\n" +
                 "🆔 កូដទំនិញ: " + (selectedProduct.id || "N/A") + "\n" +
                 "📦 ឈ្មោះ: " + selectedProduct.title + "\n" +
@@ -3048,11 +2841,9 @@
         msg += "🖼️ រូបភាព: " + imgUrl + "\n";
       }
 
-      // ៣. បម្លែងសារទៅជា Link Telegram (https://t.me/username?text=...)
       var encodedMsg = encodeURIComponent(msg);
       var tgUrl = "https://t.me/" + MY_TELEGRAM_USERNAME + "?text=" + encodedMsg;
 
-      // បើកតាម Telegram WebApp SDK ឬ Browser
       if (window.Telegram && window.Telegram.WebApp && typeof window.Telegram.WebApp.openTelegramLink === "function") {
         window.Telegram.WebApp.openTelegramLink(tgUrl);
       } else if (window.Telegram && window.Telegram.WebApp && typeof window.Telegram.WebApp.openLink === "function") {
@@ -3060,30 +2851,24 @@
       } else {
         window.open(tgUrl, '_blank');
       }
-    } // <--- បិទ askAboutCurrentProduct ត្រឹមត្រូវនៅត្រង់នេះ!
+    }
 
-      // អនុគមន៍ Refresh ទាញយកទិន្នន័យថ្មីពី Google Sheets + រំកិលឡើងលើកំពូល
     function refreshHomeData() {
-      // ១. រំកិលអេក្រង់ឡើងទៅលើគេបង្អស់ដោយរលូន
       window.scrollTo({ top: 0, behavior: 'smooth' });
 
-      // ២. បើកចលនាវិលលើ Icon 🔄
       var icon = document.getElementById('refreshIcon');
       if (icon) icon.classList.add('animate-spin');
 
-      // ៣. ទាញទិន្នន័យទំនិញ និងការកំណត់ថ្មី
       loadCustomerData(true);
       if (typeof loadAppSettings === 'function') {
         loadAppSettings();
       }
 
-      // ៤. បញ្ឈប់ការវិលក្រោយពេល ១.៥ វិនាទី
       setTimeout(function() {
         if (icon) icon.classList.remove('animate-spin');
       }, 1500);
     }
 
-    // ប្តូរ Key ទៅជា v2 ដើម្បីកម្ទេច Cache ចាស់ចោល និងបើកទាំង ៤ ដោយស្វ័យប្រវត្តិ
     var appSocialSettings = JSON.parse(localStorage.getItem('app_social_settings_v2') || JSON.stringify({
       phone_enabled: true,
       phone_val: "012345678",
@@ -3095,7 +2880,6 @@
       fb_val: "https://www.facebook.com"
     }));
 
-    // ៥. អនុគមន៍ Render Logo Icons លើ Footer (Tag <a> សុទ្ធ ១០០% ដំណើរការធម្មជាតិដូចដើម)
     function renderFooterSocialLinks() {
       var container = document.getElementById('footerSocialContainer');
       if (!container) return;
@@ -3103,7 +2887,6 @@
 
       var links = [];
 
-      // ១. Phone Icon (Tag <a> tel: សុទ្ធ ដំណើរការទាំង Android & iPhone)
       if (appSocialSettings.phone_enabled && appSocialSettings.phone_val) {
         var cleanPhone = String(appSocialSettings.phone_val).replace(/[^0-9+]/g, '');
         links.push({
@@ -3114,7 +2897,6 @@
         });
       }
 
-      // ២. Telegram Icon (ទំហំ w-[19px] h-[19px] ធំស្មើគេស្អាត)
       if (appSocialSettings.tg_enabled && appSocialSettings.tg_val) {
         var rawTg = String(appSocialSettings.tg_val).replace('@', '').trim();
         var tgUrl = rawTg.startsWith('http') ? rawTg : ("https://t.me/" + rawTg);
@@ -3126,7 +2908,6 @@
         });
       }
 
-      // ៣. TikTok Icon (Logo តន្ត្រីត្រឹមត្រូវ)
       if (appSocialSettings.tiktok_enabled && appSocialSettings.tiktok_val) {
         var rawTt = String(appSocialSettings.tiktok_val).trim();
         var ttUrl = rawTt.startsWith('http') ? rawTt : ("https://www.tiktok.com/@" + rawTt.replace('@', ''));
@@ -3138,7 +2919,6 @@
         });
       }
 
-      // ៤. Facebook Icon (អក្សរ f ស្ដង់ដារ)
       if (appSocialSettings.fb_enabled && appSocialSettings.fb_val) {
         var rawFb = String(appSocialSettings.fb_val).trim();
         var fbUrl = rawFb.startsWith('http') ? rawFb : ("https://www.facebook.com/" + rawFb);
@@ -3150,7 +2930,6 @@
         });
       }
 
-      // បង្កើត Tag <a> ធម្មជាតិសុទ្ធសាធ (គ្មាន Button, គ្មាន onclick, គ្មាន setTimeout)
       for (var i = 0; i < links.length; i++) {
         var a = document.createElement('a');
         a.href = links[i].href;
@@ -3163,7 +2942,7 @@
       }
     }
 
-// =========================================================
+    // =========================================================
     // [WISHLIST & SOLD COUNT] — គ្រប់គ្រង Wishlist និងចំនួនលក់ចេញ
     // =========================================================
     var WISHLIST_STORAGE_KEY = 'cv3d_liked_pids';
@@ -3413,14 +3192,12 @@
       }
     }
 
-    // --- អនុគមន៍ពេញលេញសម្រាប់គណនាចំនួន Sold របស់ទំនិញ ---
     function getProductSoldCount(p) {
       if (!p) return 0;
       var pid = String(p.id || '').trim().toLowerCase();
       var pTitle = String(p.title || '').toLowerCase().trim();
       var total = 0;
 
-      // ១. បូកតម្លៃផ្ទាល់ពី Google Sheet Catalog (បើមាន Column sold / soldCount)
       var rawDirect = (p.sold !== undefined && p.sold !== null && String(p.sold).trim() !== '')
         ? p.sold
         : p.soldCount;
@@ -3431,7 +3208,6 @@
         }
       }
 
-      // ២. រាប់បូកបន្ថែមពីបញ្ជី Orders ជាក់ស្តែង (ប្រសិនបើមាន allAdminOrders)
       if (typeof allAdminOrders !== 'undefined' && Array.isArray(allAdminOrders) && allAdminOrders.length > 0) {
         for (var i = 0; i < allAdminOrders.length; i++) {
           var ord = allAdminOrders[i];
@@ -3453,7 +3229,6 @@
         }
       }
 
-      // ៣. រាប់បូកបន្ថែមពី salesLog / orderHistory (ប្រសិនបើមាន)
       var historyLog = p.salesLog || p.orderHistory || '';
       if (typeof historyLog === 'string' && historyLog.trim() !== '') {
         var logLines = historyLog.split(/\r?\n/);
@@ -3466,295 +3241,6 @@
       }
 
       return total;
-    }
-
-    // --- CART RENDER & CHECKOUT ---
-    function renderCartItems() {
-      var list = document.getElementById('cartItemList');
-      var emptyState = document.getElementById('cartEmptyState');
-      var form = document.getElementById('cartOrderForm');
-      var bottomBar = document.getElementById('cartBottomBar');
-      var totalEl = document.getElementById('cartTotalPrice');
-      var t = i18n[currentLang] || i18n['km'];
-
-      if (!list) return;
-      list.innerHTML = '';
-
-      if (!cart || cart.length === 0) {
-        if (emptyState) emptyState.classList.remove('hidden');
-        if (form) form.classList.add('hidden');
-        if (bottomBar) bottomBar.classList.add('hidden');
-        return;
-      }
-
-      if (emptyState) emptyState.classList.add('hidden');
-      if (form) form.classList.remove('hidden');
-      if (bottomBar) bottomBar.classList.remove('hidden');
-
-      var itemsSubtotal = 0;
-      for (var i = 0; i < cart.length; i++) {
-        (function(item, idx) {
-          var lineTotal = (Number(item.price) || 0) * (Number(item.qty) || 1);
-          itemsSubtotal += lineTotal;
-
-          var row = document.createElement('div');
-          row.className = "flex items-center justify-between gap-2.5 bg-slate-50 p-2.5 rounded-2xl border border-slate-200/80";
-          row.innerHTML =
-            '<div class="flex items-center gap-2.5 min-w-0 flex-1">' +
-              '<img src="' + (item.image || '') + '" class="w-12 h-12 rounded-xl object-cover bg-white border border-slate-200 flex-shrink-0">' +
-              '<div class="min-w-0">' +
-                '<p class="text-xs font-bold text-slate-800 line-clamp-1">' + item.title + '</p>' +
-                '<p class="text-[10px] text-slate-500 truncate">' + item.color + ' • ' + item.size + '</p>' +
-                '<p class="text-xs font-extrabold text-blue-600 mt-0.5">$' + lineTotal.toFixed(2) + '</p>' +
-              '</div>' +
-            '</div>' +
-            '<div class="flex items-center gap-1 flex-shrink-0">' +
-              '<button type="button" onclick="updateCartItemQty(' + idx + ', -1)" class="w-6 h-6 rounded-lg bg-white border border-slate-300 text-xs font-bold cursor-pointer">-</button>' +
-              '<span class="text-xs font-bold w-5 text-center font-mono">' + item.qty + '</span>' +
-              '<button type="button" onclick="updateCartItemQty(' + idx + ', 1)" class="w-6 h-6 rounded-lg bg-white border border-slate-300 text-xs font-bold cursor-pointer">+</button>' +
-              '<button type="button" onclick="removeCartItem(' + idx + ')" class="text-rose-500 text-xs px-1.5 py-1 cursor-pointer">🗑️</button>' +
-            '</div>';
-          list.appendChild(row);
-        })(cart[i], i);
-      }
-
-      var baseShipFee = getDeliveryFee();
-      var freeMin = Number(appSettings.free_shipping_min) || 20;
-      var shipFee = (itemsSubtotal >= freeMin) ? 0 : baseShipFee;
-      var grandTotal = itemsSubtotal + shipFee;
-
-      if (totalEl) {
-        totalEl.innerHTML =
-          '<div class="text-sm font-black text-blue-600">$' + grandTotal.toFixed(2) + '</div>' +
-          '<div class="text-[10px] text-slate-400">' + t.itemCostPrefix + itemsSubtotal.toFixed(2) + t.shipCostPrefix + shipFee.toFixed(2) + '</div>';
-      }
-    }
-
-    function updateCartItemQty(index, delta) {
-      if (!cart[index]) return;
-      var nextQty = (Number(cart[index].qty) || 1) + delta;
-      if (nextQty <= 0) {
-        cart.splice(index, 1);
-      } else {
-        cart[index].qty = nextQty;
-      }
-      saveCartToStorage();
-      updateCartBadge();
-      renderCartItems();
-    }
-
-    function removeCartItem(index) {
-      if (!cart[index]) return;
-      cart.splice(index, 1);
-      saveCartToStorage();
-      updateCartBadge();
-      renderCartItems();
-    }
-
-    function submitCartOrder() {
-      var t = i18n[currentLang] || i18n['km'];
-      if (!cart || cart.length === 0) return;
-
-      var phoneInput = document.getElementById('cartPhoneInput');
-      var locInput = document.getElementById('cartLocInput');
-      var phone = phoneInput ? phoneInput.value.trim() : '';
-      var location = locInput ? locInput.value.trim() : '';
-
-      if (!phone || !location) {
-        alert(t.alertFillInfo || "សូមបញ្ចូលលេខទូរសព្ទ និងទីតាំងដឹកជញ្ជូនរបស់អ្នក!");
-        return;
-      }
-
-      var itemsSubtotal = 0;
-      for (var i = 0; i < cart.length; i++) {
-        itemsSubtotal += (Number(cart[i].price) || 0) * (Number(cart[i].qty) || 1);
-      }
-      var freeMin = Number(appSettings.free_shipping_min) || 20;
-      var shipFee = (itemsSubtotal >= freeMin) ? 0 : getDeliveryFee();
-      var grandTotal = itemsSubtotal + shipFee;
-
-      var tgUser = null;
-      try {
-        if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initDataUnsafe) {
-          tgUser = window.Telegram.WebApp.initDataUnsafe.user || null;
-        }
-      } catch (e) {}
-
-      var customerName = tgUser
-        ? ([tgUser.first_name, tgUser.last_name].filter(Boolean).join(" ") || "ភ្ញៀវ Telegram")
-        : "ភ្ញៀវទូទៅ";
-
-      var btn = document.getElementById('btnCartCheckout');
-      if (btn) {
-        btn.disabled = true;
-        btn.innerText = "⏳...";
-      }
-
-      var orderPayload = {
-        items: cart,
-        total: grandTotal,
-        customerName: customerName,
-        tgUsername: tgUser && tgUser.username ? tgUser.username : "",
-        tgUserId: tgUser && tgUser.id ? tgUser.id : "",
-        phone: phone,
-        location: location
-      };
-
-      callBackendPost({ action: "recordOrder", orderData: orderPayload })
-        .then(function(res) {
-          if (btn) {
-            btn.disabled = false;
-            btn.innerText = t.btnCheckout;
-          }
-          if (res && res.success) {
-            cart = [];
-            saveCartToStorage();
-            updateCartBadge();
-            closeCartModal();
-
-            var orderCodeEl = document.getElementById('successOrderId');
-            if (orderCodeEl) orderCodeEl.innerText = res.orderId || "";
-            var successModal = document.getElementById('orderSuccessModal');
-            if (successModal) successModal.classList.remove('hidden');
-          } else {
-            alert("❌ " + (res && res.error ? res.error : "Error submitting order"));
-          }
-        })
-        .catch(function(err) {
-          if (btn) {
-            btn.disabled = false;
-            btn.innerText = t.btnCheckout;
-          }
-          alert("Error: " + err.message);
-        });
-    }
-
-    function closeSuccessModal() {
-      var m = document.getElementById('orderSuccessModal');
-      if (m) m.classList.add('hidden');
-    }
-
-    function closeTelegramMiniApp() {
-      try {
-        if (window.Telegram && window.Telegram.WebApp && typeof window.Telegram.WebApp.close === 'function') {
-          window.Telegram.WebApp.close();
-          return;
-        }
-      } catch (e) {}
-      closeSuccessModal();
-    }
-
-    // --- MY ORDERS HISTORY ---
-    var cachedMyOrders = [];
-
-    function openMyOrdersModal() {
-      var modal = document.getElementById('myOrdersModal');
-      if (modal) {
-        modal.classList.remove('hidden');
-        modal.classList.add('flex');
-      }
-      fetchMyOrdersAuto();
-    }
-
-    function closeMyOrdersModal() {
-      var modal = document.getElementById('myOrdersModal');
-      if (modal) {
-        modal.classList.add('hidden');
-        modal.classList.remove('flex');
-      }
-    }
-
-    function fetchMyOrdersAuto() {
-      var tgId = "";
-      try {
-        if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initDataUnsafe && window.Telegram.WebApp.initDataUnsafe.user) {
-          tgId = window.Telegram.WebApp.initDataUnsafe.user.id || "";
-        }
-      } catch (e) {}
-
-      var loader = document.getElementById('myOrdersLoader');
-      var container = document.getElementById('myOrdersContainer');
-      var emptyEl = document.getElementById('myOrdersEmpty');
-      var t = i18n[currentLang] || i18n['km'];
-
-      if (container) container.innerHTML = '';
-      if (emptyEl) emptyEl.classList.add('hidden');
-
-      if (!tgId) {
-        var savedPhone = localStorage.getItem('cv3d_last_order_phone') || '';
-        if (savedPhone) {
-          fetchMyOrdersByValue(savedPhone, 'phone');
-        } else if (container) {
-          container.innerHTML =
-            '<div class="bg-slate-50 border border-slate-200 rounded-2xl p-3.5 space-y-2.5 text-xs">' +
-              '<p class="text-slate-600">' + (t.myOrdersPhonePrompt || 'សូមបញ្ចូលលេខទូរសព្ទដែលអ្នកធ្លាប់កុម្ម៉ង់ទិញដើម្បីពិនិត្យ៖') + '</p>' +
-              '<div class="flex gap-1.5">' +
-                '<input id="manualOrderPhoneInput" type="tel" placeholder="' + (t.myOrdersPhonePlaceholder || 'ឧ. 012345678') + '" class="flex-1 px-3 py-2 bg-white border border-slate-300 rounded-xl text-xs outline-none">' +
-                '<button type="button" onclick="searchMyOrdersByPhoneInput()" class="px-3.5 py-2 bg-blue-600 text-white font-bold rounded-xl text-xs cursor-pointer">' + (t.myOrdersSearchBtn || 'ស្វែងរក') + '</button>' +
-              '</div>' +
-            '</div>';
-        }
-        return;
-      }
-
-      if (loader) loader.classList.remove('hidden');
-      fetchMyOrdersByValue(String(tgId), 'tgId');
-    }
-
-    function searchMyOrdersByPhoneInput() {
-      var inp = document.getElementById('manualOrderPhoneInput');
-      var val = inp ? inp.value.trim() : '';
-      if (!val) return;
-      localStorage.setItem('cv3d_last_order_phone', val);
-      fetchMyOrdersByValue(val, 'phone');
-    }
-
-    function fetchMyOrdersByValue(queryValue, type) {
-      var loader = document.getElementById('myOrdersLoader');
-      if (loader) loader.classList.remove('hidden');
-
-      callBackendPost({ action: "getMyOrders", queryValue: queryValue, type: type })
-        .then(function(res) {
-          if (loader) loader.classList.add('hidden');
-          cachedMyOrders = (res && res.orders) ? res.orders : [];
-          renderMyOrdersList();
-        })
-        .catch(function() {
-          if (loader) loader.classList.add('hidden');
-          cachedMyOrders = [];
-          renderMyOrdersList();
-        });
-    }
-
-    function renderMyOrdersList() {
-      var container = document.getElementById('myOrdersContainer');
-      var emptyEl = document.getElementById('myOrdersEmpty');
-      var t = i18n[currentLang] || i18n['km'];
-      if (!container || !emptyEl) return;
-
-      container.innerHTML = '';
-      if (!cachedMyOrders || cachedMyOrders.length === 0) {
-        emptyEl.classList.remove('hidden');
-        if (emptyEl.querySelector('p')) emptyEl.querySelector('p').innerText = t.myOrdersEmpty;
-        return;
-      }
-
-      emptyEl.classList.add('hidden');
-      cachedMyOrders.forEach(function(ord) {
-        var card = document.createElement('div');
-        card.className = "bg-slate-50 border border-slate-200 rounded-2xl p-3 space-y-1.5 text-xs";
-        card.innerHTML =
-          '<div class="flex justify-between items-center">' +
-            '<span class="font-mono font-bold text-blue-600">' + ord.orderId + '</span>' +
-            '<span class="text-[10px] font-bold bg-white border border-slate-200 px-2 py-0.5 rounded-full">' + ord.status + '</span>' +
-          '</div>' +
-          '<p class="text-[11px] text-slate-700 whitespace-pre-line">' + ord.items + '</p>' +
-          '<div class="flex justify-between items-center pt-1 border-t border-slate-200/70 text-[11px]">' +
-            '<span class="text-slate-400 font-mono">' + (ord.date || '') + '</span>' +
-            '<span class="font-extrabold text-slate-900">$' + Number(ord.totalPrice || 0).toFixed(2) + '</span>' +
-          '</div>';
-        container.appendChild(card);
-      });
     }
   </script>
 </body>
