@@ -2607,34 +2607,34 @@
           idBadgeEl.innerText = p.id;
           idBadgeEl.classList.remove('hidden');
         }
-if (el = document.getElementById('addTitle')) el.value = p.title || '';
+    if (el = document.getElementById('addTitle')) el.value = p.title || '';
 
-// សម្អាត Price និង Discount ឱ្យជាលេខត្រឹមត្រូវ
-var cleanPrice = parseFloat(String(p.price || 0).replace(/[^0-9.]/g, '')) || 0;
-var rawDiscStr = p.discount ? String(p.discount).replace('%', '').trim() : '';
-var cleanDiscNum = parseFloat(rawDiscStr) || 0;
-if (cleanDiscNum > 0 && cleanDiscNum < 1) cleanDiscNum = cleanDiscNum * 100;
+    // សម្អាត Price និង Discount ឱ្យជាលេខត្រឹមត្រូវ
+    var cleanPrice = parseFloat(String(p.price || 0).replace(/[^0-9.]/g, '')) || 0;
+    var rawDiscStr = p.discount ? String(p.discount).replace('%', '').trim() : '';
+    var cleanDiscNum = parseFloat(rawDiscStr) || 0;
+    if (cleanDiscNum > 0 && cleanDiscNum < 1) cleanDiscNum = cleanDiscNum * 100;
 
-if (el = document.getElementById('addPrice')) el.value = cleanPrice > 0 ? cleanPrice : '';
-if (el = document.getElementById('addDesc')) el.value = p.desc || '';
-if (el = document.getElementById('addImage')) el.value = p.image || '';
-if (el = document.getElementById('addColors')) el.value = Array.isArray(p.colors) ? p.colors.join(', ') : (p.colors || '');
-if (el = document.getElementById('addSizes')) el.value = Array.isArray(p.sizes) ? p.sizes.join(', ') : (p.sizes || '');
-if (el = document.getElementById('addBadge')) el.value = p.badge || '';
+    if (el = document.getElementById('addPrice')) el.value = cleanPrice > 0 ? cleanPrice : '';
+    if (el = document.getElementById('addDesc')) el.value = p.desc || '';
+    if (el = document.getElementById('addImage')) el.value = p.image || '';
+    if (el = document.getElementById('addColors')) el.value = Array.isArray(p.colors) ? p.colors.join(', ') : (p.colors || '');
+    if (el = document.getElementById('addSizes')) el.value = Array.isArray(p.sizes) ? p.sizes.join(', ') : (p.sizes || '');
+    if (el = document.getElementById('addBadge')) el.value = p.badge || '';
 
-// ទាញ Link វីដេអូចាស់មកបង្ហាញក្នុងប្រអប់
-var vidInput = document.getElementById('addVideoUrl');
-if (vidInput) {
-  vidInput.value = p.videoUrl || '';
-  checkVideoClearBtnVisibility(); // បើមាន Link វានឹងបង្ហាញប៊ូតុង × ភ្លាម
-}
+    // ទាញ Link វីដេអូចាស់មកបង្ហាញក្នុងប្រអប់
+    var vidInput = document.getElementById('addVideoUrl');
+    if (vidInput) {
+      vidInput.value = p.videoUrl || '';
+      checkVideoClearBtnVisibility(); // បើមាន Link វានឹងបង្ហាញប៊ូតុង × ភ្លាម
+    }
 
-// បញ្ចូលភាគរយ Discount
-if (el = document.getElementById('addDiscount')) el.value = cleanDiscNum > 0 ? cleanDiscNum : '';
+    // បញ្ចូលភាគរយ Discount
+    if (el = document.getElementById('addDiscount')) el.value = cleanDiscNum > 0 ? cleanDiscNum : '';
 
-// ✅ ហៅ updateEditCostProfitPreview() នៅត្រង់នេះ (ក្រោយពេល addPrice និង addDiscount មានតម្លៃរួច)
-currentEditingCalcData = p.costAnalysis || (adminCostData ? (adminCostData[(p.id || "").trim()] || adminCostData[(p.title || "").trim().toLowerCase()]) : null);
-updateEditCostProfitPreview();
+    // ✅ ហៅ updateEditCostProfitPreview() នៅត្រង់នេះ (ក្រោយពេល addPrice និង addDiscount មានតម្លៃរួច)
+    currentEditingCalcData = p.costAnalysis || (adminCostData ? (adminCostData[(p.id || "").trim()] || adminCostData[(p.title || "").trim().toLowerCase()]) : null);
+    updateEditCostProfitPreview();
 
         var isCust = (p.isCustom === true || String(p.isCustom).toLowerCase() === 'yes');
         if (document.getElementById('addIsCustom')) document.getElementById('addIsCustom').checked = isCust;
@@ -2674,15 +2674,6 @@ updateEditCostProfitPreview();
         console.error("កំហុសពេលបើកផ្ទាំងកែប្រែ:", err);
         alert("មិនអាចបើកផ្ទាំងកែប្រែបានទេ៖ " + err.message);
       }
-
-      // ទាញ Link វីដេអូចាស់មកបង្ហាញ
-        var vidInput = document.getElementById('addVideoUrl');
-        if (vidInput) {
-          vidInput.value = p.videoUrl || p.video_url || '';
-          checkVideoClearBtnVisibility();
-        }
-
-
     }
     
     var currentEditingCalcData = null;
@@ -2741,7 +2732,7 @@ updateEditCostProfitPreview();
     function toggleCustomFeeInput() {
       var isCheck = document.getElementById('addIsCustom') ? document.getElementById('addIsCustom').checked : false;
       var feeBox = document.getElementById('customFeeContainer');
-      if (feeBox) feeBox.className = isCheck ? "pt-1 block" : "hidden";
+      if (feeBox) feeBox.className = isCheck ? "pt-1 space-y-2 block" : "hidden";
     }  
 
     function saveProductData() {
@@ -3407,8 +3398,6 @@ updateEditCostProfitPreview();
     }
 
     // ៦. គ្រប់គ្រង Mode និងជម្រើសពណ៌ Dropdown
-    var activeColorMode = 'single';
-
     function setColorMode(mode) {
       activeColorMode = mode;
       var bSingle = document.getElementById('btnModeSingle');
