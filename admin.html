@@ -2050,36 +2050,72 @@
       }
     }
 
-    // ១. កែសម្រួល loadAppSettings() ដោយបញ្ចូល sold_badge ទៅក្នុង .then(function(res))
-function loadAppSettings() {
-  fetch(API_URL + "?action=getSettings")
-    .then(function(r) { return r.json(); })
-    .then(function(res) {
-      if (res && res.status === "success" && res.data) {
-        var d = res.data;
-        if (d.free_ship_min !== undefined) {
-          var elShip = document.getElementById("setFreeShipMin");
-          if (elShip) elShip.value = d.free_ship_min;
-        }
-        if (d.banners !== undefined) {
-          var elBan = document.getElementById("setBanners");
-          if (elBan) elBan.value = d.banners;
-        }
-        // ផ្នែកដែលត្រូវបានលើកបញ្ចូលមកក្នុង .then() ត្រឹមត្រូវ
-        if (d.sold_badge_enabled !== undefined) {
-          var elSoldEn = document.getElementById("setSoldBadgeEnabled");
-          if (elSoldEn) elSoldEn.checked = (String(d.sold_badge_enabled) === "true" || d.sold_badge_enabled === true);
-        }
-        if (d.sold_badge_min !== undefined) {
-          var elSoldMin = document.getElementById("setSoldBadgeMin");
-          if (elSoldMin) elSoldMin.value = d.sold_badge_min;
-        }
-      }
-    })
-    .catch(function(err) {
-      console.error("Failed to load settings:", err);
-    });
-}
+    // --- 6.12 ADMIN SETTINGS & BANNER CONTROLLER ---
+    function loadAppSettings() {
+      callBackendPost({ action: "getSettings" })
+        .then(function(res) {
+          if (res) {
+            // ១. ថ្លៃដឹកជញ្ជូន & Banner
+            appSettings.ship_phnom_penh = parseFloat(res.ship_phnom_penh) || 1.50;
+            appSettings.ship_province = parseFloat(res.ship_province) || 2.00;
+            appSettings.free_shipping_min = parseFloat(res.free_shipping_min) || 20.00;
+            appSettings.banner_enabled = (String(res.banner_enabled).toLowerCase() === 'yes' || res.banner_enabled === true);
+            appSettings.banner_images = String(res.banner_images || '').trim();
+
+            if (res.banner_speed) {
+              appSettings.banner_speed = parseInt(res.banner_speed, 10) || 4;
+              localStorage.setItem('app_banner_speed', String(appSettings.banner_speed));
+            }
+            if (res.category_order && String(res.category_order).trim() !== '') {
+              var sheetCats = String(res.category_order).split(',').map(function(s) { return s.trim(); }).filter(Boolean);
+              if (sheetCats.length > 0) {
+                localStorage.setItem('app_category_order', JSON.stringify(sheetCats));
+                if (typeof renderAdminCategoryOrderManager === 'function') renderAdminCategoryOrderManager();
+              }
+            }
+            if (document.getElementById('setBannerSpeed')) {
+              document.getElementById('setBannerSpeed').value = String(appSettings.banner_speed || 4);
+            }
+
+            // ២. កម្រិតច្បាស់នៃរូបភាពពី Google Sheet
+            if (res.image_quality_preset) {
+              applyImageQualityPreset(res.image_quality_preset);
+              if (document.getElementById('setImageQualityPreset')) {
+                document.getElementById('setImageQualityPreset').value = res.image_quality_preset;
+              }
+            }
+
+            // ៣. បណ្ដាញសង្គមទាំង ៤ ពី Google Sheet
+            if (res.social_phone_val !== undefined || res.social_tg_val !== undefined) {
+              appSocialSettings = {
+                phone_enabled: (String(res.social_phone_enabled).toLowerCase() === 'yes' || res.social_phone_enabled === true),
+                phone_val: String(res.social_phone_val || '').trim(),
+                tg_enabled: (String(res.social_tg_enabled).toLowerCase() === 'yes' || res.social_tg_enabled === true),
+                tg_val: String(res.social_tg_val || '').trim(),
+                tiktok_enabled: (String(res.social_tiktok_enabled).toLowerCase() === 'yes' || res.social_tiktok_enabled === true),
+                tiktok_val: String(res.social_tiktok_val || '').trim(),
+                fb_enabled: (String(res.social_fb_enabled).toLowerCase() === 'yes' || res.social_fb_enabled === true),
+                fb_val: String(res.social_fb_val || '').trim()
+              };
+            }
+
+            if (typeof updateDeliveryDropdownUI === "function") updateDeliveryDropdownUI();
+            updateShippingSummaryText();
+            updateImageQualitySummaryText();
+            updateSocialSummaryUI();
+            if (typeof renderPromoBanner === "function") renderPromoBanner();
+            renderFooterSocialLinks(); // បង្ហាញ Icon ភ្លាមៗក្រោយទាញទិន្នន័យពី Sheet បាន
+            if (typeof renderCartItems === "function") renderCartItems();
+          }
+        })
+        .catch(function(err) {
+          console.warn("ប្រើតម្លៃកំណត់លំនាំដើម:", err);
+          if (typeof updateDeliveryDropdownUI === "function") updateDeliveryDropdownUI();
+          updateShippingSummaryText();
+          if (typeof renderPromoBanner === "function") renderPromoBanner();
+          renderFooterSocialLinks();
+        });
+    }
 
     function toggleBannerInputUI() {
       var isCheck = document.getElementById('setBannerEnabled') ? document.getElementById('setBannerEnabled').checked : false;
@@ -2547,90 +2583,107 @@ function loadAppSettings() {
         }
     }
 
-    // ២. សម្អាត openEditModalById(id) លុបកូដ addVideoUrl ដែលស្ទួន
-function openEditModalById(id) {
-  var p = null;
-  for (var i = 0; i < adminProducts.length; i++) {
-    if (String(adminProducts[i].id) === String(id)) {
-      p = adminProducts[i];
-      break;
-    }
-  }
-  if (!p) return;
+    // --- អនុគមន៍បើកផ្ទាំងកែប្រែទំនិញ (Edit Product) ---
+    function openEditModalById(id) {
+      try {
+        var p = null;
+        if (typeof adminProducts !== 'undefined' && adminProducts) {
+          for (var i = 0; i < adminProducts.length; i++) {
+            if (String(adminProducts[i].id) === String(id)) {
+              p = adminProducts[i];
+              break;
+            }
+          }
+        }
+        if (!p) {
+          alert("រកមិនឃើញទិន្នន័យទំនិញលេខកូដ " + id + " ឡើយ!");
+          return;
+        }
 
-  var el;
-  if (el = document.getElementById('editProductId')) el.value = p.id;
-  
-  var idBadgeEl = document.getElementById('modalProductIdBadge');
-  if (idBadgeEl) {
-    idBadgeEl.innerText = p.id;
-    idBadgeEl.classList.remove('hidden');
-  }
+        var el;
+        if (el = document.getElementById('editProductId')) el.value = p.id;
+        var idBadgeEl = document.getElementById('modalProductIdBadge');
+        if (idBadgeEl) {
+          idBadgeEl.innerText = p.id;
+          idBadgeEl.classList.remove('hidden');
+        }
+if (el = document.getElementById('addTitle')) el.value = p.title || '';
 
-  if (el = document.getElementById('addTitle')) el.value = p.title || '';
-  if (el = document.getElementById('addPrice')) el.value = p.price || '';
-  
-  var disc = parseFloat(String(p.discount || '0').replace('%', '')) || 0;
-  if (disc > 0 && disc < 1) disc = Math.round(disc * 100);
-  if (el = document.getElementById('addDiscount')) el.value = disc > 0 ? disc : '';
+// សម្អាត Price និង Discount ឱ្យជាលេខត្រឹមត្រូវ
+var cleanPrice = parseFloat(String(p.price || 0).replace(/[^0-9.]/g, '')) || 0;
+var rawDiscStr = p.discount ? String(p.discount).replace('%', '').trim() : '';
+var cleanDiscNum = parseFloat(rawDiscStr) || 0;
+if (cleanDiscNum > 0 && cleanDiscNum < 1) cleanDiscNum = cleanDiscNum * 100;
 
-  if (el = document.getElementById('addBadge')) el.value = p.badge || '';
-  if (el = document.getElementById('addDesc')) el.value = p.desc || '';
-  if (el = document.getElementById('addImage')) el.value = p.image || '';
-  if (el = document.getElementById('addVideoUrl')) {
-    el.value = p.videoUrl || '';
-    if (typeof checkVideoClearBtnVisibility === 'function') checkVideoClearBtnVisibility();
-  }
+if (el = document.getElementById('addPrice')) el.value = cleanPrice > 0 ? cleanPrice : '';
+if (el = document.getElementById('addDesc')) el.value = p.desc || '';
+if (el = document.getElementById('addImage')) el.value = p.image || '';
+if (el = document.getElementById('addColors')) el.value = Array.isArray(p.colors) ? p.colors.join(', ') : (p.colors || '');
+if (el = document.getElementById('addSizes')) el.value = Array.isArray(p.sizes) ? p.sizes.join(', ') : (p.sizes || '');
+if (el = document.getElementById('addBadge')) el.value = p.badge || '';
 
-  var colorsStr = Array.isArray(p.colors) ? p.colors.join(', ') : (p.colors || '');
-  if (el = document.getElementById('addColors')) el.value = colorsStr;
-
-  var sizesStr = Array.isArray(p.sizes) ? p.sizes.join(', ') : (p.sizes || '');
-  if (el = document.getElementById('addSizes')) el.value = sizesStr;
-
-  // ធ្វើបច្ចុប្បន្នភាព Category Chips
-  if (typeof updateCategoryDropdownUI === 'function') {
-    updateCategoryDropdownUI(p.category || '');
-  } else if (el = document.getElementById('addCategory')) {
-    el.value = p.category || '';
-  }
-
-  // ការកំណត់ទំនិញ Custom
-  var chkCustom = document.getElementById('addIsCustom');
-  if (chkCustom) chkCustom.checked = !!p.isCustom;
-  if (el = document.getElementById('addCustomMode')) el.value = p.customMode || 'flat';
-  if (el = document.getElementById('addCustomFee')) el.value = p.customFee || '';
-  if (typeof toggleCustomFeeInput === 'function') toggleCustomFeeInput();
-  if (typeof updateCustomModeUI === 'function') updateCustomModeUI();
-
-  // បង្ហាញរូបភាព Thumbnails និងតារាងវិភាគថ្លៃដើម (Cost & Profit)
-  if (typeof renderProductThumbnailsUI === 'function') renderProductThumbnailsUI();
-  currentEditingCalcData = p.costAnalysis || (adminCostData ? (adminCostData[(p.id || "").trim()] || adminCostData[(p.title || "").trim().toLowerCase()]) : null);
-  if (typeof updateEditCostProfitPreview === 'function') updateEditCostProfitPreview();
-
-  var t = (typeof i18n !== 'undefined' && i18n[currentLang]) ? i18n[currentLang] : {};
-  if (el = document.getElementById('modalFormTitle')) {
-    el.innerText = t.prodModalEditTitle || "✏️ កែសម្រួលផលិតផល";
-  }
-  if (el = document.getElementById('saveProdBtn')) {
-    el.innerText = t.btnSaveProdEdit || "💾 រក្សាទុកការកែប្រែ (Update)";
-  }
-
-  var linkWrap = document.getElementById('prodLinkWrapper');
-  if (linkWrap) {
-    linkWrap.style.display = 'none';
-    linkWrap.classList.add('hidden');
-  }
-
-  if (typeof setColorMode === 'function') setColorMode('single');
-  if (typeof updateColorDropdownOptions === 'function') updateColorDropdownOptions();
-
-  var modal = document.getElementById('addModal');
-  if (modal) {
-    modal.classList.remove('hidden');
-    modal.className = "fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4";
-  }
+// ទាញ Link វីដេអូចាស់មកបង្ហាញក្នុងប្រអប់
+var vidInput = document.getElementById('addVideoUrl');
+if (vidInput) {
+  vidInput.value = p.videoUrl || '';
+  checkVideoClearBtnVisibility(); // បើមាន Link វានឹងបង្ហាញប៊ូតុង × ភ្លាម
 }
+
+// បញ្ចូលភាគរយ Discount
+if (el = document.getElementById('addDiscount')) el.value = cleanDiscNum > 0 ? cleanDiscNum : '';
+
+// ✅ ហៅ updateEditCostProfitPreview() នៅត្រង់នេះ (ក្រោយពេល addPrice និង addDiscount មានតម្លៃរួច)
+currentEditingCalcData = p.costAnalysis || (adminCostData ? (adminCostData[(p.id || "").trim()] || adminCostData[(p.title || "").trim().toLowerCase()]) : null);
+updateEditCostProfitPreview();
+
+        var isCust = (p.isCustom === true || String(p.isCustom).toLowerCase() === 'yes');
+        if (document.getElementById('addIsCustom')) document.getElementById('addIsCustom').checked = isCust;
+        if (document.getElementById('addCustomMode')) document.getElementById('addCustomMode').value = p.customMode || 'flat';
+        if (document.getElementById('addCustomFee')) document.getElementById('addCustomFee').value = (p.customFee !== undefined && p.customFee !== null) ? p.customFee : '';
+
+        if (typeof toggleCustomFeeInput === 'function') toggleCustomFeeInput();
+        if (typeof updateCustomModeUI === 'function') updateCustomModeUI();
+        if (typeof renderProductThumbnailsUI === 'function') {
+          try { renderProductThumbnailsUI(); } catch(e) { console.warn(e); }
+        }
+
+        var t = (typeof i18n !== 'undefined' && i18n[currentLang]) ? i18n[currentLang] : {};
+        if (el = document.getElementById('modalFormTitle')) {
+          el.innerText = t.prodModalEditTitle || "✏️ កែសម្រួលផលិតផល";
+        }
+        if (el = document.getElementById('saveProdBtn')) {
+          el.innerText = t.btnSaveProdEdit || "💾 រក្សាទុកការកែប្រែ (Update)";
+        }
+
+        var linkWrap = document.getElementById('prodLinkWrapper');
+        if (linkWrap) linkWrap.classList.add('hidden');
+
+        // បង្ហាញ Modal ចេញមកក្រៅ
+        var modal = document.getElementById('addModal');
+        if (modal) {
+          modal.classList.remove('hidden');
+          modal.className = "fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4";
+        }
+        if (typeof setColorMode === 'function') setColorMode('single');
+        if (typeof updateColorDropdownOptions === 'function') updateColorDropdownOptions();
+
+        // ✅ ហៅទាញយកប្រភេទពិតប្រាកដរបស់ផលិតផលមកដាក់ក្នុង Dropdown
+        updateCategoryDropdownUI(p.category || 'custom');
+
+      } catch (err) {
+        console.error("កំហុសពេលបើកផ្ទាំងកែប្រែ:", err);
+        alert("មិនអាចបើកផ្ទាំងកែប្រែបានទេ៖ " + err.message);
+      }
+
+      // ទាញ Link វីដេអូចាស់មកបង្ហាញ
+        var vidInput = document.getElementById('addVideoUrl');
+        if (vidInput) {
+          vidInput.value = p.videoUrl || p.video_url || '';
+          checkVideoClearBtnVisibility();
+        }
+
+
+    }
     
     var currentEditingCalcData = null;
 
@@ -2997,6 +3050,46 @@ function openEditModalById(id) {
       }
     }
 
+    // អនុគមន៍ផ្ញើសារសួរនាំពីផលិតផលទៅកាន់ Telegram Admin
+    function askAboutCurrentProduct() {
+      if (!selectedProduct) return;
+
+      // ១. រៀបចំរូបភាពសម្រាប់ភ្ជាប់ជាមួយសារ
+      var imgUrl = selectedProduct.image || "";
+      if (selectedProduct.images && selectedProduct.images.length > 0) {
+        imgUrl = selectedProduct.images[0];
+      }
+
+      // ២. បង្កើតទម្រង់សារដែលមាន ID, ឈ្មោះ, តម្លៃ, ពណ៌ និងតំណភ្ជាប់រូបភាព
+      var msg = "👋 ជម្រាបសួរ Admin! ខ្ញុំចង់សួរព័ត៌មានបន្ថែមពីទំនិញនេះ៖\n\n" +
+                "🆔 កូដទំនិញ: " + (selectedProduct.id || "N/A") + "\n" +
+                "📦 ឈ្មោះ: " + selectedProduct.title + "\n" +
+                "💵 តម្លៃ: $" + Number(selectedProduct.price).toFixed(2) + "\n";
+
+      if (selectedColor) {
+        msg += "🎨 ពណ៌: " + selectedColor + "\n";
+      }
+      if (selectedSize) {
+        msg += "📏 ទំហំ: " + selectedSize + "\n";
+      }
+      if (imgUrl) {
+        msg += "🖼️ រូបភាព: " + imgUrl + "\n";
+      }
+
+      // ៣. បម្លែងសារទៅជា Link Telegram (https://t.me/username?text=...)
+      var encodedMsg = encodeURIComponent(msg);
+      var tgUrl = "https://t.me/" + MY_TELEGRAM_USERNAME + "?text=" + encodedMsg;
+
+      // បើកតាម Telegram WebApp SDK ឬ Browser
+      if (window.Telegram && window.Telegram.WebApp && typeof window.Telegram.WebApp.openTelegramLink === "function") {
+        window.Telegram.WebApp.openTelegramLink(tgUrl);
+      } else if (window.Telegram && window.Telegram.WebApp && typeof window.Telegram.WebApp.openLink === "function") {
+        window.Telegram.WebApp.openLink(tgUrl);
+      } else {
+        window.open(tgUrl, '_blank');
+      }
+    } // <--- បិទ askAboutCurrentProduct ត្រឹមត្រូវនៅត្រង់នេះ!
+
     // អនុគមន៍ បើក ឬបិទ ប្រអប់ Paste Link រូបភាព (Global Scope)
     function toggleProdLinkInput() {
       var wrapper = document.getElementById('prodLinkWrapper');
@@ -3029,6 +3122,27 @@ function openEditModalById(id) {
         wrapper.style.display = 'none';
         wrapper.classList.add('hidden');
       }
+    }
+
+      // អនុគមន៍ Refresh ទាញយកទិន្នន័យថ្មីពី Google Sheets + រំកិលឡើងលើកំពូល
+    function refreshHomeData() {
+      // ១. រំកិលអេក្រង់ឡើងទៅលើគេបង្អស់ដោយរលូន
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+
+      // ២. បើកចលនាវិលលើ Icon 🔄
+      var icon = document.getElementById('refreshIcon');
+      if (icon) icon.classList.add('animate-spin');
+
+      // ៣. ទាញទិន្នន័យទំនិញ និងការកំណត់ថ្មី
+      loadCustomerData();
+      if (typeof loadAppSettings === 'function') {
+        loadAppSettings();
+      }
+
+      // ៤. បញ្ឈប់ការវិលក្រោយពេល ១.៥ វិនាទី
+      setTimeout(function() {
+        if (icon) icon.classList.remove('animate-spin');
+      }, 1500);
     }
 
     // អនុគមន៍ Refresh ទិន្នន័យផ្ទាំង Admin ទាំងអស់ (Products, Orders, Settings, Filament)
@@ -3912,42 +4026,19 @@ function openEditModalById(id) {
 
       localStorage.setItem('app_sold_badge_enabled', isEnabled ? 'yes' : 'no');
       localStorage.setItem('app_sold_badge_min', String(minVal));
+
       updateSoldBadgeSummaryUI();
 
       if (btn) {
         btn.disabled = true;
         btn.style.opacity = "0.4";
+        setTimeout(function() { btn.disabled = false; btn.style.opacity = "1"; }, 1000);
       }
 
-      callBackendPost({
-        action: "updateSettings",
-        pin: adminPin,
-        settings: {
-          sold_badge_enabled: isEnabled ? "yes" : "no",
-          sold_badge_min: String(minVal)
-        }
-      })
-      .then(function(res) {
-        if (btn) {
-          btn.disabled = false;
-          btn.style.opacity = "1";
-        }
-        var alertText = (currentLang === 'zh') ? "✓ 已售徽章设置已同步保存！" :
-                        (currentLang === 'en') ? "✓ Sold badge settings synced to Google Sheet!" :
-                        "✓ ការកំណត់ផ្លាក Sold Badge ត្រូវបានរក្សាទុកចូល Google Sheet ជោគជ័យ!";
-        if (res && res.success) {
-          alert(alertText);
-        } else {
-          alert("❌ មិនអាចរក្សាទុកបាន៖ " + (res && res.message ? res.message : ""));
-        }
-      })
-      .catch(function(err) {
-        if (btn) {
-          btn.disabled = false;
-          btn.style.opacity = "1";
-        }
-        alert("❌ កំហុសតភ្ជាប់៖ " + err.message);
-      });
+      var alertText = (currentLang === 'zh') ? "✓ 已售徽章设置保存成功！" :
+                      (currentLang === 'en') ? "✓ Sold badge settings saved successfully!" :
+                      "✓ ការកំណត់ផ្លាក Sold Badge ត្រូវបានរក្សាទុកជោគជ័យ!";
+      alert(alertText);
     }
 
     // --- មុខងារចុច Backup ទៅកាន់ cheavireak168@gmail.com ---
