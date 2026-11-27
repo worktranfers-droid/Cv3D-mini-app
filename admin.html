@@ -195,6 +195,9 @@
       <button id="adminTabSettings" type="button" onclick="switchAdminTab('settings')" class="flex-1 py-2 rounded-xl text-xs font-bold text-slate-500 transition-all">
         ⚙️ ការកំណត់
       </button>
+      <button type="button" id="adminTabReport" onclick="switchAdminTab('report')" class="flex-1 py-2 rounded-xl text-xs font-bold text-slate-500 transition-all">
+        📊 របាយការណ៍
+      </button>
     </div>
 
     <!-- កុងតឺន័រទី ១៖ គ្រប់គ្រងផលិតផល -->
@@ -681,6 +684,57 @@
           <p id="backupLastStatus" class="text-[10px] text-center text-slate-400 font-mono hidden"></p>
         </div>
       </div>
+
+      <!-- === TAB 4: SALES & PROFIT REPORT === -->
+<div id="adminReportContainer" class="hidden space-y-3.5">
+  <!-- Period Filter & Action Buttons -->
+  <div class="flex flex-wrap items-center justify-between gap-2 bg-white p-3 rounded-2xl border border-slate-200 shadow-2xs">
+    <div class="flex items-center gap-1.5 overflow-x-auto pb-0.5">
+      <button type="button" id="repFilterThisWeek" onclick="setReportPeriod('this_week')" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-900 text-white whitespace-nowrap transition-all">អាទិត្យនេះ</button>
+      <button type="button" id="repFilterLastWeek" onclick="setReportPeriod('last_week')" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 text-slate-600 whitespace-nowrap transition-all">អាទិត្យមុន</button>
+      <button type="button" id="repFilterThisMonth" onclick="setReportPeriod('this_month')" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 text-slate-600 whitespace-nowrap transition-all">ខែនេះ</button>
+      <button type="button" id="repFilterLastMonth" onclick="setReportPeriod('last_month')" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 text-slate-600 whitespace-nowrap transition-all">ខែមុន</button>
+      <button type="button" id="repFilterAll" onclick="setReportPeriod('all')" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 text-slate-600 whitespace-nowrap transition-all">ទាំងអស់</button>
+    </div>
+    <div class="flex items-center gap-1.5">
+      <button type="button" id="btnExportReportCsv" onclick="exportReportToCsv()" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100 active:scale-95 transition-all">📥 ទាញយក CSV</button>
+      <button type="button" id="btnSendReportTg" onclick="sendReportToTelegram(this)" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-blue-600 text-white hover:bg-blue-700 active:scale-95 transition-all shadow-2xs">📲 ផ្ញើចូល Telegram</button>
+    </div>
+  </div>
+
+  <!-- 4 KPI Summary Cards -->
+  <div id="reportKpiGrid" class="grid grid-cols-2 md:grid-cols-4 gap-2.5">
+    <div class="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-2xs">
+      <p id="lblRepKpiRev" class="text-[11px] font-semibold text-slate-500">ចំណូលសរុប</p>
+      <h3 id="valRepRevenue" class="text-lg font-black text-blue-600 font-mono mt-1">$0.00</h3>
+    </div>
+    <div class="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-2xs">
+      <p id="lblRepKpiCost" class="text-[11px] font-semibold text-slate-500">ថ្លៃដើមផលិត</p>
+      <h3 id="valRepCost" class="text-lg font-black text-amber-600 font-mono mt-1">$0.00</h3>
+    </div>
+    <div class="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-2xs">
+      <p id="lblRepKpiProfit" class="text-[11px] font-semibold text-slate-500">ប្រាក់ចំណេញសុទ្ធ</p>
+      <h3 id="valRepProfit" class="text-lg font-black text-emerald-600 font-mono mt-1">+$0.00</h3>
+    </div>
+    <div class="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-2xs">
+      <p id="lblRepKpiOrders" class="text-[11px] font-semibold text-slate-500">ការកុម្ម៉ង់ជោគជ័យ</p>
+      <h3 id="valRepOrders" class="text-lg font-black text-slate-800 font-mono mt-1">0</h3>
+      <p id="subRepOrders" class="text-[10px] text-slate-400 mt-0.5">បោះបង់៖ 0 | Custom៖ 0%</p>
+    </div>
+  </div>
+
+  <!-- Top Selling Products & Filament Usage -->
+  <div id="reportDetailGrid" class="grid grid-cols-1 md:grid-cols-2 gap-3.5 items-start">
+    <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-2xs space-y-2.5">
+      <h4 id="lblRepTopProds" class="text-xs font-extrabold text-slate-800">🏆 ផលិតផលលក់ដាច់បំផុត (Top 5)</h4>
+      <div id="repTopProductsList" class="space-y-2"></div>
+    </div>
+    <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-2xs space-y-2.5">
+      <h4 id="lblRepFilUsage" class="text-xs font-extrabold text-slate-800">🧵 ការប្រើប្រាស់ជ័រតាមពណ៌ (Est. Usage)</h4>
+      <div id="repFilamentUsageList" class="space-y-2"></div>
+    </div>
+  </div>
+</div>
       
     </div>
   </section>
@@ -1133,6 +1187,22 @@
       if (el = document.getElementById('adminLoginPinInput')) el.placeholder = t.adminPinPlaceholder || "បញ្ចូលកូដសម្ងាត់...";
       if (el = document.getElementById('btnAdminLoginSubmit')) el.innerText = t.btnAdminLogin || "🔓 ចូលគ្រប់គ្រង (Login)";
       if (el = document.getElementById('linkBackToCustomerShop')) el.innerText = t.linkBackToCustomerShop || "← ត្រឡប់ទៅទំព័រហាងអតិថិជន";
+
+      if (el = document.getElementById('adminTabReport')) el.innerText = t.adminTabReport;
+      if (el = document.getElementById('repFilterThisWeek')) el.innerText = t.repPeriodThisWeek;
+      if (el = document.getElementById('repFilterLastWeek')) el.innerText = t.repPeriodLastWeek;
+      if (el = document.getElementById('repFilterThisMonth')) el.innerText = t.repPeriodThisMonth;
+      if (el = document.getElementById('repFilterLastMonth')) el.innerText = t.repPeriodLastMonth;
+      if (el = document.getElementById('repFilterAll')) el.innerText = t.repPeriodAll;
+      if (el = document.getElementById('lblRepKpiRev')) el.innerText = t.repKpiRevenue;
+      if (el = document.getElementById('lblRepKpiCost')) el.innerText = t.repKpiCost;
+      if (el = document.getElementById('lblRepKpiProfit')) el.innerText = t.repKpiProfit;
+      if (el = document.getElementById('lblRepKpiOrders')) el.innerText = t.repKpiOrders;
+      if (el = document.getElementById('lblRepTopProds')) el.innerText = t.repTopProductsTitle;
+      if (el = document.getElementById('lblRepFilUsage')) el.innerText = t.repFilamentUsageTitle;
+      if (el = document.getElementById('btnExportReportCsv')) el.innerText = t.repBtnExportCsv;
+      if (el = document.getElementById('btnSendReportTg')) el.innerText = t.repBtnSendTg;
+      if (typeof renderSalesReport === 'function' && currentAdminTab === 'report') renderSalesReport();
     }
 
     // --- HYBRID RESPONSIVE VIEW MODE (AUTO-DESKTOP + 📱/💻 TOGGLE) ---
@@ -1725,6 +1795,26 @@
           document.getElementById('setSoldBadgeMin').value = String(appSettings.sold_badge_min || 5);
         }
         updateSoldBadgeSummaryUI();
+
+        var tabR = document.getElementById('adminTabReport');
+        var conR = document.getElementById('adminReportContainer');
+        // ក្នុង Array reset class:
+        [tabP, tabO, tabS, tabR].forEach(function(b) {
+          if (b) b.className = "flex-1 py-2 rounded-xl text-xs font-bold text-slate-500 transition-all";
+        });
+        [conP, conO, conS, conR].forEach(function(c) {
+        if (c) c.className = "hidden space-y-3";
+      });
+    // បន្ថែមលក្ខខណ្ឌ៖
+      } else if (tab === 'report') {
+        if (tabR) tabR.className = "flex-1 py-2 rounded-xl text-xs font-bold bg-white text-slate-800 shadow-xs transition-all";
+        iif (conR) conR.className = "space-y-3.5";
+        iif (addBtn) addBtn.className = "hidden";
+        iif (!allAdminOrders || allAdminOrders.length === 0) {
+          iloadAdminOrders();
+        i}
+        isetTimeout(renderSalesReport, 300);
+      }
       }
     }
 
@@ -3813,6 +3903,252 @@
         alert("Error: " + err.message);
       });
     }
+
+    // --- 6.13 WEEKLY & MONTHLY SALES REPORT ---
+var currentReportPeriod = 'this_week';
+var lastComputedReport = null;
+
+function setReportPeriod(period) {
+  currentReportPeriod = period;
+  var map = {
+    this_week: 'repFilterThisWeek',
+    last_week: 'repFilterLastWeek',
+    this_month: 'repFilterThisMonth',
+    last_month: 'repFilterLastMonth',
+    all: 'repFilterAll'
+  };
+  Object.keys(map).forEach(function(k) {
+    var b = document.getElementById(map[k]);
+    if (b) {
+      b.className = (k === period)
+        ? "px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-900 text-white whitespace-nowrap transition-all"
+        : "px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 text-slate-600 whitespace-nowrap transition-all";
+    }
+  });
+  renderSalesReport();
+}
+
+function parseOrderDateObj(ord) {
+  if (ord.orderId && String(ord.orderId).indexOf("ORD-") !== -1) {
+    var ts = parseInt(String(ord.orderId).replace("ORD-", "").trim(), 10);
+    if (!isNaN(ts) && ts > 1000000000) return new Date(ts * 1000);
+  }
+  var raw = String(ord.date || '').trim();
+  var dmy = raw.match(/^(\d{1,2})-(\d{1,2})-(\d{4})/);
+  if (dmy) return new Date(parseInt(dmy[3], 10), parseInt(dmy[2], 10) - 1, parseInt(dmy[1], 10));
+  var parsed = new Date(raw);
+  return isNaN(parsed.getTime()) ? new Date(0) : parsed;
+}
+
+function isDateInReportPeriod(d, period) {
+  if (period === 'all') return true;
+  var now = new Date();
+  var startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  var dayOfWeek = (startOfToday.getDay() + 6) % 7; // Monday = 0
+  var startOfThisWeek = new Date(startOfToday);
+  startOfThisWeek.setDate(startOfToday.getDate() - dayOfWeek);
+
+  if (period === 'this_week') return d >= startOfThisWeek;
+  if (period === 'last_week') {
+    var startOfLastWeek = new Date(startOfThisWeek);
+    startOfLastWeek.setDate(startOfThisWeek.getDate() - 7);
+    return d >= startOfLastWeek && d < startOfThisWeek;
+  }
+  if (period === 'this_month') {
+    return d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth();
+  }
+  if (period === 'last_month') {
+    var lmYear = now.getMonth() === 0 ? now.getFullYear() - 1 : now.getFullYear();
+    var lmMonth = now.getMonth() === 0 ? 11 : now.getMonth() - 1;
+    return d.getFullYear() === lmYear && d.getMonth() === lmMonth;
+  }
+  return true;
+}
+
+function renderSalesReport() {
+  var t = (typeof i18n !== 'undefined' && i18n[currentLang]) ? i18n[currentLang] : {};
+  var revenue = 0, totalCost = 0, completedCount = 0, canceledCount = 0, customLines = 0, totalLines = 0;
+  var prodStats = {};
+  var colorGrams = {};
+
+  (allAdminOrders || []).forEach(function(ord) {
+    var d = parseOrderDateObj(ord);
+    if (!isDateInReportPeriod(d, currentReportPeriod)) return;
+
+    var st = String(ord.status || '').toLowerCase();
+    var isCanceled = st.indexOf('canceled') !== -1 || st.indexOf('បោះបង់') !== -1 || st.indexOf('取消') !== -1;
+    var isCompleted = st.indexOf('completed') !== -1 || st.indexOf('បញ្ចប់') !== -1 || st.indexOf('已完成') !== -1;
+
+    if (isCanceled) { canceledCount++; return; }
+    if (!isCompleted) return;
+
+    completedCount++;
+    revenue += parseFloat(ord.totalPrice) || 0;
+
+    var lines = String(ord.items || '').split('\n');
+    lines.forEach(function(line) {
+      var trimmed = line.trim();
+      if (!trimmed) return;
+      totalLines++;
+      if (trimmed.toLowerCase().indexOf('custom') !== -1 || trimmed.indexOf('ឈ្មោះ') !== -1 || trimmed.indexOf('刻字') !== -1) {
+        customLines++;
+      }
+
+      var qtyMatch = trimmed.match(/x(\d+)/i);
+      var qty = qtyMatch ? parseInt(qtyMatch[1], 10) : 1;
+
+      var matchedProd = null;
+      var idMatch = trimmed.match(/\[(P-\d+|P\d+)\]/i);
+      if (idMatch && idMatch[1]) {
+        var pid = idMatch[1].toLowerCase();
+        matchedProd = (adminProducts || []).find(function(p) { return String(p.id).toLowerCase() === pid; });
+      }
+      if (!matchedProd) {
+        matchedProd = (adminProducts || []).find(function(p) {
+          return p.title && trimmed.toLowerCase().indexOf(p.title.toLowerCase()) !== -1;
+        });
+      }
+
+      var pKey = matchedProd ? matchedProd.title : trimmed.replace(/x\d+.*/i, '').trim();
+      if (!prodStats[pKey]) prodStats[pKey] = { title: pKey, qty: 0, profit: 0 };
+      prodStats[pKey].qty += qty;
+
+      var calc = matchedProd ? (matchedProd.costAnalysis || (adminCostData ? (adminCostData[matchedProd.id] || adminCostData[matchedProd.title.toLowerCase()]) : null)) : null;
+      var unitCost = calc ? (Number(calc.totalCost) || 0) : 0;
+      var unitWeight = calc ? (Number(calc.weight) || 0) : 0;
+      totalCost += unitCost * qty;
+
+      var unitSale = matchedProd ? (Number(matchedProd.price) || 0) : 0;
+      prodStats[pKey].profit += (unitSale - unitCost) * qty;
+
+      // ប៉ាន់ស្មានទម្ងន់ជ័រតាមពណ៌ដែលអតិថិជនរើស
+      var colorMatch = trimmed.match(/\(([^)]+)\)/);
+      if (colorMatch && colorMatch[1] && unitWeight > 0) {
+        var cols = colorMatch[1].split('+').map(function(c) { return c.split('/')[0].trim(); }).filter(Boolean);
+        var perColWeight = (unitWeight * qty) / (cols.length || 1);
+        cols.forEach(function(cName) {
+          colorGrams[cName] = (colorGrams[cName] || 0) + perColWeight;
+        });
+      }
+    });
+  });
+
+  var netProfit = revenue - totalCost;
+  var customPct = totalLines > 0 ? Math.round((customLines / totalLines) * 100) : 0;
+
+  if (document.getElementById('valRepRevenue')) document.getElementById('valRepRevenue').innerText = '$' + revenue.toFixed(2);
+  if (document.getElementById('valRepCost')) document.getElementById('valRepCost').innerText = '$' + totalCost.toFixed(2);
+  var profitEl = document.getElementById('valRepProfit');
+  if (profitEl) {
+    profitEl.innerText = (netProfit >= 0 ? '+$' : '-$') + Math.abs(netProfit).toFixed(2);
+    profitEl.className = "text-lg font-black font-mono mt-1 " + (netProfit >= 0 ? "text-emerald-600" : "text-rose-600");
+  }
+  if (document.getElementById('valRepOrders')) document.getElementById('valRepOrders').innerText = completedCount;
+  if (document.getElementById('subRepOrders')) {
+    var subTpl = t.repOrdersSub || "បោះបង់៖ {canceled} | Custom៖ {custom}%";
+    document.getElementById('subRepOrders').innerText = subTpl.replace('{canceled}', canceledCount).replace('{custom}', customPct);
+  }
+
+  // Render Top 5 Products
+  var topList = Object.keys(prodStats).map(function(k) { return prodStats[k]; })
+    .sort(function(a, b) { return b.qty - a.qty; }).slice(0, 5);
+  var topEl = document.getElementById('repTopProductsList');
+  if (topEl) {
+    if (topList.length === 0) {
+      topEl.innerHTML = '<p class="text-xs text-slate-400 py-4 text-center">' + (t.repNoData || 'មិនទាន់មានទិន្នន័យ') + '</p>';
+    } else {
+      topEl.innerHTML = topList.map(function(item, idx) {
+        return '<div class="flex items-center justify-between text-xs bg-slate-50 px-3 py-2 rounded-xl border border-slate-100">' +
+          '<span class="font-bold text-slate-700 truncate pr-2">' + (idx + 1) + '. ' + item.title + '</span>' +
+          '<div class="flex items-center gap-2 flex-shrink-0 font-mono">' +
+            '<span class="bg-blue-50 text-blue-700 font-bold px-2 py-0.5 rounded-md">' + item.qty + ' pcs</span>' +
+            '<span class="text-emerald-700 font-bold">+$' + Math.max(0, item.profit).toFixed(2) + '</span>' +
+          '</div></div>';
+      }).join('');
+    }
+  }
+
+  // Render Filament Usage
+  var filList = Object.keys(colorGrams).map(function(k) { return { color: k, grams: Math.round(colorGrams[k]) }; })
+    .sort(function(a, b) { return b.grams - a.grams; });
+  var filEl = document.getElementById('repFilamentUsageList');
+  if (filEl) {
+    if (filList.length === 0) {
+      filEl.innerHTML = '<p class="text-xs text-slate-400 py-4 text-center">' + (t.repNoData || 'មិនទាន់មានទិន្នន័យ') + '</p>';
+    } else {
+      filEl.innerHTML = filList.map(function(f) {
+        var dotBg = (typeof getSimpleColorHex === 'function') ? getSimpleColorHex(f.color) : '#94a3b8';
+        return '<div class="flex items-center justify-between text-xs bg-slate-50 px-3 py-2 rounded-xl border border-slate-100">' +
+          '<div class="flex items-center gap-2">' +
+            '<span class="w-3.5 h-3.5 rounded-full border border-black/15" style="background:' + dotBg + '"></span>' +
+            '<span class="font-bold text-slate-700">' + f.color + '</span>' +
+          '</div>' +
+          '<span class="font-mono font-bold text-slate-600">' + f.grams + ' g</span></div>';
+      }).join('');
+    }
+  }
+
+  lastComputedReport = {
+    period: currentReportPeriod,
+    revenue: revenue.toFixed(2),
+    cost: totalCost.toFixed(2),
+    profit: netProfit.toFixed(2),
+    completed: completedCount,
+    canceled: canceledCount,
+    customPct: customPct,
+    topProducts: topList,
+    filamentUsage: filList
+  };
+}
+
+function exportReportToCsv() {
+  if (!lastComputedReport) renderSalesReport();
+  var r = lastComputedReport;
+  var csvRows = [
+    ["Cv3D Sales Report", r.period],
+    ["Gross Revenue ($)", r.revenue],
+    ["Production Cost ($)", r.cost],
+    ["Net Profit ($)", r.profit],
+    ["Completed Orders", r.completed],
+    ["Canceled Orders", r.canceled],
+    [],
+    ["Top Product", "Qty Sold", "Est. Profit ($)"]
+  ];
+  (r.topProducts || []).forEach(function(p) {
+    csvRows.push(['"' + p.title.replace(/"/g, '""') + '"', p.qty, p.profit.toFixed(2)]);
+  });
+  var csvContent = "\uFEFF" + csvRows.map(function(e) { return e.join(","); }).join("\n");
+  var blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  var link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = "Cv3D_Report_" + r.period + "_" + new Date().toISOString().slice(0, 10) + ".csv";
+  link.click();
+}
+
+function sendReportToTelegram(btn) {
+  if (!lastComputedReport) renderSalesReport();
+  var t = (typeof i18n !== 'undefined' && i18n[currentLang]) ? i18n[currentLang] : {};
+  if (btn) { btn.disabled = true; btn.style.opacity = "0.5"; }
+
+  callBackendPost({
+    action: "sendSalesReportTg",
+    pin: adminPin,
+    lang: currentLang,
+    report: lastComputedReport
+  })
+  .then(function(res) {
+    if (btn) { btn.disabled = false; btn.style.opacity = "1"; }
+    if (res && res.success) {
+      alert(t.repTgSentAlert || "✅ បានផ្ញើរបាយការណ៍សង្ខេបចូល Telegram រួចរាល់!");
+    } else {
+      alert("❌ Error: " + (res.message || "Failed"));
+    }
+  })
+  .catch(function(err) {
+    if (btn) { btn.disabled = false; btn.style.opacity = "1"; }
+    alert("Error: " + err.message);
+  });
+}
   </script>
 </body>
 </html>
