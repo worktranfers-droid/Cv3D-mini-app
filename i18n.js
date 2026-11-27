@@ -410,7 +410,7 @@ var i18n = {
     soldBadgeSummaryOff: "Status: Disabled",
     soldBadgeAlertSaved: "Sold badge settings saved successfully!",
     cartFreeShipBadge: "🎉 Free Shipping (Orders over ${min})",
-    : "Add ${need} more for free shipping",
+    cartNeedMoreHint: "Add ${need} more for free shipping",
     cartItemsLabel: "Items",
     cartShipLabel: "Shipping",
     wishlistTitle: "❤️ Favorite Products",
