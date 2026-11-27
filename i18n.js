@@ -187,7 +187,7 @@ var i18n = {
     soldBadgeSummaryOff: "ស្ថានភាព៖ បិទ",
     soldBadgeAlertSaved: "ការកំណត់ផ្លាក Sold Badge ត្រូវបានរក្សាទុកជោគជ័យ!",
     cartFreeShipBadge: "🎉 ដឹកឥតគិតថ្លៃ (ទិញលើស ${min})",
-    : "ទិញថែម ${need} ទៀតដើម្បីដឹកឥតគិតថ្លៃ",
+    cartNeedMoreHint: "ទិញថែម ${need} ទៀតដើម្បីដឹកឥតគិតថ្លៃ",
     cartItemsLabel: "ទំនិញ",
     cartShipLabel: "ដឹក",
     wishlistTitle: "❤️ ទំនិញដែលអ្នកចូលចិត្ត",
