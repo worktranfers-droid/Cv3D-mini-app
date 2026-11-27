@@ -219,6 +219,8 @@ var i18n = {
       "home": "តុបតែងផ្ទះ & កាដូ",
       "keychain": "បន្តោងសោ (Keychain)"
     },
+    btnSendOrderToAdmin: "💬 ផ្ញើវិក្កយបត្រទៅ Admin បញ្ជាក់",
+    orderMsgHeader: "📦 ការកុម្ម៉ង់ថ្មី (New Order)",
   },
   en: {
     flag: "🇬🇧",
@@ -442,6 +444,8 @@ var i18n = {
       "home": "Home & Gifts",
       "keychain": "Keychain"
     },
+    btnSendOrderToAdmin: "💬 Send Order to Admin to Confirm",
+    orderMsgHeader: "📦 New Order Confirmation",
   },
   zh: {
     flag: "🇨🇳",
@@ -665,5 +669,7 @@ var i18n = {
       "home": "家居礼品 (Home)",
       "keychain": "钥匙扣 (Keychain)"
     },
+    btnSendOrderToAdmin: "💬 发送订单给管理员确认",
+    orderMsgHeader: "📦 新订单确认",
   }
 };
