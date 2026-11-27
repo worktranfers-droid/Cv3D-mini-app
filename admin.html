@@ -2550,52 +2550,86 @@ function loadAppSettings() {
     // ២. សម្អាត openEditModalById(id) លុបកូដ addVideoUrl ដែលស្ទួន
 function openEditModalById(id) {
   var p = null;
-  for (var i = 0; i < currentProducts.length; i++) {
-    if (String(currentProducts[i].id) === String(id)) {
-      p = currentProducts[i];
+  for (var i = 0; i < adminProducts.length; i++) {
+    if (String(adminProducts[i].id) === String(id)) {
+      p = adminProducts[i];
       break;
     }
   }
   if (!p) return;
 
-  document.getElementById("editProdId").value = p.id;
-  document.getElementById("addName").value = p.name || "";
-  document.getElementById("addCategory").value = p.category || "Pet Accessories";
-  document.getElementById("addDesc").value = p.desc || "";
-  document.getElementById("addPrice").value = p.price || "";
-  document.getElementById("addCost").value = p.cost || "";
-  document.getElementById("addSoldCount").value = p.soldCount || 0;
-  document.getElementById("addStock").value = p.stock !== undefined ? p.stock : 10;
-  document.getElementById("addVideoUrl").value = p.videoUrl || "";
-
-  var imgs = p.images || (p.image ? [p.image] : []);
-  document.getElementById("addImageUrls").value = imgs.join(", ");
-
-  var chkCustom = document.getElementById("addAllowCustom");
-  var customOpts = document.getElementById("customOptionsBox");
-  if (chkCustom) {
-    chkCustom.checked = !!p.allowCustom;
-    if (customOpts) customOpts.classList.toggle("hidden", !chkCustom.checked);
-  }
-  document.getElementById("addCustomTitle").value = p.customTitle || "";
-
-  // បំពេញជម្រើស Options (ពណ៌ / ទំហំ)
-  var optContainer = document.getElementById("optionsListContainer");
-  if (optContainer) {
-    optContainer.innerHTML = "";
-    try {
-      var opts = typeof p.options === "string" ? JSON.parse(p.options) : (p.options || []);
-      if (Array.isArray(opts)) {
-        opts.forEach(function(o) {
-          addOptionRow(o.name || "", o.price || "", o.image || "");
-        });
-      }
-    } catch (e) {}
+  var el;
+  if (el = document.getElementById('editProductId')) el.value = p.id;
+  
+  var idBadgeEl = document.getElementById('modalProductIdBadge');
+  if (idBadgeEl) {
+    idBadgeEl.innerText = p.id;
+    idBadgeEl.classList.remove('hidden');
   }
 
-  document.getElementById("addModalTitle").textContent = t("editProdTitle");
-  document.getElementById("btnSubmitProd").textContent = t("btnUpdateProd");
-  document.getElementById("addProdModal").classList.remove("hidden");
+  if (el = document.getElementById('addTitle')) el.value = p.title || '';
+  if (el = document.getElementById('addPrice')) el.value = p.price || '';
+  
+  var disc = parseFloat(String(p.discount || '0').replace('%', '')) || 0;
+  if (disc > 0 && disc < 1) disc = Math.round(disc * 100);
+  if (el = document.getElementById('addDiscount')) el.value = disc > 0 ? disc : '';
+
+  if (el = document.getElementById('addBadge')) el.value = p.badge || '';
+  if (el = document.getElementById('addDesc')) el.value = p.desc || '';
+  if (el = document.getElementById('addImage')) el.value = p.image || '';
+  if (el = document.getElementById('addVideoUrl')) {
+    el.value = p.videoUrl || '';
+    if (typeof checkVideoClearBtnVisibility === 'function') checkVideoClearBtnVisibility();
+  }
+
+  var colorsStr = Array.isArray(p.colors) ? p.colors.join(', ') : (p.colors || '');
+  if (el = document.getElementById('addColors')) el.value = colorsStr;
+
+  var sizesStr = Array.isArray(p.sizes) ? p.sizes.join(', ') : (p.sizes || '');
+  if (el = document.getElementById('addSizes')) el.value = sizesStr;
+
+  // ធ្វើបច្ចុប្បន្នភាព Category Chips
+  if (typeof updateCategoryDropdownUI === 'function') {
+    updateCategoryDropdownUI(p.category || '');
+  } else if (el = document.getElementById('addCategory')) {
+    el.value = p.category || '';
+  }
+
+  // ការកំណត់ទំនិញ Custom
+  var chkCustom = document.getElementById('addIsCustom');
+  if (chkCustom) chkCustom.checked = !!p.isCustom;
+  if (el = document.getElementById('addCustomMode')) el.value = p.customMode || 'flat';
+  if (el = document.getElementById('addCustomFee')) el.value = p.customFee || '';
+  if (typeof toggleCustomFeeInput === 'function') toggleCustomFeeInput();
+  if (typeof updateCustomModeUI === 'function') updateCustomModeUI();
+
+  // បង្ហាញរូបភាព Thumbnails និងតារាងវិភាគថ្លៃដើម (Cost & Profit)
+  if (typeof renderProductThumbnailsUI === 'function') renderProductThumbnailsUI();
+  currentEditingCalcData = p.costAnalysis || (adminCostData ? (adminCostData[(p.id || "").trim()] || adminCostData[(p.title || "").trim().toLowerCase()]) : null);
+  if (typeof updateEditCostProfitPreview === 'function') updateEditCostProfitPreview();
+
+  var t = (typeof i18n !== 'undefined' && i18n[currentLang]) ? i18n[currentLang] : {};
+  if (el = document.getElementById('modalFormTitle')) {
+    el.innerText = t.prodModalEditTitle || "✏️ កែសម្រួលផលិតផល";
+  }
+  if (el = document.getElementById('saveProdBtn')) {
+    el.innerText = t.btnSaveProdEdit || "💾 រក្សាទុកការកែប្រែ (Update)";
+  }
+
+  var linkWrap = document.getElementById('prodLinkWrapper');
+  if (linkWrap) {
+    linkWrap.style.display = 'none';
+    linkWrap.classList.add('hidden');
+  }
+
+  if (typeof setColorMode === 'function') setColorMode('single');
+  if (typeof updateColorDropdownOptions === 'function') updateColorDropdownOptions();
+
+  var modal = document.getElementById('addModal');
+  if (modal) {
+    modal.classList.remove('hidden');
+    modal.className = "fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4";
+  }
 }
     
     var currentEditingCalcData = null;
