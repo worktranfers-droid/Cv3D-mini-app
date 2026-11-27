@@ -2115,6 +2115,21 @@
           if (typeof renderPromoBanner === "function") renderPromoBanner();
           renderFooterSocialLinks();
         });
+      if (res.sold_badge_enabled !== undefined) {
+      appSettings.sold_badge_enabled = (String(res.sold_badge_enabled).toLowerCase() === 'yes' || res.sold_badge_enabled === true);
+      localStorage.setItem('app_sold_badge_enabled', appSettings.sold_badge_enabled ? 'yes' : 'no');
+    }
+    if (res.sold_badge_min !== undefined) {
+      appSettings.sold_badge_min = parseInt(res.sold_badge_min, 10) || 5;
+      localStorage.setItem('app_sold_badge_min', String(appSettings.sold_badge_min));
+    }
+    if (document.getElementById('setSoldBadgeEnabled')) {
+      document.getElementById('setSoldBadgeEnabled').checked = appSettings.sold_badge_enabled;
+    }
+    if (document.getElementById('setSoldBadgeMin')) {
+      document.getElementById('setSoldBadgeMin').value = String(appSettings.sold_badge_min || 5);
+    }
+    updateSoldBadgeSummaryUI();
     }
 
     function toggleBannerInputUI() {
@@ -3050,46 +3065,6 @@ updateEditCostProfitPreview();
       }
     }
 
-    // អនុគមន៍ផ្ញើសារសួរនាំពីផលិតផលទៅកាន់ Telegram Admin
-    function askAboutCurrentProduct() {
-      if (!selectedProduct) return;
-
-      // ១. រៀបចំរូបភាពសម្រាប់ភ្ជាប់ជាមួយសារ
-      var imgUrl = selectedProduct.image || "";
-      if (selectedProduct.images && selectedProduct.images.length > 0) {
-        imgUrl = selectedProduct.images[0];
-      }
-
-      // ២. បង្កើតទម្រង់សារដែលមាន ID, ឈ្មោះ, តម្លៃ, ពណ៌ និងតំណភ្ជាប់រូបភាព
-      var msg = "👋 ជម្រាបសួរ Admin! ខ្ញុំចង់សួរព័ត៌មានបន្ថែមពីទំនិញនេះ៖\n\n" +
-                "🆔 កូដទំនិញ: " + (selectedProduct.id || "N/A") + "\n" +
-                "📦 ឈ្មោះ: " + selectedProduct.title + "\n" +
-                "💵 តម្លៃ: $" + Number(selectedProduct.price).toFixed(2) + "\n";
-
-      if (selectedColor) {
-        msg += "🎨 ពណ៌: " + selectedColor + "\n";
-      }
-      if (selectedSize) {
-        msg += "📏 ទំហំ: " + selectedSize + "\n";
-      }
-      if (imgUrl) {
-        msg += "🖼️ រូបភាព: " + imgUrl + "\n";
-      }
-
-      // ៣. បម្លែងសារទៅជា Link Telegram (https://t.me/username?text=...)
-      var encodedMsg = encodeURIComponent(msg);
-      var tgUrl = "https://t.me/" + MY_TELEGRAM_USERNAME + "?text=" + encodedMsg;
-
-      // បើកតាម Telegram WebApp SDK ឬ Browser
-      if (window.Telegram && window.Telegram.WebApp && typeof window.Telegram.WebApp.openTelegramLink === "function") {
-        window.Telegram.WebApp.openTelegramLink(tgUrl);
-      } else if (window.Telegram && window.Telegram.WebApp && typeof window.Telegram.WebApp.openLink === "function") {
-        window.Telegram.WebApp.openLink(tgUrl);
-      } else {
-        window.open(tgUrl, '_blank');
-      }
-    } // <--- បិទ askAboutCurrentProduct ត្រឹមត្រូវនៅត្រង់នេះ!
-
     // អនុគមន៍ បើក ឬបិទ ប្រអប់ Paste Link រូបភាព (Global Scope)
     function toggleProdLinkInput() {
       var wrapper = document.getElementById('prodLinkWrapper');
@@ -3122,27 +3097,6 @@ updateEditCostProfitPreview();
         wrapper.style.display = 'none';
         wrapper.classList.add('hidden');
       }
-    }
-
-      // អនុគមន៍ Refresh ទាញយកទិន្នន័យថ្មីពី Google Sheets + រំកិលឡើងលើកំពូល
-    function refreshHomeData() {
-      // ១. រំកិលអេក្រង់ឡើងទៅលើគេបង្អស់ដោយរលូន
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-
-      // ២. បើកចលនាវិលលើ Icon 🔄
-      var icon = document.getElementById('refreshIcon');
-      if (icon) icon.classList.add('animate-spin');
-
-      // ៣. ទាញទិន្នន័យទំនិញ និងការកំណត់ថ្មី
-      loadCustomerData();
-      if (typeof loadAppSettings === 'function') {
-        loadAppSettings();
-      }
-
-      // ៤. បញ្ឈប់ការវិលក្រោយពេល ១.៥ វិនាទី
-      setTimeout(function() {
-        if (icon) icon.classList.remove('animate-spin');
-      }, 1500);
     }
 
     // អនុគមន៍ Refresh ទិន្នន័យផ្ទាំង Admin ទាំងអស់ (Products, Orders, Settings, Filament)
@@ -4026,19 +3980,42 @@ updateEditCostProfitPreview();
 
       localStorage.setItem('app_sold_badge_enabled', isEnabled ? 'yes' : 'no');
       localStorage.setItem('app_sold_badge_min', String(minVal));
-
       updateSoldBadgeSummaryUI();
 
       if (btn) {
         btn.disabled = true;
         btn.style.opacity = "0.4";
-        setTimeout(function() { btn.disabled = false; btn.style.opacity = "1"; }, 1000);
       }
 
-      var alertText = (currentLang === 'zh') ? "✓ 已售徽章设置保存成功！" :
-                      (currentLang === 'en') ? "✓ Sold badge settings saved successfully!" :
-                      "✓ ការកំណត់ផ្លាក Sold Badge ត្រូវបានរក្សាទុកជោគជ័យ!";
-      alert(alertText);
+      callBackendPost({
+        action: "updateSettings",
+        pin: adminPin,
+        settings: {
+          sold_badge_enabled: isEnabled ? "yes" : "no",
+          sold_badge_min: String(minVal)
+        }
+      })
+      .then(function(res) {
+        if (btn) {
+          btn.disabled = false;
+          btn.style.opacity = "1";
+        }
+        var alertText = (currentLang === 'zh') ? "✓ 已售徽章设置已同步保存！" :
+                        (currentLang === 'en') ? "✓ Sold badge settings synced to Google Sheet!" :
+                        "✓ ការកំណត់ផ្លាក Sold Badge ត្រូវបានរក្សាទុកចូល Google Sheet ជោគជ័យ!";
+        if (res && res.success) {
+          alert(alertText);
+        } else {
+          alert("❌ មិនអាចរក្សាទុកបាន៖ " + (res && res.message ? res.message : ""));
+        }
+      })
+      .catch(function(err) {
+        if (btn) {
+          btn.disabled = false;
+          btn.style.opacity = "1";
+        }
+        alert("❌ កំហុសតភ្ជាប់៖ " + err.message);
+      });
     }
 
     // --- មុខងារចុច Backup ទៅកាន់ cheavireak168@gmail.com ---
