@@ -584,33 +584,23 @@
 
       <!-- ប៊ូតុងសកម្មភាព -->
       <div class="space-y-2.5">
-      <button 
-        id="btnSendReceiptToAdmin" 
-        type="button" 
-        onclick="sendLastOrderToAdmin()" 
-        class="w-full bg-sky-600 hover:bg-sky-700 text-white font-bold py-3 rounded-2xl text-xs active:scale-95 transition-all shadow-sm flex items-center justify-center gap-1.5 cursor-pointer"
-      >
-        💬 <span id="btnSendToAdminText">ផ្ញើវិក្កយបត្រទៅ Admin បញ្ជាក់</span>
-      </button>
-
-      <button 
-        id="btnSuccessCloseApp" 
-        type="button" 
-        onclick="closeTelegramMiniApp()" 
-        class="w-full bg-slate-900 hover:bg-black text-white font-bold py-3 rounded-2xl text-xs active:scale-95 transition-all shadow-sm flex items-center justify-center gap-1.5 cursor-pointer"
-      >
-        🚪 <span id="btnSuccessCloseAppText">Done (Close App)</span>
-      </button>
-
-      <button 
-        id="btnSuccessContinue" 
-        type="button" 
-        onclick="closeSuccessModal()" 
-        class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-3 rounded-2xl text-xs active:scale-95 transition-all flex items-center justify-center gap-1.5 cursor-pointer"
-      >
-        🛍️ <span id="btnSuccessContinueText">Continue Shopping</span>
-      </button>
-    </div>
+        <button 
+          id="btnSuccessCloseApp" 
+          type="button" 
+          onclick="closeTelegramMiniApp()" 
+          class="w-full bg-slate-900 hover:bg-black text-white font-bold py-3 rounded-2xl text-xs active:scale-95 transition-all shadow-sm flex items-center justify-center gap-1.5 cursor-pointer"
+        >
+          🚪 <span id="btnSuccessCloseAppText">Done (Close App)</span>
+        </button>
+        <button 
+          id="btnSuccessContinue" 
+          type="button" 
+          onclick="closeSuccessModal()" 
+          class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-3 rounded-2xl text-xs active:scale-95 transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+        >
+          🛍️ <span id="btnSuccessContinueText">Continue Shopping</span>
+        </button>
+      </div>
 
     </div>
   </div>
@@ -2637,71 +2627,6 @@
       }
     }
 
-    var lastSubmittedOrderReceipt = "";
-
-    function buildOrderReceiptMessage(orderId, itemsList, subTotal, shippingFee, grandTotal, zoneLabel, phone, location, noteText) {
-      var t = (typeof i18n !== 'undefined' && i18n[currentLang]) ? i18n[currentLang] : {};
-      var lines = [];
-      lines.push(t.receiptHeader || "📦 វិក្កយបត្រកុម្ម៉ង់ទិញថ្មី - Cv3D");
-      lines.push((t.receiptOrderId || "🆔 លេខកូដកុម្ម៉ង់៖ ") + orderId);
-      lines.push("━━━━━━━━━━━━━━");
-      lines.push(t.receiptItemsTitle || "🛍️ បញ្ជីទំនិញ៖");
-
-      var customSubtotal = 0;
-      for (var i = 0; i < itemsList.length; i++) {
-        var it = itemsList[i];
-        var lineTotal = Number(it.price || 0) * Number(it.qty || 1);
-        var variantParts = [];
-        if (it.color) variantParts.push(it.color);
-        if (it.size) variantParts.push(it.size);
-        var variantStr = variantParts.length > 0 ? (" (" + variantParts.join(", ") + ")") : "";
-
-        lines.push((i + 1) + ". " + it.title + variantStr + " x" + it.qty + " = $" + lineTotal.toFixed(2));
-        if (it.customText && String(it.customText).trim() !== "") {
-          customSubtotal += lineTotal;
-          lines.push("   " + (t.receiptCustomTag || "✍️ ឆ្លាក់ឈ្មោះ៖ ") + it.customText);
-        }
-      }
-
-      lines.push("━━━━━━━━━━━━━━");
-      lines.push((t.receiptSubTotal || "💵 តម្លៃទំនិញសរុប៖ $") + Number(subTotal).toFixed(2));
-      lines.push((t.receiptShipping || "🚚 សេវាដឹកជញ្ជូន៖ ") + (Number(shippingFee) === 0 ? (t.receiptFreeShip || "ឥតគិតថ្លៃ (Free)") : ("$" + Number(shippingFee).toFixed(2))));
-      lines.push((t.receiptGrandTotal || "💰 សរុបត្រូវទូទាត់៖ $") + Number(grandTotal).toFixed(2));
-      lines.push("━━━━━━━━━━━━━━");
-      lines.push((t.receiptZone || "📍 តំបន់ដឹកជញ្ជូន៖ ") + zoneLabel);
-      lines.push((t.receiptAddress || "🏠 អាសយដ្ឋាន៖ ") + location);
-      lines.push((t.receiptPhone || "📞 លេខទូរសព្ទ៖ ") + phone);
-      if (noteText) {
-        lines.push((t.receiptNote || "📝 ចំណាំ៖ ") + noteText);
-      }
-      lines.push("━━━━━━━━━━━━━━");
-
-      if (customSubtotal > 0) {
-        var minDep = "$" + (customSubtotal * 0.30).toFixed(2);
-        var maxDep = "$" + (customSubtotal * 0.50).toFixed(2);
-        var depTpl = t.receiptDepositPolicy || "⚠️ បញ្ជាក់៖ ទំនិញឆ្លាក់ឈ្មោះតម្រូវឱ្យកក់មុន 30% - 50% (${min} - ${max}) ដើម្បីចាប់ផ្តើមផលិត។";
-        lines.push(depTpl.replace("${min}", minDep).replace("${max}", maxDep));
-      } else {
-        lines.push(t.receiptCodPolicy || "✅ ទំនិញធម្មតា៖ មិនតម្រូវឱ្យកក់ប្រាក់មុនទេ (ទូទាត់ពេលទទួលទំនិញ COD)។");
-      }
-
-      return lines.join("\n");
-    }
-
-    function sendLastOrderToAdmin() {
-      if (!lastSubmittedOrderReceipt) return;
-      var adminUser = (typeof MY_TELEGRAM_USERNAME !== 'undefined' && MY_TELEGRAM_USERNAME) ? MY_TELEGRAM_USERNAME : "Vireak699";
-      var tgUrl = "https://t.me/" + adminUser + "?text=" + encodeURIComponent(lastSubmittedOrderReceipt);
-
-      if (window.Telegram && window.Telegram.WebApp && typeof window.Telegram.WebApp.openTelegramLink === "function") {
-        window.Telegram.WebApp.openTelegramLink(tgUrl);
-      } else if (window.Telegram && window.Telegram.WebApp && typeof window.Telegram.WebApp.openLink === "function") {
-        window.Telegram.WebApp.openLink(tgUrl);
-      } else {
-        window.open(tgUrl, '_blank');
-      }
-    }
-
     function submitCartOrder() {
       if (cart.length === 0) return;
 
@@ -2763,29 +2688,28 @@
           location: "[" + zoneLabel + "] " + location
         }
       })
-      var orderId = (res && res.orderId) ? res.orderId : ("ORD-" + Math.floor(Date.now() / 1000));
+      .then(function(res) {
+        if (submitBtn) {
+          submitBtn.innerText = t.btnCheckout;
+          submitBtn.disabled = false;
+        }
 
-    lastSubmittedOrderReceipt = buildOrderReceiptMessage(
-      orderId,
-      cart,
-      subTotal,
-      shippingFee,
-      grandTotal,
-      zoneLabel,
-      phone,
-      location,
-      noteText
-    );
-
-    cart = [];
-    saveCartToStorage();
-    updateCartBadge();
-    closeCartModal();
-    showOrderSuccessModal(orderId);
-
-    setTimeout(function() {
-      sendLastOrderToAdmin();
-    }, 500);
+        var orderId = (res && res.orderId) ? res.orderId : ("ORD-" + Math.floor(Date.now() / 1000));
+        cart = [];
+        saveCartToStorage();
+        updateCartBadge();
+        closeCartModal();
+        
+        // ✅ ហៅអនុគមន៍ថ្មីត្រង់នេះ៖
+        showOrderSuccessModal(orderId);
+      })
+      .catch(function(err) {
+        if (submitBtn) {
+          submitBtn.innerText = t.btnCheckout;
+          submitBtn.disabled = false;
+        }
+        alert("មានបញ្ហាក្នុងការបញ្ជូនការកុម្ម៉ង់៖ " + err.message);
+      });
     }
 
     // =========================================================
@@ -3072,14 +2996,6 @@
         };
       }
       updateDeliveryDropdownUI();
-      if (res.sold_badge_enabled !== undefined) {
-      appSettings.sold_badge_enabled = (String(res.sold_badge_enabled).toLowerCase() === 'yes' || res.sold_badge_enabled === true);
-      localStorage.setItem('app_sold_badge_enabled', appSettings.sold_badge_enabled ? 'yes' : 'no');
-    }
-    if (res.sold_badge_min !== undefined) {
-      appSettings.sold_badge_min = parseInt(res.sold_badge_min, 10) || 5;
-      localStorage.setItem('app_sold_badge_min', String(appSettings.sold_badge_min));
-    }
       renderPromoBanner();
       renderFooterSocialLinks();
       if (typeof renderCartItems === "function") renderCartItems();
