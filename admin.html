@@ -583,9 +583,9 @@
               លក់បានចាប់ពីប៉ុន្មានឡើងទៅ ទើបបង្ហាញផ្លាក (Threshold)៖
             </label>
             <select id="setSoldBadgeMin" onchange="updateSoldBadgeSummaryUI()" class="w-full bg-slate-50 border border-slate-200 p-2 rounded-xl text-xs outline-none font-semibold text-slate-700 cursor-pointer shadow-2xs">
-              <option value="5" id="optSoldMin5">ចាប់ពី 5 ដុំឡើងទៅ (Sold 5+)</option>
-              <option value="10" id="optSoldMin10">ចាប់ពី 10 ដុំឡើងទៅ (Sold 10+)</option>
-              <option value="20" id="optSoldMin20">ចាប់ពី 20 ដុំឡើងទៅ (Sold 20+)</option>
+              <option value="5" id="optSoldMin5">Sold 5+</option>
+              <option value="10" id="optSoldMin10">Sold 10+</option>
+              <option value="20" id="optSoldMin20">Sold 20+</option>
             </select>
           </div>
 
@@ -683,7 +683,7 @@
           </button>
           <p id="backupLastStatus" class="text-[10px] text-center text-slate-400 font-mono hidden"></p>
         </div>
-      </div>
+      
 
       <!-- === TAB 4: SALES & PROFIT REPORT === -->
 <div id="adminReportContainer" class="hidden space-y-3.5">
@@ -1735,6 +1735,8 @@
       var conP = document.getElementById('adminProductsContainer');
       var conO = document.getElementById('adminOrdersContainer');
       var conS = document.getElementById('adminSettingsContainer');
+      var tabR = document.getElementById('adminTabReport');
+      var conR = document.getElementById('adminReportContainer');
       var addBtn = document.getElementById('adminAddProdBtn');
 
       [tabP, tabO, tabS].forEach(function(b) {
@@ -1796,8 +1798,6 @@
         }
         updateSoldBadgeSummaryUI();
 
-        var tabR = document.getElementById('adminTabReport');
-        var conR = document.getElementById('adminReportContainer');
         // ក្នុង Array reset class:
         [tabP, tabO, tabS, tabR].forEach(function(b) {
           if (b) b.className = "flex-1 py-2 rounded-xl text-xs font-bold text-slate-500 transition-all";
@@ -1808,12 +1808,12 @@
     // បន្ថែមលក្ខខណ្ឌ៖
       } else if (tab === 'report') {
         if (tabR) tabR.className = "flex-1 py-2 rounded-xl text-xs font-bold bg-white text-slate-800 shadow-xs transition-all";
-        iif (conR) conR.className = "space-y-3.5";
-        iif (addBtn) addBtn.className = "hidden";
-        iif (!allAdminOrders || allAdminOrders.length === 0) {
-          iloadAdminOrders();
-        i}
-        isetTimeout(renderSalesReport, 300);
+        if (conR) conR.className = "space-y-3.5";
+        if (addBtn) addBtn.className = "hidden";
+        if (!allAdminOrders || allAdminOrders.length === 0) {
+          loadAdminOrders();
+        }
+        setTimeout(renderSalesReport, 300);
       }
       }
     }
