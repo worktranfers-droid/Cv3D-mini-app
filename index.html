@@ -2886,10 +2886,20 @@
       var encodedMsg = encodeURIComponent(msg);
       var tgUrl = "https://t.me/" + MY_TELEGRAM_USERNAME + "?text=" + encodedMsg;
 
-      if (window.Telegram && window.Telegram.WebApp && typeof window.Telegram.WebApp.openTelegramLink === 'function') {
-        window.Telegram.WebApp.openTelegramLink(tgUrl);
-      } else {
-        window.open(tgUrl, '_blank');
+      try {
+        if (window.Telegram && window.Telegram.WebApp) {
+          if (typeof window.Telegram.WebApp.openTelegramLink === 'function') {
+            window.Telegram.WebApp.openTelegramLink(tgUrl);
+          } else if (typeof window.Telegram.WebApp.openLink === 'function') {
+            window.Telegram.WebApp.openLink(tgUrl);
+          } else {
+            window.location.href = tgUrl;
+          }
+        } else {
+          window.open(tgUrl, '_blank') || (window.location.href = tgUrl);
+        }
+      } catch (e) {
+        window.location.href = tgUrl;
       }
     }
     
