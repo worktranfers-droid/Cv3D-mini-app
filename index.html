@@ -2866,19 +2866,21 @@
       var unitBase = basePrice + sizeFee;
       var finalPrice = discountPct > 0 ? unitBase * (1 - discountPct / 100) : unitBase;
 
-      var msg = "👋 ជម្រាបសួរ Admin! ខ្ញុំចង់សួរព័ត៌មានបន្ថែមពីទំនិញនេះ៖\n\n" +
-                "🆔 កូដទំនិញ: " + (selectedProduct.id || "N/A") + "\n" +
-                "📦 ឈ្មោះ: " + selectedProduct.title + "\n" +
-                "💵 តម្លៃ: $" + finalPrice.toFixed(2) + (discountPct > 0 ? " (បញ្ចុះ " + discountPct + "%)" : "") + "\n";
+      var greetText = currentLang === 'en' ? '👋 Hi Admin! I would like to ask about this product:' :
+                      currentLang === 'zh' ? '👋 你好 Admin！我想咨询这款产品：' :
+                      '👋 សួស្តី Admin! ខ្ញុំចង់សួរព័ត៌មានទំនិញនេះ៖';
 
-      if (selectedColor) {
-        msg += "🎨 ពណ៌: " + selectedColor + "\n";
-      }
-      if (selectedSize) {
-        msg += "📏 ទំហំ: " + selectedSize + "\n";
-      }
+      var priceText = "💵 $" + finalPrice.toFixed(2) + (discountPct > 0 ? " (-" + discountPct + "%)" : "");
+      var details = [priceText];
+      if (selectedColor) details.push("🎨 " + selectedColor);
+      if (selectedSize) details.push("📏 " + selectedSize);
+
+      var msg = greetText + "\n" +
+                "📦 " + selectedProduct.title + " (" + (selectedProduct.id || "N/A") + ")\n" +
+                details.join(" | ");
+
       if (imgUrl) {
-        msg += "🖼️ រូបភាព: " + imgUrl + "\n";
+        msg += "\n🖼️ " + imgUrl;
       }
 
       var encodedMsg = encodeURIComponent(msg);
