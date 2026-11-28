@@ -156,6 +156,20 @@
           </button>
         </div>
 
+        <!-- 👇 បញ្ចូលកូដ OTP នេះនៅទីនេះ (ចន្លោះ div ខាងលើ និង button Login ខាងក្រោម) -->
+        <div id="adminOtpBox" class="hidden space-y-1.5 pt-1">
+          <p id="otpSentMsg" class="text-[11px] font-semibold text-emerald-600 bg-emerald-50 p-2 rounded-xl border border-emerald-200"></p>
+          <input 
+            id="adminLoginOtpInput" 
+            type="text" 
+            inputmode="numeric"
+            maxlength="6"
+            placeholder="បញ្ចូលកូដ OTP ៦ ខ្ទង់..." 
+            onkeydown="if(event.key==='Enter') submitAdminLogin()"
+            class="w-full text-center tracking-widest text-sm font-mono font-bold py-2.5 px-4 bg-blue-50/50 border border-blue-300 rounded-2xl outline-none focus:ring-2 focus:ring-blue-500"
+          >
+        </div>
+
         <button 
           id="btnAdminLoginSubmit"
           type="button" 
@@ -1033,8 +1047,24 @@
     var currentOrderFilter = 'active';
     var currentEditingCalcData = null;
 
-    // --- 6.2 BACKEND API HELPER ---
+    var adminPin = '';
+    var adminOtp = ''; // រក្សាទុក OTP សម្រាប់ Session លើ Browser
+
+    function getTelegramInitData() {
+      try {
+        if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initData) {
+          return window.Telegram.WebApp.initData;
+        }
+      } catch (e) {}
+      return "";
+    }
+
+    // --- 6.2 BACKEND API HELPER (ភ្ជាប់ initData និង otp ដោយស្វ័យប្រវត្តិទៅគ្រប់ Request) ---
     function callBackendPost(payload) {
+      if (payload && payload.pin) {
+        payload.initData = getTelegramInitData();
+        if (adminOtp) payload.otp = adminOtp;
+      }
       return fetch(API_URL, {
         method: "POST",
         headers: { "Content-Type": "text/plain;charset=utf-8" },
@@ -1306,11 +1336,42 @@
 
     function verifyAndUnlockAdmin(pin, isAuto) {
       var btn = document.getElementById('btnAdminLoginSubmit');
+      var otpInp = document.getElementById('adminLoginOtpInput');
+      var enteredOtp = otpInp ? otpInp.value.trim() : '';
+      var initData = getTelegramInitData();
+
       if (btn && !isAuto) {
         btn.disabled = true;
         btn.innerText = "⏳ កំពុងផ្ទៀងផ្ទាត់...";
       }
 
+      // ១. ប្រសិនបើបើកលើ Browser កុំព្យូទ័រ (គ្មាន initData) ហើយមិនទាន់វាយ OTP -> ស្នើសុំ OTP មុន
+      if (!initData && !enteredOtp) {
+        callBackendPost({ action: "requestOtp", pin: pin })
+          .then(function(res) {
+            if (btn) {
+              btn.disabled = false;
+              btn.innerText = "🔓 បញ្ជាក់កូដ OTP (Verify)";
+            }
+            if (res && res.valid && res.requireOtp) {
+              var otpBox = document.getElementById('adminOtpBox');
+              var otpMsg = document.getElementById('otpSentMsg');
+              if (otpBox) otpBox.classList.remove('hidden');
+              if (otpMsg) otpMsg.innerText = res.message;
+              if (otpInp) otpInp.focus();
+            } else {
+              alert("❌ " + (res.error || "លេខកូដសម្ងាត់មិនត្រឹមត្រូវ!"));
+            }
+          })
+          .catch(function(err) {
+            if (btn) { btn.disabled = false; btn.innerText = "🔓 ចូលគ្រប់គ្រង (Login)"; }
+            alert("Error: " + err.message);
+          });
+        return;
+      }
+
+      // ២. ផ្ទៀងផ្ទាត់ PIN + (initData ឬ OTP)
+      adminOtp = enteredOtp;
       callBackendPost({ action: "verifyPin", pin: pin })
         .then(function(res) {
           if (btn && !isAuto) {
@@ -1321,10 +1382,9 @@
             adminPin = pin;
             unlockAdminDashboard();
           } else {
-            localStorage.removeItem('saved_admin_pin');
             adminPin = '';
-            showAdminLockScreen();
-            if (!isAuto) alert("❌ លេខកូដសម្ងាត់មិនត្រឹមត្រូវ!");
+            adminOtp = '';
+            if (!isAuto) alert("❌ " + (res.error || "លេខកូដសម្ងាត់ ឬ OTP មិនត្រឹមត្រូវ!"));
           }
         })
         .catch(function(err) {
@@ -1332,8 +1392,7 @@
             btn.disabled = false;
             btn.innerText = "🔓 ចូលគ្រប់គ្រង (Login)";
           }
-          if (!isAuto) alert("Error: " + err.message);
-          else showAdminLockScreen();
+          alert("Error: " + err.message);
         });
     }
 
