@@ -1513,9 +1513,19 @@
 
       callBackendPost({ action: "getAdminCatalog", pin: adminPin })
         .then(function(data) {
-          adminProducts = data || [];
           if (loader) loader.className = "hidden";
-          filterAdminProducts();
+          
+          // ពិនិត្យមើលក្រែង Backend បោះ Error (ដូចជា OTP ផុតកំណត់)
+          if (data && data.error) {
+            alert("⚠️ " + data.error);
+            showAdminLockScreen();
+            return;
+          }
+
+          if (Array.isArray(data)) {
+            adminProducts = data;
+            filterAdminProducts();
+          }
 
           callBackendPost({ action: "getCostCalculations", pin: adminPin })
             .then(function(res) {
@@ -2843,6 +2853,12 @@
         .then(function(res) {
           btn.disabled = false;
           btn.innerText = defaultSaveText;
+
+          // ពិនិត្យមើលថាតើ Backend អនុញ្ញាតឱ្យ Update ឬអត់
+          if (res && (res.error || res.success === false)) {
+            alert("❌ មិនអាចរក្សាទុកបានទេ៖ " + (res.error || res.message || "Unknown Error"));
+            return;
+          }
 
           if (editId) {
             for (var i = 0; i < adminProducts.length; i++) {
