@@ -2798,17 +2798,51 @@
     }
 
     function loadAppSettings() {
-      try {
-        var cachedSet = localStorage.getItem('cv3d_cached_settings_v1');
-        if (cachedSet) applyCustomerSettingsObj(JSON.parse(cachedSet));
-      } catch (e) {}
-
       callBackendPost({ action: "getSettings" })
         .then(function(res) {
           if (res) {
-            try { localStorage.setItem('cv3d_cached_settings_v1', JSON.stringify(res)); } catch (e) {}
-            applyCustomerSettingsObj(res);
+            appSettings.ship_phnom_penh = parseFloat(res.ship_phnom_penh) || 1.50;
+            appSettings.ship_province = parseFloat(res.ship_province) || 2.00;
+            appSettings.free_shipping_min = parseFloat(res.free_shipping_min) || 20.00;
+            appSettings.banner_enabled = (String(res.banner_enabled).toLowerCase() === 'yes' || res.banner_enabled === true);
+            appSettings.banner_images = String(res.banner_images || '').trim();
+
+            if (res.banner_speed) {
+              appSettings.banner_speed = parseInt(res.banner_speed, 10) || 4;
+              localStorage.setItem('app_banner_speed', String(appSettings.banner_speed));
+            }
+            if (res.sold_badge_enabled !== undefined) {
+              appSettings.sold_badge_enabled = (String(res.sold_badge_enabled).toLowerCase() === 'yes' || res.sold_badge_enabled === true);
+              localStorage.setItem('app_sold_badge_enabled', appSettings.sold_badge_enabled ? 'yes' : 'no');
+            }
+            if (res.sold_badge_min !== undefined) {
+              appSettings.sold_badge_min = parseInt(res.sold_badge_min, 10) || 5;
+              localStorage.setItem('app_sold_badge_min', String(appSettings.sold_badge_min));
+            }
+            if (res.category_order && String(res.category_order).trim() !== '') {
+              var sheetCats = String(res.category_order).split(',').map(function(s) { return s.trim(); }).filter(Boolean);
+              if (sheetCats.length > 0) {
+                localStorage.setItem('app_category_order', JSON.stringify(sheetCats));
+              }
+            }
+            if (res.social_phone_val !== undefined || res.social_tg_val !== undefined) {
+              appSocialSettings = {
+                phone_enabled: (String(res.social_phone_enabled).toLowerCase() === 'yes' || res.social_phone_enabled === true),
+                phone_val: String(res.social_phone_val || '').trim(),
+                tg_enabled: (String(res.social_tg_enabled).toLowerCase() === 'yes' || res.social_tg_enabled === true),
+                tg_val: String(res.social_tg_val || '').trim(),
+                tiktok_enabled: (String(res.social_tiktok_enabled).toLowerCase() === 'yes' || res.social_tiktok_enabled === true),
+                tiktok_val: String(res.social_tiktok_val || '').trim(),
+                fb_enabled: (String(res.social_fb_enabled).toLowerCase() === 'yes' || res.social_fb_enabled === true),
+                fb_val: String(res.social_fb_val || '').trim()
+              };
+              localStorage.setItem('app_social_settings_v2', JSON.stringify(appSocialSettings));
+            }
           }
+          updateDeliveryDropdownUI();
+          renderPromoBanner();
+          renderFooterSocialLinks();
+          if (typeof renderProducts === 'function') renderProducts();
         })
         .catch(function(err) {
           console.warn("ប្រើតម្លៃកំណត់លំនាំដើម:", err);
@@ -2826,10 +2860,16 @@
         imgUrl = selectedProduct.images[0];
       }
 
+      var basePrice = Number(selectedProduct.price) || 0;
+      var discountPct = Number(selectedProduct.discount) || 0;
+      var sizeFee = (typeof selectedSizeFee !== 'undefined') ? (Number(selectedSizeFee) || 0) : 0;
+      var unitBase = basePrice + sizeFee;
+      var finalPrice = discountPct > 0 ? unitBase * (1 - discountPct / 100) : unitBase;
+
       var msg = "👋 ជម្រាបសួរ Admin! ខ្ញុំចង់សួរព័ត៌មានបន្ថែមពីទំនិញនេះ៖\n\n" +
                 "🆔 កូដទំនិញ: " + (selectedProduct.id || "N/A") + "\n" +
                 "📦 ឈ្មោះ: " + selectedProduct.title + "\n" +
-                "💵 តម្លៃ: $" + Number(selectedProduct.price).toFixed(2) + "\n";
+                "💵 តម្លៃ: $" + finalPrice.toFixed(2) + (discountPct > 0 ? " (បញ្ចុះ " + discountPct + "%)" : "") + "\n";
 
       if (selectedColor) {
         msg += "🎨 ពណ៌: " + selectedColor + "\n";
@@ -2844,15 +2884,13 @@
       var encodedMsg = encodeURIComponent(msg);
       var tgUrl = "https://t.me/" + MY_TELEGRAM_USERNAME + "?text=" + encodedMsg;
 
-      if (window.Telegram && window.Telegram.WebApp && typeof window.Telegram.WebApp.openTelegramLink === "function") {
+      if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.openTelegramLink) {
         window.Telegram.WebApp.openTelegramLink(tgUrl);
-      } else if (window.Telegram && window.Telegram.WebApp && typeof window.Telegram.WebApp.openLink === "function") {
-        window.Telegram.WebApp.openLink(tgUrl);
       } else {
         window.open(tgUrl, '_blank');
       }
     }
-
+    
     function refreshHomeData() {
       window.scrollTo({ top: 0, behavior: 'smooth' });
 
