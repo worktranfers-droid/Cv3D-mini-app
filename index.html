@@ -2866,8 +2866,8 @@
       var unitBase = basePrice + sizeFee;
       var finalPrice = discountPct > 0 ? unitBase * (1 - discountPct / 100) : unitBase;
 
-      var greetText = currentLang === 'en' ? '👋 Hi Admin! I would like to ask about this product:' :
-                      currentLang === 'zh' ? '👋 你好 Admin！我想咨询这款产品：' :
+      var greetText = (currentLang === 'en') ? '👋 Hi Admin! I would like to ask about this product:' :
+                      (currentLang === 'zh') ? '👋 你好 Admin！我想咨询这款产品：' :
                       '👋 សួស្តី Admin! ខ្ញុំចង់សួរព័ត៌មានទំនិញនេះ៖';
 
       var priceText = "💵 $" + finalPrice.toFixed(2) + (discountPct > 0 ? " (-" + discountPct + "%)" : "");
@@ -2886,7 +2886,7 @@
       var encodedMsg = encodeURIComponent(msg);
       var tgUrl = "https://t.me/" + MY_TELEGRAM_USERNAME + "?text=" + encodedMsg;
 
-      if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.openTelegramLink) {
+      if (window.Telegram && window.Telegram.WebApp && typeof window.Telegram.WebApp.openTelegramLink === 'function') {
         window.Telegram.WebApp.openTelegramLink(tgUrl);
       } else {
         window.open(tgUrl, '_blank');
