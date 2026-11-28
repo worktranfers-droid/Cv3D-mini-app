@@ -236,6 +236,9 @@ var i18n = {
     repBtnExportCsv: "📥 ទាញយក CSV",
     repBtnSendTg: "📲 ផ្ញើចូល Telegram",
     repTgSentAlert: "✅ បានផ្ញើរបាយការណ៍សង្ខេបចូល Telegram រួចរាល់!",
+    otpPlaceholder: "បញ្ចូលកូដ OTP ៦ ខ្ទង់...",
+    btnVerifyOtp: "🔓 បញ្ជាក់កូដ OTP (Verify)",
+    btnVerifying: "⏳ កំពុងផ្ទៀងផ្ទាត់...",
   },
   en: {
     flag: "🇬🇧",
@@ -473,6 +476,9 @@ var i18n = {
     repBtnExportCsv: "📥 Export CSV",
     repBtnSendTg: "📲 Send to Telegram",
     repTgSentAlert: "✅ Summary report sent to Telegram!",
+    otpPlaceholder: "Enter 6-digit OTP code...",
+    btnVerifyOtp: "🔓 Verify OTP Code",
+    btnVerifying: "⏳ Verifying...",
   },
   zh: {
     flag: "🇨🇳",
@@ -709,6 +715,9 @@ var i18n = {
     repNoData: "该时间段内暂无成交记录",
     repBtnExportCsv: "📥 导出 CSV",
     repBtnSendTg: "📲 发送至 Telegram",
-    repTgSentAlert: "✅ 销售汇总报表已发送至 Telegram！"
+    repTgSentAlert: "✅ 销售汇总报表已发送至 Telegram！",
+    otpPlaceholder: "Enter 6-digit OTP code...",
+    btnVerifyOtp: "🔓 Verify OTP Code",
+    btnVerifying: "⏳ Verifying...",
   }
 };
