@@ -199,7 +199,7 @@
     </div>
 
     <!-- ប៊ូតុងរើសផ្ទាំង Tab: ផលិតផល, ការកុម្ម៉ង់, ការកំណត់ -->
-    <div class="flex gap-2 bg-slate-200/70 p-1 rounded-2xl">
+    <div class="flex gap-1.5 bg-slate-200/70 p-1 rounded-2xl overflow-x-auto no-scrollbar whitespace-nowrap">
       <button id="adminTabProds" type="button" onclick="switchAdminTab('products')" class="flex-1 py-2 rounded-xl text-xs font-bold bg-white text-slate-800 shadow-xs transition-all">
         📦 ផលិតផល
       </button>
@@ -1047,7 +1047,6 @@
     var currentOrderFilter = 'active';
     var currentEditingCalcData = null;
 
-    var adminPin = '';
     var adminOtp = ''; // រក្សាទុក OTP សម្រាប់ Session លើ Browser
 
     function getTelegramInitData() {
@@ -2133,6 +2132,22 @@
                 fb_val: String(res.social_fb_val || '').trim()
               };
             }
+
+            if (res.sold_badge_enabled !== undefined) {
+              appSettings.sold_badge_enabled = (String(res.sold_badge_enabled).toLowerCase() === 'yes' || res.sold_badge_enabled === true);
+              localStorage.setItem('app_sold_badge_enabled', appSettings.sold_badge_enabled ? 'yes' : 'no');
+              if (document.getElementById('setSoldBadgeEnabled')) {
+                document.getElementById('setSoldBadgeEnabled').checked = appSettings.sold_badge_enabled;
+              }
+            }
+            if (res.sold_badge_min !== undefined) {
+              appSettings.sold_badge_min = parseInt(res.sold_badge_min, 10) || 5;
+              localStorage.setItem('app_sold_badge_min', String(appSettings.sold_badge_min));
+              if (document.getElementById('setSoldBadgeMin')) {
+                document.getElementById('setSoldBadgeMin').value = String(appSettings.sold_badge_min);
+              }
+            }
+            if (typeof updateSoldBadgeSummaryUI === 'function') updateSoldBadgeSummaryUI();
 
             updateShippingSummaryText();
             updateImageQualitySummaryText();
@@ -3712,25 +3727,38 @@
 
     function saveImageQualitySettings(btn) {
       var selectEl = document.getElementById('setImageQualityPreset');
+      var presetVal = selectEl ? selectEl.value : 'hd';
       if (selectEl) {
-        applyImageQualityPreset(selectEl.value);
+        applyImageQualityPreset(presetVal);
       }
       localStorage.setItem('app_image_quality_settings', JSON.stringify(uploadImgSettings));
       updateImageQualitySummaryText();
 
       if (btn) {
         btn.disabled = true;
-        btn.innerText = "✓";
-        setTimeout(function() {
-          btn.disabled = false;
-          btn.innerText = "💾";
-        }, 1200);
+        btn.innerText = "⏳";
       }
 
-      var t = (typeof i18n !== 'undefined' && i18n[currentLang]) ? i18n[currentLang] : (i18n ? i18n['km'] : {});
-      alert(t.alertImgQualitySaved || "✓ បានរក្សាទុកការកំណត់ជោគជ័យ!");
+      callBackendPost({
+        action: "updateSettings",
+        pin: adminPin,
+        settings: { image_quality_preset: presetVal }
+      })
+      .then(function(res) {
+        if (btn) {
+          btn.disabled = false;
+          btn.innerText = "✓";
+          setTimeout(function() { btn.innerText = "💾"; }, 1200);
+        }
+        var t = (typeof i18n !== 'undefined' && i18n[currentLang]) ? i18n[currentLang] : (i18n ? i18n['km'] : {});
+        alert(t.alertImgQualitySaved || "✓ បានរក្សាទុកការកំណត់ជោគជ័យ!");
+      })
+      .catch(function(err) {
+        if (btn) { btn.disabled = false; btn.innerText = "💾"; }
+        alert("Error: " + err.message);
+      });
     }
-
+    
     // =========================================================
     // គ្រប់គ្រង FOOTER SOCIAL & CONTACT LINKS
     // =========================================================
@@ -3915,13 +3943,34 @@
       if (btn) {
         btn.disabled = true;
         btn.style.opacity = "0.4";
-        setTimeout(function() { btn.disabled = false; btn.style.opacity = "1"; }, 1000);
       }
 
-      var alertText = (currentLang === 'zh') ? "✓ 已售徽章设置保存成功！" :
-                      (currentLang === 'en') ? "✓ Sold badge settings saved successfully!" :
-                      "✓ ការកំណត់ផ្លាក Sold Badge ត្រូវបានរក្សាទុកជោគជ័យ!";
-      alert(alertText);
+      callBackendPost({
+        action: "updateSettings",
+        pin: adminPin,
+        settings: {
+          sold_badge_enabled: isEnabled ? "yes" : "no",
+          sold_badge_min: minVal
+        }
+      })
+      .then(function(res) {
+        if (btn) {
+          btn.disabled = false;
+          btn.style.opacity = "1";
+        }
+        if (res && res.success) {
+          var alertText = (currentLang === 'zh') ? "✓ 已售徽章设置已同步保存！" :
+                          (currentLang === 'en') ? "✓ Sold badge settings synced & saved!" :
+                          "✓ ការកំណត់ផ្លាក Sold Badge ត្រូវបានរក្សាទុកចូល Google Sheet ជោគជ័យ!";
+          alert(alertText);
+        } else {
+          alert("❌ មិនអាចរក្សាទុកបាន៖ " + (res.message || "Unknown Error"));
+        }
+      })
+      .catch(function(err) {
+        if (btn) { btn.disabled = false; btn.style.opacity = "1"; }
+        alert("Error: " + err.message);
+      });
     }
 
     var BACKUP_API_URL = "https://script.google.com/macros/s/AKfycbxRaH7sR60adveolBgvVTxv-bcpB10tkDeM6IdOm97EidmPtjgsls_LILErQJPL1IMe5g/exec";
