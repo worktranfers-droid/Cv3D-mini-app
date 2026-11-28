@@ -716,8 +716,8 @@ var i18n = {
     repBtnExportCsv: "📥 导出 CSV",
     repBtnSendTg: "📲 发送至 Telegram",
     repTgSentAlert: "✅ 销售汇总报表已发送至 Telegram！",
-    otpPlaceholder: "Enter 6-digit OTP code...",
-    btnVerifyOtp: "🔓 Verify OTP Code",
-    btnVerifying: "⏳ Verifying...",
+    otpPlaceholder: "输入6位OTP验证码...",
+    btnVerifyOtp: "🔓 验证 OTP 码",
+    btnVerifying: "⏳ 正在验证...",
   }
 };
