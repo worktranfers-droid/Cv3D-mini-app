@@ -2866,19 +2866,18 @@
       var unitBase = basePrice + sizeFee;
       var finalPrice = discountPct > 0 ? unitBase * (1 - discountPct / 100) : unitBase;
 
-      var msg = "👋 ជម្រាបសួរ Admin! ខ្ញុំចង់សួរព័ត៌មានបន្ថែមពីទំនិញនេះ៖\n\n" +
-                "🆔 កូដទំនិញ: " + (selectedProduct.id || "N/A") + "\n" +
-                "📦 ឈ្មោះ: " + selectedProduct.title + "\n" +
-                "💵 តម្លៃ: $" + finalPrice.toFixed(2) + (discountPct > 0 ? " (បញ្ចុះ " + discountPct + "%)" : "") + "\n";
+      var msg = "👋 សួស្តី Admin! ខ្ញុំចង់សួរព័ត៌មានទំនិញនេះ៖\n" +
+                "📦 " + selectedProduct.title + " (" + (selectedProduct.id || "N/A") + ")\n" +
+                "💵 $" + finalPrice.toFixed(2) + (discountPct > 0 ? " (-" + discountPct + "%)" : "");
 
       if (selectedColor) {
-        msg += "🎨 ពណ៌: " + selectedColor + "\n";
+        msg += " • 🎨 " + selectedColor;
       }
       if (selectedSize) {
-        msg += "📏 ទំហំ: " + selectedSize + "\n";
+        msg += " • 📏 " + selectedSize;
       }
       if (imgUrl) {
-        msg += "🖼️ រូបភាព: " + imgUrl + "\n";
+        msg += "\n🖼️ " + imgUrl;
       }
 
       var encodedMsg = encodeURIComponent(msg);
