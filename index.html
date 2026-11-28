@@ -2842,7 +2842,7 @@
           updateDeliveryDropdownUI();
           renderPromoBanner();
           renderFooterSocialLinks();
-          if (typeof renderProducts === 'function') renderProducts();
+          if (typeof applyCustomerFilter === 'function') applyCustomerFilter();
         })
         .catch(function(err) {
           console.warn("ប្រើតម្លៃកំណត់លំនាំដើម:", err);
@@ -2862,7 +2862,7 @@
 
       var basePrice = Number(selectedProduct.price) || 0;
       var discountPct = Number(selectedProduct.discount) || 0;
-      var sizeFee = (typeof selectedSizeFee !== 'undefined') ? (Number(selectedSizeFee) || 0) : 0;
+      var sizeFee = parseSizeExtraFee(selectedSize);
       var unitBase = basePrice + sizeFee;
       var finalPrice = discountPct > 0 ? unitBase * (1 - discountPct / 100) : unitBase;
 
@@ -3243,27 +3243,6 @@
         var parsedDirect = parseInt(String(rawDirect).replace(/[^\d-]/g, ''), 10);
         if (!isNaN(parsedDirect) && parsedDirect > 0) {
           total += parsedDirect;
-        }
-      }
-
-      if (typeof allAdminOrders !== 'undefined' && Array.isArray(allAdminOrders) && allAdminOrders.length > 0) {
-        for (var i = 0; i < allAdminOrders.length; i++) {
-          var ord = allAdminOrders[i];
-          var st = String(ord.status || '').toLowerCase();
-          if (st.indexOf('canceled') !== -1 || st.indexOf('cancelled') !== -1 || st.indexOf('បោះបង់') !== -1 || st.indexOf('取消') !== -1) {
-            continue;
-          }
-          var lines = String(ord.items || '').split(/\r?\n/);
-          for (var j = 0; j < lines.length; j++) {
-            var line = lines[j].toLowerCase().trim();
-            if (!line) continue;
-            var matchId = pid && (line.indexOf('[' + pid + ']') !== -1 || line.indexOf(pid) !== -1);
-            var matchTitle = pTitle && line.indexOf(pTitle) !== -1;
-            if (matchId || matchTitle) {
-              var qtyMatch = line.match(/(?:x|\*|\bqty[:\s]*)\s*(\d+)/i);
-              total += qtyMatch && qtyMatch[1] ? parseInt(qtyMatch[1], 10) : 1;
-            }
-          }
         }
       }
 
