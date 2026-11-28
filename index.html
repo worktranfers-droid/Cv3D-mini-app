@@ -2883,24 +2883,28 @@
         msg += "\n🖼️ " + imgUrl;
       }
 
-      var encodedMsg = encodeURIComponent(msg);
-      var tgUrl = "https://t.me/" + MY_TELEGRAM_USERNAME + "?text=" + encodedMsg;
-
-      try {
-        if (window.Telegram && window.Telegram.WebApp) {
-          if (typeof window.Telegram.WebApp.openTelegramLink === 'function') {
-            window.Telegram.WebApp.openTelegramLink(tgUrl);
-          } else if (typeof window.Telegram.WebApp.openLink === 'function') {
-            window.Telegram.WebApp.openLink(tgUrl);
-          } else {
-            window.location.href = tgUrl;
-          }
-        } else {
-          window.open(tgUrl, '_blank') || (window.location.href = tgUrl);
-        }
-      } catch (e) {
-        window.location.href = tgUrl;
+      // ១. ចម្លងសារទំនិញទុកជាមុនដោយស្វ័យប្រវត្តិ (ដើម្បីកុំឱ្យ Telegram ប្លុក Link)
+      if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
+        navigator.clipboard.writeText(msg).catch(function() {});
       }
+
+      var toastMsg = (currentLang === 'en') ? '📋 Product info copied! Just Paste in chat.' :
+                     (currentLang === 'zh') ? '📋 已复制商品信息！请在聊天中粘贴发送。' :
+                     '📋 បានចម្លងព័ត៌មានទំនិញរួចរាល់! សូមចុច Paste ក្នុងឆាត។';
+      if (typeof showCartToast === 'function') {
+        showCartToast(toastMsg);
+      }
+
+      // ២. បើក Link ឆាតស្អាត (គ្មាន ?text=) ដែល Telegram អនុញ្ញាត 100%
+      var cleanChatUrl = "https://t.me/" + MY_TELEGRAM_USERNAME;
+
+      setTimeout(function() {
+        if (window.Telegram && window.Telegram.WebApp && typeof window.Telegram.WebApp.openTelegramLink === 'function') {
+          window.Telegram.WebApp.openTelegramLink(cleanChatUrl);
+        } else {
+          window.location.href = cleanChatUrl;
+        }
+      }, 350);
     }
     
     function refreshHomeData() {
